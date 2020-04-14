@@ -1,0 +1,4 @@
+-o ~/mov/%(title)s.%(ext)s
+-f "best[height<=720]"
+--retries 64
+--fragment-retries 64

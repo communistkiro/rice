@@ -1,0 +1,44 @@
+[
+  {
+    "directory": "/root/src/plot/build",
+    "command": "cc -Iplot@exe -I. -I.. -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=c99 -g -Wundef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wstrict-prototypes -Wimplicit-fallthrough=2 -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wno-missing-braces -Wno-missing-field-initializers -Wno-unused-parameter -MD -MQ 'plot@exe/src_main.c.o' -MF 'plot@exe/src_main.c.o.d' -o 'plot@exe/src_main.c.o' -c ../src/main.c",
+    "file": "../src/main.c",
+    "output": "plot@exe/src_main.c.o"
+  },
+  {
+    "directory": "/root/src/plot/build",
+    "command": "cc -Iplot@exe -I. -I.. -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=c99 -g -Wundef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wstrict-prototypes -Wimplicit-fallthrough=2 -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wno-missing-braces -Wno-missing-field-initializers -Wno-unused-parameter -MD -MQ 'plot@exe/src_display.c.o' -MF 'plot@exe/src_display.c.o.d' -o 'plot@exe/src_display.c.o' -c ../src/display.c",
+    "file": "../src/display.c",
+    "output": "plot@exe/src_display.c.o"
+  },
+  {
+    "directory": "/root/src/plot/build",
+    "command": "cc -Iplot@exe -I. -I.. -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=c99 -g -Wundef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wstrict-prototypes -Wimplicit-fallthrough=2 -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wno-missing-braces -Wno-missing-field-initializers -Wno-unused-parameter -MD -MQ 'plot@exe/src_input.c.o' -MF 'plot@exe/src_input.c.o.d' -o 'plot@exe/src_input.c.o' -c ../src/input.c",
+    "file": "../src/input.c",
+    "output": "plot@exe/src_input.c.o"
+  },
+  {
+    "directory": "/root/src/plot/build",
+    "command": "cc -Iplot@exe -I. -I.. -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=c99 -g -Wundef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wstrict-prototypes -Wimplicit-fallthrough=2 -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wno-missing-braces -Wno-missing-field-initializers -Wno-unused-parameter -MD -MQ 'plot@exe/src_plot.c.o' -MF 'plot@exe/src_plot.c.o.d' -o 'plot@exe/src_plot.c.o' -c ../src/plot.c",
+    "file": "../src/plot.c",
+    "output": "plot@exe/src_plot.c.o"
+  },
+  {
+    "directory": "/root/src/plot/build",
+    "command": "cc -Iplot@exe -I. -I.. -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=c99 -g -Wundef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wstrict-prototypes -Wimplicit-fallthrough=2 -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wno-missing-braces -Wno-missing-field-initializers -Wno-unused-parameter -MD -MQ 'plot@exe/src_follow.c.o' -MF 'plot@exe/src_follow.c.o.d' -o 'plot@exe/src_follow.c.o' -c ../src/follow.c",
+    "file": "../src/follow.c",
+    "output": "plot@exe/src_follow.c.o"
+  },
+  {
+    "directory": "/root/src/plot/build",
+    "command": "cc -Iplot@exe -I. -I.. -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=c99 -g -Wundef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wstrict-prototypes -Wimplicit-fallthrough=2 -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wno-missing-braces -Wno-missing-field-initializers -Wno-unused-parameter -MD -MQ 'plot@exe/src_opts.c.o' -MF 'plot@exe/src_opts.c.o.d' -o 'plot@exe/src_opts.c.o' -c ../src/opts.c",
+    "file": "../src/opts.c",
+    "output": "plot@exe/src_opts.c.o"
+  },
+  {
+    "directory": "/root/src/plot/build",
+    "command": "cc -Iplot@exe -I. -I.. -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=c99 -g -Wundef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wstrict-prototypes -Wimplicit-fallthrough=2 -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wno-missing-braces -Wno-missing-field-initializers -Wno-unused-parameter -MD -MQ 'plot@exe/src_util.c.o' -MF 'plot@exe/src_util.c.o.d' -o 'plot@exe/src_util.c.o' -c ../src/util.c",
+    "file": "../src/util.c",
+    "output": "plot@exe/src_util.c.o"
+  }
+]

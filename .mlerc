@@ -1,0 +1,14 @@
+# define my kmap
+# echo '-Kmy,,0'
+
+# default normal kmap
+echo '-Kmle_normal,,0'
+    echo '-kcmd_indent,C-]'
+    echo '-kcmd_outdent,C-['
+    echo '-kcmd_fsearch,C-p,fzf --cycle -m'
+    echo '-kcmd_search_next,F3'
+    echo '-kcmd_ctag,F4'
+
+echo '-Kmle_prompt_isearch,,1'
+    echo '-k_editor_prompt_isearch_prev,F3'
+    echo '-k_editor_prompt_isearch_next,S-F3'

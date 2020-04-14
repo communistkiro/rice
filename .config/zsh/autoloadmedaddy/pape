@@ -1,0 +1,56 @@
+#!/bin/zsh
+# recurse until you like your pape
+function pape () {
+
+# no space in dir name!
+dir=( $(find ~/im -type d) );
+
+! ((${+cho})) && cho=$(printf "%s\n" "${dir[@]}" | dmenu -i -l ${#dir});
+
+feh --bg-scale --randomize ${cho};
+
+sel=('another one' 'back');
+v=$(printf "%s\n" "${sel[@]}" | dmenu -i -l ${#sel});
+
+case ${v} in
+    ${sel[2]} ) 
+        unset cho; 
+    ;&
+    ${sel[1]} ) 
+        pape;
+    ;;
+esac
+unset dir cho sel v
+}
+
+#!/bin/zsh
+# # recurse until you like your pape
+# function pape () {
+# a=('Teen Titans Go!' 'wallpaps' 'mine');
+# ! ((${+c})) && c=$(printf "%s\n" "${a[@]}" | dmenu -i -l ${#a});
+
+# case ${c} in
+#     ${a[1]} )
+#         feh --bg-scale --randomize ~/im/teentitanscrots;
+#     ;;
+#      ${a[2]} )
+#         feh --bg-scale --randomize ~/im/wp;
+#     ;;
+#     ${a[3]} )
+#         feh --bg-scale --randomize ~/im/wp/mine;
+#     ;;
+# esac
+
+# s=('another one' 'back');
+# v=$(printf "%s\n" "${s[@]}" | dmenu -i -l ${#s});
+
+# case ${v} in
+#     ${s[2]} ) 
+#         unset c; 
+#     ;&
+#     ${s[1]} ) 
+#         pape;
+#     ;;
+# esac
+# unset a s v c
+# }

@@ -1,0 +1,63 @@
+#!/bin/bash
+
+pomodoro () {
+    if [[ -z $1 ]]; 
+    then countdown $1|figlet;
+    else countdown 40|figlet;
+    fi;
+    stop_collossal;
+}
+
+break_5_min () {
+    clear; countdown 5|figlet -m 2 -f /root/.config/zsh/scripts/terminal-pomodoro/colossal.flf; stop_large
+}
+
+stop_collossal () {
+    date1=`/bin/date +%s`; 
+    while true; do 
+    clear
+    figlet -m 2 -w 50 -f /root/.config/zsh/scripts/terminal-pomodoro/colossal.flf IT\'S | lolcat
+    /bin/echo -ne "$(/bin/date -d \@$((`/bin/date +%s` - $date1 + 18000)) +%H:%M:%S)      \r"; 
+    /bin/sleep .3
+    clear
+    figlet -m 2 -w 50 -f /root/.config/zsh/scripts/terminal-pomodoro/colossal.flf TIME | lolcat
+    /bin/echo -ne "$(/bin/date -d \@$((`/bin/date +%s` - $date1 + 18000)) +%H:%M:%S)      \r"; 
+    /bin/sleep .3
+    clear
+    figlet -m 2 -w 50 -f /root/.config/zsh/scripts/terminal-pomodoro/colossal.flf TO | lolcat
+    /bin/echo -ne "$(/bin/date -d \@$((`/bin/date +%s` - $date1 + 18000)) +%H:%M:%S)      \r"; 
+    /bin/sleep .3
+    clear
+    figlet -m 2 -w 50 -f /root/.config/zsh/scripts/terminal-pomodoro/colossal.flf STOP| lolcat
+    /bin/echo -ne "$(/bin/date -d \@$((`/bin/date +%s` - $date1 + 18000)) +%H:%M:%S)      \r"; 
+    /bin/sleep .3
+    done
+}
+
+stopwatch () {
+    date1=`/bin/date +%s`; 
+    while true; do 
+        /bin/echo -ne "$(/bin/date -d \@$((`/bin/date +%s` - $date1 + 18000)) +%H:%M:%S)      \r"; 
+        /bin/sleep 1;
+    done;
+}
+
+stop_large () {
+    date1=`/bin/date +%s`; 
+    while true; do 
+    clear
+    /bin/tail -n 43 ./terminal-pomodoro/its_time_to_stop_ascii.txt |lolcat;
+    /bin/echo -ne "$(/bin/date -d \@$((`/bin/date +%s` - $date1 + 18000)) +%H:%M:%S)      \r"; 
+    /bin/sleep 1;
+    done;
+}
+
+countdown () {
+    date1=$((`/bin/date +%s` + $1 * 60)); 
+    while [ "$date1" -ge `/bin/date +%s` ]; do 
+      /bin/echo -ne "$(/bin/date -u --date @$(($date1 - `/bin/date +%s`)) +%M:%S)\r";
+      /bin/sleep 1
+    done
+}
+
+pomodoro
