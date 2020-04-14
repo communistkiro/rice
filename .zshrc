@@ -71,22 +71,6 @@ autoload -U +X bashcompinit && bashcompinit
 
 source $ZSH/oh-my-zsh.sh
 
-# # User configuration
-# export LANG=en_US.UTF-8
-# # export VISUAL="code-oss"
-# export EDITOR="subl3"
-# # export HLEDGER_UI_EDITOR="subl3 -n"
-# # export HLEDGER_UI_EDITOR="mle -i1 -w1"
-# export HLEDGER_UI_EDITOR="micro"
-# export XDG_RUNTIME_DIR="/tmp"
-# export XDG_CONFIG_HOME="/root/.config"
-# export PKG_CONFIG_PATH="/usr/share/pkgconfig:/usr/lib/pkgconfig"
-# export TERMINAL="st"
-# export DTE_HOME="/root/.config/dte"
-# # export PAGER='less --ignore-case --LONG-PROMPT'
-# export PAGER='less --hilite-unread --ignore-case --LONG-PROMPT --tabs 4'
-# export FZF_DEFAULT_COMMAND='ag --hidden -g ""'
-
 setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 # REMATCH_PCRE
 
@@ -181,11 +165,12 @@ alias fzf='fzf -m\
   --bind "alt-v:select-all"\
   '
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
+alias gp=''
 
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
-autoload backup cz mpp net pape pass rdd1 rdd2 tagme tl tldoc uhosts wic wdr xrp xrpp zmv
+autoload backup cz gp mpp net pape pass rdd1 rdd2 tagme tl tldoc uhosts wic wdr xrp xrpp zmv
 
 
 # SOURCE
