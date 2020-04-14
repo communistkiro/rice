@@ -1,0 +1,25 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"Alignment",
+		"BracketHighlighter",
+		"Color Scheme - Chromodynamics",
+		"ColorPicker",
+		"Compare Side-By-Side",
+		"gruvbox",
+		"HTML5",
+		"LaTeX-cwl",
+		"LaTeXing",
+		"Ledger syntax highlighting",
+		"OctaveSupport",
+		"Package Control",
+		"PackageResourceViewer",
+		"PlainTasks",
+		"SublimeCodeIntel",
+		"TerminalView"
+	]
+}

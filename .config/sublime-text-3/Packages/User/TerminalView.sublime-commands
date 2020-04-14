@@ -1,0 +1,12 @@
+[
+  {
+    "caption": "Terminal View: Open zsh Terminal",
+    "command": "terminal_view_open",
+    "args"   : {"title": "Terminal (zsh)", "cmd": "/bin/zsh -l"},
+  },
+  {
+    "caption": "Terminal View: Open fish Terminal",
+    "command": "terminal_view_open",
+    "args"   : {"title": "Terminal (fish)", "cmd": "/bin/fish -l"},
+  }
+]
