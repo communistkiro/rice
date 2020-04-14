@@ -26,6 +26,6 @@ dzen2 -e - -ta r -x '1084' -w '836' -h '16' -fg $FG -bg $BG -fn $FONT < <(conky 
 pgrep pomo && dzen2 -e - -ta l -x '1080' -w '64' -h '16' -fg $FG -bg $BG -fn $FONT < <(/root/.config/zsh/scripts/pomo status) &
 
 # Shortcuts
-pkill xbindkeys
-xbindkeys &
+# pkill xbindkeys
+# xbindkeys &
 

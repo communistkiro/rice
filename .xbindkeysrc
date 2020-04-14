@@ -64,17 +64,14 @@
 
 
 # Increase volume
-#"pactl set-sink-volume @DEFAULT_SINK@ +1000"
 "amixer set Master 2+"
    XF86AudioRaiseVolume
 
 # Decrease volume
-#"pactl set-sink-volume @DEFAULT_SINK@ -1000"
 "amixer set Master 2-"
    XF86AudioLowerVolume
 
 # Mute volume
-#"pactl set-sink-mute @DEFAULT_SINK@ toggle"
 "amixer set Master toggle"
    XF86AudioMute
 
@@ -91,22 +88,18 @@
   XF86ScreenSaver
 
 # Next track
-#"cmus-remote -C 'player-next'"
 "mpc next"
   XF86AudioNext
 
 # Previous track
-#"cmus-remote -C 'player-prev'"
 "mpc prev"
   XF86AudioPrev
 
 # Pause playback
-#"cmus-remote -C 'player-pause-playback'"
 "mpc toggle"
   XF86AudioPlay
 
 # Stop playback
-#"cmus-remote -C 'player-stop'"
 "mpc stop"
   XF86AudioStop
 
@@ -119,17 +112,4 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-##################################
-# End of xbindkeys configuration #
-##################################
 

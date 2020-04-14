@@ -63,7 +63,7 @@ plugins=(
   extract
   colored-man-pages
   colorize
-  timer 
+  # timer 
 )
 
 autoload -U +X compinit && compinit 
@@ -71,21 +71,21 @@ autoload -U +X bashcompinit && bashcompinit
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
-export LANG=en_US.UTF-8
-# export VISUAL="code-oss"
-export EDITOR="subl3"
-# export HLEDGER_UI_EDITOR="subl3 -n"
-# export HLEDGER_UI_EDITOR="mle -i1 -w1"
-export HLEDGER_UI_EDITOR="micro"
-export XDG_RUNTIME_DIR="/tmp"
-export XDG_CONFIG_HOME="/root/.config"
-export PKG_CONFIG_PATH="/usr/share/pkgconfig:/usr/lib/pkgconfig"
-export TERMINAL="st"
-export DTE_HOME="/root/.config/dte"
-# export PAGER='less --ignore-case --LONG-PROMPT'
-export PAGER='less --hilite-unread --ignore-case --LONG-PROMPT --tabs 4'
-export FZF_DEFAULT_COMMAND='ag --hidden -g ""'
+# # User configuration
+# export LANG=en_US.UTF-8
+# # export VISUAL="code-oss"
+# export EDITOR="subl3"
+# # export HLEDGER_UI_EDITOR="subl3 -n"
+# # export HLEDGER_UI_EDITOR="mle -i1 -w1"
+# export HLEDGER_UI_EDITOR="micro"
+# export XDG_RUNTIME_DIR="/tmp"
+# export XDG_CONFIG_HOME="/root/.config"
+# export PKG_CONFIG_PATH="/usr/share/pkgconfig:/usr/lib/pkgconfig"
+# export TERMINAL="st"
+# export DTE_HOME="/root/.config/dte"
+# # export PAGER='less --ignore-case --LONG-PROMPT'
+# export PAGER='less --hilite-unread --ignore-case --LONG-PROMPT --tabs 4'
+# export FZF_DEFAULT_COMMAND='ag --hidden -g ""'
 
 setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 # REMATCH_PCRE
@@ -93,9 +93,6 @@ setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 # STACK TAB-AUTOCOMPLETION
 # https://docs.haskellstack.org/en/stable/shell_autocompletion/
 # eval "$(stack --bash-completion-script stack)"
-
-# /usr/share/X11/xkb/rules for `-option ""'
-setxkbmap -layout "us,bg,de" -variant ",phonetic," -geometry "pc" -option "grp:win_space_toggle";\
 
 # ALII
 # UTILITIES
@@ -153,6 +150,7 @@ alias twitch="mpv \
 alias loc='setxkbmap us; export LANG=en_US.UTF-8; xb 0; slock; xb 12'
 alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias ff='firefox &>/dev/null & disown'
+alias fff="/root/src/browsh_1.6.4_linux_amd64"
 alias vsc='code-oss --user-data-dir ~/vsc/'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
@@ -182,9 +180,7 @@ alias fzf='fzf -m\
   --bind "alt-f:clear-selection"\
   --bind "alt-v:select-all"\
   '
-# alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
-alias sf="tabbed -cdr 2 surf -e '' 2>/dev/null & disown"
-# alias tabbed -c -r 2 st -w '' 2>/dev/null & disown
+alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 
 
 # FUNCTIONS
