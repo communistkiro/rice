@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$PATH:$HOME/bin:/usr/local/bin:/bin:/usr/local/plan9/bin:/opt/texlive/2019/bin/x86_64-linux:/root/.config/zsh/scripts
+export PATH=$PATH:/usr/local/plan9/bin:/opt/texlive/2019/bin/x86_64-linux:/root/.config/zsh/scripts:$HOME/bin
 
 # Path to your oh-my-zsh installation.
 export ZSH=/root/.config/omz
@@ -65,6 +65,7 @@ plugins=(
   colorize
   # timer 
 )
+# TIMER_PRECISION=6
 
 autoload -U +X compinit && compinit 
 autoload -U +X bashcompinit && bashcompinit
@@ -134,7 +135,6 @@ alias twitch="mpv \
 alias loc='setxkbmap us; export LANG=en_US.UTF-8; xb 0; slock; xb 12'
 alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias ff='firefox &>/dev/null & disown'
-alias fff="/root/src/browsh_1.6.4_linux_amd64"
 alias vsc='code-oss --user-data-dir ~/vsc/'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
@@ -165,7 +165,7 @@ alias fzf='fzf -m\
   --bind "alt-v:select-all"\
   '
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
-alias gp=''
+alias sr='surfraw'
 
 
 # FUNCTIONS

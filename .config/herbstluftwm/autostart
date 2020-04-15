@@ -170,9 +170,5 @@ done
 # spawn dmenu
 hc keybind $Mod-Escape spawn dmenu_run -i
 
-# hc keybind $Mod-Escape spawn /root/.config/zsh/scripts/fzfmenu
-# Don't forget to add a float/center rule for fzfmenu class/name to your wm's config.
-# hc rule class='fzfmenu' pseudotile=on
-
 # Autorun
-[[ -z "$HLWM_LOADED" ]] && sleep 1; ~/.config/herbstluftwm/autorun &
+[[ -z "$HLWM_LOADED" ]] && sleep 1; ~/.config/herbstluftwm/autorun; ~/.config/zsh/scripts/keys;
