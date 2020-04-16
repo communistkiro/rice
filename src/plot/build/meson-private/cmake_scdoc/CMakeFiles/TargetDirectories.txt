@@ -1,0 +1,2 @@
+/root/src/plot/build/meson-private/cmake_scdoc/CMakeFiles/rebuild_cache.dir
+/root/src/plot/build/meson-private/cmake_scdoc/CMakeFiles/edit_cache.dir
