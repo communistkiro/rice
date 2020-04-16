@@ -24,6 +24,8 @@ hc keybind $Mod-Shift-c                 close
 
 hc keybind $Mod-t                       spawn tabbed -cr 2 st -w ''
 hc keybind $Mod-Shift-t                 spawn st
+hc keybind $Mod-Shift-r                       spawn tabbed -cr 2 surf -e ''
+hc keybind $Mod-Escape                  spawn dmenu_run -i
 
 # basic movement
 # focusing clients
@@ -166,9 +168,6 @@ for monitor in $(herbstclient list_monitors | cut -d: -f1) ; do
     # start it on each monitor
     "$panel" $monitor &
 done
-
-# spawn dmenu
-hc keybind $Mod-Escape spawn dmenu_run -i
 
 # Autorun
 [[ -z "$HLWM_LOADED" ]] && sleep 1; ~/.config/herbstluftwm/autorun; ~/.config/zsh/scripts/keys;
