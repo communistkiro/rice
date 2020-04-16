@@ -3,3 +3,10 @@
 #HttpOnly_.protonmail.com	TRUE	/	TRUE	1594790308	Session-Id	XpfqIAG7LdKKwXfMZXqbdwAAAGg	None
 protonmail.com	FALSE	/	TRUE	1594790308	Version	default	None
 #HttpOnly_.4channel.org	TRUE	/	TRUE	1589606485	__cfduid	de3eb4da805384b190f2765fe63d259541587014485	Lax
+#HttpOnly_en.wiktionary.org	FALSE	/	TRUE	1589760000	WMF-Last-Access	16-Apr-2020	None
+#HttpOnly_.wiktionary.org	TRUE	/	TRUE	1589760000	WMF-Last-Access-Global	16-Apr-2020	None
+#HttpOnly_.torrentfreak.com	TRUE	/	TRUE	1589615795	__cfduid	d82fa43fe4b40c24a74909d80731d94ca1587023795	Lax
+.github.com	TRUE	/	TRUE	1618563071	_octo	GH1.1.712830611.1587027071	None
+#HttpOnly_.github.com	TRUE	/	TRUE	1618563071	logged_in	no	None
+.github.com	TRUE	/	FALSE	1650099203	_ga	GA1.2.1185693176.1587027204	None
+boards.4channel.org	FALSE	/	FALSE	1587030167	m5a4xojbcp2nx3gptmm633qal3gzmadn	hadsoks.com	None

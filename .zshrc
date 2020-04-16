@@ -162,10 +162,10 @@ alias fzf='fzf -m\
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})"\
   --bind "alt-r:execute(micro {+})"\
   --bind "alt-f:clear-selection"\
-  --bind "alt-v:select-all"\
-  '
+  --bind "alt-v:select-all"'
+alias sf="tabbed -dcr 2 surf -e ''"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
-alias sr='surfraw'
+alias sr="surfraw"
 
 
 # FUNCTIONS

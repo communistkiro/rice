@@ -1,0 +1,386 @@
+<!-- MHonArc v2.6.16 -->
+<!--X-Subject: Re: Alt and Command keys in the quartz backend -->
+<!--X-From-R13: Xbua Dnyyf <wenyyfNprevqjra.hf> -->
+<!--X-Date: Tue,  6 Sep 2011 23:39:15 +0000 (UTC) -->
+<!--X-Message-Id: 3C3FE520&#45;5FE3&#45;4572&#45;BCF3&#45;F022519951BC@ceridwen.us -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1315297645.23790.8.camel@localhost -->
+<!--X-Reference: 5DC23022&#45;EAF7&#45;4917&#45;920F&#45;BC4F845A557D@ceridwen.us -->
+<!--X-Reference: 1315317233.23790.11.camel@localhost -->
+<!--X-Reference: 422EA8E4&#45;2217&#45;4300&#45;A7A5&#45;FA16AE11A08A@ceridwen.us -->
+<!--X-Reference: 1315327756.23790.17.camel@localhost -->
+<!--X-Reference: CAFa_cK=Y&#45;Z7&#45;YNUiVYrA5YivjroF+YvyiSAq6D9xDYtJ2NO15g@mail.gmail.com -->
+<!--X-Reference: 1315330957.23790.28.camel@localhost -->
+<!--X-Reference: 046D19A0&#45;08AD&#45;429F&#45;8890&#45;37DEA16BAD3C@ceridwen.us -->
+<!--X-Reference: 1315336223.23790.32.camel@localhost -->
+<!--X-Reference: 2F286D17&#45;D187&#45;4EC0&#45;A9A1&#45;28AD739BFCA5@ceridwen.us -->
+<!--X-Reference: 1315349214.23790.41.camel@localhost -->
+<!--X-Head-End-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link href="/css/layout.css" rel="stylesheet" type="text/css" media="screen">
+  <link href="/css/style.css" rel="stylesheet" type="text/css" media="all">
+  <link href="/css/archive.css" rel="stylesheet" type="text/css" media="all">
+  <link rel="icon" type="image/png" href="http://www.gnome.org/img/logo/foot-16.png">
+  <link rel="SHORTCUT ICON" type="image/png" href="http://www.gnome.org/img/logo/foot-16.png">
+  <LINK REV="made" HREF="mailto:jralls ceridwen us">
+  <title>Re: Alt and Command keys in the quartz backend</title>
+</head>
+
+<body>
+  <!-- site header_archive -->
+  <div id="page_archive">
+  
+   <div id="global_domain_bar_archive">
+    <div class="maxwidth">
+     <div class="tab">
+      <a class="root" href="https://www.gnome.org/">GNOME.org</a>
+     </div>
+    </div>
+   </div>
+   
+       <div id="header_archive">
+	    <div id="logo_bar" class="container_12">
+	 <div id="logo" class="grid_3">
+          <a title="Go to home page" href="https://mail.gnome.org/"><img src="https://static.gnome.org/css/gnome-mail.png" alt="GNOME: Mail Services" /></a>
+	 </div>
+
+	  <div id="top_bar_archive" class="grid_9">
+	   <div class="left">
+		  <div class="menu-globalnav-container">
+		    <ul id="menu-globalnav" class="menu">
+		      <li id="menu-item-1039" class=
+		      "menu-item menu-item-type-post_type menu-item-object-page menu-item-1039">
+		      <a href="https://mail.gnome.org/">Home</a></li>
+
+		      <li id="menu-item-1037" class=
+		      "menu-item menu-item-type-post_type menu-item-object-page menu-item-1037">
+		      <a href="https://mail.gnome.org/mailman/listinfo/">Mailing Lists</a></li>
+
+		      <li id="menu-item-1040" class=
+		      "menu-item menu-item-type-post_type menu-item-object-page menu-item-1040">
+		      <a href="https://mail.gnome.org/archives/">List Archives</a></li>
+		    </ul>
+		  </div>
+		</div>
+
+		<div class="right">
+                  <form role="search" method="get" id="searchform" action="https://cse.google.com/cse">
+                    <div>
+                      <input type="hidden" name="cx" value="013743514357734452612:cqmzna8qgms">
+                      <label class="hidden">Search</label> <input type="text" name="q" maxlength="255" size="15" class="searchTerms" placeholder="Search" />
+                    </div>
+                  </form>
+		</div>
+	      </div> <!--end of top_bar_archive-->
+	      
+	    </div> <!-- end of logo_bar -->
+	    </div> <!-- end of #header -->
+
+	  </div>
+	<!-- end site header -->
+
+  <div id="body_archive_list" class="body">
+
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+&nbsp;
+
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h1>Re: Alt and Command keys in the quartz backend</h1>
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><em>From</em>: John Ralls &lt;jralls ceridwen us&gt;</li>
+<li><em>To</em>: mitch gimp org</li>
+<li><em>Cc</em>: gtk-devel-list gnome org</li>
+<li><em>Subject</em>: Re: Alt and Command keys in the quartz backend</li>
+<li><em>Date</em>: Tue, 6 Sep 2011 16:38:58 -0700</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>
+On Sep 6, 2011, at 3:46 PM, Michael Natterer wrote:
+
+&gt; On Tue, 2011-09-06 at 14:30 -0700, John Ralls wrote:
+&gt;&gt; On Sep 6, 2011, at 12:10 PM, Michael Natterer wrote:
+&gt;&gt; 
+&gt;&gt;&gt; On Tue, 2011-09-06 at 11:57 -0700, John Ralls wrote:
+&gt;&gt;&gt;&gt; On Sep 6, 2011, at 10:42 AM, Michael Natterer wrote:
+&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt; On Tue, 2011-09-06 at 12:58 -0400, Paul Davis wrote:
+&gt;&gt;&gt;&gt;&gt;&gt; On Tue, Sep 6, 2011 at 12:49 PM, Michael Natterer &lt;mitch gimp org&gt; wrote:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; On Tue, 2011-09-06 at 08:27 -0700, John Ralls wrote:
+&gt;&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt;&gt; [ ... imminent turf war ... ]
+&gt;&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt;&gt; this seems to be about two different things, neither of which are in
+&gt;&gt;&gt;&gt;&gt;&gt; conflict (and i think john actually agrees with this).
+&gt;&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt;&gt; 1) whether or not the Alt key should generate MOD1 as a modifier
+&gt;&gt;&gt;&gt;&gt;&gt; 2) whether or not code that wants to be cross-platform can assume that
+&gt;&gt;&gt;&gt;&gt;&gt; they can use MOD1 with its own chosen semantics
+&gt;&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt;&gt; the problem is that (2) includes GTK, not just applications, and GTK
+&gt;&gt;&gt;&gt;&gt;&gt; already makes this assumption. as a result, john changed the modifier
+&gt;&gt;&gt;&gt;&gt;&gt; that alt/option generates on OS X, because (2) is not true for OS X.
+&gt;&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt;&gt; if (2) was fixed so that GTK was not an example of code that assumes
+&gt;&gt;&gt;&gt;&gt;&gt; that MOD1 is free for any interpretation on any platform, then (1) is
+&gt;&gt;&gt;&gt;&gt;&gt; moot, and it really doesn't matter what the Alt key generates on OS X
+&gt;&gt;&gt;&gt;&gt;&gt; (hence, it could be MOD1).
+&gt;&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt;&gt; but as long as (2) remains an issue within GTK itself, its hard to
+&gt;&gt;&gt;&gt;&gt;&gt; argue that a key that has clearly different purposes for a large body
+&gt;&gt;&gt;&gt;&gt;&gt; of platform users of OS X should be handled by GTK as if it had some
+&gt;&gt;&gt;&gt;&gt;&gt; different meaning based on another platform.
+&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt; That's not what I'm asking for. The only special meaning of &quot;Alt&quot;
+&gt;&gt;&gt;&gt;&gt; in GTK is to invoke mnemonics. Other than that, it's simply a modifier.
+&gt;&gt;&gt;&gt;&gt; Same on the Mac, it's just a modifier. Let's just disable the mnemonics
+&gt;&gt;&gt;&gt;&gt; on the Mac then.
+&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt; The fact that the OS uses it to generate special characters is
+&gt;&gt;&gt;&gt;&gt; not really relevant here. One X11 window manager &quot;steals&quot; key
+&gt;&gt;&gt;&gt;&gt; combo A from the app, the other one key combo B, there is nothing
+&gt;&gt;&gt;&gt;&gt; I can do about this.
+&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt; Turning &quot;Alt&quot; into &quot;Alt&quot; fixes more than it breaks. It fixes e.g.
+&gt;&gt;&gt;&gt;&gt; configuring GTK keybindings (you can easily make Alt-cursor do
+&gt;&gt;&gt;&gt;&gt; word navigation then, the config file says alt, it's all correctly
+&gt;&gt;&gt;&gt;&gt; mapped, the modifier says alt, and it just works).
+&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt; And it's not just key bindings. Alt-click should be alt-click,
+&gt;&gt;&gt;&gt;&gt; there is nothing wrong about that. If the OS decides to use it
+&gt;&gt;&gt;&gt;&gt; for its own purposes, then it's the job of higher-level code
+&gt;&gt;&gt;&gt;&gt; to be aware of that. 
+&gt;&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt;&gt; If we need to change something in GTK as a consequence of that
+&gt;&gt;&gt;&gt;&gt; change, then so be it, but please let's not do strange stuff
+&gt;&gt;&gt;&gt;&gt; to the quartz' backend's modifier mapping just to accommodate
+&gt;&gt;&gt;&gt;&gt; some code in GTK that was never meant to handle the Mac, but
+&gt;&gt;&gt;&gt;&gt; can easily be changed to simply do it.
+&gt;&gt;&gt;&gt; 
+&gt;&gt;&gt;&gt; It's not really different. Getting rid of the hard-coded association between &lt;alt&gt; in an accelerator map or key binding and GDK_MOD1_MASK is part of Paul's (2). I'd map it to GDK_META_MASK, but I'm open to super, hyper, or a new GDK_ALT_MASK (bit 25, perhaps). It *is* the right thing to do, I think, but it's not a quartz-only change and it probably would not be welcome in gtk+-2.24. 
+&gt;&gt;&gt; 
+&gt;&gt;&gt; It is not the right thing to do. Why do you insist on that,
+&gt;&gt;&gt; and what is wrong about the &quot;hard-coded&quot; association between
+&gt;&gt;&gt; ALT and MOD1_MASK? What is the problem about fixing GDK to
+&gt;&gt;&gt; map Alt to what is globally considered Alt, and then fix
+&gt;&gt;&gt; the platform-specific things in GTK+ afterwards?
+&gt;&gt; 
+&gt;&gt; 
+&gt;&gt; For one thing, the platform-specific stuff belongs in Gdk. That's why there's gdk/broadway, gdk/quartz, gdk/wayland, gdk/win32, and gdk/x11. Yes, there are gtkdnd-quartz, gtkclipboard-quartz, gtkstatusicon-quartz, and (in quartz-integration) gtkselection-quartz. That's an unfortunate side effect of the main implementations being so closely tied to the X11 model that they couldn't be integrated with quartz at the gdk level, and it breaks the multiple-backend feature of Gtk+-3.
+&gt;&gt; 
+&gt;&gt; For another, key-mapping is done in gdk as the very first step in processing a native key-down/up event (well, OK, the second step, the first being to decide that it's a key-down/up event and to dispatch it to the key-mapping routine). That is, of course, in a virtualized gdk function call. You're proposing to then reinterpret those key-down/up events in gtk? That seems rather complicated.
+&gt; 
+&gt; I have no idea what you are talking about.
+&gt; 
+&gt;&gt; Nothing is wrong with &lt;alt&gt; being mapped to GDK_MOD1_MASK so long as NSCommandKey is also mapped to GDK_MOD1_MASK. Why do you object to that? Is it that the GIMP documenters don't want to write &quot;(Command-foo on Macs)&quot; next to every occurrence of &quot;The accelerator for Bar is Alt-foo&quot;?
+&gt; 
+&gt; Why on earth would you want to map both keys to the same modifier?
+&gt; 
+&gt; Nobody uses &quot;Alt&quot; for accelerators, I don't think we are talking
+&gt; about the same things here, in GTK+:
+&gt; 
+&gt; - Accelerator is the thing to invoke actions (menu shortcuts)
+&gt;  -&gt; invoked by Command on the mac, and by Control on != Mac.
+&gt; 
+&gt; - Mnemonic is the thing that invokes the underlined stuff
+&gt;  -&gt; invoked by Alt on != Mac, doesn't exist on the Mac
+&gt; 
+&gt; Where is the conflict here? We just need to make sure accelerators
+&gt; are invoked by whatever modifier combination is triggered by Command,
+&gt; and making it the same as the modifier triggered by Alt doesn't make
+&gt; any sense.
+&gt; 
+&gt; And just to finally say it, please spare us this aggressive undertone.
+
+I quit.
+
+Regards,
+John Ralls
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<ul><li><strong>Follow-Ups</strong>:
+<ul>
+<li><strong><a name="00051" href="msg00051.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Michael Natterer</li></ul></li>
+</ul></li></ul>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="00010" href="msg00010.html">Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Michael Natterer</li></ul></li>
+<li><strong><a name="00011" href="msg00011.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> John Ralls</li></ul></li>
+<li><strong><a name="00012" href="msg00012.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Michael Natterer</li></ul></li>
+<li><strong><a name="00022" href="msg00022.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> John Ralls</li></ul></li>
+<li><strong><a name="00024" href="msg00024.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Michael Natterer</li></ul></li>
+<li><strong><a name="00025" href="msg00025.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Paul Davis</li></ul></li>
+<li><strong><a name="00026" href="msg00026.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Michael Natterer</li></ul></li>
+<li><strong><a name="00031" href="msg00031.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> John Ralls</li></ul></li>
+<li><strong><a name="00032" href="msg00032.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Michael Natterer</li></ul></li>
+<li><strong><a name="00037" href="msg00037.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> John Ralls</li></ul></li>
+<li><strong><a name="00044" href="msg00044.html">Re: Alt and Command keys in the quartz backend</a></strong>
+<ul><li><em>From:</em> Michael Natterer</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<HR>
+[<a href="msg00046.html">Date Prev</a>][<a href="msg00048.html">Date Next</a>] &nbsp; [<a href="msg00045.html">Thread Prev</a>][<a href="msg00051.html">Thread Next</a>] &nbsp; 
+[<A HREF="thread.html#00047">Thread Index</A>]
+[<A HREF="date.html#00047">Date Index</A>]
+[<A HREF="author.html#00047">Author Index</A>]
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<!--X-User-Footer-End-->
+</div> <!-- end of div.body -->
+
+  <div id="footer_community"></div>
+
+  <div id="footer_grass"></div>
+
+  <div id="footer">
+    <div class="container_12" id="container_12">
+      <div class="links grid_9">
+        <div class="menu-footer-container">
+          <ul id="menu-footer" class="menu">
+            <li id="menu-item-1048" class=
+            "menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item menu-item-1048">
+            <a href="http://www.gnome.org">The GNOME Project</a>
+
+              <ul class="sub-menu">
+                <li id="menu-item-1049" class=
+                "menu-item menu-item-type-post_type menu-item-object-page menu-item-1049">
+                <a href="https://www.gnome.org/about/">About Us</a></li>
+
+                <li id="menu-item-1050" class=
+                "menu-item menu-item-type-post_type menu-item-object-page menu-item-1050">
+                <a href="https://www.gnome.org/get-involved/">Get Involved</a></li>
+
+                <li id="menu-item-1051" class=
+                "menu-item menu-item-type-post_type menu-item-object-page menu-item-1051">
+                <a href="https://www.gnome.org/teams/">Teams</a></li>
+
+                <li id="menu-item-1053" class=
+                "menu-item menu-item-type-post_type menu-item-object-page menu-item-1053">
+                <a href="https://www.gnome.org/support-gnome/">Support GNOME</a></li>
+
+                <li id="menu-item-1054" class=
+                "menu-item menu-item-type-post_type menu-item-object-page menu-item-1054">
+                <a href="https://www.gnome.org/contact/">Contact Us</a></li>
+
+                <li id="menu-item-2246" class=
+                "menu-item menu-item-type-post_type menu-item-object-page menu-item-2246">
+                <a href="https://www.gnome.org/foundation/">The GNOME Foundation</a></li>
+              </ul>
+            </li>
+
+            <li id="menu-item-1047" class=
+            "menu-item menu-item-type-custom menu-item-object-custom menu-item-1047">
+              <a href="#">Resources</a>
+
+              <ul class="sub-menu">
+                <li id="menu-item-1055" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1055">
+                <a href="https://developer.gnome.org">Developer Center</a></li>
+
+                <li id="menu-item-1056" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1056">
+                <a href="https://help.gnome.org">Documentation</a></li>
+
+                <li id="menu-item-1057" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1057">
+                <a href="https://wiki.gnome.org">Wiki</a></li>
+
+                <li id="menu-item-1058" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1058">
+                <a href="https://mail.gnome.org/mailman/listinfo">Mailing Lists</a></li>
+
+                <li id="menu-item-1059" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1059">
+                <a href="https://wiki.gnome.org/GnomeIrcChannels">IRC Channels</a></li>
+
+                <li id="menu-item-1060" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1060">
+                <a href="https://bugzilla.gnome.org/">Bug Tracker</a></li>
+
+                <li id="menu-item-1061" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1061">
+                <a href="https://git.gnome.org/browse/">Development Code</a></li>
+
+                <li id="menu-item-1062" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1062">
+                <a href="https://wiki.gnome.org/Jhbuild">Build Tool</a></li>
+              </ul>
+            </li>
+
+            <li id="menu-item-1046" class=
+            "menu-item menu-item-type-custom menu-item-object-custom menu-item-1046">
+              <a href="https://www.gnome.org/news">News</a>
+
+              <ul class="sub-menu">
+                <li id="menu-item-1063" class=
+                "menu-item menu-item-type-post_type menu-item-object-page menu-item-1063">
+                <a href="https://www.gnome.org/press/">Press Releases</a></li>
+
+                <li id="menu-item-1064" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1064">
+                <a href="https://www.gnome.org/start/stable">Latest Release</a></li>
+
+                <li id="menu-item-1065" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1065">
+                <a href="https://planet.gnome.org">Planet GNOME</a></li>
+
+                <li id="menu-item-1067" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1067">
+                <a href="https://news.gnome.org">Development News</a></li>
+
+                <li id="menu-item-1068" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1068">
+                <a href="https://identi.ca/gnome">Identi.ca</a></li>
+
+                <li id="menu-item-1069" class=
+                "menu-item menu-item-type-custom menu-item-object-custom menu-item-1069">
+                <a href="https://twitter.com/gnome">Twitter</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="footnotes" class="grid_9">
+       <p> Copyright &copy; 2005 - 2013 <a href="https://www.gnome.org/"><strong>The GNOME Project</strong></a>.<br />
+       <small><a href="http://validator.w3.org/check/referer">Optimised</a> for <a href=
+        "http://www.w3.org/">standards</a>. Hosted by <a href=
+        "http://www.redhat.com/">Red Hat</a>.
+        Powered by <a href="http://www.list.org/">MailMan</a>, <a href="http://www.python.org/">Python</a> and <a href="http://www.gnu.org/">GNU</a>.</small></p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-702853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-702853-1');
+</script>
+<title>TorrentFreak - News</title>
+
+<meta name="description" content="TorrentFreak is a publication dedicated to bringing the latest news about copyright, privacy, and everything related to filesharing." />
+<meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+<link rel="canonical" href="https://torrentfreak.com/" />
+<link rel="next" href="https://torrentfreak.com/page/2/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="TorrentFreak - News" />
+<meta property="og:description" content="TorrentFreak is a publication dedicated to bringing the latest news about copyright, privacy, and everything related to filesharing." />
+<meta property="og:url" content="https://torrentfreak.com/" />
+<meta property="og:site_name" content="TorrentFreak" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="TorrentFreak is a publication dedicated to bringing the latest news about copyright, privacy, and everything related to filesharing." />
+<meta name="twitter:title" content="TorrentFreak - News" />
+<meta name="twitter:site" content="@torrentfreak" />
+<meta name="msvalidate.01" content="CF03D5C6DA66DEECF14BE17F600CDF57" />
+<script type='application/ld+json' class='yoast-schema-graph yoast-schema-graph--main'>{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://torrentfreak.com/#organization","name":"TorrentFreak","url":"https://torrentfreak.com/","sameAs":["https://www.facebook.com/torrentfreak/","https://twitter.com/torrentfreak"],"logo":{"@type":"ImageObject","@id":"https://torrentfreak.com/#logo","inLanguage":"en-US","url":"https://torrentfreak.com/images/970Kmz2_400x400.jpg","width":400,"height":400,"caption":"TorrentFreak"},"image":{"@id":"https://torrentfreak.com/#logo"}},{"@type":"WebSite","@id":"https://torrentfreak.com/#website","url":"https://torrentfreak.com/","name":"TorrentFreak","inLanguage":"en-US","description":"Breaking File-sharing, Copyright and Privacy News","publisher":{"@id":"https://torrentfreak.com/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://torrentfreak.com/?s={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"CollectionPage","@id":"https://torrentfreak.com/#webpage","url":"https://torrentfreak.com/","name":"TorrentFreak - News","isPartOf":{"@id":"https://torrentfreak.com/#website"},"inLanguage":"en-US","about":{"@id":"https://torrentfreak.com/#organization"},"description":"TorrentFreak is a publication dedicated to bringing the latest news about copyright, privacy, and everything related to filesharing."}]}</script>
+
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/torrentfreak.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.3.2"}};
+			!function(e,a,t){var r,n,o,i,p=a.createElement("canvas"),s=p.getContext&&p.getContext("2d");function c(e,t){var a=String.fromCharCode;s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,e),0,0);var r=p.toDataURL();return s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,t),0,0),r===p.toDataURL()}function l(e){if(!s||!s.fillText)return!1;switch(s.textBaseline="top",s.font="600 32px Arial",e){case"flag":return!c([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])&&(!c([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!c([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]));case"emoji":return!c([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340])}return!1}function d(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(i=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},o=0;o<i.length;o++)t.supports[i[o]]=l(i[o]),t.supports.everything=t.supports.everything&&t.supports[i[o]],"flag"!==i[o]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[i[o]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(r=t.source||{}).concatemoji?d(r.concatemoji):r.wpemoji&&r.twemoji&&(d(r.twemoji),d(r.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='tf-fonts-css' href='https://fonts.googleapis.com/css?family=Gloria+Hallelujah|Muli|Roboto+Condensed:300,400,700|Roboto:300,400,400i,500,600' type='text/css' media='all' />
+<link rel='stylesheet' id='tf-css-css' href='https://torrentfreak.com/wp-content/themes/tf-theme-v2/build/assets/css/style.css?ver=1571132989' type='text/css' media='all' />
+<script type='text/javascript' src='https://torrentfreak.com/wp-includes/js/jquery/jquery.js?ver=1.12.4-wp'></script>
+<script type='text/javascript' src='https://torrentfreak.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<link rel='https://api.w.org/' href='https://torrentfreak.com/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://torrentfreak.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://torrentfreak.com/wp-includes/wlwmanifest.xml" />
+<meta name="generator" content="WordPress 5.3.2" />
+<style type="text/css" id="wp-custom-css">
+			:root {
+	--global-container-max-width: 77rem;
+	
+  --line-height: 1.85;
+
+  --font-size-lede: 1.14rem;
+  --font-style-lede: italic;
+
+
+  --font-size-h1: 1.5625rem;
+  --font-size-h2: 1.375rem;
+  --font-size-h3: 1.25rem;
+  --font-size-h4: 1.125rem;
+
+  --font-size-body: 1.11rem;
+
+  --font-size-blockquote: 1.1rem;
+  --font-size-pullquote: 1.1rem;
+
+  --font-size-table-cell: 1rem;
+  --font-size-table-cell-s: 0.9rem;
+
+  --font-size-caption: 1rem;
+
+  --font-size-cover-image: 1.875rem;
+}
+.article__body a:visited {
+color: #7c7c7c;
+}		</style>
+</head>
+<body>
+<div class="page ">
+<div class="page__top">
+<header class="header ">
+<div class="header__bottom">
+<div class="header__container">
+<div class="header__fixed">
+<div class="header__logo">
+<a href="/" class="logo"><img src="https://torrentfreak.com/wp-content/themes/tf-theme-v2/build/assets/img/logo.svg" alt="" class="logo__image"></a>
+</div>
+</div>
+<div class="header__drawer js-header-drawer">
+<div class="header__search">
+<aside class="search">
+<form action="/" class="search__form">
+<input type="text" name="s" class="search__input o-input o-input--widget o-input--icon-left" placeholder="Enter Search Term and Press Enter">
+</form>
+<img src="https://torrentfreak.com/wp-content/themes/tf-theme-v2/build/assets/img/search.svg" class="search__icon search__icon--left" alt="">
+</aside>
+</div>
+<div class="header__menu">
+<nav class="menu">
+<ul class="menu__list">
+<li class="menu__item"><a href="https://torrentfreak.com/about/" class="menu__link "><span>About</span></a></li>
+<li class="menu__item"><a href="https://torrentfreak.com/contact/" class="menu__link "><span>Contact</span></a></li>
+<li class="menu__item"><a href="https://torrentfreak.com/archives/" class="menu__link "><span>Archives</span></a></li>
+<li class="menu__item"><a href="https://torrentfreak.com/subscriptions/" class="menu__link "><span>Subscribe</span></a></li>
+</ul>
+</nav>
+</div>
+</div>
+<div class="header__trigger js-header-trigger">
+<span class="header__bars"></span>
+<span class="header__cross">
+<img src="https://torrentfreak.com/wp-content/themes/tf-theme-v2/build/assets/img/x.svg" alt="">
+</span>
+</div>
+</div>
+</div>
+</header>
+<main>
+<section>
+<a href="https://torrentfreak.com/youtube-fights-off-lawsuit-over-retaliatory-copyright-strikes-200415/" class="hero " style="background-image: url('https://torrentfreak.com/images/youtube-feat-1200x250.jpg');">
+<div class="container container--hero grid">
+<div class="col-8_md-12 hero__content">
+<h1 class="hero__title">YouTube Fights Off Lawsuit Over &#8216;Retaliatory&#8217; Copyright Strikes</h1>
+<p class="hero__description">A California federal court has dismissed a lawsuit against YouTube over 'retaliatory' copyright strikes. DJ Short-E accused YouTube of failing to process DMCA counternotices after he threatened legal action. The court, however, concluded that YouTube rightfully terminated the DJ's account as it is not required to process counter-notices under the agreed terms of service.</p>
+<footer class="hero__meta">
+<div class="hero__published"><time>yesterday</time> by
+Ernesto
+</div>
+<div class="hero__comments">
+<span class="o-comments o-comments--white"><span class="disqus-comment-count" data-disqus-identifier="185483 https://torrentfreak.com/?p=185483">6</span> comments</span>
+</div>
+</footer>
+</div>
+</div>
+</a>
+</section>
+<div class="container container--main grid">
+<section class="col-8_md-12 page__content">
+<div class="grid-equalHeight">
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/huge-games-piracy-forum-cs-rin-ru-says-cash-is-needed-to-stay-online-200415/">
+<header class="preview-article__header">
+<img src="https://torrentfreak.com/images/money-feat-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">News</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">Huge Games Piracy Forum CS.RIN.RU Says Cash is Needed to Stay Online</h3>
+<p class="preview-article__excerpt">CS.RIN.RU is probably the largest forum dedicated to video games piracy on the planet. However, after a reported 17 years in operation, the site's sponsor&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>yesterday, 11:38</time> <span>by Andy</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185488 https://torrentfreak.com/?p=185488">7</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/charter-cant-sue-over-false-dmca-notices-record-labels-argue-200414/">
+<header class="preview-article__header">
+<img src="https://torrentfreak.com/images/court1-featured-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">News</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">Charter Can&#8217;t Sue Over False DMCA Notices, Record Labels Argue</h3>
+<p class="preview-article__excerpt">Last year Internet provider Charter Communications was sued by several record labels for not doing enough to curb piracy. A few weeks ago, the ISP&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>April 14, 2020, 22:43</time> <span>by Ernesto</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185185 https://torrentfreak.com/?p=185185">9</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-12 tf-midfeed-slot"></div>
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/internet-archive-to-senator-no-emergency-copyright-act-required-fair-use-has-it-covered-200414/">
+<header class="preview-article__header">
+ <img src="https://torrentfreak.com/images/books-large-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">News</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">Internet Archive to Senator: No &#8220;Emergency Copyright Act&#8221; Required, Fair Use Has Library Covered</h3>
+<p class="preview-article__excerpt">The row over the Internet Archive's National Emergency Library, which aims to fill the learning gap in the midst of the COVID-19 crisis, has now&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>April 14, 2020, 11:01</time> <span>by Andy</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185409 https://torrentfreak.com/?p=185409">9</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/covid-19-lockdowns-directly-impacted-torrent-download-numbers-in-several-countries-200413/">
+<header class="preview-article__header">
+<img src="https://torrentfreak.com/images/movie-featured-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">News</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">COVID-19 &#8216;Lockdowns&#8217; Directly Impacted Torrent Download Numbers in Several Countries</h3>
+<p class="preview-article__excerpt">The new coronavirus continues to spread around the world, with many governments responding with social distancing measures and lockdowns. These restrictions have far-reaching consequences and&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>April 13, 2020, 22:05</time> <span>by Ernesto</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185142 https://torrentfreak.com/?p=185142">17</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/russia-preparing-new-law-to-ban-all-video-recording-in-movie-theaters-200413/">
+<header class="preview-article__header">
+<img src="https://torrentfreak.com/images/movie-featured-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">News</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">Russia Preparing New Law to Ban All Video Recording in Movie Theaters</h3>
+<p class="preview-article__excerpt">Russia's Ministry of Culture says it has drafted new legislation to combat the unauthorized recording of movies in cinemas. The development will be greeted with&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>April 13, 2020, 12:42</time> <span>by Andy</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185325 https://torrentfreak.com/?p=185325">7</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/top-10-most-pirated-movies-of-the-week-on-bittorrent-04-13-20/">
+<header class="preview-article__header">
+<img src="https://torrentfreak.com/images/protest-crowd-feat-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">Stats</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">Top 10 Most Pirated Movies of The Week on BitTorrent &#8211; 04/13/20</h3>
+<p class="preview-article__excerpt">The top 10 most downloaded movies on BitTorrent are in again. 'Bad Boys for Life' tops the chart this week, followed by ‘Trolls world Tour'.&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>April 13, 2020, 09:34</time> <span>by Ernesto</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185365 https://torrentfreak.com/?p=185365">5</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/copyright-troll-lawyers-request-for-a-temporary-prison-release-due-to-covid-19-threat-fails/">
+<header class="preview-article__header">
+<img src="https://torrentfreak.com/images/jailbarprison-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">News</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">‘Copyright Troll’ Lawyer&#8217;s Request for a Temporary Prison Release Due to COVID-19 Threat Fails</h3>
+<p class="preview-article__excerpt">Paul Hansmeier, one of the lead attorneys behind the controversial Prenda law firm, has asked the court for a temporary release from prison while he&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>April 12, 2020, 22:44</time> <span>by Ernesto</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185096 https://torrentfreak.com/?p=185096">10</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-6_lg-12_md-6_sm-12">
+<article class="preview-article ">
+<a href="https://torrentfreak.com/judge-in-ebook-bike-piracy-case-asks-author-to-consider-a-massively-reduced-damages-claim-200412/">
+<header class="preview-article__header">
+<img src="https://torrentfreak.com/images/books-large-500x210.jpg" alt="" class="preview-article__photo">
+<p class="preview-article__category">News</p>
+</header>
+<div class="preview-article__body">
+<div>
+<h3 class="preview-article__title">Judge in eBook.bike Piracy Case Asks Author to Consider a Massively Reduced Damages Claim</h3>
+<p class="preview-article__excerpt">The copyright infringement lawsuit filed by author John van Stry against former Pirate Party leader Travis McCrea may be edging closer to financial discomfort. A&hellip;</p>
+</div>
+<ul class="preview-article__meta">
+<li class="preview-article__published">
+<time>April 12, 2020, 14:25</time> <span>by Andy</span>
+</li>
+<li class="preview-article__comments">
+<span class="o-comments disqus-comment-count" data-disqus-identifier="185207 https://torrentfreak.com/?p=185207">7</span>
+</li>
+</ul>
+</div>
+</a>
+</article>
+</div>
+<div class="col-12">
+<div class="page__navigation">
+
+<ul class="navigation ">
+<li class="navigation__item">
+</li>
+<li class="navigation__item">
+<a href="https://torrentfreak.com/page/2/" class="navigation__link navigation__link--right">
+Older Posts<img src="https://torrentfreak.com/wp-content/themes/tf-theme-v2/build/assets/img/arrow-right.svg" alt="">
+</a>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</section>
+<section class="col-4_md-12 page__sidebar">
+<div class="widget_text widget-odd widget-first widget-1 o-widget widget_custom_html"><h5 class="o-widget__title">Sponsors</h5><div class="textwidget custom-html-widget"><a href="https://www.privateinternetaccess.com/pages/buy-vpn/TF001" rel="nofollow sponsored" title="Private Internet Access" class="image" data-image-url="/images/pia03-e1528404617129.png,/images/pia02-e1528404638231.png,/images/pia01-e1528404652864.png"></a>
+<noscript><a href="https://www.privateinternetaccess.com/pages/buy-vpn/TF001"  rel="nofollow sponsored" title="Private Internet Access"><img src="images/pia03-e1528404617129.png" alt="PIA"></a></noscript>
+<br /><br />
+<a href="https://www.expressvpn.com/tfk?a_aid=tf" rel="nofollow sponsored" title="ExpressVPN" class="image" data-image-url="/wp-content/banners/expressvpn/express4.jpg,/wp-content/banners/expressvpn/express2.jpg,/wp-content/banners/expressvpn/express1.jpg"></a>
+<noscript><a href="https://www.expressvpn.com/tfk?a_aid=tf"  rel="nofollow sponsored" title="ExpressVPN"><img src="/wp-content/banners/expressvpn/expressvpnbanner3,png" alt="ExpressVPN"></a></noscript>
+<br /><br />
+<a href="http://go.nordvpn.net/aff_c?aff_id=2581&offer_id=47" rel="nofollow sponsored" class="image" data-image-url="/images/270x90-blue-2.png,/images/270x90_photo_1.png,/images/270x90_photo_3.png,/images/270x90-blue-3.png"></a>
+<noscript><a href="http://go.nordvpn.net/aff_c?aff_id=2581&offer_id=47"  rel="nofollow sponsored"><img src="/images/270x90-blue-3.png" alt="NordVPN"></a></noscript></div></div><section class="o-widget o-widget--back o-widget--positioned-title">
+<h5 class="o-widget__title">Popular Posts</h5>
+<ul class="widget-popular">
+<li class="widget-popular__item">
+<a href="https://torrentfreak.com/covid-19-lockdowns-directly-impacted-torrent-download-numbers-in-several-countries-200413/" class="widget-popular__link">
+<img src="https://torrentfreak.com/images/movie-featured-150x150.jpg" alt="" class="widget-popular__photo">
+<h4 class="widget-popular__title">COVID-19 &#8216;Lockdowns&#8217; Directly Impacted Torrent Download Numbers in Several Countries</h4>
+</a>
+</li>
+<li class="widget-popular__item">
+<a href="https://torrentfreak.com/which-vpn-services-keep-you-anonymous-in-2019/" class="widget-popular__link">
+<img src="https://torrentfreak.com/images/privacy-featured-150x150.jpg" alt="" class="widget-popular__photo">
+<h4 class="widget-popular__title">Which VPN Services Keep You Anonymous</h4>
+</a>
+</li>
+<li class="widget-popular__item">
+<a href="https://torrentfreak.com/top-10-most-popular-torrent-sites-of-2020-200105/" class="widget-popular__link">
+<img src="https://torrentfreak.com/images/piratebay2-featured-150x150.jpg" alt="" class="widget-popular__photo">
+<h4 class="widget-popular__title">Top 10 Most Popular Torrent Sites of 2020</h4>
+</a>
+</li>
+<li class="widget-popular__item">
+<a href="https://torrentfreak.com/the-xtream-codes-iptv-takedown-is-complex-and-confused-190919/" class="widget-popular__link">
+<img src="https://torrentfreak.com/images/servers-featured-150x150.jpg" alt="" class="widget-popular__photo">
+<h4 class="widget-popular__title">The Xtream Codes IPTV Takedown is Complex and Confused</h4>
+</a>
+</li>
+</ul>
+</section>
+<section class="o-widget o-widget--title">
+<h5 class="o-widget__title">Most commented posts</h5>
+<ul class="widget-commented">
+<li class="widget-commented__item">
+<span data-disqus-identifier="184780 https://torrentfreak.com/?p=184780" class="widget-commented__counter">24</span>
+<h3 class="widget-commented__title"><a href="https://torrentfreak.com/internet-archives-national-emergency-library-is-vile-says-copyright-alliance-310331/" class="widget-commented__link">Internet Archive&#8217;s National Emergency Library is &#8220;Vile&#8221; Says Copyright Alliance</a></h3>
+</li>
+<li class="widget-commented__item">
+<span data-disqus-identifier="184830 https://torrentfreak.com/?p=184830" class="widget-commented__counter">27</span>
+<h3 class="widget-commented__title"><a href="https://torrentfreak.com/movie-company-boss-urges-us-senators-to-make-streaming-piracy-a-felony-200406/" class="widget-commented__link">Movie Company Boss Urges US Senators to Make Streaming Piracy a Felony</a></h3>
+</li>
+<li class="widget-commented__item">
+<span data-disqus-identifier="184536 https://torrentfreak.com/?p=184536" class="widget-commented__counter">15</span>
+<h3 class="widget-commented__title"><a href="https://torrentfreak.com/youtube-refuses-to-process-dmca-counternotice-for-creepy-bugs-cartoon-200328/" class="widget-commented__link">YouTube Refuses to Process DMCA Counternotice for &#8216;Creepy Bugs&#8217; Cartoon</a></h3>
+</li>
+<li class="widget-commented__item">
+<span data-disqus-identifier="184828 https://torrentfreak.com/?p=184828" class="widget-commented__counter">16</span>
+<h3 class="widget-commented__title"><a href="https://torrentfreak.com/disney-deletes-print-on-demand-sale-claiming-rights-to-denmarks-the-little-mermaid-statue-200401/" class="widget-commented__link">Disney Deletes Print-on-Demand Sale Claiming Rights to Denmark&#8217;s The Little Mermaid Statue</a></h3>
+</li>
+<li class="widget-commented__item">
+<span data-disqus-identifier="184747 https://torrentfreak.com/?p=184747" class="widget-commented__counter">16</span>
+<h3 class="widget-commented__title"><a href="https://torrentfreak.com/affordable-legal-options-are-the-best-anti-piracy-tool-us-senators-are-told-300320/" class="widget-commented__link">Affordable Legal Options Are the Best Anti-Piracy Tool, US Senators Are Told</a></h3>
+</li>
+</ul>
+</section>
+<section class="o-widget o-widget--rotated o-widget--slider">
+<h5 class="o-widget__title" id="on-this-day-title">From ten years ago…</h5>
+<div class="widget-slider">
+<div class="widget-slider__cycle cycle-slideshow" data-cycle-auto-height="calc" data-cycle-caption="#on-this-day-title" data-cycle-caption-template="{{cycleTitle}}" data-cycle-timeout=50000 data-cycle-slides="> .cycle-slide" data-cycle-prev="#widget-slider-prev" data-cycle-next="#widget-slider-next">
+<div class="cycle-slide" data-cycle-title="From 1 years ago…">
+<a href="https://torrentfreak.com/disneys-seeking-to-reinforce-its-piracy-intelligence-team-191117/" class="cycle-slide__link">
+<div class="cycle-slide__image" style="background-image: url('https://torrentfreak.com/images/disneyplusfea-500x210.jpg');"></div>
+<div class="cycle-slide__caption">Disney Wants to Reinforce Its &#8216;Piracy Intelligence&#8217; Team</div>
+</a>
+</div>
+<div class="cycle-slide" data-cycle-title="From 5 years ago…">
+<a href="https://torrentfreak.com/kim-dotcom-speeding-offense-could-lead-to-deportation-150416/" class="cycle-slide__link">
+<div class="cycle-slide__image" style="background-image: url('https://torrentfreak.com/images/kim1-featured-500x210.jpg');"></div>
+<div class="cycle-slide__caption">Dotcom Speeding Offense Could Lead to Deportation &#8220;In Weeks&#8221;</div>
+</a>
+</div>
+<div class="cycle-slide" data-cycle-title="From 10 years ago…">
+<a href="https://torrentfreak.com/u-s-authorities-shut-down-wordpress-host-with-73000-blogs-100716/" class="cycle-slide__link">
+<div class="cycle-slide__image" style="background-image: url('https://torrentfreak.com/wp-content/themes/tf-theme-v2/build/assets/img/default/feature-kilo.png');"></div>
+<div class="cycle-slide__caption">U.S. Authorities Shut Down WordPress Host With 73,000 Blogs</div>
+</a>
+</div>
+<div class="cycle-pager"></div>
+<div class="widget-slider__navigation">
+<a href=# id="widget-slider-prev">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 284.935 284.936" xml:space="preserve">
+<g><path d="M110.488,142.468L222.694,30.264c1.902-1.903,2.854-4.093,2.854-6.567c0-2.474-0.951-4.664-2.854-6.563L208.417,2.857C206.513,0.955,204.324,0,201.856,0c-2.475,0-4.664,0.955-6.567,2.857L62.24,135.9c-1.903,1.903-2.852,4.093-2.852,6.567c0,2.475,0.949,4.664,2.852,6.567l133.042,133.043c1.906,1.906,4.097,2.857,6.571,2.857c2.471,0,4.66-0.951,6.563-2.857 l14.277-14.267c1.902-1.903,2.851-4.094,2.851-6.57c0-2.472-0.948-4.661-2.851-6.564L110.488,142.468z" fill="#ef4b92" /></g>
+</svg>
+</a>
+<a href=# id="widget-slider-next">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 284.935 284.936" xml:space="preserve">
+<g><path d="M222.701,135.9L89.652,2.857C87.748,0.955,85.557,0,83.084,0c-2.474,0-4.664,0.955-6.567,2.857L62.244,17.133c-1.906,1.903-2.855,4.089-2.855,6.567c0,2.478,0.949,4.664,2.855,6.567l112.204,112.204L62.244,254.677c-1.906,1.903-2.855,4.093-2.855,6.564c0,2.477,0.949,4.667,2.855,6.57l14.274,14.271c1.903,1.905,4.093,2.854,6.567,2.854c2.473,0,4.663-0.951,6.567-2.854l133.042-133.044c1.902-1.902,2.854-4.093,2.854-6.567S224.603,137.807,222.701,135.9z" fill="#ef4b92" /></g>
+</svg>
+</a>
+</div>
+</div>
+</div>
+</section>
+</section>
+</div>
+</main>
+</div>
+<div class="page__bottom">
+<footer class="footer">
+<div class="container grid-noBottom">
+<div class="col-8_sm-12">
+<section class="footer__widget footer__widget--stats sm-hidden">
+<h4 class="footer__title">TorrentFreak Stats</h4>
+<ul class="stats">
+<li class="stats__item">
+<a class="stats__link" href="/archives/">
+<h3 class="stats__value">12382</h3>
+<p class="stats__description">Breaking news stories</p>
+</a>
+</li>
+<li class="stats__item">
+<a class="stats__link" href="/about/#socialmedia">
+<h3 class="stats__value">179k</h3>
+<p class="stats__description">Social media followers</p>
+</a>
+</li>
+<li class="stats__item">
+<a class="stats__link" href="https://feeds.feedburner.com/Torrentfreak">
+<h3 class="stats__value">19.9k</h3>
+<p class="stats__description">RSS subscribers</p>
+</a>
+</li>
+</ul>
+</section>
+<section class="footer__widget footer__widget--copyright">
+<p class="copyright">
+<a href="https://torrentfreak.com/contact/">Tip Us Off</a>
+&middot; <a href="https://torrentfreak.com/subscriptions/">Subscribe</a>
+&middot; <a href="https://torrentfreak.com/copyright/">Copyright</a>
+&middot; <a href="https://torrentfreak.com/privacy/">Privacy</a>
+</p>
+</section>
+</div>
+<div class="col-4 sm-hidden">
+<section class="footer__widget footer__widget--socials">
+<ul class="socials">
+<li class="socials__item">
+<a href="https://twitter.com/TorrentFreak" class="socials__link socials__link--twitter">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve" width="512px" height="512px">
+<g><path d="M512,97.248c-19.04,8.352-39.328,13.888-60.48,16.576c21.76-12.992,38.368-33.408,46.176-58.016    c-20.288,12.096-42.688,20.64-66.56,25.408C411.872,60.704,384.416,48,354.464,48c-58.112,0-104.896,47.168-104.896,104.992    c0,8.32,0.704,16.32,2.432,23.936c-87.264-4.256-164.48-46.08-216.352-109.792c-9.056,15.712-14.368,33.696-14.368,53.056    c0,36.352,18.72,68.576,46.624,87.232c-16.864-0.32-33.408-5.216-47.424-12.928c0,0.32,0,0.736,0,1.152    c0,51.008,36.384,93.376,84.096,103.136c-8.544,2.336-17.856,3.456-27.52,3.456c-6.72,0-13.504-0.384-19.872-1.792    c13.6,41.568,52.192,72.128,98.08,73.12c-35.712,27.936-81.056,44.768-130.144,44.768c-8.608,0-16.864-0.384-25.12-1.44    C46.496,446.88,101.6,464,161.024,464c193.152,0,298.752-160,298.752-298.688c0-4.64-0.16-9.12-0.384-13.568    C480.224,136.96,497.728,118.496,512,97.248z" /></g>
+</svg>
+</a>
+</li>
+<li class="socials__item">
+<a href="https://facebook.com/TorrentFreak" class="socials__link socials__link--facebook">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve" width="512px" height="512px">
+<g><path d="M288,176v-64c0-17.664,14.336-32,32-32h32V0h-64c-53.024,0-96,42.976-96,96v80h-64v80h64v256h96V256h64l32-80H288z" /></g>
+</svg>
+</a>
+</li>
+</ul>
+</section>
+</div>
+</div>
+</footer>
+</div>
+</div>
+<script type="text/javascript">function showhide_toggle(e,t,r,g){var a=jQuery("#"+e+"-link-"+t),s=jQuery("a",a),i=jQuery("#"+e+"-content-"+t),l=jQuery("#"+e+"-toggle-"+t);a.toggleClass("sh-show sh-hide"),i.toggleClass("sh-show sh-hide").toggle(),"true"===s.attr("aria-expanded")?s.attr("aria-expanded","false"):s.attr("aria-expanded","true"),l.text()===r?(l.text(g),a.trigger("sh-link:more")):(l.text(r),a.trigger("sh-link:less")),a.trigger("sh-link:toggle")}</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var countVars = {"disqusShortname":"torrentfreak"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://torrentfreak.com/wp-content/plugins/disqus-comment-system/public/js/comment_count.js?ver=3.0.17'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var embedVars = {"disqusShortname":"torrentfreak"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://torrentfreak.com/wp-content/themes/tf-theme-v2/build/assets/js/script.js?ver=1571819009'></script>
+<script type='text/javascript' src='https://torrentfreak.com/wp-includes/js/wp-embed.min.js?ver=5.3.2'></script>
+
+</body>
+</html>

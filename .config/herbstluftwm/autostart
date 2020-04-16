@@ -22,9 +22,9 @@ Mod=Mod1    # Use alt as the main modifier
 hc keybind $Mod-F12                     reload
 hc keybind $Mod-Shift-c                 close
 
-hc keybind $Mod-t                       spawn tabbed -cr 2 st -w ''
+hc keybind $Mod-t                       spawn tabbed -dcr 2 st -w ''
 hc keybind $Mod-Shift-t                 spawn st
-hc keybind $Mod-Shift-r                       spawn tabbed -cr 2 surf -e ''
+hc keybind $Mod-Shift-r                 spawn tabbed -dcr 2 surf -e ''
 hc keybind $Mod-Escape                  spawn dmenu_run -i
 
 # basic movement

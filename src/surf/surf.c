@@ -33,7 +33,7 @@
 #include "common.h"
 
 #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
-#define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
+#define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK|GDK_CONTROL_MASK))
 
 enum { AtomFind, AtomGo, AtomUri, AtomLast };
 
@@ -182,6 +182,7 @@ static void initwebextensions(WebKitWebContext *wc, Client *c);
 static GtkWidget *createview(WebKitWebView *v, WebKitNavigationAction *a,
                              Client *c);
 static gboolean buttonreleased(GtkWidget *w, GdkEvent *e, Client *c);
+static gboolean scrollmultiply(GtkWidget *w, GdkEvent *e, Client *c);
 static GdkFilterReturn processx(GdkXEvent *xevent, GdkEvent *event,
                                 gpointer d);
 static gboolean winevent(GtkWidget *w, GdkEvent *e, Client *c);
@@ -337,9 +338,11 @@ setup(void)
 
 	/* dirs and files */
 	cookiefile = buildfile(cookiefile);
-	scriptfile = buildfile(scriptfile);
 	cachedir   = buildpath(cachedir);
 	certdir    = buildpath(certdir);
+	for (i = 0; i < LENGTH(scriptfiles); i++) {
+		scriptfiles[i] = buildfile(scriptfiles[i]);
+	}
 
 	gdkkb = gdk_seat_get_keyboard(gdk_display_get_default_seat(gdpy));
 
@@ -945,9 +948,11 @@ runscript(Client *c)
 	gchar *script;
 	gsize l;
 
-	if (g_file_get_contents(scriptfile, &script, &l, NULL) && l)
-		evalscript(c, "%s", script);
-	g_free(script);
+	for (int i = 0; i < LENGTH(scriptfiles); i++) {
+		if (g_file_get_contents(scriptfiles[i], &script, &l, NULL) && l)
+			evalscript(c, "%s", script);
+		g_free(script);
+	}
 }
 
 void
@@ -1010,9 +1015,9 @@ newwindow(Client *c, const Arg *a, int noembed)
 	cmd[i++] = curconfig[Style].val.i ?           "-M" : "-m" ;
 	cmd[i++] = curconfig[Inspector].val.i ?       "-N" : "-n" ;
 	cmd[i++] = curconfig[Plugins].val.i ?         "-P" : "-p" ;
-	if (scriptfile && g_strcmp0(scriptfile, "")) {
+	if (scriptfiles[0] && g_strcmp0(scriptfiles[0], "")) {
 		cmd[i++] = "-r";
-		cmd[i++] = scriptfile;
+		cmd[i++] = scriptfiles[0];
 	}
 	cmd[i++] = curconfig[JavaScript].val.i ? "-S" : "-s";
 	cmd[i++] = curconfig[StrictTLS].val.i ? "-T" : "-t";
@@ -1076,9 +1081,11 @@ cleanup(void)
 	close(pipein[0]);
 	close(pipeout[1]);
 	g_free(cookiefile);
-	g_free(scriptfile);
 	g_free(stylefile);
 	g_free(cachedir);
+	for (int i = 0; i < LENGTH(scriptfiles); i++) {
+		g_free(scriptfiles[i]);
+	}
 	XCloseDisplay(dpy);
 }
 
@@ -1182,6 +1189,8 @@ newview(Client *c, WebKitWebView *rv)
 			 G_CALLBACK(titlechanged), c);
 	g_signal_connect(G_OBJECT(v), "button-release-event",
 			 G_CALLBACK(buttonreleased), c);
+	g_signal_connect(G_OBJECT(v), "scroll-event",
+			 G_CALLBACK(scrollmultiply), c);
 	g_signal_connect(G_OBJECT(v), "close",
 			G_CALLBACK(closeview), c);
 	g_signal_connect(G_OBJECT(v), "create",
@@ -1294,6 +1303,13 @@ buttonreleased(GtkWidget *w, GdkEvent *e, Client *c)
 		}
 	}
 
+	return FALSE;
+}
+
+gboolean
+scrollmultiply(GtkWidget *w, GdkEvent *e, Client *c)
+{
+	e->scroll.delta_y*=7;
 	return FALSE;
 }
 
@@ -2067,7 +2083,7 @@ main(int argc, char *argv[])
 		defconfig[Plugins].prio = 2;
 		break;
 	case 'r':
-		scriptfile = EARGF(usage());
+		scriptfiles[0] = EARGF(usage());
 		break;
 	case 's':
 		defconfig[JavaScript].val.i = 0;
@@ -2111,7 +2127,11 @@ main(int argc, char *argv[])
 	if (argc > 0)
 		arg.v = argv[0];
 	else
-		arg.v = "about:blank";
+#ifdef HOMEPAGE
+		arg.v = HOMEPAGE;
+#else
+ 		arg.v = "about:blank";
+#endif
 
 	setup();
 	c = newclient(NULL);
