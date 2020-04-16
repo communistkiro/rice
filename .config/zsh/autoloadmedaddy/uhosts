@@ -1,4 +1,5 @@
 #!/bin/zsh
+# update /etc/hosts
 function uhosts () {
 mkdir -p /tmp/h; cd /tmp/h;
 # main- ads, spam, scam
@@ -29,7 +30,7 @@ xbps-fetch -o $RANDOM https://raw.githubusercontent.com/nickspaargaren/pihole-go
 # https://github.com/notracking/hosts-blocklists
 xbps-fetch -o $RANDOM https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt
 
-cat * >> tmp
+cat * ~/dcs/blockme >> tmp;
 sed -r '
   /localhost/d;
   /^#+\s*[^0]/d;

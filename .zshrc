@@ -163,7 +163,7 @@ alias fzf='fzf -m\
   --bind "alt-r:execute(micro {+})"\
   --bind "alt-f:clear-selection"\
   --bind "alt-v:select-all"'
-alias sf="tabbed -dcr 2 surf -e ''"
+alias sf="tabbed -dcr 2 surf -e '' &> /dev/null & disown"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias sr="surfraw"
 

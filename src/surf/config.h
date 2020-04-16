@@ -146,8 +146,8 @@ static SiteSpecific certs[] = {
  */
 static Key keys[] = {
 	/* modifier                keyval                      function            arg */
-	{ GDK_CONTROL_MASK,        GDK_KEY_g,                  spawn,              SETPROP("_SURF_URI", "_SURF_GO", PROMPT_GO) },
-	{ GDK_CONTROL_MASK,        GDK_KEY_f,                  spawn,              SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
+	{ MODKEY,                  GDK_KEY_g,                  spawn,              SETPROP("_SURF_URI", "_SURF_GO", PROMPT_GO) },
+	{ MODKEY,                  GDK_KEY_f,                  spawn,              SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
     { MODKEY,                  GDK_KEY_q,                  spawn,              QSEARCH },
     { MODKEY,                  GDK_KEY_w,      			   spawn,              SR_SEARCH },
 
@@ -168,8 +168,8 @@ static Key keys[] = {
 	{ MODKEY|GDK_SHIFT_MASK,   GDK_KEY_backslash,          scrollh,            { .i = -10 } },
 
 
-	{ GDK_SHIFT_MASK,          GDK_KEY_minus,              zoom,               { .i = -1 } },
-	{ GDK_SHIFT_MASK,          GDK_KEY_equal,              zoom,               { .i = +1 } },
+	{ MODKEY,                  GDK_KEY_minus,              zoom,               { .i = -1 } },
+	{ MODKEY,                  GDK_KEY_equal,              zoom,               { .i = +1 } },
 
 	{ GDK_CONTROL_MASK,        GDK_KEY_c,                  clipboard,          { .i = 0 } },
 	{ GDK_CONTROL_MASK,        GDK_KEY_v,                  clipboard,          { .i = 1 } },
