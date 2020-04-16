@@ -1,0 +1,9 @@
+#!/bin/zsh
+function backup () {
+  while IFS= read -r t; do;
+    [[ ${t} =~ '^1:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/root;
+    [[ ${t} =~ '^2:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/root/.config;
+    [[ ${t} =~ '^3:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/root/dcs;
+    [[ ${t} =~ '^e:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/etc;
+  done < /root/.local/share/ranger/tagged;
+}

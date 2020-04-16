@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<html class="client-nojs" lang="de" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<title>lol – Wiktionary</title>
+<script>document.documentElement.className="client-js";RLCONF={"wgBreakFrames":!1,"wgSeparatorTransformTable":[",\t.",".\t,"],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],"wgRequestId":"XpfQwwpAAMEAAxeO45MAAAAR","wgCSPNonce":!1,"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":!1,"wgNamespaceNumber":0,"wgPageName":"lol","wgTitle":"lol","wgCurRevisionId":6558107,"wgRevisionId":6558107,"wgArticleId":3878,"wgIsArticle":!0,"wgIsRedirect":!1,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["siehe auch","Grundformeintrag (Deutsch)","Rückläufige Wörterliste (Deutsch)","Übersetzungen (Englisch)","Übersetzungen (Französisch)","Übersetzungen (Spanisch)","Link zur Wikipedia","Rückläufige Wörterliste (Englisch)","Rückläufige Wörterliste (Niederländisch)","Wiktionary:Audio-Datei",
+"Wiktionary:Beispiele fehlen (Niederländisch)","Seiten, die magische ISBN-Links verwenden","Deutsch","Netzjargon","Abkürzung (Deutsch)","Englisch","Abkürzung (Englisch)","Niederländisch","Substantiv (Niederländisch)"],"wgPageContentLanguage":"de","wgPageContentModel":"wikitext","wgRelevantPageName":"lol","wgRelevantArticleId":3878,"wgIsProbablyEditable":!1,"wgRelevantPageIsProbablyEditable":!1,"wgRestrictionEdit":["autoconfirmed"],"wgRestrictionMove":["autoconfirmed"],"wgFlaggedRevsParams":{"tags":{"accuracy":{"levels":1,"quality":2,"pristine":4}}},"wgStableRevisionId":6558107,"wgMediaViewerOnClick":!0,"wgMediaViewerEnabledByDefault":!0,"wgVisualEditor":{"pageLanguageCode":"de","pageLanguageDir":"ltr","pageVariantFallbacks":"de"},"wgMFDisplayWikibaseDescriptions":{"search":!0,"nearby":!0,"watchlist":!0,"tagline":!1},"wgWMESchemaEditAttemptStepOversample":!1,"wgULSCurrentAutonym":"Deutsch","wgNoticeProject":"wiktionary","wgCentralAuthMobileDomain":!1,
+"wgEditSubmitButtonLabelPublish":!0};RLSTATE={"ext.globalCssJs.user.styles":"ready","site.styles":"ready","noscript":"ready","user.styles":"ready","ext.globalCssJs.user":"ready","user":"ready","user.options":"loading","ext.flaggedRevs.icons":"ready","oojs-ui-core.styles":"ready","oojs-ui.styles.indicators":"ready","mediawiki.widgets.styles":"ready","oojs-ui-core.icons":"ready","jquery.makeCollapsible.styles":"ready","mediawiki.toc.styles":"ready","skins.vector.styles.legacy":"ready","ext.flaggedRevs.basic":"ready","ext.visualEditor.desktopArticleTarget.noscript":"ready","ext.uls.interlanguage":"ready","ext.wikimediaBadges":"ready"};RLPAGEMODULES=["site","mediawiki.page.startup","skins.vector.js","mediawiki.page.ready","jquery.makeCollapsible","mediawiki.toc","ext.flaggedRevs.advanced","ext.gadget.DeWiktCommon","ext.gadget.editor","ext.gadget.rhymesedit","ext.gadget.JsLauncher","ext.gadget.DeWiktTranslation","ext.centralauth.centralautologin","mmv.head","mmv.bootstrap.autostart",
+"ext.visualEditor.desktopArticleTarget.init","ext.visualEditor.targetLoader","ext.eventLogging","ext.wikimediaEvents","ext.navigationTiming","ext.uls.compactlinks","ext.uls.interface","ext.centralNotice.geoIP","ext.centralNotice.startUp"];</script>
+<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.implement("user.options@1hzgi",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});mw.user.options.set({"variant":"de"});
+});});</script>
+<link rel="stylesheet" href="/w/load.php?lang=de&amp;modules=ext.flaggedRevs.basic%2Cicons%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cjquery.makeCollapsible.styles%7Cmediawiki.toc.styles%7Cmediawiki.widgets.styles%7Coojs-ui-core.icons%2Cstyles%7Coojs-ui.styles.indicators%7Cskins.vector.styles.legacy&amp;only=styles&amp;skin=vector"/>
+<script async="" src="/w/load.php?lang=de&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<link rel="stylesheet" href="/w/load.php?lang=de&amp;modules=site.styles&amp;only=styles&amp;skin=vector"/>
+<meta name="generator" content="MediaWiki 1.35.0-wmf.28"/>
+<meta name="referrer" content="origin"/>
+<meta name="referrer" content="origin-when-crossorigin"/>
+<meta name="referrer" content="origin-when-cross-origin"/>
+<link rel="apple-touch-icon" href="/static/apple-touch/wiktionary/de.png"/>
+<link rel="shortcut icon" href="/static/favicon/piece.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="/w/opensearch_desc.php" title="Wiktionary (de)"/>
+<link rel="EditURI" type="application/rsd+xml" href="//de.wiktionary.org/w/api.php?action=rsd"/>
+<link rel="license" href="//creativecommons.org/licenses/by-sa/3.0/"/>
+<link rel="alternate" type="application/atom+xml" title="Letzte Änderungen (Atom-Feed)" href="/w/index.php?title=Spezial:Letzte_%C3%84nderungen&amp;feed=atom"/>
+<link rel="canonical" href="https://de.wiktionary.org/wiki/lol"/>
+<link rel="dns-prefetch" href="//login.wikimedia.org"/>
+<link rel="dns-prefetch" href="//meta.wikimedia.org" />
+<!--[if lt IE 9]><script src="/w/resources/lib/html5shiv/html5shiv.js"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr capitalize-all-nouns mw-hide-empty-elt ns-0 ns-subject page-lol rootpage-lol skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+		<div id="siteNotice" class="mw-body-content"><!-- CentralNotice --></div>
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="de">lol</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">Aus Wiktionary, dem freien Wörterbuch</div>
+		<div id="contentSub"></div>
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Zur Navigation springen</a>
+		<a class="mw-jump-link" href="#p-search">Zur Suche springen</a>
+		<div id="mw-content-text" lang="de" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div id="Vorlage_Siehe_auch" style="display:none;">
+<table cellspacing="8" cellpadding="0" style="background-color: #FCFCFC; border: #E9E9E9; width: 100%; font-size: 12px; border-bottom-style: solid; margin-bottom: 1em;">
+
+<tbody><tr>
+<td style="width: 25px; vertical-align: middle;"><a href="/wiki/Datei:Disambig.svg" class="image"><img alt="Disambig.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/7/72/Disambig.svg/25px-Disambig.svg.png" decoding="async" width="25" height="20" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/7/72/Disambig.svg/38px-Disambig.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/7/72/Disambig.svg/50px-Disambig.svg.png 2x" data-file-width="230" data-file-height="183" /></a>
+</td>
+<td>Siehe auch: <span class="SieheAuch"><a href="/wiki/LOL" title="LOL">LOL</a></span>
+</td></tr></tbody></table>
+</div>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="de" dir="ltr"><h2 id="mw-toc-heading">Inhaltsverzeichnis</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#lol_(Deutsch)"><span class="tocnumber">1</span> <span class="toctext">lol (Deutsch)</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Abkürzung"><span class="tocnumber">1.1</span> <span class="toctext">Abkürzung</span></a>
+<ul>
+<li class="toclevel-3 tocsection-3"><a href="#Übersetzungen"><span class="tocnumber">1.1.1</span> <span class="toctext">Übersetzungen</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-4"><a href="#lol_(Englisch)"><span class="tocnumber">2</span> <span class="toctext">lol (Englisch)</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#Abkürzung_2"><span class="tocnumber">2.1</span> <span class="toctext">Abkürzung</span></a>
+<ul>
+<li class="toclevel-3 tocsection-6"><a href="#Übersetzungen_2"><span class="tocnumber">2.1.1</span> <span class="toctext">Übersetzungen</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-7"><a href="#lol_(Niederländisch)"><span class="tocnumber">3</span> <span class="toctext">lol (Niederländisch)</span></a>
+<ul>
+<li class="toclevel-2 tocsection-8"><a href="#Substantiv,_f"><span class="tocnumber">3.1</span> <span class="toctext">Substantiv, f</span></a>
+<ul>
+<li class="toclevel-3 tocsection-9"><a href="#Übersetzungen_3"><span class="tocnumber">3.1.1</span> <span class="toctext">Übersetzungen</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<h2><span id="lol_.28Deutsch.29"></span><span class="mw-headline" id="lol_(Deutsch)">lol (<a href="/wiki/Wiktionary:Deutsch" title="Wiktionary:Deutsch">Deutsch</a><span style="visibility:hidden" id="lol_.28Deutsch.29"></span><span style="visibility:hidden" id="Deutsch"></span><span style="visibility:hidden" id="Deutsch"></span>)</span></h2>
+<table border="0" cellspacing="8" cellpadding="0" style="background-color: #F4E8FF; border: 2px solid #8A42C0; font-size: 95%">
+<tbody><tr>
+<td style="width: 32px"><a href="/wiki/Datei:Nuvola_apps_chat.svg" class="image"><img alt="Nuvola apps chat.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nuvola_apps_chat.svg/40px-Nuvola_apps_chat.svg.png" decoding="async" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nuvola_apps_chat.svg/60px-Nuvola_apps_chat.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nuvola_apps_chat.svg/80px-Nuvola_apps_chat.svg.png 2x" data-file-width="128" data-file-height="128" /></a>
+</td>
+<td><b>Dieser Ausdruck wird vorwiegend im Internet verwendet und ist sprachwissenschaftlich <i>nicht</i> erfasst.</b> In der gesprochenen Sprache findet „lol“ eher keine Verwendung, die Schreibweise ist nicht verbindlich und kann variieren.
+</td></tr></tbody></table>
+<h3><span id="Abk.C3.BCrzung"></span><span class="mw-headline" id="Abkürzung"><a href="/wiki/Hilfe:Wortart#Abkürzung" title="Hilfe:Wortart">Abkürzung</a></span></h3>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Alternative Schreibweisen">Alternative Schreibweisen:</p>
+<dl><dd><ul><li>lol*, <a href="/wiki/LOL" title="LOL">LOL</a></li></ul></dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Sinn und Bezeichnetes (Semantik)">Bedeutungen:</p>
+<dl><dd>[1] <i>Chatsprache:</i> Kürzel, das ausdrückt, dass man laut lacht beziehungsweise etwas sehr lustig findet</dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Etymologie und Morphologie">Herkunft:</p>
+<dl><dd>aus dem Englischen: <i><a href="/wiki/lol#Englisch" title="lol">lol</a></i>, Abkürzung von <i><b>l</b>aughing <b>o</b>ut <b>l</b>oud</i>, englisch für <i>lautes Auflachen</i>)</dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="bedeutungsgleich gebrauchte Wörter">Synonyme:</p>
+<dl><dd>[1] <a href="/wiki/hahaha" title="hahaha">hahaha</a>; <a href="/wiki/rofl" title="rofl">rofl</a></dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Hyperonyme">Oberbegriffe:</p>
+<dl><dd>[1] <i>thematisch:</i> <a href="/w/index.php?title=Chatsprache&amp;action=edit&amp;redlink=1" class="new" title="Chatsprache (Seite nicht vorhanden)">Chatsprache</a></dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Verwendungsbeispielsätze">Beispiele:</p>
+<dl><dd>[1] <i>lol,</i> das Bild rockt!</dd>
+<dd>[1] <i>lol,</i> wie sieht das denn aus.</dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Derivate, Komposita und Konversionen">Wortbildungen:</p>
+<dl><dd><a href="/w/index.php?title=roflol&amp;action=edit&amp;redlink=1" class="new" title="roflol (Seite nicht vorhanden)">roflol</a></dd></dl>
+<h4><span id=".C3.9Cbersetzungen"></span><span class="mw-headline" id="Übersetzungen">Übersetzungen</span></h4>
+<div class="mw-collapsible NavFrame" style="margin-bottom:1em; margin-left:0; clear:both; text-align:left;">
+<div style="border-top: dotted 1px #aaaaaa; border-bottom: dotted 1px #aaaaaa; padding-left:5px; padding-top:1px; padding-bottom:1px; height: 1.6em; font-size:100%; background-color: #EFF5FB; font-weight: bold;">&#160;</div>
+<div class="mw-collapsible-content NavContent" style="background-color:#F5FAFE;">
+<table style="border:0; width:100%; background-color:#F5FAFE;" title="Übersetzungen in andere Sprachen">
+
+<tbody><tr>
+<td style="border-bottom: dotted 1px #aaaaaa; background-color: #F7F7F9; vertical-align: top; width: 50%;">
+<ul><li><a href="/wiki/Englisch" title="Englisch">Englisch</a>: [1] <span lang="en"><a href="/wiki/lol#lol_(Englisch)" title="lol">lol</a></span>&#160;<a href="https://en.wiktionary.org/wiki/Special:Search/lol" class="extiw" title="en:Special:Search/lol"><sup>→&#160;en</sup></a></li></ul>
+</td>
+<td style="background-color: #F7F7F9; border-bottom: dotted 1px #aaaaaa;">
+</td>
+<td style="border-bottom: dotted 1px #aaaaaa; background-color: #F7F7F9; vertical-align: top; width: 50%;">
+<ul><li><a href="/wiki/Franz%C3%B6sisch" title="Französisch">Französisch</a>: [1] <span lang="fr"><a href="/wiki/mdr#mdr_(Französisch)" title="mdr">mdr</a></span>&#160;<a href="https://fr.wiktionary.org/wiki/Special:Search/mdr" class="extiw" title="fr:Special:Search/mdr"><sup>→&#160;fr</sup></a></li>
+<li><a href="/wiki/Spanisch" title="Spanisch">Spanisch</a>: [1] <span lang="es"><a href="/w/index.php?title=reva&amp;action=edit&amp;redlink=1" class="new" title="reva (Seite nicht vorhanden)">reva</a></span>&#160;<a href="https://es.wiktionary.org/wiki/Special:Search/reva" class="extiw" title="es:Special:Search/reva"><sup>→&#160;es</sup></a></li></ul>
+</td></tr></tbody></table>
+</div>
+</div>
+<div style="margin-bottom: -0.5em;" title="Referenzen und weiterführende Informationen"><b><a href="/wiki/Wiktionary:Referenzen" title="Wiktionary:Referenzen">Referenzen und weiterführende Informationen:</a></b></div>
+<dl><dd>[1] Wikipedia-Artikel „<a href="https://de.wikipedia.org/wiki/Spezial:Suche/Liste_von_Abk%C3%BCrzungen_(Netzjargon)#L" class="extiw" title="w:Spezial:Suche/Liste von Abkürzungen (Netzjargon)">Liste_von_Abkürzungen_(Netzjargon)#L</a>“</dd>
+<dd>[1] <span class="cite">Anja Steinhauer:&#32;<i>Das Wörterbuch der Abkürzungen.</i>&#32;Rund 50000 nationale und internationale Abkürzungen und Kurzwörter mit ihren Bedeutungen.&#32;5.&#160;Auflage.&#32;Dudenverlag,&#32;Mannheim/Leipzig/Wien/Zürich&#32;<span style="white-space:nowrap;">2005</span>,&#32;<a href="/wiki/Spezial:ISBN-Suche/3411050152" class="internal mw-magiclink-isbn">ISBN 3-411-05015-2</a></span><span style="display: none;" class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rfr_id=info%3Asid%2Fde.wikipedia.org%3Alol&amp;rft.btitle=Das+W%C3%B6rterbuch+der+Abk%C3%BCrzungen&amp;rft.au=Anja+Steinhauer&amp;rft.date=2005&amp;rft.edition=5.&amp;rft.pub=Dudenverlag&amp;rft.place=Mannheim%2FLeipzig%2FWien%2FZ%C3%BCrich&amp;rft.isbn=3-411-05015-2">&#160;</span>, Seite 221</dd></dl>
+<h2><span id="lol_.28Englisch.29"></span><span class="mw-headline" id="lol_(Englisch)">lol (<a href="/wiki/Wiktionary:Englisch" title="Wiktionary:Englisch">Englisch</a><span style="visibility:hidden" id="lol_.28Englisch.29"></span><span style="visibility:hidden" id="Englisch"></span><span style="visibility:hidden" id="Englisch"></span>)</span></h2>
+<table border="0" cellspacing="8" cellpadding="0" style="background-color: #F4E8FF; border: 2px solid #8A42C0; font-size: 95%">
+<tbody><tr>
+<td style="width: 32px"><a href="/wiki/Datei:Nuvola_apps_chat.svg" class="image"><img alt="Nuvola apps chat.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nuvola_apps_chat.svg/40px-Nuvola_apps_chat.svg.png" decoding="async" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nuvola_apps_chat.svg/60px-Nuvola_apps_chat.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nuvola_apps_chat.svg/80px-Nuvola_apps_chat.svg.png 2x" data-file-width="128" data-file-height="128" /></a>
+</td>
+<td><b>Dieser Ausdruck wird vorwiegend im Internet verwendet und ist sprachwissenschaftlich <i>nicht</i> erfasst.</b> In der gesprochenen Sprache findet „lol“ eher keine Verwendung, die Schreibweise ist nicht verbindlich und kann variieren.
+</td></tr></tbody></table>
+<h3><span id="Abk.C3.BCrzung_2"></span><span class="mw-headline" id="Abkürzung_2"><a href="/wiki/Hilfe:Wortart#Abkürzung" title="Hilfe:Wortart">Abkürzung</a></span></h3>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Alternative Schreibweisen">Alternative Schreibweisen:</p>
+<ul><li><ul><li>lol*, <a href="/wiki/LOL" title="LOL">LOL</a></li></ul></li></ul>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Sinn und Bezeichnetes (Semantik)">Bedeutungen:</p>
+<dl><dd>[1] <i>Chatsprache:</i> Kürzel, das ausdrückt, dass man laut lacht beziehungsweise etwas sehr lustig findet</dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Etymologie und Morphologie">Herkunft:</p>
+<dl><dd><b>l</b>aughing <b>o</b>ut <b>l</b>oud (lautes Auflachen)</dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="bedeutungsgleich gebrauchte Wörter">Synonyme:</p>
+<dl><dd>[1] <a href="/wiki/hahaha" title="hahaha">hahaha</a>; <a href="/w/index.php?title=lmao&amp;action=edit&amp;redlink=1" class="new" title="lmao (Seite nicht vorhanden)">lmao</a>, <a href="/wiki/rofl" title="rofl">rofl</a></dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Verwendungsbeispielsätze">Beispiele:</p>
+<dl><dd>[1] <i>lol</i> ur a noob.
+<dl><dd><i>Lol</i> du bistn Anfänger.</dd></dl></dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Derivate, Komposita und Konversionen">Wortbildungen:</p>
+<dl><dd><a href="/w/index.php?title=roflol&amp;action=edit&amp;redlink=1" class="new" title="roflol (Seite nicht vorhanden)">roflol</a></dd></dl>
+<h4><span id=".C3.9Cbersetzungen_2"></span><span class="mw-headline" id="Übersetzungen_2">Übersetzungen</span></h4>
+<div class="mw-collapsible NavFrame" style="margin-bottom:1em; margin-left:0; clear:both; text-align:left;">
+<div style="border-top: dotted 1px #aaaaaa; border-bottom: dotted 1px #aaaaaa; padding-left:5px; padding-top:1px; padding-bottom:1px; height: 1.6em; font-size:100%; background-color: #EFF5FB; font-weight: bold;">&#160;</div>
+<div class="mw-collapsible-content NavContent" style="background-color:#F5FAFE;">
+<table style="border:0; width:100%; background-color:#F5FAFE;" title="Übersetzungen in andere Sprachen">
+
+<tbody><tr>
+<td style="border-bottom: dotted 1px #aaaaaa; background-color: #F7F7F9; vertical-align: top; width: 50%;">
+<ul><li><b><a href="/wiki/Deutsch" title="Deutsch">Deutsch</a></b>: [1] <a href="/wiki/lol#lol_(Deutsch)" title="lol">lol</a></li></ul>
+</td>
+<td style="background-color: #F7F7F9; border-bottom: dotted 1px #aaaaaa;">
+</td>
+<td style="border-bottom: dotted 1px #aaaaaa; background-color: #F7F7F9; vertical-align: top; width: 50%;">
+</td></tr></tbody></table>
+</div>
+</div>
+<div style="margin-bottom: -0.5em;" title="Referenzen und weiterführende Informationen"><b><a href="/wiki/Wiktionary:Referenzen" title="Wiktionary:Referenzen">Referenzen und weiterführende Informationen:</a></b></div>
+<dl><dd>[1] Englischer&#160;Wikipedia-Artikel „<a href="https://de.wikipedia.org/wiki/en:Special:Search/lol" class="extiw" title="w:en:Special:Search/lol">lol</a>“</dd></dl>
+<h2><span id="lol_.28Niederl.C3.A4ndisch.29"></span><span class="mw-headline" id="lol_(Niederländisch)">lol (<a href="/wiki/Wiktionary:Niederl%C3%A4ndisch" title="Wiktionary:Niederländisch">Niederländisch</a><span style="visibility:hidden" id="lol_.28Niederländisch.29"></span><span style="visibility:hidden" id="Niederländisch"></span><span style="visibility:hidden" id="Niederländisch"></span>)</span></h2>
+<h3><span id="Substantiv.2C_f"></span><span class="mw-headline" id="Substantiv,_f"><a href="/wiki/Hilfe:Wortart#Substantiv" title="Hilfe:Wortart">Substantiv</a>, <em title="Genus: Femininum (grammatikal. Geschlecht: weiblich)">f</em></span></h3>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Trennungsmöglichkeiten am Zeilenumbruch">Worttrennung:</p>
+<dl><dd>lol</dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Phonetik">Aussprache:</p>
+<dl><dd><a href="/wiki/Hilfe:IPA" title="Hilfe:IPA">IPA</a>: [<span class="ipa" style="padding: 0 1px; text-decoration: none;">lɔl</span>]</dd>
+<dd><a href="/wiki/Hilfe:H%C3%B6rbeispiele" title="Hilfe:Hörbeispiele">Hörbeispiele:</a> <img alt="Lautsprecherbild" src="//upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Loudspeaker.svg/15px-Loudspeaker.svg.png" decoding="async" title="Lautsprecherbild" width="15" height="15" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Loudspeaker.svg/23px-Loudspeaker.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Loudspeaker.svg/30px-Loudspeaker.svg.png 2x" data-file-width="20" data-file-height="20" />&#160;<a href="//upload.wikimedia.org/wikipedia/commons/e/ec/Nl-lol.ogg" class="internal" title="Nl-lol.ogg">lol</a><sup>&#160;(<a href="/wiki/Datei:Nl-lol.ogg" title="Datei:Nl-lol.ogg">Info</a>)</sup></dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Sinn und Bezeichnetes (Semantik)">Bedeutungen:</p>
+<dl><dd>[1] der <a href="/wiki/Spa%C3%9F" title="Spaß">Spaß</a></dd></dl>
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Verwendungsbeispielsätze">Beispiele:</p>
+<dl><dd>[1]</dd></dl>
+<h4><span id=".C3.9Cbersetzungen_3"></span><span class="mw-headline" id="Übersetzungen_3">Übersetzungen</span></h4>
+<div class="mw-collapsible NavFrame" style="margin-bottom:1em; margin-left:0; clear:both; text-align:left;">
+<div style="border-top: dotted 1px #aaaaaa; border-bottom: dotted 1px #aaaaaa; padding-left:5px; padding-top:1px; padding-bottom:1px; height: 1.6em; font-size:100%; background-color: #EFF5FB; font-weight: bold;">&#160;</div>
+<div class="mw-collapsible-content NavContent" style="background-color:#F5FAFE;">
+<table style="border:0; width:100%; background-color:#F5FAFE;" title="Übersetzungen in andere Sprachen">
+
+<tbody><tr>
+<td style="border-bottom: dotted 1px #aaaaaa; background-color: #F7F7F9; vertical-align: top; width: 50%;">
+<ul><li><a href="/wiki/Englisch" title="Englisch">Englisch</a>: [1]</li></ul>
+</td>
+<td style="background-color: #F7F7F9; border-bottom: dotted 1px #aaaaaa;">
+</td>
+<td style="border-bottom: dotted 1px #aaaaaa; background-color: #F7F7F9; vertical-align: top; width: 50%;">
+<ul><li><a href="/wiki/Franz%C3%B6sisch" title="Französisch">Französisch</a>: [1]</li></ul>
+</td></tr></tbody></table>
+</div>
+</div>
+<div style="margin-bottom: -0.5em;" title="Referenzen und weiterführende Informationen"><b><a href="/wiki/Wiktionary:Referenzen" title="Wiktionary:Referenzen">Referenzen und weiterführende Informationen:</a></b></div>
+<dl><dd>[1] Van Dale  Onlinewoordenboek: „<a rel="nofollow" class="external text" href="http://www.vandale.nl/opzoeken?pattern=lol&amp;lang=nn">lol</a>“</dd>
+<dd>[1] uitmuntend Wörterbuch Niederländisch-Deutsch: „<a rel="nofollow" class="external text" href="http://www.uitmuntend.de/woordenboek/lol/">lol</a>“</dd></dl>
+<div style="margin-top:20px; margin-bottom:0em; border-top:1px solid #AAAAAA;" title="Ähnlich geschriebene oder gleich klingende Wörter"></div>
+<div style="clear:both">
+<p style="margin-bottom:-0.5em; font-weight:bold;" title="Ähnliche Wörter (Deutsch)">Ähnliche Wörter (Deutsch):</p>
+<dl><dd><i>ähnlich geschrieben und/oder ausgesprochen:</i> <a href="/wiki/toll" title="toll">toll</a></dd></dl>
+</div>
+
+<!-- 
+NewPP limit report
+Parsed by mw1343
+Cached time: 20200405104405
+Cache expiry: 2592000
+Dynamic content: false
+Complications: []
+CPU time usage: 0.264 seconds
+Real time usage: 5.409 seconds
+Preprocessor visited node count: 2185/1000000
+Post‐expand include size: 22353/2097152 bytes
+Template argument size: 3409/2097152 bytes
+Highest expansion depth: 13/40
+Expensive parser function count: 14/500
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+Number of Wikibase entities loaded: 0/400
+Lua time usage: 0.053/10.000 seconds
+Lua memory usage: 1.03 MB/50 MB
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 5081.381      1 -total
+ 18.15%  922.386      3 Vorlage:Sprache
+ 13.59%  690.671      3 Vorlage:Ü-Tabelle
+  9.80%  498.163      3 Vorlage:Anker
+  9.22%  468.313     13 Vorlage:Textbaustein-Intl
+  8.47%  430.311      1 Vorlage:Oberbegriffe
+  8.14%  413.865      3 Vorlage:Referenzen
+  6.89%  350.106      3 Vorlage:Übersetzungen
+  6.86%  348.742      1 Vorlage:f
+  6.26%  318.305      5 Vorlage:Ü
+-->
+
+<!-- Saved in parser cache with key dewiktionary:pcache:idhash:3878-0!canonical and timestamp 20200405104405 and revision id 6558107
+ -->
+</div><noscript><img src="//de.wiktionary.org/wiki/Special:CentralAutoLogin/start?type=1x1" alt="" title="" width="1" height="1" style="border: none; position: absolute;" /></noscript></div>
+		<div class="printfooter">Abgerufen von „<a dir="ltr" href="https://de.wiktionary.org/w/index.php?title=lol&amp;oldid=6558107">https://de.wiktionary.org/w/index.php?title=lol&amp;oldid=6558107</a>“</div>
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="/wiki/Spezial:Kategorien" title="Spezial:Kategorien">Kategorien</a>: <ul><li><a href="/wiki/Kategorie:Deutsch" title="Kategorie:Deutsch">Deutsch</a></li><li><a href="/wiki/Kategorie:Netzjargon" title="Kategorie:Netzjargon">Netzjargon</a></li><li><a href="/wiki/Kategorie:Abk%C3%BCrzung_(Deutsch)" title="Kategorie:Abkürzung (Deutsch)">Abkürzung (Deutsch)</a></li><li><a href="/wiki/Kategorie:Englisch" title="Kategorie:Englisch">Englisch</a></li><li><a href="/wiki/Kategorie:Abk%C3%BCrzung_(Englisch)" title="Kategorie:Abkürzung (Englisch)">Abkürzung (Englisch)</a></li><li><a href="/wiki/Kategorie:Niederl%C3%A4ndisch" title="Kategorie:Niederländisch">Niederländisch</a></li><li><a href="/wiki/Kategorie:Substantiv_(Niederl%C3%A4ndisch)" title="Kategorie:Substantiv (Niederländisch)">Substantiv (Niederländisch)</a></li></ul></div><div id="mw-hidden-catlinks" class="mw-hidden-catlinks mw-hidden-cats-hidden">Versteckte Kategorien: <ul><li><a href="/wiki/Kategorie:siehe_auch" title="Kategorie:siehe auch">siehe auch</a></li><li><a href="/wiki/Kategorie:Grundformeintrag_(Deutsch)" title="Kategorie:Grundformeintrag (Deutsch)">Grundformeintrag (Deutsch)</a></li><li><a href="/wiki/Kategorie:R%C3%BCckl%C3%A4ufige_W%C3%B6rterliste_(Deutsch)" title="Kategorie:Rückläufige Wörterliste (Deutsch)">Rückläufige Wörterliste (Deutsch)</a></li><li><a href="/wiki/Kategorie:%C3%9Cbersetzungen_(Englisch)" title="Kategorie:Übersetzungen (Englisch)">Übersetzungen (Englisch)</a></li><li><a href="/wiki/Kategorie:%C3%9Cbersetzungen_(Franz%C3%B6sisch)" title="Kategorie:Übersetzungen (Französisch)">Übersetzungen (Französisch)</a></li><li><a href="/wiki/Kategorie:%C3%9Cbersetzungen_(Spanisch)" title="Kategorie:Übersetzungen (Spanisch)">Übersetzungen (Spanisch)</a></li><li><a href="/wiki/Kategorie:Link_zur_Wikipedia" title="Kategorie:Link zur Wikipedia">Link zur Wikipedia</a></li><li><a href="/wiki/Kategorie:R%C3%BCckl%C3%A4ufige_W%C3%B6rterliste_(Englisch)" title="Kategorie:Rückläufige Wörterliste (Englisch)">Rückläufige Wörterliste (Englisch)</a></li><li><a href="/wiki/Kategorie:R%C3%BCckl%C3%A4ufige_W%C3%B6rterliste_(Niederl%C3%A4ndisch)" title="Kategorie:Rückläufige Wörterliste (Niederländisch)">Rückläufige Wörterliste (Niederländisch)</a></li><li><a href="/wiki/Kategorie:Wiktionary:Audio-Datei" title="Kategorie:Wiktionary:Audio-Datei">Wiktionary:Audio-Datei</a></li><li><a href="/wiki/Kategorie:Wiktionary:Beispiele_fehlen_(Niederl%C3%A4ndisch)" title="Kategorie:Wiktionary:Beispiele fehlen (Niederländisch)">Wiktionary:Beispiele fehlen (Niederländisch)</a></li><li><a href="/wiki/Kategorie:Seiten,_die_magische_ISBN-Links_verwenden" title="Kategorie:Seiten, die magische ISBN-Links verwenden">Seiten, die magische ISBN-Links verwenden</a></li></ul></div></div>
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+<div id="mw-navigation">
+	<h2>Navigationsmenü</h2>
+	<div id="mw-head">
+		
+<div id="p-personal" role="navigation" class="" aria-labelledby="p-personal-label">
+	<h3 id="p-personal-label">Meine Werkzeuge</h3>
+	<ul >
+		<li id="pt-anonuserpage">Nicht angemeldet</li><li id="pt-anontalk"><a href="/wiki/Spezial:Meine_Diskussionsseite" title="Diskussion über Änderungen von dieser IP-Adresse [n]" accesskey="n">Diskussionsseite</a></li><li id="pt-anoncontribs"><a href="/wiki/Spezial:Meine_Beitr%C3%A4ge" title="Eine Liste der Bearbeitungen, die von dieser IP-Adresse gemacht wurden [y]" accesskey="y">Beiträge</a></li><li id="pt-createaccount"><a href="/w/index.php?title=Spezial:Benutzerkonto_anlegen&amp;returnto=lol" title="Wir ermutigen dich dazu, ein Benutzerkonto zu erstellen und dich anzumelden. Es ist jedoch nicht zwingend erforderlich.">Benutzerkonto erstellen</a></li><li id="pt-login"><a href="/w/index.php?title=Spezial:Anmelden&amp;returnto=lol" title="Sich anzumelden wird gerne gesehen, ist jedoch nicht zwingend erforderlich. [o]" accesskey="o">Anmelden</a></li>
+	</ul>
+</div>
+
+		<div id="left-navigation">
+			<div id="p-namespaces" role="navigation" class="vectorTabs " aria-labelledby="p-namespaces-label">
+	<h3 id="p-namespaces-label">Namensräume</h3>
+	<ul >
+		<li id="ca-nstab-main" class="selected"><a href="/wiki/lol" title="Seiteninhalt anzeigen [c]" accesskey="c">Eintrag</a></li><li id="ca-talk"><a href="/wiki/Diskussion:lol" rel="discussion" title="Diskussion zum Seiteninhalt [t]" accesskey="t">Diskussion</a></li>
+	</ul>
+</div>
+
+			<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+	<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+	<h3 id="p-variants-label">
+		<span>Varianten</span>
+	</h3>
+	<ul class="menu" >
+		
+	</ul>
+</div>
+
+		</div>
+		<div id="right-navigation">
+			<div id="p-views" role="navigation" class="vectorTabs " aria-labelledby="p-views-label">
+	<h3 id="p-views-label">Diese Seite</h3>
+	<ul >
+		<li id="ca-view" class="collapsible selected"><a href="/wiki/lol">Lesen</a></li><li id="ca-viewsource" class="collapsible"><a href="/w/index.php?title=lol&amp;action=edit" title="Diese Seite ist geschützt. Ihr Quelltext kann dennoch angesehen und kopiert werden. [e]" accesskey="e">Quelltext anzeigen</a></li><li id="ca-history" class="collapsible"><a href="/w/index.php?title=lol&amp;action=history" title="Frühere Versionen dieser Seite [h]" accesskey="h">Versionsgeschichte</a></li>
+	</ul>
+</div>
+
+			<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+	<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+	<h3 id="p-cactions-label">
+		<span>Mehr</span>
+	</h3>
+	<ul class="menu" >
+		
+	</ul>
+</div>
+
+			<div id="p-search" role="search">
+	<h3 >
+		<label for="searchInput">Suche</label>
+	</h3>
+	<form action="/w/index.php" id="searchform">
+		<div id="simpleSearch">
+			<input type="search" name="search" placeholder="Wiktionary durchsuchen" title="Wiktionary durchsuchen [f]" accesskey="f" id="searchInput"/>
+			<input type="hidden" value="Spezial:Suche" name="title"/>
+			<input type="submit" name="fulltext" value="Volltext" title="Suche nach Seiten, die diesen Text enthalten" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/>
+			<input type="submit" name="go" value="Seite" title="Gehe direkt zu der Seite mit genau diesem Namen, falls sie vorhanden ist." id="searchButton" class="searchButton"/>
+		</div>
+	</form>
+</div>
+
+		</div>
+	</div>
+	
+<div id="mw-panel">
+	<div id="p-logo" role="banner">
+		<a  title="Hauptseite" class="mw-wiki-logo" href="/wiki/Wiktionary:Hauptseite"></a>
+	</div>
+	<div class="portal" role="navigation" id="p-navigation"  aria-labelledby="p-navigation-label">
+	<h3  id="p-navigation-label">
+		Navigation
+	</h3>
+	<div class="body">
+		<ul><li id="n-mainpage-text"><a href="/wiki/Wiktionary:Hauptseite">Hauptseite</a></li><li id="n-verzeichnisse"><a href="/wiki/Verzeichnis:%C3%9Cbersicht">Themenportale</a></li><li id="n-randompage"><a href="/wiki/Spezial:Zuf%C3%A4llige_Seite" title="Zufällige Seite aufrufen [x]" accesskey="x">Zufällige Seite</a></li><li id="n-contents"><a href="/wiki/Spezial:Alle_Seiten">Inhaltsverzeichnis</a></li></ul>
+		
+	</div>
+</div>
+
+
+	<div class="portal" role="navigation" id="p-contribution"  aria-labelledby="p-contribution-label">
+	<h3  id="p-contribution-label">
+		Mitarbeit
+	</h3>
+	<div class="body">
+		<ul><li id="n-new-entry"><a href="/wiki/Wiktionary:Eintrag_erstellen">Eintrag erstellen</a></li><li id="n-portal"><a href="/wiki/Wiktionary:Autorenportal" title="Über das Projekt, was du tun kannst, wo was zu finden ist">Autorenportal</a></li><li id="n-Wunschliste"><a href="/wiki/Wiktionary:Wunschliste">Wunschliste</a></li><li id="n-Literaturliste"><a href="/wiki/Wiktionary:Literaturliste">Literaturliste</a></li><li id="n-recentchanges"><a href="/wiki/Spezial:Letzte_%C3%84nderungen" title="Liste der letzten Änderungen in diesem Wiki [r]" accesskey="r">Letzte Änderungen</a></li></ul>
+		
+	</div>
+</div>
+
+<div class="portal" role="navigation" id="p-support"  aria-labelledby="p-support-label">
+	<h3  id="p-support-label">
+		Hilfe
+	</h3>
+	<div class="body">
+		<ul><li id="n-help"><a href="/wiki/Wiktionary:Hilfe" title="Hilfeseite anzeigen">Hilfe</a></li><li id="n-Spenden"><a href="//donate.wikimedia.org/wiki/Special:FundraiserRedirector?utm_source=donate&amp;utm_medium=sidebar&amp;utm_campaign=C13_de.wiktionary.org&amp;uselang=de">Spenden</a></li><li id="n-disclaimer"><a href="/wiki/Hilfe:Hinweise_f%C3%BCr_Leser">Hinweise für Leser</a></li></ul>
+		
+	</div>
+</div>
+
+<div class="portal" role="navigation" id="p-coll-print_export"  aria-labelledby="p-coll-print_export-label">
+	<h3  id="p-coll-print_export-label">
+		Drucken/­exportieren
+	</h3>
+	<div class="body">
+		<ul><li id="coll-create_a_book"><a href="/w/index.php?title=Spezial:Buch&amp;bookcmd=book_creator&amp;referer=lol">Buch erstellen</a></li><li id="coll-download-as-rl"><a href="/w/index.php?title=Spezial:ElectronPdf&amp;page=lol&amp;action=show-download-screen">Als PDF herunterladen</a></li><li id="t-print"><a href="/w/index.php?title=lol&amp;printable=yes" title="Druckansicht dieser Seite [p]" accesskey="p">Druckversion</a></li></ul>
+		
+	</div>
+</div>
+
+<div class="portal" role="navigation" id="p-tb"  aria-labelledby="p-tb-label">
+	<h3  id="p-tb-label">
+		Werkzeuge
+	</h3>
+	<div class="body">
+		<ul><li id="t-whatlinkshere"><a href="/wiki/Spezial:Linkliste/lol" title="Liste aller Seiten, die hierher verlinken [j]" accesskey="j">Was linkt hierher?</a></li><li id="t-recentchangeslinked"><a href="/wiki/Spezial:%C3%84nderungen_an_verlinkten_Seiten/lol" rel="nofollow" title="Letzte Änderungen an Seiten, die von hier verlinkt sind [k]" accesskey="k">Änderungen an verlinkten Seiten</a></li><li id="t-upload"><a href="//commons.wikimedia.org/wiki/Special:UploadWizard?uselang=de" title="Dateien hochladen [u]" accesskey="u">Bild lokal hochladen</a></li><li id="t-specialpages"><a href="/wiki/Spezial:Spezialseiten" title="Liste aller Spezialseiten [q]" accesskey="q">Spezialseiten</a></li><li id="t-permalink"><a href="/w/index.php?title=lol&amp;oldid=6558107" title="Dauerhafter Link zu dieser Seitenversion">Beständige URL</a></li><li id="t-info"><a href="/w/index.php?title=lol&amp;action=info" title="Weitere Informationen über diese Seite">Seiten­informationen</a></li><li id="t-cite"><a href="/w/index.php?title=Spezial:Zitierhilfe&amp;page=lol&amp;id=6558107&amp;wpFormIdentifier=titleform" title="Hinweise, wie diese Seite zitiert werden kann">Seite zitieren</a></li></ul>
+		
+	</div>
+</div>
+
+<div class="portal" role="navigation" id="p-lang"  aria-labelledby="p-lang-label">
+	<h3  id="p-lang-label">
+		In anderen Sprachen
+	</h3>
+	<div class="body">
+		<ul><li class="interlanguage-link interwiki-af"><a href="https://af.wiktionary.org/wiki/lol" title="lol – Afrikaans" lang="af" hreflang="af" class="interlanguage-link-target">Afrikaans</a></li><li class="interlanguage-link interwiki-chr"><a href="https://chr.wiktionary.org/wiki/lol" title="lol – Cherokee" lang="chr" hreflang="chr" class="interlanguage-link-target">ᏣᎳᎩ</a></li><li class="interlanguage-link interwiki-el"><a href="https://el.wiktionary.org/wiki/lol" title="lol – Griechisch" lang="el" hreflang="el" class="interlanguage-link-target">Ελληνικά</a></li><li class="interlanguage-link interwiki-en"><a href="https://en.wiktionary.org/wiki/lol" title="lol – Englisch" lang="en" hreflang="en" class="interlanguage-link-target">English</a></li><li class="interlanguage-link interwiki-fa"><a href="https://fa.wiktionary.org/wiki/lol" title="lol – Persisch" lang="fa" hreflang="fa" class="interlanguage-link-target">فارسی</a></li><li class="interlanguage-link interwiki-fi"><a href="https://fi.wiktionary.org/wiki/lol" title="lol – Finnisch" lang="fi" hreflang="fi" class="interlanguage-link-target">Suomi</a></li><li class="interlanguage-link interwiki-fr"><a href="https://fr.wiktionary.org/wiki/lol" title="lol – Französisch" lang="fr" hreflang="fr" class="interlanguage-link-target">Français</a></li><li class="interlanguage-link interwiki-he"><a href="https://he.wiktionary.org/wiki/lol" title="lol – Hebräisch" lang="he" hreflang="he" class="interlanguage-link-target">עברית</a></li><li class="interlanguage-link interwiki-jbo"><a href="https://jbo.wiktionary.org/wiki/lol" title="lol – Lojban" lang="jbo" hreflang="jbo" class="interlanguage-link-target">La .lojban.</a></li><li class="interlanguage-link interwiki-ku"><a href="https://ku.wiktionary.org/wiki/lol" title="lol – Kurdisch" lang="ku" hreflang="ku" class="interlanguage-link-target">Kurdî</a></li><li class="interlanguage-link interwiki-lt"><a href="https://lt.wiktionary.org/wiki/lol" title="lol – Litauisch" lang="lt" hreflang="lt" class="interlanguage-link-target">Lietuvių</a></li><li class="interlanguage-link interwiki-mg"><a href="https://mg.wiktionary.org/wiki/lol" title="lol – Madagassisch" lang="mg" hreflang="mg" class="interlanguage-link-target">Malagasy</a></li><li class="interlanguage-link interwiki-nl"><a href="https://nl.wiktionary.org/wiki/lol" title="lol – Niederländisch" lang="nl" hreflang="nl" class="interlanguage-link-target">Nederlands</a></li><li class="interlanguage-link interwiki-pl"><a href="https://pl.wiktionary.org/wiki/lol" title="lol – Polnisch" lang="pl" hreflang="pl" class="interlanguage-link-target">Polski</a></li><li class="interlanguage-link interwiki-pt"><a href="https://pt.wiktionary.org/wiki/lol" title="lol – Portugiesisch" lang="pt" hreflang="pt" class="interlanguage-link-target">Português</a></li><li class="interlanguage-link interwiki-ru"><a href="https://ru.wiktionary.org/wiki/lol" title="lol – Russisch" lang="ru" hreflang="ru" class="interlanguage-link-target">Русский</a></li><li class="interlanguage-link interwiki-simple"><a href="https://simple.wiktionary.org/wiki/lol" title="lol – einfaches Englisch" lang="en-simple" hreflang="en-simple" class="interlanguage-link-target">Simple English</a></li><li class="interlanguage-link interwiki-sv"><a href="https://sv.wiktionary.org/wiki/lol" title="lol – Schwedisch" lang="sv" hreflang="sv" class="interlanguage-link-target">Svenska</a></li><li class="interlanguage-link interwiki-ta"><a href="https://ta.wiktionary.org/wiki/lol" title="lol – Tamil" lang="ta" hreflang="ta" class="interlanguage-link-target">தமிழ்</a></li><li class="interlanguage-link interwiki-tr"><a href="https://tr.wiktionary.org/wiki/lol" title="lol – Türkisch" lang="tr" hreflang="tr" class="interlanguage-link-target">Türkçe</a></li><li class="interlanguage-link interwiki-uz"><a href="https://uz.wiktionary.org/wiki/lol" title="lol – Usbekisch" lang="uz" hreflang="uz" class="interlanguage-link-target">Oʻzbekcha/ўзбекча</a></li><li class="interlanguage-link interwiki-zh"><a href="https://zh.wiktionary.org/wiki/lol" title="lol – Chinesisch" lang="zh" hreflang="zh" class="interlanguage-link-target">中文</a></li></ul>
+		
+	</div>
+</div>
+
+
+</div>
+
+</div>
+
+<div id="footer" role="contentinfo" >
+	<ul id="footer-info" class="">
+		<li id="footer-info-lastmod"> Letzte Änderung dieser Seite: 7. Oktober 2018 um 00:05</li>
+		<li id="footer-info-copyright">
+<a class="external" href="https://tools.wmflabs.org/pageviews?pages=lol&amp;project=de.wiktionary.org" rel="nofollow">Abrufstatistik</a><br /><br />
+Der Text ist unter der Lizenz <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.de">Creative Commons Namensnennung – Weitergabe unter gleichen Bedingungen 3.0 Unported</a> verfügbar; zusätzliche Bedingungen können gelten. Einzelheiten sind in den <a href="https://foundation.wikimedia.org/wiki/Terms_of_Use/de">Nutzungsbedingungen</a> beschrieben.</li>
+	</ul>
+	<ul id="footer-places" class="">
+		<li id="footer-places-privacy"><a href="https://meta.wikimedia.org/wiki/Privacy_policy/de" class="extiw" title="m:Privacy policy/de">Datenschutz</a></li>
+		<li id="footer-places-about"><a href="/wiki/Wiktionary:%C3%9Cber_das_Wiktionary" title="Wiktionary:Über das Wiktionary">Über Wiktionary™</a></li>
+		<li id="footer-places-disclaimer"><a href="/wiki/Wiktionary:Impressum" title="Wiktionary:Impressum">Haftungsausschluss</a></li>
+		<li id="footer-places-developers"><a href="https://www.mediawiki.org/wiki/Special:MyLanguage/How_to_contribute">Entwickler</a></li>
+		<li id="footer-places-statslink"><a href="https://stats.wikimedia.org/#/de.wiktionary.org">Statistiken</a></li>
+		<li id="footer-places-cookiestatement"><a href="https://foundation.wikimedia.org/wiki/Cookie_statement">Stellungnahme zu Cookies</a></li>
+		<li id="footer-places-mobileview"><a href="//de.m.wiktionary.org/w/index.php?title=lol&amp;mobileaction=toggle_view_mobile" class="noprint stopMobileRedirectToggle">Mobile Ansicht</a></li>
+	</ul>
+	<ul id="footer-icons" class="noprint">
+		<li id="footer-copyrightico"><a href="https://wikimediafoundation.org/"><img src="/static/images/wikimedia-button.png" srcset="/static/images/wikimedia-button-1.5x.png 1.5x, /static/images/wikimedia-button-2x.png 2x" width="88" height="31" alt="Wikimedia Foundation"/></a></li>
+		<li id="footer-poweredbyico"><a href="https://www.mediawiki.org/"><img src="/static/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/static/images/poweredby_mediawiki_132x47.png 1.5x, /static/images/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a></li>
+	</ul>
+	<div style="clear: both;"></div>
+</div>
+
+
+<script>(RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.264","walltime":"5.409","ppvisitednodes":{"value":2185,"limit":1000000},"postexpandincludesize":{"value":22353,"limit":2097152},"templateargumentsize":{"value":3409,"limit":2097152},"expansiondepth":{"value":13,"limit":40},"expensivefunctioncount":{"value":14,"limit":500},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"entityaccesscount":{"value":0,"limit":400},"timingprofile":["100.00% 5081.381      1 -total"," 18.15%  922.386      3 Vorlage:Sprache"," 13.59%  690.671      3 Vorlage:Ü-Tabelle","  9.80%  498.163      3 Vorlage:Anker","  9.22%  468.313     13 Vorlage:Textbaustein-Intl","  8.47%  430.311      1 Vorlage:Oberbegriffe","  8.14%  413.865      3 Vorlage:Referenzen","  6.89%  350.106      3 Vorlage:Übersetzungen","  6.86%  348.742      1 Vorlage:f","  6.26%  318.305      5 Vorlage:Ü"]},"scribunto":{"limitreport-timeusage":{"value":"0.053","limit":"10.000"},"limitreport-memusage":{"value":1077075,"limit":52428800}},"cachereport":{"origin":"mw1343","timestamp":"20200405104405","ttl":2592000,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":129,"wgHostname":"mw1389"});});</script></body></html>

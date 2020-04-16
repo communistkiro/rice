@@ -1,0 +1,58 @@
+#!/bin/zsh
+# search thru mpc library and insert songs by queries with overlap after current
+# `escape' to cancel query chain so far generatated
+# makes use of delimiters in metadata tags somewhat
+function mpp () {
+a=(
+    'artist'
+    'album'
+    'albumartist'
+    'genre'
+    'date'
+    'title'
+    'insert'
+    'exit'
+);
+
+i=0;
+q[1]=''; q[2]='';
+while true; do
+    c=$(printf "%s\n" "${a[@]}" | dmenu -i -l ${#a});
+    case ${c} in
+        ${a[1]} )
+            q[++i]=${a[1]};
+            q[++i]=$( (mpc list ${a[1]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|,] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[1]}" -l 8);
+        ;;
+        ${a[2]} )
+            q[++i]=${a[2]};
+            q[++i]=$( (mpc list ${a[2]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[2]}" -l 8);
+        ;;
+        ${a[3]} )
+            q[++i]=${a[3]};
+            q[++i]=$( (mpc list ${a[3]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[3]}" -l 8);
+        ;;
+        ${a[4]} )
+            q[++i]=${a[4]};
+            q[++i]=$( (mpc list ${a[4]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|/\] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[4]}" -l 8);
+        ;;
+        ${a[5]} )
+            q[++i]=${a[5]};
+            q[++i]=$( (mpc list ${a[5]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?; ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[5]}" -l 8);
+        ;;
+        ${a[6]} )
+            q[++i]=${a[6]};
+            # q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | gawk -vRS='(; ?)' -vORS='\n' '1' | sort -fu ) | dmenu -i -p "${a[6]}" -l 8);
+            q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -i -p "${a[6]}" -l 8);
+        ;;
+        ${a[7]} )
+            mpc search ${q} | mpc insert;
+            unset a i q;
+            break;
+        ;;
+        ${a[8]} )
+            unset a i q;
+            break;
+        ;;
+    esac
+done
+}

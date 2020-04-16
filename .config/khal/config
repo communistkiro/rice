@@ -1,0 +1,39 @@
+[calendars]
+
+[[work]]
+path = /root/.local/share/khal/calendars/private
+color = dark green
+type = calendar
+
+[[misc]]
+path = /root/.local/share/khal/calendars/misc
+color = light blue
+type = calendar
+
+[locale]
+longdateformat = %Y-%m-%d
+timeformat = %H%M
+
+
+dateformat = %m%d
+datetimeformat = %m%d %H%M
+longdatetimeformat = %Y%m%d %H%M
+
+firstweekday = 0
+
+[keybindings]
+up = "["
+down = "'"
+left = ";"
+right = "\"
+save = F5
+external_edit = F2
+new = a
+quit = Q
+today = !,~
+export = 
+delete  = D
+
+[default]
+default_calendar = work
+highlight_event_days = True  # the default is False

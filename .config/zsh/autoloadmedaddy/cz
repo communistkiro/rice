@@ -1,0 +1,11 @@
+#!/bin/sh
+function cz () {
+chosen="z"
+while [ ! -z "$chosen" ]; do
+    DIRS="$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')";
+    clear; printf "\e[1;7;33m $(pwd)"; echo ''; lsd -a1;
+    # chosen=$(echo "$DIRS" | dmenu -i -b -l $(echo $DIRS|wc -l));
+    chosen=$(echo "$DIRS" | dmenu -i -b -l 16);
+    cd "$chosen"
+done
+}

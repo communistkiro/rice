@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>ProtonMail Bridge is open source on macOS, Windows, and Linux</title>
+    	<link rel="profile" href="http://gmpg.org/xfn/11" />
+        <link rel="pingback" href="https://protonmail.com/blog/xmlrpc.php" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        
+<!-- This site is optimized with the Yoast SEO plugin v11.8 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="description" content="Our Bridge app is now open source for macOS, Windows, and Linux. In this article, you can find links to the code and an independent security audit report."/>
+<link rel="canonical" href="https://protonmail.com/blog/bridge-open-source/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="ProtonMail Bridge is open source on macOS, Windows, and Linux" />
+<meta property="og:description" content="Our Bridge app is now open source for macOS, Windows, and Linux. In this article, you can find links to the code and an independent security audit report." />
+<meta property="og:url" content="https://protonmail.com/blog/bridge-open-source/" />
+<meta property="og:site_name" content="ProtonMail Blog" />
+<meta property="article:tag" content="featured" />
+<meta property="article:section" content="Uncategorized" />
+<meta property="article:published_time" content="2020-04-15T17:11:47+02:00" />
+<meta property="article:modified_time" content="2020-04-15T17:11:48+02:00" />
+<meta property="og:updated_time" content="2020-04-15T17:11:48+02:00" />
+<meta property="og:image" content="https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog-1024x512.png" />
+<meta property="og:image:secure_url" content="https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog-1024x512.png" />
+<meta property="og:image:width" content="1024" />
+<meta property="og:image:height" content="512" />
+<script type='application/ld+json' class='yoast-schema-graph yoast-schema-graph--main'>{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://protonmail.com/blog/#website","url":"https://protonmail.com/blog/","name":"ProtonMail Blog","potentialAction":{"@type":"SearchAction","target":"https://protonmail.com/blog/?s={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"ImageObject","@id":"https://protonmail.com/blog/bridge-open-source/#primaryimage","url":"https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog.png","width":2133,"height":1067,"caption":"Illustration of ProtonMail Bridge open source"},{"@type":"WebPage","@id":"https://protonmail.com/blog/bridge-open-source/#webpage","url":"https://protonmail.com/blog/bridge-open-source/","inLanguage":"en-US","name":"ProtonMail Bridge is open source on macOS, Windows, and Linux","isPartOf":{"@id":"https://protonmail.com/blog/#website"},"primaryImageOfPage":{"@id":"https://protonmail.com/blog/bridge-open-source/#primaryimage"},"datePublished":"2020-04-15T17:11:47+02:00","dateModified":"2020-04-15T17:11:48+02:00","author":{"@id":"https://protonmail.com/blog/#/schema/person/b938a405474f95f15749cbfb682f5b3d"},"description":"Our Bridge app is now open source for macOS, Windows, and Linux. In this article, you can find links to the code and an independent security audit report."},{"@type":["Person"],"@id":"https://protonmail.com/blog/#/schema/person/b938a405474f95f15749cbfb682f5b3d","name":"Richie Koch","description":"Prior to joining Proton, Richie spent several years working on tech solutions in the developing world. He joined the Proton team to advance the rights of online privacy and freedom.","sameAs":[]}]}</script>
+<!-- / Yoast SEO plugin. -->
+
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel="alternate" type="application/rss+xml" title="ProtonMail Blog &raquo; Feed" href="https://protonmail.com/blog/feed/" />
+<link rel="alternate" type="application/rss+xml" title="ProtonMail Blog &raquo; Comments Feed" href="https://protonmail.com/blog/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="ProtonMail Blog &raquo; ProtonMail Bridge is now open source! Comments Feed" href="https://protonmail.com/blog/bridge-open-source/feed/" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/protonmail.com\/blog\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.3.2"}};
+			!function(e,a,t){var r,n,o,i,p=a.createElement("canvas"),s=p.getContext&&p.getContext("2d");function c(e,t){var a=String.fromCharCode;s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,e),0,0);var r=p.toDataURL();return s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,t),0,0),r===p.toDataURL()}function l(e){if(!s||!s.fillText)return!1;switch(s.textBaseline="top",s.font="600 32px Arial",e){case"flag":return!c([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])&&(!c([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!c([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]));case"emoji":return!c([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340])}return!1}function d(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(i=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},o=0;o<i.length;o++)t.supports[i[o]]=l(i[o]),t.supports.everything=t.supports.everything&&t.supports[i[o]],"flag"!==i[o]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[i[o]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(r=t.source||{}).concatemoji?d(r.concatemoji):r.wpemoji&&r.twemoji&&(d(r.twemoji),d(r.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='wp-block-library-css'  href='https://protonmail.com/blog/wp-includes/css/dist/block-library/style.min.css?ver=5.3.2' type='text/css' media='all' />
+<link rel='stylesheet' id='es-widget-css-css'  href='https://protonmail.com/blog/wp-content/plugins/email-subscribers/widget/es-widget.css?ver=5.3.2' type='text/css' media='all' />
+<link rel='stylesheet' id='main-style-css'  href='https://protonmail.com/blog/wp-content/themes/bootstrap-basic/css/main.css?ver=5.3.2' type='text/css' media='all' />
+<script type='text/javascript' src='https://protonmail.com/blog/wp-includes/js/jquery/jquery.js?ver=1.12.4-wp'></script>
+<script type='text/javascript' src='https://protonmail.com/blog/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript' src='https://protonmail.com/blog/wp-content/plugins/stop-user-enumeration/frontend/js/frontend.js?ver=1.3.20'></script>
+<script type='text/javascript' src='https://protonmail.com/blog/wp-content/themes/bootstrap-basic/js/vendor/modernizr.min.js?ver=3.3.1'></script>
+<script type='text/javascript' src='https://protonmail.com/blog/wp-content/themes/bootstrap-basic/js/vendor/html5shiv.min.js?ver=3.7.3'></script>
+<link rel='https://api.w.org/' href='https://protonmail.com/blog/wp-json/' />
+<meta name="generator" content="WordPress 5.3.2" />
+<link rel='shortlink' href='https://protonmail.com/blog/?p=6507' />
+<link rel="alternate" type="application/json+oembed" href="https://protonmail.com/blog/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fprotonmail.com%2Fblog%2Fbridge-open-source%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://protonmail.com/blog/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fprotonmail.com%2Fblog%2Fbridge-open-source%2F&#038;format=xml" />
+<style type="text/css">	.csbtns {
+											
+											
+											
+											
+										}
+										.csbtns img		
+										{ 	
+											width: 35px !important;
+											padding: 6px;
+											border:  0;
+											box-shadow: none !important;
+											display: inline;
+											vertical-align: middle;
+										}
+										.csbtns, .csbtns a		
+										{
+											text-decoration:none;
+											background: none;
+											
+											font-size: 	20px;
+											
+											
+										}</style><style type="text/css">
+ul.scfw_16px li, ul.scfw_24px li, ul.scfw_32px li, ul.scfw_16px li a, ul.scfw_24px li a, ul.scfw_32px li a {
+	display:inline !important;
+	float:none !important;
+	border:0 !important;
+	background:transparent none !important;
+	margin:0 !important;
+	padding:0 !important;
+}
+ul.scfw_16px li {
+	margin:0 2px 0 0 !important;
+}
+ul.scfw_24px li {
+	margin:0 3px 0 0 !important;
+}
+ul.scfw_32px li {
+	margin:0 5px 0 0 !important;
+}
+ul.scfw_text_img li:before, ul.scfw_16px li:before, ul.scfw_24px li:before, ul.scfw_32px li:before {
+	content:none !important;
+}
+.scfw img {
+	float:none !important;
+}
+</style>	
+	        <link rel="stylesheet" href="https://protonmail.com/css/static.css" media="screen" charset="utf-8">
+        <style media="screen">
+        .content a {
+            color: #9497ce;
+            text-decoration: underline;
+        }
+        .content a.btn {
+            text-decoration: none;
+        }
+        .content a:hover {
+            color: #000;
+        }
+        </style>
+    </head>
+<body class="post-template-default single single-post postid-6507 single-format-standard" itemtype="http://schema.org/WebPage" itemscope="itemscope">
+
+<nav class="navbar navbar-default navbar-inverse navbar-fixed-top" id="header">
+    <div class="top hidden-sm hidden-xs">
+        <div class="container text-right form-inline">
+	    <a class="pull-left" href="/"><i class="fa fa-chevron-left"></i> &nbsp;Return to protonmail.com</a>
+            <!--a target="_blank" href="https://plus.google.com/+protonmail" rel="publisher">
+                <i class="fa fa-google"></i> +Google
+            </a-->
+            <a target="_blank" href="https://facebook.com/ProtonMail" title="Facebook">
+                <i class="fa fa-facebook"></i> Facebook
+            </a>
+            <a target="_blank" href="https://twitter.com/ProtonMail" title="Twitter">
+                <i class="fa fa-twitter"></i> Twitter
+            </a>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a href="#" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="navbar-brand" href="https://protonmail.com/blog/">
+                    <img src="https://protonmail.com/images/logo.png" alt="" height="23" class="pull-left">
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1" aria-expanded="false">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="first"><a href="https://protonmail.com/about" title="About">About</a></li>
+                    <li><a href="https://protonmail.com/security-details" title="Security">Security</a></li>
+                    <li class="active"><a href="https://protonmail.com/blog/" title="Blog">Blog</a></li>
+                    <li><a href="https://protonmail.com/careers" title="Careers">Careers</a></li>
+                    <li><a href="https://protonmail.com/support/" title="Support">Support</a></li>
+        		    <li class="dropdown">
+                        <span class="title">Enterprise <i class="fa fa-angle-down"></i></span>
+                        <ul class="">
+                            <li><a href="/business">ProtonMail Business</a></li>
+                            <li><a href="/gdpr">GDPR Compliance</a></li>
+                            <li><a href="/it-security-complete-guide-for-businesses">Guide to IT Security</a></li>
+                        </ul>
+                    </li>                    
+        		    <li><a href="https://mail.protonmail.com/login" title="Log In" class="btn btn-ghost btn-short">LOG IN</a></li>
+                    <li><a href="https://protonmail.com/signup" title="Sign Up" class="btn btn-default btn-short">SIGN UP</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </div>
+</nav>
+<div id="header-spacer"></div>
+
+<div class="container content">
+<div class="col-lg-10 col-lg-offset-1 content-area" id="main-column">
+	<div id="main" class="site-main" role="main">
+		
+			<div class="bar">
+				<div class="row">
+					<div class="col-sm-8">
+						<ul class="hidden-sm hidden-xs">
+                            <li class="cat-item"><a href="https://protonmail.com/blog/">All</a></li>
+                            	<li class="cat-item cat-item-9"><a href="https://protonmail.com/blog/category/news/">Articles &amp; News</a>
+</li>
+	<li class="cat-item cat-item-24"><a href="https://protonmail.com/blog/category/encryption/">Encryption</a>
+</li>
+	<li class="cat-item cat-item-25"><a href="https://protonmail.com/blog/category/privacy/">Privacy</a>
+</li>
+	<li class="cat-item cat-item-7"><a href="https://protonmail.com/blog/category/release-notes/">Releases</a>
+</li>
+	<li class="cat-item cat-item-6"><a href="https://protonmail.com/blog/category/security/">Security</a>
+</li>
+                        </ul>
+                        <select  name='cat' id='cat' class='form-control hidden-md hidden-lg' >
+	<option class="level-0" value="9">Articles &amp; News</option>
+	<option class="level-0" value="24">Encryption</option>
+	<option class="level-0" value="25">Privacy</option>
+	<option class="level-0" value="7">Releases</option>
+	<option class="level-0" value="6">Security</option>
+</select>
+
+						<!--
+						<select  name='cat' id='cat' class='form-control' >
+	<option class="level-0" value="9">Articles &amp; News</option>
+	<option class="level-0" value="24">Encryption</option>
+	<option class="level-0" value="25">Privacy</option>
+	<option class="level-0" value="7">Releases</option>
+	<option class="level-0" value="6">Security</option>
+</select>
+						-->
+
+					</div>
+					<div class="col-sm-4 text-right">
+						
+<!--a class="btn btn-link" target="_blank" href="https://plus.google.com/share?url=https://protonmail.com/blog/blog/bridge-open-source/" rel="publisher">
+        <i class="fa fa-google"></i>
+</a-->
+<a class="btn btn-link" target="_blank" href="http://www.facebook.com/sharer.php?u=https://protonmail.com/blog/blog/bridge-open-source/" title="Facebook">
+        <i class="fa fa-facebook"></i>
+</a>
+<a class="btn btn-link" target="_blank" href="http://twitter.com/share?text=ProtonMail Bridge is now open source!&url=https://protonmail.com/blog/blog/bridge-open-source/" title="Twitter">
+        <i class="fa fa-twitter"></i>
+</a>
+<a class="btn btn-link" target="_blank" href="https://protonmail.com/blog/feed/" title="RSS">
+        <i class="fa fa-rss"></i>
+</a>
+					</div>
+				</div>
+			</div>
+
+			<article id="post-6507" class="post-6507 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized tag-featured">
+
+	<header class="entry-header">
+		<h1 class="entry-title">ProtonMail Bridge is now open source!</h1>
+
+				<div class="entry-meta">
+			<span class="posted-on">Posted on <a href="https://protonmail.com/blog/bridge-open-source/" title="7:11 PM" rel="bookmark"><time class="entry-date published" datetime="2020-04-15T19:11:47+02:00">April 15, 2020</time><time class="updated" datetime="2020-04-15T19:11:48+02:00">April 15, 2020</time></a></span><span class="byline"> by <span class="author vcard"><a class="url fn n" href="https://protonmail.com/blog/author/richie-koch/" title="View all posts by Richie Koch">Richie Koch</a></span></span>		</div><!-- .entry-meta -->
+		
+	</header><!-- .entry-header -->
+
+<div class="post-image">
+<img width="1200" height="600" src="https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog.png" class="attachment-1200 size-1200 wp-post-image" alt="Illustration of ProtonMail Bridge open source" thumbnail="" srcset="https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog.png 2133w, https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog-300x150.png 300w, https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog-1024x512.png 1024w, https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog-768x384.png 768w, https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog-1536x768.png 1536w, https://protonmail.com/blog/wp-content/uploads/2020/04/protonmail-bridge-open-source-blog-2048x1024.png 2048w" sizes="(max-width: 1200px) 100vw, 1200px" /></div>
+
+		<div class="entry-content">
+		
+<p>We are one step closer to fully open sourcing all our apps. ProtonMail Bridge joins iOS and the web app as open source software, and it has also passed an independent security audit.</p>
+
+
+
+<p>Trust and transparency are core values of ProtonMail. We want you to know <a href="https://protonmail.com/about" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">who is on our team</a> and <a href="https://protonmail.com/blog/ad-free-business-model/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">how we protect your privacy</a>. Similarly, we want you to be able to see the code that makes up our apps and keeps your data safe. That’s why we have prioritized making all our apps open source.</p>
+
+
+
+<p>You can <a href="https://github.com/ProtonMail/proton-bridge" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">view the code</a> for ProtonMail Bridge for macOS, Windows, and Linux on our GitHub page. </p>
+
+
+
+<p><a href="https://protonmail.com/bridge/install" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)"><em>Download ProtonMail Bridge</em></a></p>
+
+
+
+<h2>Why open source matters</h2>
+
+
+
+<p>Our effort to open source all Proton apps began in 2015 with our ProtonMail <a href="https://protonmail.com/blog/protonmail-open-source/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">web app</a>, followed by our <a href="https://protonmail.com/blog/ios-open-source/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">iOS app</a>. Earlier this year, we open sourced <a href="https://protonvpn.com/blog/open-source/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">all of the ProtonVPN apps</a>. And finally, the Android app is now in the final stages before publishing its code as well.</p>
+
+
+
+<p>ProtonMail Bridge is a desktop application that allows you to fully integrate your ProtonMail account with any IMAP and SMTP email client, including Outlook, Thunderbird, or Apple Mail. Open sourcing the code lets anyone verify how the encryption process takes place through Bridge as the emails are transferred between your ProtonMail account and your desktop email app. </p>
+
+
+
+<p>Security experts can now examine the Bridge code and submit any findings via our <a href="https://protonmail.com/blog/protonmail-bug-bounty-program/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">bug bounty program</a>. By leveraging the entire IT security community, we are making it more likely that potential vulnerabilities are quickly discovered and fixed.</p>
+
+
+
+<h2>A better Internet is possible with open source</h2>
+
+
+
+<p>Open sourcing all our apps is the culmination of our development approach. </p>
+
+
+
+<p>We have long been an active member and supporter of the open source community. We contributed to the development of the open source VPN protocol <a href="https://protonmail.com/blog/lifetime-account-auction-success/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">WireGuard</a>, and we maintain two of the largest cryptographic libraries on the Internet, <a href="https://openpgpjs.org/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">OpenPGPjs</a> and <a href="https://gopenpgp.org/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">GopenPGP</a>.</p>
+
+
+
+<p>Because Proton is rooted in scientific rigor, transparency, and peer review, we believe in the open source ethos of showing your work. Users can verify our code and see how it works at any time. This leads to more secure and reliable digital products that integrate feedback from all our users and impact our whole community. </p>
+
+
+
+<p>In the same spirit of transparency, we have contracted the information security firm SEC Consult to conduct an independent security audit, and we are publishing <a href="https://protonmail.com/blog/wp-content/uploads/2020/04/Report_1907974_Proton_Technologies_AG_Source_Code_Review_-_ProtonMail_Bridge_1.2_public.pdf" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">their full report here</a>.</p>
+
+
+
+<p>You can also read our article describing the <a href="https://protonmail.com/blog/bridge-security-model" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">Bridge security model</a>. Raw code is only useful if you know how to read it. Providing this technical documentation helps more people understand the security features of Bridge.</p>
+
+
+
+<h2>Thank you for your support</h2>
+
+
+
+<p>All of this is possible because of our community. You allow us to continue prioritizing open source projects and furthering the Proton mission to build a safer Internet.</p>
+
+
+
+<p>Make sure to check our blog and follow us on social media for more product updates.</p>
+
+
+
+<p></p>
+
+
+
+<p><strong><em>You can get a </em></strong><a href="https://protonmail.com/signup" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)"><strong><em>free secure email account from ProtonMail here</em></strong></a><strong><em>.</em></strong></p>
+
+
+
+<p><strong><em>We also provide a </em></strong><a href="https://protonvpn.com/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)"><strong><em>free VPN service</em></strong></a><strong><em> to protect your privacy.</em></strong></p>
+
+
+
+<p><strong><em>ProtonMail and ProtonVPN are funded by community contributions. If you would like to support our development efforts, you can upgrade to a </em></strong><a href="https://protonmail.com/support/knowledge-base/paid-plans/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)"><strong><em>paid plan</em></strong></a><strong><em> or </em></strong><a href="https://protonmail.com/donate" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)"><strong><em>donate</em></strong></a><strong><em>. Thank you for your support.</em></strong></p>
+<!-- I got these buttons from mrwebsolution.in :) --><div class="csbtns">Share This!<a class="csbtns_reddit_share" href="http://reddit.com/submit?url=https://protonmail.com/blog/bridge-open-source/&amp;title=ProtonMail Bridge is now open source!" target="_blank"><img title="Reddit" class="csbtns" alt="Share on Reddit" src="https://protonmail.com/blog/wp-content/plugins/custom-share-buttons/buttons/somacro/reddit.png" /></a><a class="csbtns_facebook_share" href="http://www.facebook.com/sharer.php?u=https://protonmail.com/blog/bridge-open-source/" target="_blank"><img title="Facebook" class="csbtns" alt="Share on Facebook" src="https://protonmail.com/blog/wp-content/plugins/custom-share-buttons/buttons/somacro/facebook.png" /></a><a class="csbtns_email_share" href="mailto:?Subject=ProtonMail Bridge is now open source!&amp;Body=%20https://protonmail.com/blog/bridge-open-source/"><img title="Email" class="csbtns" alt="Email this to someone" src="https://protonmail.com/blog/wp-content/plugins/custom-share-buttons/buttons/somacro/email.png" /></a><a class="csbtns_twitter_share" href="http://twitter.com/share?url=https://protonmail.com/blog/bridge-open-source/&amp;text=ProtonMail+Bridge+is+now+open+source%21+" target="_blank"><img title="Twitter" class="csbtns" alt="Tweet about this on Twitter" src="https://protonmail.com/blog/wp-content/plugins/custom-share-buttons/buttons/somacro/twitter.png" /></a><a href="/signup" class="btn btn-primary pull-right" style="font-size:1.5rem">Get a Free Encrypted Email Account</a></div>		<div class="clearfix"></div>
+			</div><!-- .entry-content -->
+	
+
+	<footer class="entry-meta">
+				<div class="entry-meta-category-tag">
+						<span class="cat-links">
+				<span class="categories-icon glyphicon glyphicon-th-list" title="Posted in"></span> <a href="https://protonmail.com/blog/category/uncategorized/" rel="category tag">Uncategorized</a>			</span>
+			
+						<span class="tags-links">
+				<span class="tags-icon glyphicon glyphicon-tags" title="Tagged"></span>&nbsp; <a href="https://protonmail.com/blog/tag/featured/" rel="tag">featured</a>			</span>
+					</div><!--.entry-meta-category-tag-->
+		
+		<div class="entry-meta-comment-tools">
+						<span class="comments-link"><a href="https://protonmail.com/blog/bridge-open-source/#respond" class="btn btn-default btn-xs" ><span class="comment-icon glyphicon glyphicon-comment"><small class="comment-total">0</small></span></a></span>
+			
+			<a class="post-edit-link btn btn-default btn-xs" href="" title="Edit"><i class="edit-post-icon glyphicon glyphicon-pencil" title="Edit"></i></a>		</div><!--.entry-meta-comment-tools-->
+	</footer><!-- .entry-meta -->
+</article><!-- #post-## -->
+
+
+			
+
+
+
+<p><em>About the Author</em></p>
+<div class="author well">
+	<div class="row">
+		<div class="col-md-2 hidden-sm">
+			<img src="https://protonmail.com/images/stripeLogo.png" alt="Richie Koch" class="img-circle">
+		</div>
+		<div class="col-md-10 col-sm-12">
+			<h4><strong>Richie Koch</strong></h4>
+			<p>Prior to joining Proton, Richie spent several years working on tech solutions in the developing world. He joined the Proton team to advance the rights of online privacy and freedom.</p>
+		</div>
+	</div>
+</div>
+
+
+
+			
+			<p>&nbsp;</p>
+			<div id="related-posts">
+
+				<h3>Learn More</h3>
+
+				<div class="row">
+					<div class="col-md-6">
+					<h5><a href="https://protonmail.com/blog/proton-bridge-linux-launch/"><strong>ProtonMail launches Bridge for Linux</strong></a></h5><span class="date"><em>April 1, 2020 in <a href="https://protonmail.com/blog/category/news/">Articles &amp; News</a></em></span><div>We are excited to announce that starting today, you can use Bridge to connect your ProtonMail account with your desktop email app on the Linux operating system. ProtonMail&hellip;</div>					</div>
+					<div class="col-md-6">
+					<h5><a href="https://protonmail.com/blog/protonmail-threat-model/"><strong>The ProtonMail Threat Model</strong></a></h5><span class="date"><em>May 19, 2014 in <a href="https://protonmail.com/blog/category/security/">Security</a></em></span><div>ProtonMail is designed to guard against a broad range of threats. But there is no such thing as perfect security. This threat model describes the threats ProtonMail can&hellip;</div>					</div>
+				</div><!--/.row-->
+
+				<div class="row">
+					<div class="col-md-6">
+					<h5><a href="https://protonmail.com/blog/ios-open-source/"><strong>ProtonMail iOS app goes open source!</strong></a></h5><span class="date"><em>October 30, 2019 in <a href="https://protonmail.com/blog/category/news/">Articles &amp; News</a></em></span><div>We’re happy to announce that the ProtonMail iOS app is now fully open source.&nbsp; We believe in transparency, the power of community, and building a more private and&hellip;</div>					</div>
+					<div class="col-md-6">
+					<h5><a href="https://protonmail.com/blog/pm-me-short-email-domain/"><strong>pm.me – your new short email domain for ProtonMail</strong></a></h5><span class="date"><em>March 29, 2018 in <a href="https://protonmail.com/blog/category/news/">Articles &amp; News</a></em></span><div>For a long time, some members of our community have been asking us for a shorter, easy-to-share email address. Part of this comes from the difficulty of spelling&hellip;</div>					</div>
+				</div><!--/.row-->
+
+			</div><!--/#related-posts-->
+
+			
+			
+
+<div id="comments" class="comments-area">
+
+	
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/blog/bridge-open-source/#respond" style="display:none;">Cancel reply</a></small></h3><form action="https://protonmail.com/blog/wp-comments-post.php" method="post" id="commentform" class="comment-form form form-horizontal" novalidate><p class="comment-notes"><span id="email-notes">Your email address will not be published.</span></p><div class="form-group row"><label class="control-label col-md-2" for="comment">Comment</label> <div class="col-md-10"><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true" class="form-control"></textarea></div></div><p class="help-block">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt;</code> <code>&lt;abbr title=&quot;&quot;&gt;</code> <code>&lt;acronym title=&quot;&quot;&gt;</code> <code>&lt;b&gt;</code> <code>&lt;blockquote cite=&quot;&quot;&gt;</code> <code>&lt;cite&gt;</code> <code>&lt;code&gt;</code> <code>&lt;del datetime=&quot;&quot;&gt;</code> <code>&lt;em&gt;</code> <code>&lt;i&gt;</code> <code>&lt;q cite=&quot;&quot;&gt;</code> <code>&lt;s&gt;</code> <code>&lt;strike&gt;</code> <code>&lt;strong&gt; </code> </p><div class="form-group row"><label class="control-label col-md-2" for="author">Name</label> <div class="col-md-10"><input id="author" name="author" type="text" value="" size="30" class="form-control" /></div></div>
+<div class="form-group row"><label class="control-label col-md-2" for="email">Email</label> <div class="col-md-10"><input id="email" name="email" type="email" value="" size="30" class="form-control" /></div></div>
+<div class="form-group row"><label class="control-label col-md-2" for="url">Website</label> <div class="col-md-10"><input id="url" name="url" type="url" value="" size="30" class="form-control" /></div></div>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="btn btn-primary" value="Post Comment" /> <input type='hidden' name='comment_post_ID' value='6507' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p>		<p class="antispam-group antispam-group-q" style="clear: both;">
+			<label>Current ye@r <span class="required">*</span></label>
+			<input type="hidden" name="antspm-a" class="antispam-control antispam-control-a" value="2020" />
+			<input type="text" name="antspm-q" class="antispam-control antispam-control-q" value="5.0" autocomplete="off" />
+		</p>
+		<p class="antispam-group antispam-group-e" style="display: none;">
+			<label>Leave this field empty</label>
+			<input type="text" name="antspm-e-email-url-website" class="antispam-control antispam-control-e" value="" autocomplete="off" />
+		</p>
+</form>	</div><!-- #respond -->
+	
+
+
+        
+        
+
+</div><!-- #comments -->
+
+
+
+			</div>
+</div>
+</div><!--/.container-->
+
+<div class="free-email-section">
+	<div class="container text-center">
+		<h5 class="text-center">Get your secure email account</h5>
+		<a href="/signup" class="btn btn-primary btn-lg">Create Account</a>
+	</div><!--/.container-->
+</div>
+
+<div class="contact-cols">
+    <div class="container content">
+        <p>Proton Technologies AG</p>
+        <div class="row">
+            <div class="col-md-3">
+                <p>
+                    Chemin du Pré-Fleuri, 3 <br>CH-1228 Plan-les-Ouates, Genève, Switzerland
+                </p>
+            </div><!--/.col-->
+            <div class="col-md-3">
+                <p>
+                    <i class="fa fa-envelope"></i> General: <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#099;&#111;&#110;&#116;&#097;&#099;&#116;&#064;&#112;&#114;&#111;&#116;&#111;&#110;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">&#099;&#111;&#110;&#116;&#097;&#099;&#116;&#064;&#112;&#114;&#111;&#116;&#111;&#110;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;</a>
+<br>
+                    <i class="fa fa-envelope"></i> Media: <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#109;&#101;&#100;&#105;&#097;&#064;&#112;&#114;&#111;&#116;&#111;&#110;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">&#109;&#101;&#100;&#105;&#097;&#064;&#112;&#114;&#111;&#116;&#111;&#110;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;</a>
+                </p>
+            </div><!--/.col-->
+            <div class="col-md-3">
+                <p>
+                    For support inquiries, please visit<br>
+                    <a href="https://protonmail.com/support" class="sp-before arrow-icon">
+                        <i class="fa fa-arrow-right"></i> protonmail.com/support
+                    </a>
+                </p>
+            </div><!--/.col-->
+            <div class="col-md-3">
+                <p>
+                    For security related discussions<br>
+		    <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#101;&#099;&#117;&#114;&#105;&#116;&#121;&#064;&#112;&#114;&#111;&#116;&#111;&#110;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">&#115;&#101;&#099;&#117;&#114;&#105;&#116;&#121;&#064;&#112;&#114;&#111;&#116;&#111;&#110;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;</a>
+                </p>
+            </div><!--/.col-->
+        </div><!--/.cols4-->
+    </div><!--/.container-->
+</div>
+
+<div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2_4">
+                <h2 class="h4">ProtonMail</h2>
+                <ul>
+                    <li><a href="/pricing">Pricing</a></li>
+                    <li><a href="/security-details">Security</a></li>
+                    <li><a href="https://shop.protonmail.com">Shop</a></li>
+                    <li><a href="https://protonmail.com/press">Press/Media Kit</a></li>
+                    <li><a href="https://protonmail.com/tor">Onion Site</a></li>
+                    <li><a href="https://protonstatus.com/">ProtonMail Status</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-2_4">
+                <h2 class="h4">Features</h2>
+                <ul>
+                    <li><a href="https://itunes.apple.com/us/app/protonmail-encrypted-email/id979659905">iOS App</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=ch.protonmail.android">Android App</a></li>
+                    <li><a href="/bridge">IMAP/SMTP Bridge</a></li>
+                    <li><a href="https://protonvpn.com/">ProtonVPN</a></li>
+                    <li><a href="https://protonmail.com/support/knowledge-base/business/">ProtonMail Business</a></li>
+                    <li><a href="https://protonmail.com/support/knowledge-base/encrypted-contacts/">Encrypted Contacts</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-2_4">
+                <h2 class="h4">Legal</h2>
+                <ul>
+                    <li><a href="/imprint">Imprint</a></li>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+                    <li><a href="https://protonmail.com/blog/transparency-report/">Transparency Report</a></li>
+                    <li><a href="mailto:abuse@protonmail.ch">Report Abuse</a></li>
+                    <li><a href="/gdpr">GDPR Compliance</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-2_4">
+                <h2 class="h4">Company</h2>
+                <ul>
+                    <li><a href="https://protonmail.com/blog/">Blog</a></li>
+                    <li><a href="https://protonmail.com/about">Team</a></li>
+                    <li><a href="https://protonmail.com/careers">Careers</a></li>
+                    <li><a href="https://protonmail.com/support/">Support</a></li>
+                    <li><a href="https://protonmail.com/donate">Donate</a></li>
+                    <li><a href="https://protonmail.com/blog/openpgpjs-3-release/">Open Source</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-2_4">
+                <h2 class="h4">Social</h2>
+                <ul>
+                    <li class="fb"><a href="https://facebook.com/ProtonMail"><i class="fa fa-facebook"></i><span>Facebook</span></a></li>
+                    <li class="tw"><a href="https://twitter.com/ProtonMail"><i class="fa fa-twitter"></i><span>Twitter</span></a></li>
+                    <!--li class="gplus"><a href="https://plus.google.com/+protonmail/posts" rel="publisher"><i class="fa fa-google"></i><span>Find us on Google+</span></a></li-->
+                    <li class="fb-forum"><a target="_blank" href="https://protonmail.uservoice.com/"><i class="fa fa-comments"></i><span>Feedback Forum</span></a></li>
+                    <li class="fb-reddit"><a target="_blank" href="https://www.reddit.com/r/ProtonMail/"><i class="fa fa-reddit-alien"></i><span>Reddit</span></a></li>
+                    <li class="insta"><a target="_blank" href="https://www.instagram.com/protonmail/"><i class="fa fa-instagram"></i><span>Instagram</span></a></li>                    
+                </ul>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p class="text-center">&copy; 2020 Proton Technologies AG. All Rights Reserved.</p>
+    </div>
+</div>
+
+<script type='text/javascript' src='https://protonmail.com/blog/wp-content/plugins/anti-spam/js/anti-spam-5.0.js'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var es_widget_notices = {"es_email_notice":"Please enter email address","es_success_message":"Successfully Subscribed.","es_success_notice":"Your subscription was successful! Kindly check your mailbox and confirm your subscription. If you don't see the email within a few minutes, check the spam\/junk folder.","es_email_exists":"Email Address already exists!","es_error":"Oops.. Unexpected error occurred.","es_invalid_email":"Invalid email address","es_try_later":"Please try after some time","es_ajax_url":"https:\/\/protonmail.com\/blog\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://protonmail.com/blog/wp-content/plugins/email-subscribers/widget/es-widget.js?ver=5.3.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var es_widget_page_notices = {"es_email_notice":"Please enter email address","es_success_message":"Successfully Subscribed.","es_success_notice":"Your subscription was successful! Kindly check your mailbox and confirm your subscription. If you don't see the email within a few minutes, check the spam\/junk folder.","es_email_exists":"Email Address already exists!","es_error":"Oops.. Unexpected error occurred.","es_invalid_email":"Invalid email address","es_try_later":"Please try after some time","es_ajax_url":"https:\/\/protonmail.com\/blog\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://protonmail.com/blog/wp-content/plugins/email-subscribers/widget/es-widget-page.js?ver=5.3.2'></script>
+<script type='text/javascript' src='https://protonmail.com/blog/wp-includes/js/wp-embed.min.js?ver=5.3.2'></script>
+
+<script type="text/javascript" src="https://protonmail.com/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://protonmail.com/blog/wp-content/themes/bootstrap-basic/js/vendor/jquery.hoverIntent.min.js"></script>
+
+<script type="text/javascript" defer>
+	jQuery( function() {
+		setFooter();
+		jQuery(window).on('resize', setFooter);
+
+		// fixed header
+		function fixedHeader() {
+   	 		if (window.pageYOffset>160) {
+        			jQuery('#header').addClass('collapsed');
+   			}
+    			else {
+        			jQuery('#header').removeClass('collapsed');
+    			}
+		}
+
+		// Excerpt Height
+        	function ellipsizeExcerpts() {
+            		jQuery('.posts .post .excerpt').each( function() {
+                		var wordArray = jQuery(this).text().split(' ');
+                		if (jQuery(this)[0].scrollHeight == jQuery(this)[0].offsetHeight) {
+              		      		jQuery(this)[0].innerHTML = '<p>' + wordArray.join(' ') + '</p>';
+                		}
+                		while(jQuery(this)[0].scrollHeight > jQuery(this)[0].offsetHeight) {
+                    			wordArray.pop();
+                    			jQuery(this)[0].innerHTML = '<p>' + wordArray.join(' ') + '...</p>';
+                		}
+           		});
+       		}
+
+		jQuery(window).on("load resize",function(e){
+			 ellipsizeExcerpts();
+		});
+
+		jQuery(window).on("load resize scroll",function(e){
+    			fixedHeader();
+		});
+	});
+
+	function setFooter() {
+		if (jQuery('body').height()<jQuery(window).height()) {
+			jQuery('footer').addClass('sticky');
+		}
+		else {
+			jQuery('footer').removeClass('sticky');
+		}
+	}
+	jQuery('#mobileMenuToggle').on('click', function() {
+		jQuery('#mobileMenu').toggle();
+	});
+
+
+	// Add Bootstrap classes to the theme
+	jQuery('.searchform').addClass('form-inline');
+	jQuery('.searchform input').addClass('form-control');
+	jQuery('.searchform button').addClass('btn btn-primary');
+	jQuery('.form-submit input[type="submit"]').addClass('btn btn-primary');
+	jQuery('.comment-form textarea').addClass('form-control');
+	jQuery('.comment-form input[type="text"], .comment-form input[type="email"], .comment-form input[type="url"]').addClass('form-control input-lg');
+	jQuery('.bar li a').addClass('btn btn-ghost alt');
+	jQuery('#commentform').removeClass('form-horizontal');
+
+
+	jQuery('#header li.dropdown').hoverIntent(
+        	function() { jQuery(this).find('ul').addClass('open') },
+        	function() { jQuery(this).find('ul').removeClass('open') }
+    	);
+
+var dropdown = document.getElementById("cat");
+function onCatChange() {
+	if ( dropdown.options[dropdown.selectedIndex].value > 0 ) {
+		location.href = "https://protonmail.com/blog/?cat="+dropdown.options[dropdown.selectedIndex].value;
+	}
+}
+if (typeof dropdown !== 'undefined') {
+	dropdown.onchange = onCatChange;
+}
+
+var originalFeaturedExcerptText = jQuery('.home .featured .excerpt p').eq(0).text().slice(0, -3);
+
+function featuredExcerptSize() {
+
+	// only for homepage
+	if (!jQuery('body.home').length) { 
+		return;
+	}
+
+	// we need to hide text before getting the height.
+	jQuery('.home .featured .excerpt').hide();
+	var featuredHeight = jQuery('.home .featured').outerHeight();
+	var featuredTitleHeight = jQuery('.home .featured h3').outerHeight();
+	var featuredLinkHeight = jQuery('.home .featured .btn-ghost').outerHeight();
+	var padding = 160;
+	var excerptHeight = featuredHeight - (featuredTitleHeight + featuredLinkHeight + padding);
+	// console.log(featuredHeight, featuredTitleHeight, featuredLinkHeight, excerptHeight);
+	jQuery('.home .featured .excerpt').show();
+	ellipsis(excerptHeight);
+}
+
+function ellipsis(number) {
+	if (number < 1) {
+		jQuery('.home .featured .excerpt p').text('');
+	}
+	else {
+		// 40 characters = 26 height roughly.
+		var rows = number/26;
+		var chars = rows * 40;
+		var text = originalFeaturedExcerptText;
+		text = text.substring(0, chars);
+		jQuery('.home .featured .excerpt p').text(text + '...');
+	}
+}
+
+// event listener
+jQuery(window).on('load resize', function() {
+	featuredExcerptSize();
+});
+
+// ARIA screen reader for links
+jQuery('.single .entry-content a').each( function() {
+    var label = jQuery(this).attr('aria-label');
+    var target = jQuery(this).attr('target');
+    if (label === undefined) {
+        var text = jQuery(this).text();
+        if (target === '_blank') {
+            text += ' (opens in a new tab)';
+        }
+        jQuery(this).attr('aria-label', text);
+    }
+});
+</script>
+
+</body>
+</html>

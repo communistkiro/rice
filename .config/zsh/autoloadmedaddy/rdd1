@@ -1,0 +1,30 @@
+#!/bin/zsh
+# dir of alba -> dir of artist/alba or dir of mp3 if dirs don't follor format
+# assumes artist, album, year tags exist
+function rdd1 () {
+  ls . > /tmp/d;
+  while IFS= read -r d; do;
+    if [[ -d ${d} ]]; then;
+      /bin/find ${d} -regextype posix-extended -iregex ".*(mp3|wav|flac|acc|m4a|ogg)" -type f > /tmp/m && (
+        while IFS= read -r m; do;
+          z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
+          mkdir ${z};
+          /bin/mv ${m} ${z};
+          /bin/mv ${d}/*jpg ${z} || /bin/mv ${d}/*png ${z} || /bin/mv ${d}/*jpeg ${z};
+        done < /tmp/m;
+        rmdir * 2&> /dev/null;
+      )
+    fi;
+  done < /tmp/d;
+  ls . > /tmp/d;
+  while IFS= read -r d; do;
+    mkdir -p ${d%% \[*}; 
+    if [[ ${d} =~ ',[0-9]{4})]' ]]; then;
+      /bin/mv ${d} ${d/,[0-9](#c4))]/)]};
+      /bin/mv ${d/,[0-9](#c4))]/)]} ${d%% \[*}; 
+    else;
+      /bin/mv ${d} ${d%% \[*}; 
+    fi;
+  done < /tmp/d;
+  rmdir ${d}*;
+}

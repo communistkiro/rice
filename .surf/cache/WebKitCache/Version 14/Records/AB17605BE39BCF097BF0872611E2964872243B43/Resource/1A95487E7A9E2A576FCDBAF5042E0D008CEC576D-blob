@@ -1,0 +1,2418 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Physics News - Physics News, Material Sciences, Science News, Physics</title>
+	<meta http-equiv="Keywords" content="Physics News, Science news, Technology News, Physics, Materials, Nanotech, Technology, Science" name="Keywords">
+	<meta http-equiv="Description" content="Physorg.com provides the latest news on physics, materials, nanotech, science and technology.  Updated Daily." name="Description">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="ROBOTS" content="INDEX,FOLLOW" />
+  <meta name="ROBOTS" content="noodp" />
+  <link rel="canonical" href="https://phys.org/physics-news/" />
+  <link rel="top" title="" href="/" />
+	<link rel="manifest" href="/manifest.json">
+  <link rel="search" href="https://phys.org/search/" />  
+  
+    <link rel="alternate" title="All news stories" href="https://phys.org/rss-feed/physics-news/" type="application/rss+xml" />
+    <link rel="alternate" title="Spotlight news only" href="https://phys.org/rss-feed/breaking/physics-news/" type="application/rss+xml" />
+
+	<link rel="shortcut icon" href="https://phys.b-cdn.net/favicon.ico" type="image/x-icon" />
+	<link rel="icon" href="https://phys.b-cdn.net/favicon.ico" type="image/x-icon" />
+        <meta name="apple-itunes-app" content="app-id=356443503">
+        <meta name="google-play-app" content="com.PhysOrg.RssLite">	
+        <meta property="twitter:account_id" content="17248121" />
+	<meta property="fb:app_id" content="163850683679377" />
+	<meta property="fb:pages" content="47849178041" />
+	<meta property="og:title" content="Physics News - Physics News, Material Sciences, Science News, Physics" />
+	<meta property="og:description" content="Physorg.com provides the latest news on physics, materials, nanotech, science and technology.  Updated Daily." />
+	<meta property="og:image" content="https://phys.b-cdn.net/tmpl/v5/img/phys_308px.png" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://phys.org/physics-news/" />
+    
+    
+    <link rel="stylesheet" href="https://phys.b-cdn.net/tmpl/v6/css/libs.132850488.css">
+	<link rel="stylesheet" href="https://phys.b-cdn.net/tmpl/v6/css/style.132850488.css">
+    <link rel="preload" as="image" href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg">
+
+        
+          
+    
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	  ga('create', 'UA-73855-5', 'auto');
+	  ga('send', 'pageview');
+	</script>
+          
+
+  </head>
+
+  
+
+    <body itemscope="" itemtype="http://schema.org/WebPage">
+        
+            <header class="header">
+                <nav class="navbar bg-primary">
+                    <div class="container">
+                        <div class="row align-items-center pt-4 pt-lg-0">
+                            <div class="col-3  col-md-4 col-lg-2 order-2 order-lg-1">
+                                <a class="navbar-brand" href="https://phys.org/">
+                                    <img src="https://phys.b-cdn.net/tmpl/v6/img/logo-header.png" alt="Phys.org">
+                                </a>
+                            </div>					
+                            
+                            <div class="col-auto px-lg-2 mt-2 mt-sm-0 ml-auto ml-lg-0  order-3 order-lg-2 d-print-none">
+                                <button type="button" class="header-button" data-toggle="collapse" data-target="#collapseNavigation" aria-expanded="false" aria-controls="collapseNavigation">
+                                    <span class="icon-nav"><span></span></span>
+                                    <span class="d-none d-lg-block">Topics</span>
+                                </button>
+                            </div>
+                            
+                            <div class="col-12 col-lg-7 col-xl-6 mb-sm-1 my-lg-0 ml-auto d-flex align-items-center order-1 order-lg-3 d-print-none">
+                                <ul class="d-flex header-site-nav ml-lg-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/weekly-news/">Week's top</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/latest-news/">Latest news</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/unread-news/">Unread news</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" data-toggle="modal" data-target="#subscribe">Subscribe</a>
+                                    </li>
+                                </ul>
+                                <form class="header-search ml-auto ml-lg-0" action="https://phys.org/search/" method="get">
+                                    <fieldset class="header-search__group">
+                                        <input name="search" class="header-search__field" type="search" placeholder="Search" aria-label="Search">
+                                        <input name="s" class="header-search__field" type="hidden" value="0">
+                                        <button class="header-search__submit" type="submit">
+                                            <svg>
+                                                <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#search" x="0" y="0"/>
+                                            </svg>
+                                        </button>
+                                    </fieldset>
+                                    <button type="button" class="header-search__show mr-4 mr-sm-5 mx-md-5">
+                                        <svg>
+                                            <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#search" x="0" y="0"/>
+                                        </svg>
+                                    </button>
+                                </form>						
+                                <div class="dropdown">
+                                        <a class="header-account" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <svg>
+            <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_account" x="0" y="0"/>
+        </svg>
+            </a>
+    <div class="dropdown-menu dropdown-menu-right dropdown-menu-tip fade mt-3" aria-labelledby="dropdownMenuButton">
+                                        
+            <div class="dropdown-content px-5 mx-5 py-4">
+               <h3 class="text-extra-large font-weight-normal text-center text-nowrap mb-4">Science X Account</h3>
+               <form method="post" action="https://sciencex.com/profile/login/">
+                   <input type="hidden" name="status" value="login">
+                   <input type="hidden" name="redirect" value="1">
+                   <input type="hidden" name="ref" value="https://phys.org/physics-news/">
+                   <div class="text-center px-lg-2">
+                     <div class="mb-3">
+                       <div data-focus="input" class="login-form-item">
+                         <div class="login-form-icon">
+                           <i class="icon login_field_email"></i>
+                         </div>
+                         <!-- icon -->
+                         <input name="email" type="text" class="form-control input-styled input-email" placeholder="email" required="">
+                       </div>
+                     </div>
+                     <!-- col -->
+                     <div class="mb-3">
+                       <div data-focus="input" class="login-form-item">
+                         <div class="login-form-icon">
+                           <i class="icon login_field_password"></i>
+                         </div>
+                         <!-- icon -->
+                         <input name="passwd" type="password" class="form-control input-styled input-password" placeholder="password" required="">
+                       </div>
+                     </div>
+                     <!-- col -->
+                     <div class="mb-3 text-left">
+                       <div data-focus="input" class="login-form-item">
+                         <input class="modal-custom-form__checkbox bg-white" name="remember" type="checkbox" id="log_persistent" checked="checked">
+                         <label for="log_persistent">Remember me</label>
+                       </div>
+                     </div>
+                     <!-- col -->
+                     <div class="mt-2 mb-2 mb-lg-3">
+                          <button type="submit" class="btn btn-sm btn-primary btn-block">Sign In</button>
+                     </div>
+                       <p class="mb-2 mb-lg-3">
+                         <a href="https://sciencex.com/profile/login/" class="login-link">
+                           Click here to sign in with
+                               <svg>
+                                   <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#logo_fb" x="0" y="0"/>
+                               </svg>
+                                   or
+                                <svg>
+                                   <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#logo_google" x="0" y="0"/>
+                               </svg>
+                         </a> 
+                       </p>
+                       <p class="mb-2 mb-lg-3">
+                         <a href="https://sciencex.com/profile/pwdreset/">Forget Password?</a>
+                       </p>
+                       <div class="mb-2 mb-lg-3">
+                         <a href="https://sciencex.com/profile/register/" class="btn btn-sm btn-white btn-block">Not a member?
+                           <b>Sign up</b>
+                         </a>
+                       </div>
+                       <p>
+                           <a class="font-weight-normal" href="https://sciencex.com/help/account/">Learn more</a>
+                       </p>
+                     </div>
+                     <!-- col -->
+                   </div>
+                   <!-- row -->
+                  </form>
+            </div>
+                               
+    </div>
+    <!-- //dropdown -->
+                                  
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                    <nav class="bg-secondary position-relative">
+           <div class="header-collapse collapse" id="collapseNavigation">
+                <div class="container bg-secondary py-2" >
+                    <div class="dropdown-nav">                        
+                        <div class="mx-auto mt-5 loader"><span></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="container py-2 d-print-none" id="secondaryNav">
+                <div class="row">
+                    <div class="col-md-12 col-xl-9 offset-xl-1">
+                        <ul class="d-flex header-articles-nav justify-content-between flex-wrap" role="menubar">
+                                                       <li class="nav-item" role="menuitem">
+                                <a class="nav-link" href="https://phys.org/nanotech-news/">Nanotechnology</a>                         
+                            </li>                            
+                                                        <li class="nav-item" role="menuitem">
+                                <a class="nav-link active" href="https://phys.org/physics-news/">Physics</a>                         
+                            </li>                            
+                                                        <li class="nav-item" role="menuitem">
+                                <a class="nav-link" href="https://phys.org/earth-news/">Earth</a>                         
+                            </li>                            
+                                                        <li class="nav-item" role="menuitem">
+                                <a class="nav-link" href="https://phys.org/space-news/">Astronomy &amp; Space</a>                         
+                            </li>                            
+                                                        <li class="nav-item" role="menuitem">
+                                <a class="nav-link" href="https://phys.org/technology-news/">Technology</a>                         
+                            </li>                            
+                                                        <li class="nav-item" role="menuitem">
+                                <a class="nav-link" href="https://phys.org/chemistry-news/">Chemistry</a>                         
+                            </li>                            
+                                                        <li class="nav-item" role="menuitem">
+                                <a class="nav-link" href="https://phys.org/biology-news/">Biology</a>                         
+                            </li>                            
+                                                        <li class="nav-item" role="menuitem">
+                                <a class="nav-link" href="https://phys.org/science-news/">Other Sciences</a>                         
+                            </li>                            
+                                                    </ul>
+                    </div>
+                </div>
+            </div>
+    </nav>
+            </header>
+        
+        
+        
+        
+<main class="pt-2">
+		<div class="container-fluid">			
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+				  <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <a itemprop="item" href="https://phys.org/">
+                        <span itemprop="name">Home</span>
+                        <meta itemprop="position" content="1"/>
+                    </a>
+                  </li>
+                  				  <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <span itemprop="name">Physics</span>
+                    <meta itemprop="position" content="2"/>
+                  </li>
+				  				  				</ol>
+			</nav>
+			
+			<div class="row no-gutters">
+				<div class="col-7 col-lg-6 pr-3">
+					<div>
+						<p class="text-muted text-low mb-0">
+							<span class="text-uppercase">Last update:</span>
+							<time>10 hours ago</time>
+						</p>
+					</div>
+					<div class="mb-3 text-low">
+						<a href="https://phys.org/news/2020-04-didnt-universe-annihilate-neutrinos.html"><strong>Why didn't the universe annihilate itself? Neutrinos may hold the answer</strong></a>
+					</div>
+					<div class="row">
+						<div class="col-auto">
+							<h1 class="text-large mb-2">Physics news</h1>
+						</div>
+						<div class="ml-auto mt-2 col-md-5 col-lg-auto">
+							<ul class="breaking-sorting">
+    <li class="breaking-sorting__item breaking-sorting__dropdown">
+        <a class="breaking-sorting__button breaking-sorting__dropdown-button" href="https://phys.org/physics-news/sort/date/all/">
+            <span>Date</span>
+        </a>
+        <div class="breaking-sorting__dropdown-content">							
+            <a href="https://phys.org/physics-news/sort/date/6h/">6 hours</a>
+            <a href="https://phys.org/physics-news/sort/date/12h/">12 hours</a>
+            <a href="https://phys.org/physics-news/sort/date/1d/">1 day</a>
+            <a href="https://phys.org/physics-news/sort/date/3d/">3 days</a>
+            <a href="https://phys.org/physics-news/sort/date/all/">all</a>					
+        </div>	
+    </li> 
+    <li class="breaking-sorting__item breaking-sorting__dropdown">
+        <a class="breaking-sorting__button breaking-sorting__dropdown-button" href="https://phys.org/physics-news/sort/rank/all/">
+            <span>Rank</span>
+        </a>
+        <div class="breaking-sorting__dropdown-content">							
+            <a href="https://phys.org/physics-news/sort/rank/1d/">Last day</a>
+            <a href="https://phys.org/physics-news/sort/rank/1w/">1 week</a>
+            <a href="https://phys.org/physics-news/sort/rank/1m/">1 month</a>
+            <a href="https://phys.org/physics-news/sort/rank/all/">all</a>				
+        </div>	
+    </li> 
+    <li class="breaking-sorting__item breaking-sorting__dropdown">
+        <a class="breaking-sorting__button breaking-sorting__dropdown-button" href="https://phys.org/physics-news/sort/liverank/all/">
+            <span>LiveRank</span>
+        </a>
+        <div class="breaking-sorting__dropdown-content">							
+            <a href="https://phys.org/physics-news/sort/liverank/1d/">Last day</a>
+            <a href="https://phys.org/physics-news/sort/liverank/1w/">1 week</a>
+            <a href="https://phys.org/physics-news/sort/liverank/1m/">1 month</a>
+            <a href="https://phys.org/physics-news/sort/liverank/all/">all</a>		
+        </div>	
+    </li> 
+    <li class="breaking-sorting__item breaking-sorting__dropdown">
+        <a class="breaking-sorting__button breaking-sorting__dropdown-button" href="https://phys.org/physics-news/sort/popular/all/">
+            <span>Popular</span>
+        </a>
+        <div class="breaking-sorting__dropdown-content">							
+            <a href="https://phys.org/physics-news/sort/popular/1d/">Last day</a>
+            <a href="https://phys.org/physics-news/sort/popular/1w/">1 week</a>
+            <a href="https://phys.org/physics-news/sort/popular/1m/">1 month</a>
+            <a href="https://phys.org/physics-news/sort/popular/all/">all</a>	
+        </div>	
+    </li>    
+</ul>                      
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<div class="sorted-news-list px-3" data-role="page" data-page="1">
+								    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-quantum-metasurface-simultaneously-multiple-properties.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/aquantummeta.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-quantum-metasurface-simultaneously-multiple-properties.html">A quantum metasurface that can simultaneously control multiple properties of light</a></h3>
+                <p class="mb-1 pr-1">
+                    Metasurfaces are artificial materials designed at the nanoscale, which can control the scattering of light with exceptionally high precision. Over the past decade or so, these materials have been used to create a variety ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Optics & Photonics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"><a href="https://phys.org/editorials/">
+  <span class="ml-2 badge a_editorial">feature</span>
+</a>
+</span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    14 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>1</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>808</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-hot-qubits-biggest-constraints-quantum.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/hotqubitsbre.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-hot-qubits-biggest-constraints-quantum.html">Hot qubits break one of the biggest constraints to practical quantum computers</a></h3>
+                <p class="mb-1 pr-1">
+                    Most quantum computers being developed around the world will only work at fractions of a degree above absolute zero. That requires multi-million-dollar refrigeration and as soon as you plug them into conventional electronic ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Quantum Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    12 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>654</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-satellite-galaxies-milky-dark-theory.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/satellitegal.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-satellite-galaxies-milky-dark-theory.html">Satellite galaxies of the Milky Way help test dark matter theory</a></h3>
+                <p class="mb-1 pr-1">
+                    A research team led by physicists at the University of California, Riverside, reports tiny satellite galaxies of the Milky Way can be used to test fundamental properties of "dark matter"—nonluminous material thought to ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    13 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>5</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>340</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-matter-antimatter-asymmetry-t2k-results-restrict.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/t2kresultsre.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-matter-antimatter-asymmetry-t2k-results-restrict.html">Closing in on matter-antimatter asymmetry: T2K results restrict possible values of neutrino CP phase</a></h3>
+                <p class="mb-1 pr-1">
+                    The T2K Collaboration has published new results showing the strongest constraint yet on the parameter that governs the breaking of the symmetry between matter and antimatter in neutrino oscillations. Using beams of muon neutrinos ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    12 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>220</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-wolfram-physics-fundamental-theory.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/stephenwolfr.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-wolfram-physics-fundamental-theory.html">The Wolfram Physics Project hopes to find fundamental theory of physics</a></h3>
+                <p class="mb-1 pr-1">
+                    Physicist and entrepreneur Stephen Wolfram has unveiled "The Wolfram Physics Project," which he subtitles "A Project to Find the Fundamental Theory of Physics." The aim of the project is to enlist the assistance of people ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"><a href="https://phys.org/editorials/">
+  <span class="ml-2 badge a_report">report</span>
+</a>
+</span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    13 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>2</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>2820</span></p>
+            </div>
+        </div>
+    </article>
+                            
+								<div class="sorted-article ads">
+    <!-- Main-native -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-format="fluid"
+         data-ad-layout-key="-fz-32+4x-a4+7t"
+         data-ad-client="ca-pub-0536483524803400"
+         data-ad-slot="9793191136"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+								    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-kind-diamond-anvils-simulate-earth.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/1-journeytothe.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-kind-diamond-anvils-simulate-earth.html">First of its kind experiment uses diamond anvils to simulate the Earth's core</a></h3>
+                <p class="mb-1 pr-1">
+                    In an effort to investigate conditions found at the Earth's molten outer core, researchers successfully determined the density of liquid iron and the speed at which sound propagates through it at extremely high pressures. ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    11 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>1</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>30</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-speeding-up-quantum-giant-atomic-ions.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/quantum.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-speeding-up-quantum-giant-atomic-ions.html">Speeding-up quantum computing using giant atomic ions</a></h3>
+                <p class="mb-1 pr-1">
+                    Trapped Rydberg ions may be the next step towards scaling up quantum computers to sizes where they can be practically usable, a new study in Nature shows.
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Quantum Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    11 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>73</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-didnt-universe-annihilate-neutrinos.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/strongestevi.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-didnt-universe-annihilate-neutrinos.html">Why didn't the universe annihilate itself? Neutrinos may hold the answer</a></h3>
+                <p class="mb-1 pr-1">
+                    Alysia Marino and Eric Zimmerman, physicists at CU Boulder, have been on the hunt for neutrinos for the last two decades.
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    10 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>4</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>32</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-puzzle-compton-approach-theories-quantum.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/1-particlebill.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-puzzle-compton-approach-theories-quantum.html">Researchers solve puzzle of Compton scattering: New approach for testing theories in quantum mechanics</a></h3>
+                <p class="mb-1 pr-1">
+                    When the American physicist Arthur Compton discovered that light waves behave like particles in 1922, and could knock electrons out of atoms during an impact experiment, it was a milestone for quantum mechanics. Five years ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Quantum Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    16 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>1037</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-method-high-quality-copper-oxide-crystals.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/methodtosynt.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-method-high-quality-copper-oxide-crystals.html">Method to synthesize high-quality copper oxide crystals for quantum photonics</a></h3>
+                <p class="mb-1 pr-1">
+                    Copper oxidation generally means tarnished surfaces and corroded electronics. But the compound Cu2O, or cuprous oxide, is a promising material for quantum photonics, optoelectronics and renewable energy technologies. Now, ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Optics & Photonics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    16 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>198</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-stability-dissipative-topological-classical-quantum.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2018/quantum.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-stability-dissipative-topological-classical-quantum.html">Questionable stability of dissipative topological models for classical and quantum systems</a></h3>
+                <p class="mb-1 pr-1">
+                    Energy conservation lies at the core of every physical theory. Effective mathematical models however can feature energy gain and/or loss and thus break the energy conservation law by only capturing the physics of a subsystem. ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    11 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>9</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-tin-spur-advances-chips.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/noveltinbubb.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-tin-spur-advances-chips.html">Novel tin 'bubbles' spur advances in the development of integrated chips</a></h3>
+                <p class="mb-1 pr-1">
+                    The use of extreme ultraviolet light sources in making advanced integrated chips has been considered, but their development has been hindered owing to a paucity of efficient laser targets. Scientists at Tokyo Institute of ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Optics & Photonics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    13 hours ago
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>2</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-discovery-avenue-next-generation-storage.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/discoveryoff.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-discovery-avenue-next-generation-storage.html">Discovery offers new avenue for next-generation data storage</a></h3>
+                <p class="mb-1 pr-1">
+                    The demands for data storage and processing have grown exponentially as the world becomes increasingly connected, emphasizing the need for new materials capable of more efficient data storage and data processing.
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Superconductivity
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 14, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>1</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>224</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-electronic-cooling-technology-enable-miniaturization.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/newelectroni.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-electronic-cooling-technology-enable-miniaturization.html">New electronic cooling technology to enable miniaturization of quantum computers</a></h3>
+                <p class="mb-1 pr-1">
+                    VTT researchers have successfully demonstrated a new electronic refrigeration technology that could enable major leaps in the development of quantum computers. Present quantum computers require extremely complicated and large ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Quantum Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 14, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>427</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-soundwaves-superfluid-parameter.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/seekingtheso.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-soundwaves-superfluid-parameter.html">Seeking 'soundwaves' in the superfluid order parameter</a></h3>
+                <p class="mb-1 pr-1">
+                    A Swinburne University of Technology study published this week examines the propagation of energy as sound waves in a quantum gas, revealing for the first time strong variations in the nature of the sound wave as a function ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 14, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>96</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-d-imaging-technology-fluorescence-microscopy.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/novel3dimagi.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-d-imaging-technology-fluorescence-microscopy.html">Novel 3-D imaging technology makes fluorescence microscopy more efficient</a></h3>
+                <p class="mb-1 pr-1">
+                    Scientists have been using fluorescence microscopy to study the inner workings of biological cells and organisms for decades. However, many of these platforms are often too slow to follow the biological action in 3-D; and ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Optics & Photonics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 14, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>4</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-fast-micrometer-size-electro-optical-modulator.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/breakingthes.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-fast-micrometer-size-electro-optical-modulator.html">Researchers develop fast, micrometer-size electro-optical modulator</a></h3>
+                <p class="mb-1 pr-1">
+                    Researchers at the George Washington University developed and demonstrated for the first time a silicon-based electro-optical modulator that is smaller, as fast as and more efficient than state-of-the-art technologies. By ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Optics & Photonics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 14, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>8</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-constraints-dark-photons.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/6-researchiden.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-constraints-dark-photons.html">Research identifies detection constraints for dark photons</a></h3>
+                <p class="mb-1 pr-1">
+                    Past cosmological and astrophysical observations suggest that over one quarter of the universe's energy density is made up of a non-conventional type of matter known as dark matter. This type of matter is believed to be composed ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"><a href="https://phys.org/editorials/">
+  <span class="ml-2 badge a_editorial">feature</span>
+</a>
+</span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 13, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>18</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>468</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-quantum-enigma-vibrational-states-magnesium.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/3-quantumcompu.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-quantum-enigma-vibrational-states-magnesium.html">Quantum computation solves an old enigma: Finding the vibrational states of magnesium dimer</a></h3>
+                <p class="mb-1 pr-1">
+                    High vibrational states of the Magnesium dimer (Mg2) are an important system in studies of fundamental physics, although they have eluded experimental characterization for half a century. Experimental physicists have so far ...
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                Condensed Matter
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"><a href="https://phys.org/editorials/">
+  <span class="ml-2 badge a_editorial">feature</span>
+</a>
+</span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 13, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>0</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>975</span></p>
+            </div>
+        </div>
+    </article>
+    <article class="sorted-article">
+        <div class="d-flex">
+                            <figure class="sorted-article-figure">
+                    <a href="https://phys.org/news/2020-04-electromagnetic-properties-enable-spintronic.html">
+                        <img data-src="https://scx1.b-cdn.net/csz/news/175u/2020/newhandlefor.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="alt="">
+                        </a>
+                </figure>
+                        <div class="sorted-article-content d-flex flex-column ie-flex-1">
+                <h3 class="mb-1 mb-lg-2"><a class="news-link" href="https://phys.org/news/2020-04-electromagnetic-properties-enable-spintronic.html">New handle for controlling electromagnetic properties could enable spintronic computing</a></h3>
+                <p class="mb-1 pr-1">
+                    Materials scientists at Duke University have shown the first clear example that a material's transition into a magnet can control instabilities in its crystalline structure that cause it to change from a conductor to an insulator.
+                </p>
+            </div>
+        </div>
+        <div class="article__info mt-lg-3 mt-2">
+            <div class="article__info-item mr-auto">
+                <div class="text-low text-uppercase">
+                    <p>
+                                                General Physics
+                    </p>
+                </div>
+            </div>
+            <div class="article__info-item mr-3">
+                <span class="mr-3"></span>
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low">
+                    Apr 13, 2020
+                </p>
+            </div>
+            <div class="article__info-item mr-3">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>1</span></p>
+            </div>
+            <div class="article__info-item">
+                <svg class="article__info-icon">
+                    <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_share" x="0" y="0"></use>
+                </svg>
+                <p class="text-uppercase text-low"><span>964</span></p>
+            </div>
+        </div>
+    </article>
+                            
+							</div>
+                            <div id="load-more"></div>
+						</div>
+					</div>					
+				</div>
+				<div class="col-5 col-lg-6 mb-5 mb-lg-0">
+					
+					<div class="categories page-block with-padding mb-3">
+						<ul class="categories-controls nav justify-content-between" role="tablist">
+							<li class="categories-controls__item">
+								<a class="active" id="nav-featured-tab" data-toggle="tab" href="#nav-featured" role="tab" aria-controls="nav-featured" aria-selected="true">Featured</a>
+							</li>
+							<li class="categories-controls__item">
+								<a id="nav-comments-tab" data-toggle="tab" href="#nav-commented" role="tab" aria-controls="nav-commented" aria-selected="false">Last Comments</a>
+							</li>
+							<li class="categories-controls__item">
+								<a id="nav-popular-tab" data-toggle="tab" href="#nav-popular" role="tab" aria-controls="nav-popular" aria-selected="false">Popular</a>	
+							</li>
+							<li class="categories-controls__item">
+								<a id="nav-popular-tab" data-toggle="tab" href="#nav-popular" role="tab" aria-controls="nav-partners" aria-selected="false">Partners</a>	
+							</li>
+						</ul>
+						<div class="categories-content tab-content pt-4">
+						  <div class="categories-content__pane tab-pane fade show active" id="nav-featured" role="tabpanel" aria-labelledby="nav-featured-tab" data-loaded="true">
+							 
+    <article class="categories-content__item">
+        <h4><a href="https://phys.org/news/2020-04-quantum-metasurface-simultaneously-multiple-properties.html">A quantum metasurface that can simultaneously control multiple properties of light</a></h4>
+        <div class="article__info">
+                  <div class="article__info-item mr-auto">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low">14 hours ago</p>
+                  </div>
+                  <div class="article__info-item mr-3">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low"><span>1</span></p>
+                  </div>
+          </div>
+    </article>
+ 
+    <article class="categories-content__item">
+        <h4><a href="https://phys.org/news/2020-04-earth-size-habitable-zone-planet-hidden-early.html">Earth-size, habitable-zone planet found hidden in early NASA Kepler data</a></h4>
+        <div class="article__info">
+                  <div class="article__info-item mr-auto">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low">9 hours ago</p>
+                  </div>
+                  <div class="article__info-item mr-3">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low"><span>2</span></p>
+                  </div>
+          </div>
+    </article>
+ 
+    <article class="categories-content__item">
+        <h4><a href="https://phys.org/news/2020-04-hot-qubits-biggest-constraints-quantum.html">Hot qubits break one of the biggest constraints to practical quantum computers</a></h4>
+        <div class="article__info">
+                  <div class="article__info-item mr-auto">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low">12 hours ago</p>
+                  </div>
+                  <div class="article__info-item mr-3">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low"><span>0</span></p>
+                  </div>
+          </div>
+    </article>
+ 
+    <article class="categories-content__item">
+        <h4><a href="https://phys.org/news/2020-04-satellite-galaxies-milky-dark-theory.html">Satellite galaxies of the Milky Way help test dark matter theory</a></h4>
+        <div class="article__info">
+                  <div class="article__info-item mr-auto">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low">13 hours ago</p>
+                  </div>
+                  <div class="article__info-item mr-3">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low"><span>5</span></p>
+                  </div>
+          </div>
+    </article>
+ 
+    <article class="categories-content__item">
+        <h4><a href="https://phys.org/news/2020-04-carbon-nanotubes-embedded-chemical.html">Carbon nanotubes embedded in leaves detect chemical signals that are produced when a plant is damaged</a></h4>
+        <div class="article__info">
+                  <div class="article__info-item mr-auto">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_clock" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low">12 hours ago</p>
+                  </div>
+                  <div class="article__info-item mr-3">
+                          <svg class="article__info-icon">
+                                  <use xlink:href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_comment" x="0" y="0"/>
+                          </svg>
+                          <p class="text-uppercase text-low"><span>0</span></p>
+                  </div>
+          </div>
+    </article>
+
+						  </div>
+						  <div class="categories-content__pane tab-pane fade" id="nav-commented" role="tabpanel" aria-labelledby="nav-commented-tab">
+						  </div>
+						  <div class="categories-content__pane tab-pane fade" id="nav-popular" role="tabpanel" aria-labelledby="nav-shared-tab">
+						  </div>
+						</div>
+				    </div>
+					
+					<div class="row no-gutters">
+						<div class="col-12 col-lg-6 pr-lg-3 d-flex order-1 ie-flex-column">
+							<div class="selection mb-3">
+								<h3 class="text-middle text-muted mt-2 mb-4">
+									More news
+								</h3>
+								                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-graphene-heterostructures-black-phosphorus-arsenic.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/graphenehete.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Optics & Photonics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-graphene-heterostructures-black-phosphorus-arsenic.html">Graphene heterostructures with black phosphorus, arsenic layers enable new infrared detectors</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-lasers-nuclear-nonproliferation.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/howlaserscan.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Plasma Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-lasers-nuclear-nonproliferation.html">How lasers can help with nuclear nonproliferation monitoring</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-perovskite-based-diode-capable-emission.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/aperovskiteb.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-perovskite-based-diode-capable-emission.html">A perovskite-based diode capable of both light emission and detection</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-magnet-giant.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/magnetresear.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-magnet-giant.html">Magnet research takes giant leap</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-self-powered-x-ray-detector-revolutionize-imaging.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/selfpoweredx.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-self-powered-x-ray-detector-revolutionize-imaging.html">Self-powered X-ray detector to revolutionize imaging for medicine, security and research</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-sighting-mysterious-majorana-fermion-common.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2019/quantum.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Quantum Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-sighting-mysterious-majorana-fermion-common.html">First sighting of mysterious Majorana fermion on a common metal</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-protocol-fascinating-quantum-states.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/newprotocoli.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Quantum Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-protocol-fascinating-quantum-states.html">New protocol identifies fascinating quantum states</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-cold-eyes-dune-international-deep.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/thecoldeyeso.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-cold-eyes-dune-international-deep.html">The cold eyes of DUNE: International Deep Underground Neutrino Experiment</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-links-elastodynamic-electromagnetic-phenomena.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/1-researchlink.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-links-elastodynamic-electromagnetic-phenomena.html">Research links elastodynamic and electromagnetic wave phenomena</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-anyon-evidence-tiny-collider.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/5e90624ed3d01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Quantum Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-anyon-evidence-tiny-collider.html">Anyon evidence observed using tiny anyon collider</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-ultrafast-electron-camera-molecules-liquid.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/inafirstrese.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-ultrafast-electron-camera-molecules-liquid.html">In a first, researchers use ultrafast 'electron camera' to learn about molecules in liquid samples</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-platform-future-optical-transistors.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/71-researchersd.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Optics & Photonics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-platform-future-optical-transistors.html">Researchers demonstrate a platform for future optical transistors</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-one-way-street-electrons.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/70-researchersd.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-one-way-street-electrons.html">Researchers develop one-way street for electrons</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-scientists-tokyo-skytree-einstein-theory.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/tokyoskytree.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-scientists-tokyo-skytree-einstein-theory.html">Scientists use the Tokyo Skytree to test Einstein's theory of general relativity</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-quantum-simulations-nuclear-physics.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/chartingacou.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Quantum Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-quantum-simulations-nuclear-physics.html">Charting a course toward quantum simulations of nuclear physics</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-atoms-liquid-gallium-pressure.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/orderingofat.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Condensed Matter</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-atoms-liquid-gallium-pressure.html">Ordering of atoms in liquid gallium under pressure</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-x-ray-vision-window.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/xrayvisionth.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Optics & Photonics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-x-ray-vision-window.html">X-ray vision through the water window</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-theory-future-spintronic-circuits.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/newtheorycou.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Quantum Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-theory-future-spintronic-circuits.html">New theory could change the design of future spintronic circuits</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-fine-tuning-magnetic-faster-smaller-memory.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/4-sciencesnaps.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-fine-tuning-magnetic-faster-smaller-memory.html">Fine-tuning magnetic spin for faster, smaller memory devices</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-broad-spectrum-hybrid-material-efficient.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/broadspectrum.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Optics & Photonics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-broad-spectrum-hybrid-material-efficient.html">Broad spectrum: Novel hybrid material proves an efficient photodetector</a>
+                        </h5>
+                    </div>
+                </div>
+    
+							</div>
+						</div>
+						<div class="col-12 col-lg-6 d-flex order-3 order-lg-2 ie-flex-column">
+							<div class="selection mb-3">
+								<h3 class="text-middle text-muted mt-2 mb-4">
+									Other news
+								</h3>
+								                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-earth-size-habitable-zone-planet-hidden-early.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/earthsizehab.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Astronomy</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-earth-size-habitable-zone-planet-hidden-early.html">Earth-size, habitable-zone planet found hidden in early NASA Kepler data</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-carbon-nanotubes-embedded-chemical.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2016/57d1575f1dd5b.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Bio & Medicine</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-carbon-nanotubes-embedded-chemical.html">Carbon nanotubes embedded in leaves detect chemical signals that are produced when a plant is damaged</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-origami-universal-method-d-surfaces.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/5-computationa.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Materials Science</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-origami-universal-method-d-surfaces.html">Computational origami: A universal method to wrap 3-D curved surfaces with nonstretchable materials</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-solar-hotter.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/newresearchh.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Space Exploration</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-solar-hotter.html">New research helps explain why the solar wind is hotter than expected</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-boron-material-high-hardness-plasma.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/newboronmate.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Materials Science</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-boron-material-high-hardness-plasma.html">New boron material of high hardness created by plasma chemical vapor deposition</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-major-outburst-x-ray-pulsations-rx.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/majoroutburs.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Astronomy</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-major-outburst-x-ray-pulsations-rx.html">Major outburst and X-ray pulsations detected from RX J0209.6−7427</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-questionnaire-survey-potential-separation-related-problems.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/questionnair.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Plants & Animals</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-questionnaire-survey-potential-separation-related-problems.html">Questionnaire survey identifies potential separation-related problems in cats</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-economists-carbon-footprint-parenthood.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/1-carbonfootpr.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Environment</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-economists-carbon-footprint-parenthood.html">Economists find carbon footprint grows with parenthood</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-accuracy-methods-trees-life.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2018/tree.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Ecology</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-accuracy-methods-trees-life.html">Researchers challenge accuracy of methods that analyze trees of life</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-human-stresses-young-monarch-butterflies.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/humanhandlin.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Plants & Animals</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-human-stresses-young-monarch-butterflies.html">Human handling stresses young monarch butterflies</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-snake-venom-muscle-protein.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/1-utswresearch.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Molecular & Computational biology</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-snake-venom-muscle-protein.html">Researchers use snake venom to solve structure of muscle protein</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-secret-corals-tolerance-climate-diet.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/hkustudyunlo.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Plants & Animals</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-secret-corals-tolerance-climate-diet.html">Study unlocks the secret of corals' tolerance to climate change: Their diet</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-bees-evolutionary.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/beespointton.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Evolution</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-bees-evolutionary.html">Bees point to new evolutionary answers</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-100th-lunar-asteroid-collision-telescope.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/100thlunaras.gif" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Space Exploration</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-100th-lunar-asteroid-collision-telescope.html">100th lunar asteroid collision confirmed by second telescope</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-mask-material-virus-size-nanoparticles.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/newmaskmater.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Materials Science</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-mask-material-virus-size-nanoparticles.html">New mask material can remove virus-size nanoparticles</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-pioneer-era-apple-thought-extinct-west.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/10pioneerera.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Plants & Animals</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-pioneer-era-apple-thought-extinct-west.html">10 pioneer-era apple types thought extinct found in US West</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-scientists-co-catalysts-nanosheet-purification.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/26-scientistsfi.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Nanomaterials</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-scientists-co-catalysts-nanosheet-purification.html">Scientists fit two co-catalysts on one nanosheet for better water purification</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-mahogany-tree-family-dates-hurrah.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/mahoganytree.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Archaeology & Fossils</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-mahogany-tree-family-dates-hurrah.html">Mahogany tree family dates back to last hurrah of the dinosaurs</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-pterosaurs-fossil-flyers-manmade-flight.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/studyingpter.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Archaeology & Fossils</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-pterosaurs-fossil-flyers-manmade-flight.html">Studying pterosaurs and other fossil flyers to better engineer manmade flight</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-unusually-drove-loss-greenland-ice.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/3-unusuallycle.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Earth Sciences</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-unusually-drove-loss-greenland-ice.html">Unusually clear skies drove record loss of Greenland ice in 2019</a>
+                        </h5>
+                    </div>
+                </div>
+    
+							</div>
+						</div>
+						<div class="col-12 mb-3 order-2 order-lg-3">
+							    <div id="ad-main2" class="clearfix" >
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- Phys.org - Category pages CSi -->
+	<ins class="adsbygoogle"
+	     style="display:block"
+	     data-ad-client="ca-pub-0536483524803400"
+	     data-ad-slot="3924181939"
+	     data-ad-format="auto"></ins>
+	<script>
+	(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+    </div>
+						</div>
+						<div class="col-12 col-lg-6 pr-lg-3 d-lg-flex d-none order-4 ie-flex-column">
+							<div class="selection mb-3">
+								                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-methods-dark-tiny-perturbations-fundamental.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2017/darkmatter.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-methods-dark-tiny-perturbations-fundamental.html">Study suggests two novel methods of searching for dark matter by measuring tiny perturbations in fundamental constants</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-successful-laser-circular-rydberg-atoms.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/firstsuccess.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-successful-laser-circular-rydberg-atoms.html">First successful laser trapping of circular Rydberg atoms</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-refrigerator-super-cools-molecules-nanokelvin-temperatures.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2018/2-molecule.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-refrigerator-super-cools-molecules-nanokelvin-temperatures.html">New 'refrigerator' super-cools molecules to nanokelvin temperatures</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-cern-physics-lab-basic-covid-.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/cernishometo.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-cern-physics-lab-basic-covid-.html">CERN physics lab developing basic COVID-19 ventilator</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-revolutionary-light-emitting-silicon.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/eindhovenres.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Condensed Matter</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-revolutionary-light-emitting-silicon.html">Researchers present revolutionary light-emitting silicon</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-ultrafast-imaging-particles.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/astepaheadin.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Optics & Photonics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-ultrafast-imaging-particles.html">A step ahead in the race toward ultrafast imaging of single particles</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-bethe-experimentally.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/condensedmat.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-bethe-experimentally.html">Bethe strings experimentally observed</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-dynamics-reveal-bottles-faster.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/bubbledynami.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">General Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-dynamics-reveal-bottles-faster.html">Bubble dynamics reveal how to empty bottles faster</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-antibiotic-quantum-nature-complex-polypeptide.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/antibioticma.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Quantum Physics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-antibiotic-quantum-nature-complex-polypeptide.html">Antibiotic matter waves: The quantum wave nature of a complex antibiotic polypeptide</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-ai-movement-glass-molecules-transitioning.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/5e8c6087dc922.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Condensed Matter</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-ai-movement-glass-molecules-transitioning.html">AI system that predicts movement of glass molecules transitioning between liquid and solid states</a>
+                        </h5>
+                    </div>
+                </div>
+    
+							</div>
+						</div>
+						<div class="col-12 col-lg-6 d-lg-flex d-none order-5 ie-flex-column">
+							<div class="selection mb-3">
+								                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-international-earth-crust.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2019/earth.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Earth Sciences</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-international-earth-crust.html">International study sheds new light on the transformation of the Earth's crust</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-dna-like-cards.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/usingdnalike.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Biotechnology</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-dna-like-cards.html">Using DNA-like punch cards to store data</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-stretchable-sheets-atoms-quantum-technologies.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/lightfromstr.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Nanophysics</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-stretchable-sheets-atoms-quantum-technologies.html">Light from stretchable sheets of atoms for quantum technologies</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-carbons-absorbing-lightand-people-health.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/researchersf.gif" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Environment</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-carbons-absorbing-lightand-people-health.html">Researchers find organic carbons are also absorbing light—and likely harming people's health</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-earth-atmosphere-dustier-previously-believed.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/earthsatmosp.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Earth Sciences</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-earth-atmosphere-dustier-previously-believed.html">Earth's atmosphere far dustier than previously believed</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-nasa-curiosity-team-rover-home.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/nasascuriosi.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Space Exploration</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-nasa-curiosity-team-rover-home.html">NASA's Curiosity keeps rolling as team operates rover from home</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-climate-affect-americans-electricity-summer.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/modeltobette.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Environment</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-climate-affect-americans-electricity-summer.html">Model to better predict how climate change will affect Americans' electricity use in summer</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-21st-century-genomics-samoan-population-years.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/samoaflag.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Evolution</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-21st-century-genomics-samoan-population-years.html">Researchers use 21st-century genomics to estimate Samoan population over 3,000 years</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-gulf-wide-survey-oil-pollution-years.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/firstgulfwid.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Environment</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-gulf-wide-survey-oil-pollution-years.html">First Gulf-wide survey of oil pollution completed 10 years after Deepwater Horizon</a>
+                        </h5>
+                    </div>
+                </div>
+                    <div class="d-flex selection-article_little mb-2 mb-sm-3">
+                    <figure class="sorted-article-figure sorted-article-small my-2 mt-sm-0">
+                        <a href="https://phys.org/news/2020-04-transposable-elements-important-role-genetic.html"><img data-src="https://scx1.b-cdn.net/csz/news/tmb/2020/transposable.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" alt=""></a>
+                    </figure>                    <div class="sorted-article-content selection-article__description d-flex flex-column ie-flex-1">
+                        <div class="justify-content-between mb-1 text-low d-none d-lg-flex">
+                            <span class="text-info text-muted">Biotechnology</span>
+                        </div>
+                        <h5>
+                            <a class="news-link" href="https://phys.org/news/2020-04-transposable-elements-important-role-genetic.html">Transposable elements play an important role in genetic expression and evolution</a>
+                        </h5>
+                    </div>
+                </div>
+    
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>			            
+			
+			<div class="row no-gutters my-4 pb-5">
+				<div class="col-7 col-lg-6 text-center pr-3">
+					<a href="./sort/date/all/" data-page="2" class="btn btn-lg btn-outline-secondary text-low-up">Load more</a>
+				</div>
+			</div>
+		</div>
+</main>
+
+        
+        
+        
+            <footer class="footer d-print-none">
+                <div class="footer-partners bg-white py-5">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4 mb-4 mb-md-0">
+                                <a href="https://medicalxpress.com/" class="footer-company">
+                                    <figure class="footer-figure">
+                                        <img src="https://phys.b-cdn.net/tmpl/v6/img/MedicalXpress.svg" alt="Medical Xpress">
+                                        <figcaption>
+                                            <h3 class="text-low-up mb-2">Medical Xpress</h3>
+                                            <p class="text-low mb-0">Medical Xpress covers all medical research advances and health news </p>
+                                        </figcaption>
+                                    </figure>
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-4 mb-md-0">
+                                <a href="https://techxplore.com/" class="footer-company">
+                                    <figure class="footer-figure">
+                                        <img src="https://phys.b-cdn.net/tmpl/v6/img/techexploer.svg" alt="Tech Xplore" width="58" height="58">
+                                        <figcaption>
+                                            <h3 class="text-low-up mb-2">Tech Xplore</h3>
+                                            <p class="text-low mb-0">Tech Xplore covers the latest engineering, electronics and technology advances</p>
+                                        </figcaption>
+                                    </figure>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="https://sciencex.com/" class="footer-company">
+                                    <figure class="footer-figure">
+                                        <img src="https://phys.b-cdn.net/tmpl/v6/img/ScienceX.svg" alt="ScienceX">
+                                        <figcaption>
+                                            <h3 class="text-low-up mb-2">ScienceX</h3>
+                                            <p class="text-low mb-0"> Science X Network offers the most comprehensive sci-tech news coverage on the web</p>
+                                        </figcaption>
+                                    </figure>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        <div class="container">
+                    <div class="row pt-5 mb-5">
+                        <div class="col-8 col-xl-5 offset-xl-1 mb-5 mb-md-0">
+                            <h2 class="footer-title mb-3 mb-md-2">Newsletters</h2>
+                            <form action="#" name="nwsubscribe" class="footer-form">
+                                <div class="form-row align-items-start">
+                                    <div class="col-7 mb-4">
+                                        <input type="email" name="email" class="form-control form-control-lg" aria-describedby="emailHelp" placeholder="Email">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="hidden" name="project" value="physorg">
+                                        <button type="submit" class="btn btn-block btn-info border-bold">Subscribe</button>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col mb-4">
+                                        <span id="emailHelp" class="form-text text-low-up text-regular">
+                                            <a class="footer-document" href="https://sciencex.com/help/newsletter/">
+                                                Science X Daily and the Weekly Email Newsletter are free features that allow you to receive your favorite sci-tech news updates in your email inbox
+                                            </a>    
+                                        </span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6 col-xl-5">
+                            <h2 class="footer-title mb-3 mb-md-2">Follow us</h2>
+                            <ul class="follow">
+                                <li class="follow-item">
+                                    <a href="https://www.facebook.com/physorg" class="follow-link" target="_blank">
+                                        <svg>
+                                            <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_fb" x="0" y="0"/>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="follow-item"><a href="https://twitter.com/physorg_com" class="follow-link" target="_blank">
+                                    <svg>
+                                        <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_twit" x="0" y="0"/>
+                                    </svg>
+                                </a></li>                    
+                                <li class="follow-item"><a href="https://www.linkedin.com/company/phys-org/" class="follow-link" target="_blank">
+                                    <svg>
+                                        <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_linkedin" x="0" y="0"/>
+                                    </svg>
+                                </a></li>
+                                <li class="follow-item"><a href="https://phys.org/feeds/" class="follow-link">
+                                    <svg>
+                                        <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_rss" x="0" y="0"/>
+                                    </svg>
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-xl-10 offset-xl-1">
+                            <nav class="nav footer-nav justify-content-between">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" rel="top">Top</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/search/">Search</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="nav-mobile" href="https://phys.org/physics-news/?deviceType=mobile" rel="nofollow">Mobile version</a>
+                                    </li>
+                                </ul>
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://sciencex.com/help/" target="_blank" rel="nofollow">Help</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://sciencex.com/help/contactus/" target="_blank" rel="nofollow">FAQ</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://sciencex.com/help/about-us/" target="_blank" rel="nofollow">About</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://sciencex.com/help/feedback/" target="_blank" rel="nofollow">Contact</a>
+                                    </li>
+                                </ul>
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://sciencex.com/profile/">Science X Account</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://sciencex.com/help/donate/">Sponsored Account</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/archive/">Archive</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/wire-news/"  rel="nofollow">News wire</a>
+                                    </li>
+                                </ul>
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://play.google.com/store/apps/details?id=com.PhysOrg.RssLite">Android app</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://itunes.apple.com/us/app/phys-org/id356443503?mt=8">iOS app</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="https://phys.org/feeds/">RSS feeds</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="javascript:void(0)" data-action="webpush">Push notification</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-12 text-center">
+                            <small class="text-low-up text-regular">&copy; Phys.org 2003 - 2020 powered by <a class="footer-document" href="https://sciencex.com/">Science X Network</a></small>
+                        </div>
+                        <div class="col-12 mt-3 text-center">
+                            <a class="footer-document" href="https://sciencex.com/help/privacy/" target="_blank">Privacy policy</a>
+                            <a class="footer-document" href="https://sciencex.com/help/terms/" target="_blank">Terms of use</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <div class="popup-cookies bg-primary" id="js-popup-cookies">
+                <h4 class="text-extra-large mb-4">Your Privacy</h4>
+                <p class="text-low-up text-regular">
+                    This site uses cookies to assist with navigation, analyse your use of our services, and provide content from third parties.
+                    By using our site, you acknowledge that you have read and understand our <a href="https://sciencex.com/help/privacy/" class="popup-cookies-more" target="_blank">Privacy Policy</a>
+                    and <a href="https://sciencex.com/help/terms/" class="popup-cookies-more" target="_blank">Terms of Use</a>.
+                </p>
+                <div class="d-flex align-items-center mt-4 flex-wrap flex-sm-nowrap popup-cookies-controls">
+                    <a href="#" class="btn btn-warning px-5 text-low-up" data-cookies-close>Ok</a>
+                    <a href="https://sciencex.com/help/terms/" class="popup-cookies-more ml-4 text-low-up" target="_blank">More Information</a>
+                </div>
+            </div>
+            <div class="modal fade modal-custom d-print-none" tabindex="-1" role="dialog" id="subscribe">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header mb-4">
+                        <button class="modal-custom__close" type="button" data-dismiss="modal" aria-label="Close">
+                            <svg>
+                                <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_close" x="0" y="0"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4 class="footer-title mb-3">E-mail newsletter</h4>
+                        <form class="row mb-4" name="nwsubscribe">
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <input type="email" name="email" class="form-control form-control-lg" id="nw-email" placeholder="email" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="hidden" name="project" value="physorg">
+                                <button type="submit" class="btn btn-block btn-info text-low-up">Subscribe</button>
+                            </div>
+                        </form>
+                        
+                        <h4 class="footer-title mb-3">Follow us</h4>
+                        <ul class="follow">
+                            <li class="follow-item">
+                                <a href="https://www.facebook.com/physorg" class="follow-link" target="_blank">
+                                    <svg>
+                                        <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_fb" x="0" y="0"/>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="follow-item"><a href="https://twitter.com/physorg_com" class="follow-link" target="_blank">
+                                <svg>
+                                    <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_twit" x="0" y="0"/>
+                                </svg>
+                            </a></li>                    
+                            <li class="follow-item"><a href="https://www.linkedin.com/company/phys-org/" class="follow-link" target="_blank">
+                                <svg>
+                                    <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_linkedin" x="0" y="0"/>
+                                </svg>
+                            </a></li>
+                            <li class="follow-item"><a href="https://phys.org/feeds/" class="follow-link">
+                                <svg>
+                                    <use href="https://phys.b-cdn.net/tmpl/v6/img/svg/sprite.svg#icon_rss" x="0" y="0"/>
+                                </svg>
+                            </a></li>
+                        </ul>                
+                    </div>
+                </div>
+                </div>
+            </div>
+            <template id="adblock">        
+                <div class="alert py-2 bg-danger fade" role="alert">
+                    <div class="container text-white">
+                        <a href="https://sciencex.com/help/adblock/" class="link-white">
+                            It appears that you are currently using <strong>Ad Blocking software</strong>. What are the consequences?
+                        </a>
+                        <button type="button" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true" class="text-white">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </template>
+                        <script src="https://phys.b-cdn.net/tmpl/v6/js/svgxuse.132850488.js"></script>
+            <script src="https://phys.b-cdn.net/tmpl/v6/js/libs.132850488.js"></script>
+            <script src="https://phys.b-cdn.net/tmpl/v6/js/common.3566065161.js"></script>
+                    
+        <script type="text/javascript">
+                var _qevents = _qevents || [];
+                
+                (function() {
+                var elem = document.createElement('script');
+                elem.src = (document.location.protocol == "https:" ? "https://secure" : "http://edge") + ".quantserve.com/quant.js";
+                elem.async = true;
+                elem.type = "text/javascript";
+                var scpt = document.getElementsByTagName('script')[0];
+                scpt.parentNode.insertBefore(elem, scpt);
+                })();
+                
+                _qevents.push({
+                qacct:"p-5dNhPAnM9r0yY"
+                });
+            </script><noscript>
+                <div style="display:none;">
+                <img src="//pixel.quantserve.com/pixel/p-5dNhPAnM9r0yY.gif" border="0" height="1" width="1" alt="Quantcast"/>
+                </div>
+            </noscript>
+            <!-- End Quantcast tag -->
+        
+    </body>
+
+
+
+</html>
