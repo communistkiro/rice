@@ -1,5 +1,0 @@
-[
-    { "keys": ["f1"], "command": "show_overlay", "args": {"overlay": "command_palette", "text": "Set Syntax: "} },
-    { "keys": ["ctrl+b"], "command": "show_overlay", "args": {"overlay": "command_palette", "text": "Build with: "} },
-    { "keys": ["alt+g"], "command": "show_overlay", "args": {"overlay": "goto", "text": ":"} },
-]

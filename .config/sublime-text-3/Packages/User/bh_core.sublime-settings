@@ -1,6 +1,0 @@
-{
-    "high_visibility_enabled_by_default": false,
-    "high_visibility_color": "scope",
-    "search_threshold": 10000,
-    "bracket_string_escape_mode": "regex",
-}
