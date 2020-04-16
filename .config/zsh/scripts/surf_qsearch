@@ -16,7 +16,6 @@
 #
 # { MODKEY, GDK_q, spawn, QSEARCH },
 #
-id=$(xdotool getwindowfocus)
 
 # Get the full query. The 'echo | dmenu' idiom may be a bit of
 # a hack, but it seems to work.
@@ -42,11 +41,12 @@ s=$(printf %s "${q#* }")
 
 # -id $1
 # id=$(wmctrl -l | grep -i surf | awk '{print w$1}')
-# id=$(echo "ibase=16; `wmctrl -l | grep -i surf | cut -c 3-11 | tr a-z A-Z`" | bc)
 # id=$(xdotool search --classname 'tabbed-surf' | pcre2grep -o '\d+')
 # id=$(xdotool search --class 'surf' | pcre2grep -o '\d+')
-# id=$(cat /tmp/winid)
-
+# id=$(cat /tmp/winid) 
+# id=$(sed "/$(xdotool search --name )/d')
+# id=$(xdotool getwindowfocus)
+id=$(xdotool search --class 'surf' | tail -1)
 
 case $e in
     's')
