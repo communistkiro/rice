@@ -166,6 +166,7 @@ alias fzf='fzf -m\
 alias sf="tabbed -dcr 2 surf -e '' &> /dev/null & disown"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias sr="surfraw"
+alias fd='fd -uu -i'
 
 
 # FUNCTIONS
