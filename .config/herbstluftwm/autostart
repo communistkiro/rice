@@ -24,7 +24,6 @@ hc keybind $Mod-Shift-c                 close
 
 hc keybind $Mod-t                       spawn tabbed -dcr 2 st -w ''
 hc keybind $Mod-Shift-t                 spawn st
-hc keybind $Mod-Shift-r                 spawn tabbed -dcr 2 surf -e ''
 hc keybind $Mod-Escape                  spawn dmenu_run -i
 
 # basic movement
@@ -61,7 +60,7 @@ tag_names=( {1..9} )
 tag_keys=( {1..9} 0 )
 
 hc rename default "${tag_names[0]}" || true
-for i in ${!tag_names[@]} ; do
+for i in "${!tag_names[@]}" ; do
     hc add "${tag_names[$i]}"
     key="${tag_keys[$i]}"
     if ! [ -z "$key" ] ; then
@@ -78,7 +77,9 @@ hc keybind $Mod-comma  use_index -1 --skip-visible
 hc keybind $Mod-Shift-r                 remove
 hc keybind $Mod-Shift-f                 floating toggle
 hc keybind $Mod-Shift-x                 fullscreen toggle
-#hc keybind $Mod-p pseudotile toggle
+hc keybind $Mod-Shift-g                 set_attr clients.focus.floating toggle
+# hc keybind $Mod-p                       pseudotile toggle
+
 # The following cycles through the available layouts within a frame, but skips layouts, if the layout change wouldn't affect the actual window positions. i.e., if there are two windows within a frame, the grid layout is skipped.
 hc keybind $Mod-space                                                           \
             or , and . compare tags.focus.curframe_wcount = 2                   \
@@ -145,6 +146,8 @@ hc rule                                 title~'.*qpdfview' tag=4
 hc rule                                 title~'Gimp.*' tag=3
 
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
+# hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on
+
 hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
 # focus new clients?
@@ -164,9 +167,9 @@ hc unlock
 # find the panel
 panel=~/.config/herbstluftwm/panel.sh
 [ -x "$panel" ] || panel=/etc/xdg/herbstluftwm/panel.sh
-for monitor in $(herbstclient list_monitors | cut -d: -f1) ; do
+for monitor in $(hc list_monitors | cut -d: -f1) ; do
     # start it on each monitor
-    "$panel" $monitor &
+    "$panel" "$monitor" &
 done
 
 # Autorun

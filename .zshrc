@@ -79,6 +79,7 @@ setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 # https://docs.haskellstack.org/en/stable/shell_autocompletion/
 # eval "$(stack --bash-completion-script stack)"
 
+
 # ALII
 # UTILITIES
 alias vol='amixer set Master'
@@ -163,15 +164,14 @@ alias fzf='fzf -m\
   --bind "alt-r:execute(micro {+})"\
   --bind "alt-f:clear-selection"\
   --bind "alt-v:select-all"'
-alias sf="tabbed -dcr 2 surf -e '' &> /dev/null & disown"
+alias sf="tabbed -p s+1 -dr 2 surf -e '' &> /dev/null & disown"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
-alias sr="surfraw"
 alias fd='fd -uu -i'
 
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
-autoload backup cz gp mpp net pape pass rdd1 rdd2 tagme tl tldoc uhosts wic wdr xrp xrpp zmv
+autoload $(ls /root/.config/zsh/autoloadmedaddy) zmv
 
 
 # SOURCE

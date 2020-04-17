@@ -22,7 +22,7 @@ static Parameter defconfig[ParameterLast] = {
 	[AccessWebcam]        =       { { .i = 0 },     },
 	[Certificate]         =       { { .i = 0 },     },
 	[CaretBrowsing]       =       { { .i = 0 },     },
-	[CookiePolicies]      =       { { .v = "@Aa" }, },
+	[CookiePolicies]      =       { { .v = "a@A" }, },
 	[DefaultCharset]      =       { { .v = "UTF-8" }, },
 	[DiskCache]           =       { { .i = 1 },     },
 	[DNSPrefetch]         =       { { .i = 0 },     },
@@ -114,7 +114,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 
 #define SR_SEARCH {\
     .v = (char *[]){ "/bin/sh", "-c", \
-	"xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(sr -p $(sr -elvi | tail -n +2 | cut -s -f1 | dmenu -i))", \
+	"xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))", \
     winid, NULL }\
 }
 
@@ -193,7 +193,15 @@ static Key keys[] = {
 	{ MODKEY|GDK_CONTROL_MASK, GDK_KEY_b,                  toggle,             { .i = ScrollBars } },
 	{ MODKEY|GDK_CONTROL_MASK, GDK_KEY_t,                  toggle,             { .i = StrictTLS } },
 	{ MODKEY|GDK_SHIFT_MASK,   GDK_KEY_m,                  toggle,             { .i = Style } },
+    { 0,                       GDK_KEY_F4,                 playexternal,       { 0 } },
 };
+
+/* VIDEOPLAY(URI) */
+#define VIDEOPLAY(u) {\
+    .v = (const char *[]){ "/bin/sh", "-c", \
+         "mpv --really-quiet \"$0\"", u, NULL \
+    } \
+}
 
 /* button definitions */
 /* target can be OnDoc, OnLink, OnImg, OnMedia, OnEdit, OnBar, OnSel, OnAny */

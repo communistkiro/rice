@@ -1,0 +1,4 @@
+#!/bin/sh
+function sr () {
+surfraw $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i)
+}

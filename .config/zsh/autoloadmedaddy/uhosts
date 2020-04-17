@@ -1,6 +1,6 @@
 #!/bin/zsh
 function uhosts () {
-mkdir -p /tmp/h; cd /tmp/h;
+mkdir -p /tmp/hosts; cd /tmp/hosts;
 a=(
   "http://winhelp2002.mvps.org/hosts.txt"
   "https://github.com/adversarialtools/apple-telemetry/raw/master/blacklist"
@@ -23,12 +23,12 @@ a=(
   "https://github.com/nickspaargaren/pihole-google/raw/master/categories/youtube.txt"
   "https://raw.githubusercontent.com/nickspaargaren/pihole-google/master/google-domains"
   "https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt"
-  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts"
+  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts"
 );
 
 for s in {1..${#a}}; do wget -O ${s} ${a[s]}; done;
 
-cat /tmp/h/* ~/dcs/blockme >> tmp;
+cat /tmp/hosts/* ~/dcs/blockme >> tmp;
 sed -r '
   /localhost|loopback|ip6-|broadcasthost|local$/d; /^\s+$/d;
   s/  +/ /g; /^ /d;
@@ -40,7 +40,7 @@ sed -r '
   /^0.0.0.0 [a-zA-Z0-9 ]+$/d;
   ' tmp | sort -u > h;
 
-gre '^#' /etc/hosts | sed 's/^#//' > holdme;
+gre '^#' /etc/hosts | sed 's/#//' > holdme;
 
 while IFS= read -r h; do
   /bin/sed -r --in-place=bak "s/^${h}$/#&/" h;
@@ -49,5 +49,5 @@ done < holdme;
 head -29 22 | tail -14 > /etc/hosts;
 cat h >> /etc/hosts;
 
-cd ~; rm -r /tmp/h;
+cd ~; rm -r /tmp/hosts;
 }
