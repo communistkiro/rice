@@ -19,7 +19,7 @@
 
 # Get the full query. The 'echo | dmenu' idiom may be a bit of
 # a hack, but it seems to work.
-q="$(echo "s\nd\nwe\nwa\nw\nwd\ng\no\ny\ndd\nti\nr\nhj\nl\ni" | dmenu -i)"
+q="$(echo "s\nd\nwe\nwa\nw\nwd\ng\no\ny\ndd\nti\nr\nhj\nl\ni\nsf" | dmenu -i)"
 [ -z "$q" ] && exit 0
 
 # Extract the engine code.
@@ -33,39 +33,25 @@ e="${q%% *}"
 # s=$(printf %s "${q#* }" | tr -d '\n' | sed 's/ /_/g' od -t x1 -An |  tr ' ' '%')
 s=$(printf %s "${q#* }")
 
-# id=$(xdotool search --class 'surf' | tail -1)
-
+# id=$(xdotool search --class 'surf' | tail -1)     
 case $e in
-    's')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.startpage.com/do/search?q=${s}";;
-    'd')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://duckduckgo.com/?q=${s}";;
-    'we')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=${s}";;
-    'wa')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://wiki.archlinux.org/index.php/Special:Search?search=${s}&go=Go";;
-    'w')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://en.wiktionary.org/w/index.php?search=${s}&go=Go";;
-    'wd')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://de.wiktionary.org/w/index.php?title=Spezial%3ASuche&search=${s}";;
-    'g')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://github.com/search?utf8=%E2%9C%93&type=&q=${s}";;
-    'o')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.onelook.com/?w=${s}&ls=a";;
-    'y')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.youtube.com/results?search_query=${s}";;
-    'dd')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.dict.cc/?s=${s}&=DEEN&=";;
-    'ti')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://tineye.com/search?q=${s}";;
-    'r')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.reddit.com/search?include_over_18=on&q=${s}";;
-    'hj')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://howjsay.com/search?word=aposematism&word=${s}";;
-    'l')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.last.fm/search?q=${s}";;
-    'i')
-        xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
-    *)
+    's'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.startpage.com/do/search?q=${s}";;
+    'd'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://duckduckgo.com/?q=${s}";;
+    'we' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=${s}";;
+    'wa' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://wiki.archlinux.org/index.php/Special:Search?search=${s}&go=Go";;
+    'w'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://en.wiktionary.org/w/index.php?search=${s}&go=Go";;
+    'wd' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://de.wiktionary.org/w/index.php?title=Spezial%3ASuche&search=${s}";;
+    'g'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://github.com/search?utf8=%E2%9C%93&type=&q=${s}";;
+    'o'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.onelook.com/?w=${s}&ls=a";;
+    'y'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.youtube.com/results?search_query=${s}";;
+    'dd' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.dict.cc/?s=${s}&=DEEN&=";;
+    'ti' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://tineye.com/search?q=${s}";;
+    'r'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.reddit.com/search?include_over_18=on&q=${s}";;
+    'hj' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://howjsay.com/search?word=aposematism&word=${s}";;
+    'l'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.last.fm/search?q=${s}";;
+    'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
+    'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
+    'sh' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://sci-hub.tw/${s}";;
+    *    ) 
         exit 1;;
 esac

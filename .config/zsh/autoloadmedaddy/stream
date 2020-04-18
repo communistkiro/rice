@@ -1,0 +1,13 @@
+#!/bin/zsh
+# terminal streaming
+function stream () {
+while getopts 'f:' o; do
+  case ${o} in
+    'z') z=${OPTARG};;
+    *) return 1;;
+  esac
+done
+shift ${OPTIND}-1
+mpv --profile=low-latency --ytdl-raw-options=format="${z:-'best[height=480]'}" $1;
+}
+
