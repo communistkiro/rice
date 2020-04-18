@@ -3,7 +3,7 @@
 function stream () {
 while getopts 'f:' o; do
   case ${o} in
-    'z') z=${OPTARG};;
+    'f') z=${OPTARG};;
     *) return 1;;
   esac
 done
