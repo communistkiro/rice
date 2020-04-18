@@ -2,6 +2,7 @@
 static int surfuseragent    = 1;  /* Append Surf version to default WebKit user agent */
 static char *fulluseragent  = ""; /* Or override the whole user agent string */
 static char *styledir       = "~/.surf/styles/";
+static char *scriptdir      = "~/.surf/script/";
 static char *certdir        = "~/.surf/certificates/";
 static char *cachedir       = "~/.surf/cache/";
 static char *cookiefile     = "~/.surf/cookies.txt";
@@ -48,6 +49,7 @@ static Parameter defconfig[ParameterLast] = {
 	[SpellLanguages]      =       { { .v = ((char *[]){ "en_US", NULL }) }, },
 	[StrictTLS]           =       { { .i = 1 },     },
 	[Style]               =       { { .i = 1 },     },
+    [UserScript]          =       { { .i = 1 },     },
 	[WebGL]               =       { { .i = 0 },     },
 	[ZoomLevel]           =       { { .f = 1.0 },   },
 };
@@ -125,7 +127,16 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
  */
 static SiteSpecific styles[] = {
 	/* regexp               file in $styledir */
+    { "://boards\\.4chan.*", "non.css" },
 	{ ".*",                 "default.css" },
+};
+
+ 
+/* scripts */
+static SiteSpecific scripts[] = {
+   /* regexp               file in $scriptdir */
+   // { ".*",                 "default.js" },
+    { "://boards\\.4chan.*", "4chan-X.user.js" },
 };
 
 /* certificates */

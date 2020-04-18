@@ -1,0 +1,175 @@
+From 80941418899c5c337b4a26b72e57c0dd7d2d9482 Mon Sep 17 00:00:00 2001
+From: Leonardo Taccari <iamleot@gmail.com>
+Date: Sat, 8 Jun 2019 13:22:49 +0200
+Subject: [PATCH] Add support for UserScript.
+
+Permit to inject per-site userscripts similarly to styles (most
+logic shameless copypasted from there!).
+---
+ config.def.h |  8 ++++++++
+ surf.c       | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 34265f6..0bbcb25 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -3,6 +3,7 @@ static int surfuseragent    = 1;  /* Append Surf version to default WebKit user
+ static char *fulluseragent  = ""; /* Or override the whole user agent string */
+ static char *scriptfile     = "~/.surf/script.js";
+ static char *styledir       = "~/.surf/styles/";
++static char *scriptdir      = "~/.surf/script/";
+ static char *certdir        = "~/.surf/certificates/";
+ static char *cachedir       = "~/.surf/cache/";
+ static char *cookiefile     = "~/.surf/cookies.txt";
+@@ -46,6 +47,7 @@ static Parameter defconfig[ParameterLast] = {
+ 	[SpellLanguages]      =       { { .v = ((char *[]){ "en_US", NULL }) }, },
+ 	[StrictTLS]           =       { { .i = 1 },     },
+ 	[Style]               =       { { .i = 1 },     },
++	[UserScript]          =       { { .i = 1 },     },
+ 	[WebGL]               =       { { .i = 0 },     },
+ 	[ZoomLevel]           =       { { .f = 1.0 },   },
+ };
+@@ -112,6 +114,12 @@ static SiteSpecific styles[] = {
+ 	{ ".*",                 "default.css" },
+ };
+ 
++/* scripts */
++static SiteSpecific scripts[] = {
++	/* regexp               file in $scriptdir */
++	{ ".*",                 "default.js" },
++};
++
+ /* certificates */
+ /*
+  * Provide custom certificate for urls
+diff --git a/surf.c b/surf.c
+index 2b54e3c..ebeae2f 100644
+--- a/surf.c
++++ b/surf.c
+@@ -80,6 +80,7 @@ typedef enum {
+ 	SpellLanguages,
+ 	StrictTLS,
+ 	Style,
++	UserScript,
+ 	WebGL,
+ 	ZoomLevel,
+ 	ParameterLast
+@@ -164,7 +165,9 @@ static void seturiparameters(Client *c, const char *uri, ParamName *params);
+ static void setparameter(Client *c, int refresh, ParamName p, const Arg *a);
+ static const char *getcert(const char *uri);
+ static void setcert(Client *c, const char *file);
++static const char *getscript(const char *uri);
+ static const char *getstyle(const char *uri);
++static void setscript(Client *c, const char *file);
+ static void setstyle(Client *c, const char *file);
+ static void runscript(Client *c);
+ static void evalscript(Client *c, const char *jsstr, ...);
+@@ -265,6 +268,7 @@ static ParamName loadtransient[] = {
+ 	PreferredLanguages,
+ 	ShowIndicators,
+ 	StrictTLS,
++	UserScript,
+ 	ParameterLast
+ };
+ 
+@@ -340,6 +344,7 @@ setup(void)
+ 	scriptfile = buildfile(scriptfile);
+ 	cachedir   = buildpath(cachedir);
+ 	certdir    = buildpath(certdir);
++	scriptdir  = buildpath(scriptdir);
+ 
+ 	gdkkb = gdk_seat_get_keyboard(gdk_display_get_default_seat(gdpy));
+ 
+@@ -364,6 +369,17 @@ setup(void)
+ 		}
+ 	}
+ 
++	for (i = 0; i < LENGTH(scripts); ++i) {
++		if (!regcomp(&(scripts[i].re), scripts[i].regex, REG_EXTENDED)) {
++			scripts[i].file = g_strconcat(scriptdir, "/", scripts[i].file,
++			                            NULL);
++		} else {
++			fprintf(stderr, "Could not compile regex: %s\n",
++			        scripts[i].regex);
++			scripts[i].regex = NULL;
++		}
++	}
++
+ 	if (!stylefile) {
+ 		styledir = buildpath(styledir);
+ 		for (i = 0; i < LENGTH(styles); ++i) {
+@@ -722,6 +738,7 @@ seturiparameters(Client *c, const char *uri, ParamName *params)
+ 		case Certificate:
+ 		case CookiePolicies:
+ 		case Style:
++		case UserScript:
+ 			setparameter(c, 0, p, &curconfig[p].val);
+ 		}
+ 	}
+@@ -846,6 +863,13 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
+ 			setstyle(c, getstyle(geturi(c)));
+ 		refresh = 0;
+ 		break;
++	case UserScript:
++		webkit_user_content_manager_remove_all_scripts(
++		    webkit_web_view_get_user_content_manager(c->view));
++		if (a->i)
++			setscript(c, getscript(geturi(c)));
++		refresh = 0;
++		break;
+ 	case WebGL:
+ 		webkit_settings_set_enable_webgl(s, a->i);
+ 		break;
+@@ -902,6 +926,20 @@ setcert(Client *c, const char *uri)
+ 
+ }
+ 
++const char *
++getscript(const char *uri)
++{
++	int i;
++
++	for (i = 0; i < LENGTH(scripts); ++i) {
++		if (scripts[i].regex &&
++		    !regexec(&(scripts[i].re), uri, 0, NULL, 0))
++			return scripts[i].file;
++	}
++
++	return "";
++}
++
+ const char *
+ getstyle(const char *uri)
+ {
+@@ -919,6 +957,26 @@ getstyle(const char *uri)
+ 	return "";
+ }
+ 
++void
++setscript(Client *c, const char *file)
++{
++	gchar *script;
++
++	if (!g_file_get_contents(file, &script, NULL, NULL)) {
++		fprintf(stderr, "Could not read script file: %s\n", file);
++		return;
++	}
++
++	webkit_user_content_manager_add_script(
++	    webkit_web_view_get_user_content_manager(c->view),
++	    webkit_user_script_new(script,
++	    WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
++	    WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END,
++	    NULL, NULL));
++
++	g_free(script);
++}
++
+ void
+ setstyle(Client *c, const char *file)
+ {
+-- 
+2.21.0
+
+

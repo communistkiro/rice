@@ -80,6 +80,7 @@ typedef enum {
 	SpellLanguages,
 	StrictTLS,
 	Style,
+	UserScript,
 	WebGL,
 	ZoomLevel,
 	ParameterLast
@@ -164,7 +165,9 @@ static void seturiparameters(Client *c, const char *uri, ParamName *params);
 static void setparameter(Client *c, int refresh, ParamName p, const Arg *a);
 static const char *getcert(const char *uri);
 static void setcert(Client *c, const char *file);
+static const char *getscript(const char *uri);
 static const char *getstyle(const char *uri);
+static void setscript(Client *c, const char *file);
 static void setstyle(Client *c, const char *file);
 static void runscript(Client *c);
 static void evalscript(Client *c, const char *jsstr, ...);
@@ -267,6 +270,7 @@ static ParamName loadtransient[] = {
 	PreferredLanguages,
 	ShowIndicators,
 	StrictTLS,
+	UserScript,
 	ParameterLast
 };
 
@@ -341,6 +345,7 @@ setup(void)
 	cookiefile = buildfile(cookiefile);
 	cachedir   = buildpath(cachedir);
 	certdir    = buildpath(certdir);
+	scriptdir  = buildpath(scriptdir);
 	for (i = 0; i < LENGTH(scriptfiles); i++) {
 		scriptfiles[i] = buildfile(scriptfiles[i]);
 	}
@@ -365,6 +370,17 @@ setup(void)
 			fprintf(stderr, "Could not compile regex: %s\n",
 			        certs[i].regex);
 			certs[i].regex = NULL;
+		}
+	}
+
+	for (i = 0; i < LENGTH(scripts); ++i) {
+		if (!regcomp(&(scripts[i].re), scripts[i].regex, REG_EXTENDED)) {
+			scripts[i].file = g_strconcat(scriptdir, "/", scripts[i].file,
+			                            NULL);
+		} else {
+			fprintf(stderr, "Could not compile regex: %s\n",
+			        scripts[i].regex);
+			scripts[i].regex = NULL;
 		}
 	}
 
@@ -726,6 +742,7 @@ seturiparameters(Client *c, const char *uri, ParamName *params)
 		case Certificate:
 		case CookiePolicies:
 		case Style:
+		case UserScript:
 			setparameter(c, 0, p, &curconfig[p].val);
 		}
 	}
@@ -850,6 +867,13 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 			setstyle(c, getstyle(geturi(c)));
 		refresh = 0;
 		break;
+	case UserScript:
+		webkit_user_content_manager_remove_all_scripts(
+		    webkit_web_view_get_user_content_manager(c->view));
+		if (a->i)
+			setscript(c, getscript(geturi(c)));
+		refresh = 0;
+		break;
 	case WebGL:
 		webkit_settings_set_enable_webgl(s, a->i);
 		break;
@@ -907,6 +931,20 @@ setcert(Client *c, const char *uri)
 }
 
 const char *
+getscript(const char *uri)
+{
+	int i;
+
+	for (i = 0; i < LENGTH(scripts); ++i) {
+		if (scripts[i].regex &&
+		    !regexec(&(scripts[i].re), uri, 0, NULL, 0))
+			return scripts[i].file;
+	}
+
+	return "";
+}
+
+const char *
 getstyle(const char *uri)
 {
 	int i;
@@ -921,6 +959,26 @@ getstyle(const char *uri)
 	}
 
 	return "";
+}
+
+void
+setscript(Client *c, const char *file)
+{
+	gchar *script;
+
+	if (!g_file_get_contents(file, &script, NULL, NULL)) {
+		fprintf(stderr, "Could not read script file: %s\n", file);
+		return;
+	}
+
+	webkit_user_content_manager_add_script(
+	    webkit_web_view_get_user_content_manager(c->view),
+	    webkit_user_script_new(script,
+	    WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+	    WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END,
+	    NULL, NULL));
+
+	g_free(script);
 }
 
 void

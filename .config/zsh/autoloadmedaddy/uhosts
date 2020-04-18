@@ -49,5 +49,5 @@ done < holdme;
 head -29 22 | tail -14 > /etc/hosts;
 cat h >> /etc/hosts;
 
-cd ~; rm -r /tmp/hosts;
+cd ~; rm -rf /tmp/hosts;
 }
