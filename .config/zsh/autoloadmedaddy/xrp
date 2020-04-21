@@ -6,11 +6,11 @@ function xrp () {
   if [[ ! -z $1 ]]; then; xrpp $1; fi;
     curl ${a} > /tmp/z;
     # DETECT RIDIRECTION ATTEMPS
-    grep 'redirected' /tmp/z >& /dev/null && echo ${a} >> ~/nm/redir && sed -i '1,1d' ~/nm/newlinks && break;
+    gre 'redirected' /tmp/z >& /dev/null && echo ${a} >> ~/nm/redir && sed -i '1,1d' ~/nm/newlinks && break;
     # PENDING RELEASE?
     sed -n '15,/">/p' /tmp/z > /tmp/c;
     # TAGS ON PAGE
-    grep 'class="tag"' /tmp/z | gre -o 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
+    gre 'class="tag"' /tmp/z | gre -o 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
 
     gre 'releases' /tmp/c && echo ${a} >> ~/nm/soon && sort -uo ~/nm/soon ~/nm/soon || (
       # DOWNLOAD ALBUM
