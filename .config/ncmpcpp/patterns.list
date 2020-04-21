@@ -1,8 +1,8 @@
 %a [%b #%n (%y)] %t
+%n %t
 %A [%b #%n (%y)] %t
 %n. %t
 %n - %t
-%n %t
 %a - %b - %n %t
 %a - %l - %n %t
 %t
