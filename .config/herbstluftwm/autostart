@@ -45,8 +45,6 @@ hc keybind $Mod-Control-Up              split bottom 0.5
 hc keybind $Mod-Control-Down            split top 0.5
 hc keybind $Mod-Control-Left            split right 0.5
 hc keybind $Mod-Control-Right           split left 0.5
-# let the current frame explode into subframes
-# hc keybind $Mod-Shift-space split explode
 
 # resizing frames
 resizestep=0.05
@@ -81,22 +79,19 @@ hc keybind $Mod-Shift-g                 set_attr clients.focus.floating toggle
 # hc keybind $Mod-p                       pseudotile toggle
 
 # The following cycles through the available layouts within a frame, but skips layouts, if the layout change wouldn't affect the actual window positions. i.e., if there are two windows within a frame, the grid layout is skipped.
-hc keybind $Mod-space                                                           \
-            or , and . compare tags.focus.curframe_wcount = 2                   \
-                     . cycle_layout +1 vertical horizontal max vertical grid    \
+hc keybind $Mod-space                                                \
+            or , and . compare tags.focus.curframe_wcount = 2        \
+                     . cycle_layout +1  max grid vertical horizontal \
                , cycle_layout +1
 # mouse
 hc mouseunbind --all
 hc mousebind $Mod-Shift-Button1         move
-hc mousebind $Mod-Shift-Button2         zoom
 hc mousebind $Mod-Shift-Button3         resize
 
 # focus
-hc keybind $Mod-BackSpace               cycle_monitor
 hc keybind $Mod-Tab                     cycle_all +1
 hc keybind $Mod-Shift-Tab               cycle_all -1
 hc keybind $Mod-Control-c               cycle
-#hc keybind $Mod-i jumpto urgent
 
 # theme
 hc attr theme.tiling.reset              1
@@ -131,30 +126,28 @@ hc attr theme.background_color          '#1a1a1a'
 
 hc set window_gap                       0
 hc set frame_padding                    0
-hc set smart_window_surroundings        0
-hc set smart_frame_surroundings         1
+hc set smart_window_surroundings        off
+hc set smart_frame_surroundings         on
 hc set mouse_recenter_gap               0
 
 # rules
 hc unrule -F
-hc rule                                 title~'qBittorrent.*' tag=9
-hc rule                                 title~'Nicot.*' tag=9
-# hc rule                                 title~'Cataclysm.*' tag=5
-hc rule                                 title~'.*Firefox' tag=2
-hc rule                                 title~'MuseScore.*' tag=5
-hc rule                                 title~'.*qpdfview' tag=4
-hc rule                                 title~'Gimp.*' tag=3
+hc rule                                 class='Firefox'     tag=2
+hc rule                                 class='tabbedsurf'  tag=2
+hc rule                                 class='musescore'   tag=3
+hc rule                                 class='qpdfview'    tag=4
+hc rule                                 class='Gimp'        tag=3
+hc rule                                 class='qBittorrent' tag=9
+hc rule                                 class='Nicotine'    tag=9
 
-hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
-# hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on
-
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on
 hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
-# focus new clients?
-hc rule focus=on 
-# hc rule focus=off
 
 hc set tree_style '╾│ ├└╼─┐'
+
+# focus new clients?
+hc rule focus=on 
 
 # unlock, just to be sure
 hc unlock

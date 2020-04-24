@@ -2,7 +2,7 @@
 # conky dzen2 status bar
 FG='#9ffb00'
 BG='#202020'
-FONT="-*-firacode-medium-r-*-*-14-*-*-*-*-*-*-*"
+FONT="-otf-fira code-medium-r-*-*-14-*-*-*-*-*-*-*"
 
 # Set last set background
 ~/.fehbg &

@@ -157,7 +157,7 @@ alias fzf='fzf -m\
   --bind "alt-r:execute(micro {+})"\
   --bind "alt-f:clear-selection"\
   --bind "alt-v:select-all"'
-alias sf="tabbed -p s+1 -dr 2 surf -e '' &> /dev/null & disown"
+alias sf="tabbed -n tabbedsurf -dr 2 surf -e '' &> /dev/null & disown"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'

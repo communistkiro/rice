@@ -7,7 +7,7 @@ static char *certdir        = "~/.surf/certificates/";
 static char *cachedir       = "~/.surf/cache/";
 static char *cookiefile     = "~/.surf/cookies.txt";
 static char *scriptfiles[]  = {
-	"~/.surf/script.js",
+	"~/.surf/user.js",
 };
 
 /* Webkit default features */
@@ -28,7 +28,7 @@ static Parameter defconfig[ParameterLast] = {
 	[DiskCache]           =       { { .i = 1 },     },
 	[DNSPrefetch]         =       { { .i = 0 },     },
 	[FileURLsCrossAccess] =       { { .i = 0 },     },
-	[FontSize]            =       { { .i = 14 },    },
+	[FontSize]            =       { { .i = 16 },    },
 	[FrameFlattening]     =       { { .i = 0 },     },
 	[Geolocation]         =       { { .i = 0 },     },
 	[HideBackground]      =       { { .i = 0 },     },
@@ -185,8 +185,8 @@ static Key keys[] = {
 	{ GDK_CONTROL_MASK,        GDK_KEY_c,                  clipboard,          { .i = 0 } },
 	{ GDK_CONTROL_MASK,        GDK_KEY_v,                  clipboard,          { .i = 1 } },
 
-	{ 0,                       GDK_KEY_F3,                 find,               { .i = +1 } },
-	{ GDK_SHIFT_MASK,          GDK_KEY_F3,                 find,               { .i = -1 } },
+	{ MODKEY,                  GDK_KEY_n,                  find,               { .i = +1 } },
+	{ MODKEY|GDK_SHIFT_MASK,   GDK_KEY_n,                  find,               { .i = -1 } },
 
 	{ MODKEY|GDK_SHIFT_MASK,   GDK_KEY_p,                  print,              { 0 } },
 	{ MODKEY|GDK_SHIFT_MASK,   GDK_KEY_t,                  showcert,           { 0 } },

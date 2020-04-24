@@ -1,6 +1,6 @@
 #!/bin/zsh
+# UPDATE /ETC/HOSTS
 function uhosts () {
-# update /etc/hosts
 mkdir -p /tmp/hosts; cd /tmp/hosts;
 a=(
   "http://winhelp2002.mvps.org/hosts.txt"

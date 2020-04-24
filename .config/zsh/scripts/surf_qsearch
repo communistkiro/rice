@@ -19,7 +19,7 @@
 
 # Get the full query. The 'echo | dmenu' idiom may be a bit of
 # a hack, but it seems to work.
-q="$(echo "s\nd\nwe\nwa\nw\nwd\ng\no\ny\ndd\nti\nr\nhj\nl\ni\nsf" | dmenu -i)"
+q="$(echo "s\nd\nwe\nwa\nw\nwd\ng\no\ny\ndd\nti\nr\nhj\nl\ni\nsf\nbc" | dmenu -i)"
 [ -z "$q" ] && exit 0
 
 # Extract the engine code.
@@ -52,6 +52,7 @@ case $e in
     'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
     'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
     'sh' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://sci-hub.tw/${s}";;
+    'bc' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://bandcamp.com/search?q=${s}";;
     *    ) 
         exit 1;;
 esac
