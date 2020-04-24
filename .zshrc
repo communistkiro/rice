@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$PATH:/usr/local/plan9/bin:/opt/texlive/2019/bin/x86_64-linux:/root/.config/zsh/scripts:$HOME/bin
+export PATH=$PATH:/opt/texlive/2020/bin/x86_64-linux:/root/.config/zsh/scripts:$HOME/bin # /usr/local/plan9/bin:
 
 # Path to your oh-my-zsh installation.
 export ZSH=/root/.config/omz
@@ -85,10 +85,7 @@ setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 alias vol='amixer set Master'
 alias xb='xbacklight -set'
 alias so='source /root/.zshrc'
-alias mix='amixer set Beep 0;\
-    amixer sset Capture toggle;\
-    xbacklight -set 20;\
-    ! pgrep xbindkeys && xbindkeys;'
+alias mix='amixer set Beep 0; amixer sset Capture toggle; xbacklight -set 20'
 # PROGRAMS AND PREFERENCES
 alias xbq='xbps-query --regex -Rs'
 alias xbqm='xbps-query -m'
@@ -98,19 +95,18 @@ alias xbr='xbps-remove -R'
 alias ls='lsd -A'
 alias ls1='lsd -A1'
 alias lsr='lsd -A --tree'
-alias less='less --hilite-unread --ignore-case --LONG-PROMPT --tabs 4'
+alias less='less --ignore-case --LONG-PROMPT --tabs 4'
 alias du='/bin/du -hs'
 alias rm='sudo rm -r'
 alias cp='cp -vR'
 alias gre='/bin/grep -P --color -i'
-# -M MULTILINE; -v INVERT SELECTION; -o ONLY MATCHED
 alias pre='pcre2grep -i --color'
 alias man='man -a -T ascii -O width=94,indent=2'
 alias catdoc='catdoc -m256'
 alias pk='pkill -KILL -i'
 alias rsync='rsync -vah --progress'
 alias ncm='ncmpcpp'
-alias mpdd='pk mpdas; mpd; mpdas -d'
+alias mpdd='pgrep mpd &>/dev/null && pk mpd && sleep 5 && mpdd || mpd && mpdas -d && ncm'
 alias feh='feh --scale-down'
 alias cmat='cmatrix -au2'
 alias kl='khal interactive'
@@ -130,9 +126,6 @@ alias oc='octave-cli'
 alias oce='octave-cli --eval'
 alias espeak='espeak -p30 -k35 -s310 -g 2 -ven-sc'
 alias flite='flite -voice awb'
-alias twitch="mpv \
-    --profile=low-latency \
-    --ytdl-raw-options=format='best[height<=360]'"
 alias loc='setxkbmap us; export LANG=en_US.UTF-8; xb 0; slock; xb 12'
 alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias ff='firefox &>/dev/null & disown'
@@ -148,7 +141,7 @@ alias lmms='lmms --allowroot &>/dev/null & disown'
 alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
 alias clb="col -b"
 alias bb='bye'
-alias npp='notepadqq --allow-root 2> /dev/null & disown'
+# alias npp='notepadqq --allow-root 2> /dev/null & disown'
 alias unb='bindkey -d'
 alias mle='mle -i1 -w1'
 alias love='mpc sendmessage mpdas love'
@@ -167,7 +160,8 @@ alias fzf='fzf -m\
 alias sf="tabbed -p s+1 -dr 2 surf -e '' &> /dev/null & disown"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias fd='fd -uu -i'
-
+alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
+alias d2re='cd /root/.wine/drive_c/D2-resurgence; wine Plugy.exe &>/dev/null & disown'
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)

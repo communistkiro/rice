@@ -1,7 +1,0 @@
-#!/bin/sh
-function pass () {
-echo 'gaysha APERTURE yamaguch1 SP)0_- helvetica ajar 123 !@#' | xclip -loops 1 -silent;
-keepassxc-cli open ~/keepassxc/Passwords.kdbx
-}
-
-
