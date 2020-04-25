@@ -1,3 +1,4 @@
 kdef 'mle_normal,no'
 keybind 'cmd_indent,C-]'
 keybind 'cmd_outdent,C-['
+keybind 'cmd_insert_data,C-V'

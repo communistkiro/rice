@@ -204,7 +204,7 @@ static Key keys[] = {
 	{ MODKEY|GDK_CONTROL_MASK, GDK_KEY_b,                  toggle,             { .i = ScrollBars } },
 	{ MODKEY|GDK_CONTROL_MASK, GDK_KEY_t,                  toggle,             { .i = StrictTLS } },
 	{ MODKEY|GDK_SHIFT_MASK,   GDK_KEY_m,                  toggle,             { .i = Style } },
-    { 0,                       GDK_KEY_F4,                 playexternal,       { 0 } },
+    { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_w,                  playexternal,       { 0 } },
 };
 
 /* VIDEOPLAY(URI) */

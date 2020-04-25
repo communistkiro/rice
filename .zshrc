@@ -129,10 +129,10 @@ alias flite='flite -voice awb'
 alias loc='setxkbmap us; export LANG=en_US.UTF-8; xb 0; slock; xb 12'
 alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias ff='firefox &>/dev/null & disown'
-alias vsc='code-oss --user-data-dir ~/vsc/'
+alias vsc='sudo --user=v code-oss --user-data-dir ~/vsc/'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
-alias qpp='qpdfview --unique &> /dev/null & disown'
+alias qpp='qpdfview --unique ${1} &>/dev/null & disown qpdfview'
 alias mpi='mp3info2'
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
@@ -162,6 +162,8 @@ alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --
 alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
 alias d2re='cd /root/.wine/drive_c/D2-resurgence; wine Plugy.exe &>/dev/null & disown'
+alias genn='keepassxc-cli generate -UlnseL64'
+alias gen='keepassxc-cli generate -UlnL64'
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)

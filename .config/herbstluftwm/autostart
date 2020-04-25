@@ -47,7 +47,7 @@ hc keybind $Mod-Control-Left            split right 0.5
 hc keybind $Mod-Control-Right           split left 0.5
 
 # resizing frames
-resizestep=0.05
+resizestep=0.025
 hc keybind $Mod-Shift-Left              resize left +$resizestep
 hc keybind $Mod-Shift-Down              resize down +$resizestep
 hc keybind $Mod-Shift-Up                resize up +$resizestep

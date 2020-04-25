@@ -19,7 +19,7 @@
 
 # Get the full query. The 'echo | dmenu' idiom may be a bit of
 # a hack, but it seems to work.
-q="$(echo "s\nd\nwe\nwa\nw\nwd\ng\no\ny\ndd\nti\nr\nhj\nl\ni\nsf\nbc" | dmenu -i)"
+q="$(echo "d\ns\nwe\nwa\nw\nwd\ng\no\ny\ndd\nti\nr\nhj\nl\ni\ni\nsh\nbc" | dmenu)"
 [ -z "$q" ] && exit 0
 
 # Extract the engine code.
@@ -32,13 +32,13 @@ e="${q%% *}"
 # s=$(printf %s "${q#* }" | tr -d '\n' | od -t x1 -An |  tr ' ' '%')
 # s=$(printf %s "${q#* }" | tr -d '\n' | sed 's/ /_/g' od -t x1 -An |  tr ' ' '%')
 s=$(printf %s "${q#* }")
-
 # id=$(xdotool search --class 'surf' | tail -1)     
+
 case $e in
-    's'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.startpage.com/do/search?q=${s}";;
     'd'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://duckduckgo.com/?q=${s}";;
+    's'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.startpage.com/do/mypage.pl?prfe=36c84513558a2d34bf0d89ea505333ad761002405484af240c1c89932309a9bc5065027ac0acf304530bea21aa54bdf5?q=${s}";;
     'we' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=${s}";;
-    'wa' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://wiki.archlinux.org/index.php/Special:Search?search=${s}&go=Go";;
+    'wa' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://wiki.archlinux.org/index.php?title=Special%3ASearch&search=${s}";;
     'w'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://en.wiktionary.org/w/index.php?search=${s}&go=Go";;
     'wd' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://de.wiktionary.org/w/index.php?title=Spezial%3ASuche&search=${s}";;
     'g'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://github.com/search?utf8=%E2%9C%93&type=&q=${s}";;
@@ -53,6 +53,5 @@ case $e in
     'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
     'sh' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://sci-hub.tw/${s}";;
     'bc' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://bandcamp.com/search?q=${s}";;
-    *    ) 
-        exit 1;;
+    *    ) exit 1;;
 esac
