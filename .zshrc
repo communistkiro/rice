@@ -112,9 +112,6 @@ alias cmat='cmatrix -au2'
 alias kl='khal interactive'
 alias kln='khal new'
 alias mpv='mpv --gpu-dumb-mode=yes'
-# alias ww='wyrd'
-# alias ww='when --past=0 --future=1'
-# alias we='when e'
 alias rr='ranger --cmd="chain set preview_files true"'
 alias hl='hledger-ui --watch'
 alias cow='cowthink -e "^^" -f xxx -T "U"'
@@ -141,7 +138,6 @@ alias lmms='lmms --allowroot &>/dev/null & disown'
 alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
 alias clb="col -b"
 alias bb='bye'
-# alias npp='notepadqq --allow-root 2> /dev/null & disown'
 alias unb='bindkey -d'
 alias mle='mle -i1 -w1'
 alias love='mpc sendmessage mpdas love'
@@ -161,9 +157,10 @@ alias sf="tabbed -n tabbedsurf -dr 2 surf -e '' &> /dev/null & disown"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
-alias d2re='cd /root/.wine/drive_c/D2-resurgence; wine Plugy.exe &>/dev/null & disown'
+alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
 alias genn='keepassxc-cli generate -UlnseL64'
 alias gen='keepassxc-cli generate -UlnL64'
+alias tage='tageditor --no-sandbox'
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)

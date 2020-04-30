@@ -43,7 +43,7 @@ set (gca, 'fontsize',14,'fontweight','bold');
 
 
 subplot (3, 3, 7:9);
-plot (dt48h, clouds48h, "k;Cloud coverage, %;", "linewidth", 2); dateaxis ('x', '%d.'); hold on; [ax, h1, h2] = plotyy (dt48h, humidity48h, dt48h, pressure48h); ylabel (ax(1), "Relative humidity, %"); ylabel (ax(2), "Pressure AGL, mbar"); for a=[1 2]; xlabel (ax(a), 'UTC'); endfor;
+plot (dt48h, clouds48h, "k;Cloud coverage, %;", "linewidth", 2); dateaxis ('x', '%d.'); hold on; [ax, h1, h2] = plotyy (dt48h, humidity48h, dt48h, pressure48h); ylabel (ax(1), 'Relative humidity, %'); ylabel (ax(2), 'Pressure AGL, mbar'); for a=[1 2]; xlabel (ax(a), 'UTC'); endfor;
 grid minor; axis tight; dateaxis (ax(1), 'x', '%d.'); dateaxis (ax(2), 'x', '%d.');
 set (ax(:),'fontsize', 14, 'fontweight', 'bold');
 set ([h1 h2], 'linewidth', 2);
@@ -59,7 +59,7 @@ set (gca, 'fontsize',14,'fontweight','bold');
 
 
 subplot (3, 3, 7:9);
-plot (1:8, clouds7d, 'k;Cloud coverage, %;', "linewidth", 2); hold on; [ax, h1, h2] = plotyy (1:8, humidity7d, 1:8, pressure7d); ylabel (ax(1), 'Relative humidity, %'); ylabel (ax(2), 'Pressure AGL, mbar'); for a=[1 2]; xlabel (ax(a), 'UTC'); endfor
+plot (1:8, clouds7d, 'k;Cloud coverage, %;', "linewidth", 2); hold on; [ax, h1, h2] = plotyy (1:8, humidity7d, 1:8, pressure7d); ylabel (ax(1), 'Relative humidity, %'); ylabel (ax(2), 'Pressure AGL, mbar'); for a=[1 2]; xlabel (ax(a), '1 = current day'); endfor;
 grid minor; axis tight;
 set (ax(:),'fontsize', 14, 'fontweight', 'bold');
 set ([h1 h2], 'linewidth', 2);

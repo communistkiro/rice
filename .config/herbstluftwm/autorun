@@ -19,10 +19,8 @@ pgrep syndaemon || syndaemon -d -i 131072 -p /tmp/syndaemon
 # Screen lock
 pgrep xautolock || xautolock -time 20 -secure -locker 'setxkbmap us; export LANG=en_US.UTF-8; xbacklight -set 0; slock; xbacklight -set 15' &
 
-pgrep bumblebeed || bumblebeed --daemon
-
 # RHS of status bar
-pgrep conky && pk conky
+pgrep conky && pkill -KILL conky
 dzen2 -e - -ta r -x '1084' -w '836' -h '16' -fg $FG -bg $BG -fn $FONT < <(conky -d -c ~/.config/conky/conky.conf) &
 pgrep pomo && dzen2 -e - -ta l -x '1080' -w '64' -h '16' -fg $FG -bg $BG -fn $FONT < <(/root/.config/zsh/scripts/pomo status) &
 

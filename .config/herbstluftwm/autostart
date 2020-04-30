@@ -97,6 +97,7 @@ hc keybind $Mod-Control-c               cycle
 hc attr theme.tiling.reset              1
 hc attr theme.floating.reset            1
 hc set frame_border_active_color        '#392030'
+
 # top bar
 hc set frame_border_normal_color        '#202020'
 hc set frame_bg_normal_color            '#803380'
@@ -107,27 +108,29 @@ hc set frame_bg_transparent             1
 hc set frame_transparent_width          1
 hc set frame_gap                        0
 
-
-# inner border active/inactive window
-# inner cannot be greater than outer
-# virt desktop selection color
+# inner border active/inactive window ; inner cannot be greater than outer ; virt desktop selection color
 hc attr theme.active.color              '#9FFB00'
 hc attr theme.normal.color              '#803380'
 hc attr theme.urgent.color              '#FF0000'
-hc attr theme.inner_width               0
-hc attr theme.inner_color               '#202020'
+
 hc attr theme.border_width              1
 hc attr theme.floating.border_width     1
-hc attr theme.floating.outer_width      1
-hc attr theme.floating.outer_color      '#803380'
-hc attr theme.active.inner_color        '#9ffb00'
-hc attr theme.active.outer_color        '#9ffb00'
-hc attr theme.background_color          '#1a1a1a'
 
-hc set window_gap                       0
+hc attr theme.active.outer_color        '#9FFB00'
+hc attr theme.active.inner_color        '#9FFB00'
+
+hc attr theme.inner_width               0
+hc attr theme.inner_color               '#202020'
+
+hc attr theme.floating.outer_width      0
+hc attr theme.floating.outer_color      '#803380'
+
+hc attr theme.background_color          '#1A1A1A'
+
+hc set window_gap                       1
 hc set frame_padding                    0
 hc set smart_window_surroundings        off
-hc set smart_frame_surroundings         on
+hc set smart_frame_surroundings         off
 hc set mouse_recenter_gap               0
 
 # rules
