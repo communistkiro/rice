@@ -8,4 +8,5 @@ while [ ! -z "$chosen" ]; do
     chosen=$(echo "$DIRS" | dmenu -i -b -l 16);
     cd "$chosen"
 done
+# while [ ! -z ${c} ]; do; c="$(echo "$(/bin/ls -ap | /bin/grep -iP \'^[\.\w][^\$/]+/$\')" | dmenu -i -p \'where..?\')"; cd ${c}; done;
 }

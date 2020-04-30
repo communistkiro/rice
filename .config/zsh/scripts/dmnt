@@ -1,12 +1,13 @@
-#!/bin/sh
+#!/bin/zsh
 # Gives a dmenu prompt to mount disk/drives. If found in /etc/fstab, it'll be mounted; otherwise, you'll be prompted to give a mountpoint from already existsing directories. 
 
-a=$(lsblk -nlpo 'name,label,type,size,uuid,state,mountpoint' 2>/dev/null | grep -v '/home$|/boot$|/$|SWAP');
 case $(printf "mount\\nunmount" | dmenu -i -p '..?') in
 'mount') 
-    s=$(echo "$(echo ${a} | dmenu -i -p 'mount..?')" | /bin/grep -oP '^[\w/]+');
-    mount ${s} && return 0 || c="z";
-    while [ ! -z ${c} ]; do; c="$(echo "$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')" | dmenu -i -p 'where..?')"; cd ${c}; done;
-    mount ${s} "$(pwd)";;
+    a=$(lsblk -nlpo 'name,label,type,size,uuid,state,mountpoint' 2>/dev/null | grep -v '/home$|/boot$|/$|SWAP');
+    s=$(echo "$(echo ${a} | dmenu -i -p 'mount..?' -l $(echo ${a} | wc -l))" | /bin/grep -oP '^[\w/]+');
+    mount ${s} && return 0;
+    c="z"; while [ ! -z ${c} ]; do c="$(echo "$(/bin/ls -ap | /bin/grep -iP "^[\.\w][^\$/]+/$")" | dmenu -i -p "mount where..?")"; cd "${c}"; done;
+    yn "Mount ${s} to $(pwd)?" 'mount ${s} "$(pwd)"';;
 'unmount') umount "$(echo "$(findmnt --real -nlo 'target,source,fstype' | dmenu -i -p 'unmount (target, source, fstype)..?')" | /bin/grep -oP '^[\w/]+')";;
 esac;
+unset a s c;
