@@ -29,26 +29,42 @@ a=(
 
 for s in {1..${#a}}; do wget -O ${s} ${a[s]}; done;
 
-cat /tmp/hosts/* ~/dcs/blockme >> tmp;
-sed -r '
-  /localhost|loopback|ip6-|broadcasthost|local$/d; /^\s+$/d;
-  s/  +/ /g; /^ /d;
-  /^#{2,}/d; /^\s+#/d; /^\s+$/d;
-  s/^# *(0.){3}0/0.0.0.0/;
-  s/^[^:#0 ]/0.0.0.0 &/; /^#/d; /^ +#$/d;
-  /0.courier-push-apple.com.akadns.net/d; /0-courier.push.apple.com/d;
-  s/:::+[^ ]+/::1/;
-  /^0.0.0.0 [a-zA-Z0-9 ]+$/d;
-  ' tmp | sort -u > h;
-
-gre '^#' /etc/hosts | sed 's/#//' > holdme;
-
-while IFS= read -r h; do
-  /bin/sed -r --in-place=bak "s/^${h}$/#&/" h;
-done < holdme;
+/bin/grep -P '^#' /etc/hosts | tr -d '#' > holdme;
 
 head -29 22 | tail -14 > /etc/hosts;
-cat h >> /etc/hosts;
+
+/bin/sed -i '1,40d' 22;
+
+# cat /tmp/hosts/[0-9]* ~/dcs/blockme | tr -s ' ' | tr -s '\n' | tr -s '#' > tmp;
+# cat /tmp/hosts/[0-9]* ~/dcs/blockme > tmp;
+
+# sed -r '
+#   /localhost/d; /loopback/d; /ip6-/d; /broadcasthost/d;
+#   /^ #/d;
+#   /^0\.0\.0\.0 [a-zA-Z0-9 ]+$/d;
+#   s/^# ?0\.0\.0\.0/0.0.0.0/;
+#   /^[# a-zA-Z0-9*=]//;
+#   s/^[a-zA-Z0-9 .]+/0.0.0.0 &/;
+#   /^#/d;
+#   s/^[^0]/0.0.0.0 &/;
+#   ' tmp | tr -s '\n' | sort -u > h;
+cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe '
+  s{.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*}{}n; 
+  s{[\ \t\f\r]+}{ }g;
+  s{^ }{ };
+  s{#+}{#}g;
+  s{^:{3,}}{::};
+  s{^# ?(0\.0\.0\.0)}{0.0.0.0}n;
+  s{^# ?(::)}{::}n;
+  s{^(\s+)?#.*$}{};
+  s{(^[^0:][^.:])}{0.0.0.0 $1};
+  # s{(^[^0]|[^:][^.]|[^:][^ ]|[^0])}{0.0.0.0 $1};
+  # s{^ ?([a-zA-Z0-9 /.-]+)$}{0.0.0.0 $1}; # only office and windows, not actual links
+  s{(^[^:]\.[^0]+?)}{0.0.0.0 $1};
+  s{^ #.*}{};
+' | tr -s '\n' | sort -u > h;
+
+[ -s holdme ] && while IFS= read -r h; do sed -r "s/^${h}$/#&/" h >> /etc/hosts; done < holdme || cat h >> /etc/hosts;
 
 cd ~; rm -rf /tmp/hosts;
 }

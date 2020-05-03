@@ -8,6 +8,8 @@ case $(printf "mount\\nunmount" | dmenu -i -p '..?') in
     mount ${s} && return 0;
     c="z"; while [ ! -z ${c} ]; do c="$(echo "$(/bin/ls -ap | /bin/grep -iP "^[\.\w][^\$/]+/$")" | dmenu -i -p "mount where..?")"; cd "${c}"; done;
     yn "Mount ${s} to $(pwd)?" 'mount ${s} "$(pwd)"';;
-'unmount') umount "$(echo "$(findmnt --real -nlo 'target,source,fstype' | dmenu -i -p 'unmount (target, source, fstype)..?')" | /bin/grep -oP '^[\w/]+')";;
+'unmount') 
+    a=$(findmnt --real -nlo 'target,source,fstype');
+    umount "$(echo "${a} | dmenu -i -p 'unmount (target, source, fstype)..?')" -l $(echo ${a} | wc -l) | /bin/grep -oP '^[\w/]+')";;
 esac;
 unset a s c;
