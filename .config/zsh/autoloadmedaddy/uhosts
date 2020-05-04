@@ -25,6 +25,7 @@ a=(
   "https://raw.githubusercontent.com/nickspaargaren/pihole-google/master/google-domains"
   "https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt"
   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts"
+  "https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt"
 );
 
 for s in {1..${#a}}; do wget -O ${s} ${a[s]}; done;
@@ -39,17 +40,16 @@ head -29 22 | tail -14 > /etc/hosts;
 cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe "
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n; 
   s/[\ \t\f\r]+/ /g;
-  s/^ / /;
   s/#+/#/g;
+  s/^ //;
   s/^:{3,}/::/;
   s/^# ?(0\.0\.0\.0)/0.0.0.0/n;
   s/^# ?(::)/::/n;
-  s/^(\s+)?#.*$//;
-  s/(^[^0:][^.:])/0.0.0.0 $1/;
-  # s/(^[^0]|[^:][^.]|[^:][^ ]|[^0])/0.0.0.0 $1/;
-  # s/^ ?([a-zA-Z0-9 /.-]+)$/0.0.0.0 $1/;
-  s/(^[^:]\.[^0]+?)/0.0.0.0 $1/;
-  s/^ #.*//;
+  s/^# ?.*$//;
+  s/^[^(:: )|(0.0.0.0 )]/0.0.0.0 $1/; 
+  #s/(^[^0:][^.:][^. ]?)/0.0.0.0 $1/;
+  # s/(^[^:]\.[^0]+?)/0.0.0.0 $1/;
+  s/^ #.*$//;
   s/ $//;
 " | tr -s '\n' | sort -u > h;
 
