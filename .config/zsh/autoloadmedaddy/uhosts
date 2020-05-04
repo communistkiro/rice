@@ -29,26 +29,14 @@ a=(
 
 for s in {1..${#a}}; do wget -O ${s} ${a[s]}; done;
 
-perl -ne 's/^#// && print' /etc/hosts > holdme;
+# https://unix.stackexchange.com/questions/29724/how-to-properly-collect-an-array-of-lines-in-zsh
+q=("${(@f)$(perl -ne 's/^#(?:0\.0\.0\.0|::) // && print' /etc/hosts)}");
 
 head -29 22 | tail -14 > /etc/hosts;
 
 /bin/sed -i '1,40d' 22;
 
-# cat /tmp/hosts/[0-9]* ~/dcs/blockme | tr -s ' ' | tr -s '\n' | tr -s '#' > tmp;
-# cat /tmp/hosts/[0-9]* ~/dcs/blockme > tmp;
-
-# sed -r '
-#   /localhost/d; /loopback/d; /ip6-/d; /broadcasthost/d;
-#   /^ #/d;
-#   /^0\.0\.0\.0 [a-zA-Z0-9 ]+$/d;
-#   s/^# ?0\.0\.0\.0/0.0.0.0/;
-#   /^[# a-zA-Z0-9*=]//;
-#   s/^[a-zA-Z0-9 .]+/0.0.0.0 &/;
-#   /^#/d;
-#   s/^[^0]/0.0.0.0 &/;
-#   ' tmp | tr -s '\n' | sort -u > h;
-cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe '
+cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe "
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n; 
   s/[\ \t\f\r]+/ /g;
   s/^ / /;
@@ -59,15 +47,18 @@ cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe '
   s/^(\s+)?#.*$//;
   s/(^[^0:][^.:])/0.0.0.0 $1/;
   # s/(^[^0]|[^:][^.]|[^:][^ ]|[^0])/0.0.0.0 $1/;
-  # s/^ ?([a-zA-Z0-9 /.-]+)$/0.0.0.0 $1/; # only office and windows, not actual links
+  # s/^ ?([a-zA-Z0-9 /.-]+)$/0.0.0.0 $1/;
   s/(^[^:]\.[^0]+?)/0.0.0.0 $1/;
   s/^ #.*//;
   s/ $//;
-' | tr -s '\n' | sort -u > h;
+" | tr -s '\n' | sort -u > h;
 
-if [ -s holdme ]; then; 
-  while IFS= read -r h; do sed -r "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;
-else; cat h >> /etc/hosts; fi;
+# if [ -s holdme ]; then; 
+#   while IFS= read -r h; do perl -ie "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;
+# else; cat h >> /etc/hosts; fi;
+# for a in {1..${#q}}; do; perl -pe "s/(.*\b${q[a]}$)/#$1/" -i h
+[[ -n $q ]] && for a in {1..${#q}}; do; /bin/sed -ir "s/.* ${q[a]}$/#&/" h; done;
+cat h >> /etc/hosts;
 
 cd ~; rm -rf /tmp/hosts;
 unset a;
