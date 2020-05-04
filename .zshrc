@@ -164,7 +164,7 @@ alias tage='tageditor --no-sandbox'
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
-autoload $(ll /root/.config/zsh/autoloadmedaddy) zmv
+autoload $(ll /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc && zmathfunc
 
 
 # SOURCE
