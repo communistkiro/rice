@@ -31,7 +31,7 @@ a=(
 for s in {1..${#a}}; do wget -O ${s} ${a[s]}; done;
 
 # https://unix.stackexchange.com/questions/29724/how-to-properly-collect-an-array-of-lines-in-zsh
-q=("${(@f)$(perl -ne 's/^#(?:0\.0\.0\.0|::) // && print' /etc/hosts)}");
+q=("${(@f)$(perl -ne 's/^#(0\.0\.0\.0|::) //n && print' /etc/hosts)}");
 
 head -29 22 | tail -14 > /etc/hosts;
 
@@ -43,12 +43,12 @@ cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe "
   s/#+/#/g;
   s/^ //;
   s/^:{3,}/::/;
+  s/(^(?!0\.0\.0\.0).+)/0.0.0.0 $1/;# negative look-ahead assertion
+  # s/(^.{1,6}$|^.{7}(?<!0\.0\.0\.0).*)/0\.0\.0\.0 $1/; # negative look-back assertion
+  # s/^([^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^ ])))))))).*/0.0.0.0 $1/; # char set and alternations
   s/^# ?(0\.0\.0\.0)/0.0.0.0/n;
   s/^# ?(::)/::/n;
   s/^# ?.*$//;
-  s/^[^(:: )|(0.0.0.0 )]/0.0.0.0 $1/; 
-  #s/(^[^0:][^.:][^. ]?)/0.0.0.0 $1/;
-  # s/(^[^:]\.[^0]+?)/0.0.0.0 $1/;
   s/^ #.*$//;
   s/ $//;
 " | tr -s '\n' | sort -u > h;
