@@ -10,13 +10,13 @@ a=( # feh bg options
 );
 c=~/im; # starting dir & file/folder choice
 cd ${c};
-until w=$(xwininfo -name 'pape' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print');do; sleep 0; done;
+until [[ -n ${w} ]]; do; w=$(xwininfo -name 'pape' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 while [[ '' != ${c} ]]; do;
     [ -d ${c} ] && f=($(ls -ap ${c} | grep -v '/')) && d=($(ls -ap ${c} | grep '/' | grep -v '^\./'));
     # c=$(printf "%s\n" "${d[@]}" "${f[@]}" "FEH BG OPTION" | tr -s '\n' | dmenu -i -l $((${#d} + ${#f} + 1)) -p $(pwd)) || return 0;
-    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "FEH BG OPTION" | tr -s '\n' | dmenu -i -l $(zcalc -e 'min(16, ${#d} + ${#f} + 1)') -p $(pwd) -w ${w} ) || return 0;
+    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "FEH BG OPTION" | tr -s '\n' | dmenu -i -l $(zcalc -e 'min(16, ${#d} + ${#f} + 1)') -p $(pwd) -w ${w} );
     [ -d ${c} ] && cd ${c} && c=.;
-    [ -f ${c} ] && (feh ${s-${a[4]}} ${c} || return 1);
+    [ -f ${c} ] && feh ${s-${a[4]}} ${c} || break;
     # [[ ${c} = "FEH BG OPTION" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options') && feh ${s} $(perl -ne "s/^.*?'(.*)'/\1/ && print" ~/.fehbg);
     [[ ${c} = "FEH BG OPTION" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options' -w ${w}) && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
 done

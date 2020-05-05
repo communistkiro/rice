@@ -14,7 +14,7 @@ a=(
     'exit'
 );
 i=0;
-until w=$(xwininfo -name 'mpp' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print'); do; sleep 0; done;
+until [[ -n ${w} ]]; do; w=$(xwininfo -name 'mpp' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 q[1]=''; q[2]='';
 while [[ '' != ${c-a} ]]; do
     c=$(printf "%s\n" "${a[@]}" | dmenu -i -w ${w} -l ${#a});
