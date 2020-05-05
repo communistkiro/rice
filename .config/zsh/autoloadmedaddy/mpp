@@ -42,5 +42,5 @@ while [[ '' != ${c-a} ]]; do
             break;;
     esac
 done
-unset a i q w;
+unset a i q w c;
 }
