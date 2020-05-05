@@ -4,3 +4,4 @@
 
 void hbunloadfonts();
 void hbtransform(XftGlyphFontSpec *, const Glyph *, int, int, int);
+
