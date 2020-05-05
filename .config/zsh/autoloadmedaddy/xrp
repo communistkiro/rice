@@ -23,9 +23,9 @@ function xrp () {
         --embed-thumbnail \
         --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' ${a};
       # MISSING TRACKS?
-      (( $(sed -rn '/^[1-9]+\.\ /p' /tmp/c | tail -1 | pre -o '^\d+') > $(ls *mp3 | wc -l) )) && echo ${a} >> ~/nm/missing && sort -uo ~/nm/missing ~/nm/missing;
+      (( $(sed -rn '/^[1-9]+\.\ /p' /tmp/c | tail -1 | /bin/grep -Po '^\d+') > $(ls *mp3 | wc -l) )) && echo ${a} >> ~/nm/missing && sort -uo ~/nm/missing ~/nm/missing;
       # to-be-created dir(s)
-      echo "$(ls *.mp3 | pre -o '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/')" > /tmp/s;
+      echo "$(ls *.mp3 | /bin/grep -Po '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/')" > /tmp/s;
       # FIXME figure out when v.a., feat., etc. -> TPE2
       # CREATE DIR `ARTIST [ALBUM (YYYY-MM-DD)]`, PUT MP3S INSIDE, TAG 'EM, (CREATE `ARTIST`), AND PUT IN DIR `ARTIST`
       while IFS= read -r s; do;
