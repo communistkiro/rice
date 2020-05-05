@@ -6,13 +6,13 @@ function xrp () {
   if [[ ! -z $1 ]]; then; xrpp $1; fi;
     curl ${a} > /tmp/z;
     # DETECT RIDIRECTION ATTEMPS
-    gre 'redirected' /tmp/z >& /dev/null && echo ${a} >> ~/nm/redir && sed -i '1,1d' ~/nm/newlinks && break;
+    grep 'redirected' /tmp/z >& /dev/null && echo ${a} >> ~/nm/redir && sed -i '1,1d' ~/nm/newlinks && break;
     # PENDING RELEASE?
     sed -n '15,/">/p' /tmp/z > /tmp/c;
     # TAGS ON PAGE
-    gre 'class="tag"' /tmp/z | gre -o 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
+    grep 'class="tag"' /tmp/z | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
 
-    gre 'releases' /tmp/c && echo ${a} >> ~/nm/soon && sort -uo ~/nm/soon ~/nm/soon || (
+    grep 'releases' /tmp/c && echo ${a} >> ~/nm/soon && sort -uo ~/nm/soon ~/nm/soon || (
       # DOWNLOAD ALBUM
       # bcdl ${a};
       youtube-dl \
@@ -23,9 +23,9 @@ function xrp () {
         --embed-thumbnail \
         --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' ${a};
       # MISSING TRACKS?
-      (( $(sed -rn '/^[1-9]+\.\ /p' /tmp/c | tail -1 | pre -o '^\d+') > $(lsd --classic *mp3 | wc -l) )) && echo ${a} >> ~/nm/missing && sort -uo ~/nm/missing ~/nm/missing;
+      (( $(sed -rn '/^[1-9]+\.\ /p' /tmp/c | tail -1 | pre -o '^\d+') > $(ls *mp3 | wc -l) )) && echo ${a} >> ~/nm/missing && sort -uo ~/nm/missing ~/nm/missing;
       # to-be-created dir(s)
-      echo "$(lsd --classic *.mp3 | pre -o '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/')" > /tmp/s;
+      echo "$(ls *.mp3 | pre -o '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/')" > /tmp/s;
       # FIXME figure out when v.a., feat., etc. -> TPE2
       # CREATE DIR `ARTIST [ALBUM (YYYY-MM-DD)]`, PUT MP3S INSIDE, TAG 'EM, (CREATE `ARTIST`), AND PUT IN DIR `ARTIST`
       while IFS= read -r s; do;

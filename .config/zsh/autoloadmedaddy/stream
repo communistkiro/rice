@@ -8,6 +8,6 @@ while getopts 'f:' o; do
   esac
 done
 shift ${OPTIND}-1
-mpv --profile=low-latency --ytdl-raw-options=format="${z:-'best[height=480]'}" $1;
+mpv --profile=low-latency --ytdl-raw-options=format="${z:-'best[height=480]'}" $1 &>/dev/null & disown
 }
 

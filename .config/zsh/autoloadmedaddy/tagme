@@ -16,7 +16,7 @@ function tagme () {
     #   -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
     #   -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
     #   -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-    #   -g "$(cat /tmp/x)" \
+    #   -g $(</tmp/x) \
     #   -F TPE2=%a \
     #   ${z};
     tageditor set \
@@ -30,11 +30,11 @@ function tagme () {
       year=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      genre="$(cat /tmp/x)" \
+      genre=$(</tmp/x) \
       albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
       --files ${z};
   done < /tmp/z;
-  # rm -f **/*bak;
+  rm -f **/*.bak;
   # echo "$(fd 'bak$' ${1:-.})" > /tmp/z; 
   # while IFS= read -r f; do rm -f ${f}; done < /tmp/z;
 }
