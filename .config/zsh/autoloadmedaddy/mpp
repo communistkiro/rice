@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 # search thru mpc library and insert songs by queries with overlap after current
 # `escape' to cancel query chain so far generatated
 # makes use of delimiters in metadata tags somewhat
@@ -11,7 +11,6 @@ a=(
     'date'
     'title'
     'insert'
-    'exit'
 );
 i=0;
 until [[ -n ${w} ]]; do; w=$(xwininfo -name 'mpp' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;

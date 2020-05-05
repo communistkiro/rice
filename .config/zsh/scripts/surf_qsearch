@@ -34,7 +34,7 @@ e="${q%% *}"
 s=$(printf %s "${q#* }")
 # id=$(xdotool search --class 'surf' | tail -1)     
 
-case $e in
+case ${e} in
     'd'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://duckduckgo.com/?q=${s}";;
     's'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.startpage.com/do/mypage.pl?prfe=36c84513558a2d34bf0d89ea505333ad761002405484af240c1c89932309a9bc5065027ac0acf304530bea21aa54bdf5?q=${s}";;
     'we' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=${s}";;

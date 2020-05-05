@@ -37,21 +37,20 @@ head -29 22 | tail -14 > /etc/hosts;
 
 /bin/sed -i '1,40d' 22;
 
-cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe "
+cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe '
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n; 
   s/[\ \t\f\r]+/ /g;
   s/#+/#/g;
   s/^ //;
-  s/^:{3,}/::/;
-  s/(^(?!0\.0\.0\.0).+)/0.0.0.0 $1/;# negative look-ahead assertion
-  # s/(^.{1,6}$|^.{7}(?<!0\.0\.0\.0).*)/0\.0\.0\.0 $1/; # negative look-back assertion
-  # s/^([^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^ ])))))))).*/0.0.0.0 $1/; # char set and alternations
-  s/^# ?(0\.0\.0\.0)/0.0.0.0/n;
-  s/^# ?(::)/::/n;
+  s/^#? ?:+ //;
+  s/^# ?(0\.0\.0\.0) /0.0.0.0 /n;
   s/^# ?.*$//;
-  s/^ #.*$//;
+  s/^#.*$//;
+  s/(^(?!0\.0\.0\.0).+)/0.0.0.0 $1/; # negative look-ahead assertion
+  #s/(^.{1,6}$|^.{7}(?<!0\.0\.0\.0).*)/0\.0\.0\.0 $1/; # negative look-back assertion
+  #s/^([^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^ ])))))))).*/0.0.0.0 $1/; # char set and alternations
   s/ $//;
-" | tr -s '\n' | sort -u > h;
+' | tr -s '\n' | sort -u > h;
 
 # if [ -s holdme ]; then; 
 #   while IFS= read -r h; do perl -ie "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;
