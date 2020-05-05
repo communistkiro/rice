@@ -13,46 +13,34 @@ a=(
     'insert'
     'exit'
 );
-
 i=0;
+until w=$(xwininfo -name 'mpp' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print'); do; sleep 0; done;
 q[1]=''; q[2]='';
-while true; do
-    c=$(printf "%s\n" "${a[@]}" | dmenu -i -l ${#a});
+while [[ '' != ${c-a} ]]; do
+    c=$(printf "%s\n" "${a[@]}" | dmenu -i -w ${w} -l ${#a});
     case ${c} in
         ${a[1]} )
             q[++i]=${a[1]};
-            q[++i]=$( (mpc list ${a[1]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|,] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[1]}" -l 8);
-        ;;
+            q[++i]=$( (mpc list ${a[1]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|,] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -w ${w} -p "${a[1]}" -l 8);;
         ${a[2]} )
             q[++i]=${a[2]};
-            q[++i]=$( (mpc list ${a[2]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[2]}" -l 8);
-        ;;
+            q[++i]=$( (mpc list ${a[2]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -w ${w} -p "${a[2]}" -l 8);;
         ${a[3]} )
             q[++i]=${a[3]};
-            q[++i]=$( (mpc list ${a[3]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[3]}" -l 8);
-        ;;
+            q[++i]=$( (mpc list ${a[3]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -w ${w} -p "${a[3]}" -l 8);;
         ${a[4]} )
             q[++i]=${a[4]};
-            q[++i]=$( (mpc list ${a[4]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|/\] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[4]}" -l 8);
-        ;;
+            q[++i]=$( (mpc list ${a[4]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|/\] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -w ${w} -p "${a[4]}" -l 8);;
         ${a[5]} )
             q[++i]=${a[5]};
-            q[++i]=$( (mpc list ${a[5]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?; ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[5]}" -l 8);
-        ;;
+            q[++i]=$( (mpc list ${a[5]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?; ?' -vORS='\n' '1' | sort -u ) | dmenu -i -w ${w} -p "${a[5]}" -l 8);;
         ${a[6]} )
             q[++i]=${a[6]};
-            # q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | gawk -vRS='(; ?)' -vORS='\n' '1' | sort -fu ) | dmenu -i -p "${a[6]}" -l 8);
-            q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -i -p "${a[6]}" -l 8);
-        ;;
+            q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -i -w ${w} -p "${a[6]}" -l 8);;
         ${a[7]} )
             mpc search ${q} | mpc insert;
-            unset a i q;
-            break;
-        ;;
-        ${a[8]} )
-            unset a i q;
-            break;
-        ;;
+            break;;
     esac
 done
+unset a i q w;
 }
