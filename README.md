@@ -13,3 +13,4 @@ my config for the most part;
   - `cz` - small terminal navigation program with dmenu
   - `dmnt` - mount and umount disks and drives with `findmnt` and `lsblk`;
   - `pomo` - tomoto timer integrated into a `dzen2` bar over the normal bar
+  - `stream` - selct twitch category(s), language(s) and choose a stream to watch, uses `dmenu`, `perl`, `mpv`
