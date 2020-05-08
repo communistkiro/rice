@@ -22,7 +22,7 @@ Mod=Mod1    # Use alt as the main modifier
 hc keybind $Mod-F12                     reload
 hc keybind $Mod-Shift-c                 close
 
-hc keybind $Mod-t                       spawn tabbed -dcr 2 st -w ''
+hc keybind $Mod-t                       spawn tabbed -p s-1 -dcr 2 st -w ''
 hc keybind $Mod-Shift-t                 spawn st
 hc keybind $Mod-Escape                  spawn dmenu_run -i
 

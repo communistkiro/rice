@@ -158,9 +158,6 @@ def_key "ctrl-p"
 def_key "+"
  dummy
 
-def_key "s"
- dummy
-
 def_key "z"
  dummy
 
@@ -314,10 +311,10 @@ def_key "1"
 def_key "2"
  show_media_library
 
-def_key "f"
+def_key "s"
  show_search_engine
 
-def_key "f"
+def_key "s"
  reset_search_engine
 
 def_key "3"
@@ -378,7 +375,7 @@ def_key "S"
 #def_key "S"
 # toggle_media_library_sort_mode
 
-def_key "F"
+def_key "f"
  apply_filter
 
 def_key "d"

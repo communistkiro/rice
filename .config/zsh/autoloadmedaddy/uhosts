@@ -55,7 +55,7 @@ cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe '
 # if [ -s holdme ]; then; 
 #   while IFS= read -r h; do perl -ie "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;
 # else; cat h >> /etc/hosts; fi;
-# for a in {1..${#q}}; do; perl -pe "s/(.*\b${q[a]}$)/#$1/" -i h
+[[ -n $q ]] && for a in {1..${#q}}; do; perl -ipe "s/(.*\b${q[a]}$)/#\1/" h; done;
 [[ -n $q ]] && for a in {1..${#q}}; do; /bin/sed -ir "s/.* ${q[a]}$/#&/" h; done;
 cat h >> /etc/hosts;
 
