@@ -32,7 +32,7 @@ clear; figlet Weather for ${location};
 if (($c > $d)); then;
     unset c d location; echo ${weather} | jq -r .; return 0;
 elif (($c == $d && $c == 1)); then;
-    unset c d location; echo ${weather} | jq -r '.weather|..|.description'; return 0;
+    unset c d location; echo ${weather} | jq -r '.weather[].description'; return 0;
 fi;
 
 lat=$(echo "${weather}" | jq -r '.coord.lat');
