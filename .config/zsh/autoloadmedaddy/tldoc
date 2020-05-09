@@ -1,4 +1,2 @@
 #!/bin/sh
-function tldoc () {
-  firefox --new-tab /opt/texlive/2019/doc.html &> /dev/null & disown
-}
+firefox --new-tab /opt/texlive/2019/doc.html &> /dev/null & disown

@@ -1,4 +1,2 @@
 #!/bin/sh
-function tl () {
-  cd ~/src/9base && make uninstall && /opt/texlive/2019/bin/x86_64-linux/tlmgr gui && cd ~/src/9base && make clean install;
-}
+cd ~/src/sbase && make uninstall && /opt/texlive/202-/bin/x86_64-linux/tlmgr gui && cd ~/src/sbase && make clean install && make clean;

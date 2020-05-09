@@ -1,6 +1,5 @@
 #!/bin/zsh
 # UPDATE /ETC/HOSTS
-function uhosts () {
 mkdir -p /tmp/hosts; cd /tmp/hosts;
 a=(
   "http://winhelp2002.mvps.org/hosts.txt"
@@ -61,4 +60,3 @@ cat h >> /etc/hosts;
 
 cd ~; rm -rf /tmp/hosts;
 unset a;
-}

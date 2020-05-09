@@ -64,7 +64,7 @@ for i in "${!tag_names[@]}" ; do
     if ! [ -z "$key" ] ; then
         hc keybind "$Mod-F$key" use_index "$i"
         hc keybind "$Mod-Shift-F$key" move_index "$i"
-    fi
+    find
 done
 
 # DESK CYCLING
@@ -73,9 +73,9 @@ hc keybind $Mod-comma  use_index -1 --skip-visible
 
 # layouting
 hc keybind $Mod-Shift-r                 remove
-hc keybind $Mod-Shift-f                 floating toggle
-hc keybind $Mod-Shift-x                 fullscreen toggle
-hc keybind $Mod-Shift-g                 set_attr clients.focus.floating toggle
+hc keybind $Mod-Shift-d                 fullscreen toggle
+hc keybind $Mod-Shift-f                 set_attr clients.focus.floating toggle
+hc keybind $Mod-Shift-g                 floating toggle
 # hc keybind $Mod-p                       pseudotile toggle
 
 # The following cycles through the available layouts within a frame, but skips layouts, if the layout change wouldn't affect the actual window positions. i.e., if there are two windows within a frame, the grid layout is skipped.

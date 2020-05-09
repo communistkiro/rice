@@ -1,16 +1,14 @@
 #!/bin/zsh
 # DIR OF ALL MP3S, -> DIR OF ARTIST/ALBA/MP3S
-function rdd2 () {
-  ls *mp3 > /tmp/m;
-  while IFS= read -r m; do;
-    z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
-    mkdir -p ${z};
-    zmv ${m} ${z};
-  done < /tmp/m;
+ls *mp3 > /tmp/m;
+while IFS= read -r m; do;
+  z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
+  mkdir -p ${z};
+  zmv ${m} ${z};
+done < /tmp/m;
 
-  ls . > /tmp/d;
-  while IFS= read -r d; do;
-    mkdir -p ${d%% \[*};
-    zmv ${d} ${d%% \[*};
-  done < /tmp/d;
-}
+ls . > /tmp/d;
+while IFS= read -r d; do;
+  mkdir -p ${d%% \[*};
+  zmv ${d} ${d%% \[*};
+done < /tmp/d;

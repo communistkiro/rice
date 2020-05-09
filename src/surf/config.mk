@@ -5,7 +5,7 @@ VERSION = 2.0
 
 # paths
 PREFIX = /usr/local
-MANPREFIX = $(PREFIX)/share/man
+MANPREFIX = $(PREFIX)/man
 LIBPREFIX = $(PREFIX)/lib
 LIBDIR = $(LIBPREFIX)/surf
 

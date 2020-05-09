@@ -78,6 +78,6 @@ echo ${weather} | jq -r '.daily[].dew_point' | sed '/null/d' > dew_point7d;
 echo ${weather} | jq -r '.daily[].wind_deg' | sed '/null/d' > wind_deg7d;
 echo ${weather} | jq -r '.daily[].wind_speed' | sed '/null/d' > wind_speed7d;
 
-octave-cli --persist ~/.config/zsh/autoloadmedaddy/wdr.m;
-# cd ~; rm -r /tmp/wdr;
+octave-cli --persist ~/.config/zsh/other/wdr.m;
+cd ~; rm -r /tmp/wdr;
 }

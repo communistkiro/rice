@@ -2,7 +2,6 @@
 # search thru mpc library and insert songs by queries with overlap after current
 # `escape' to cancel query chain so far generatated
 # makes use of delimiters in metadata tags somewhat
-function mpp () {
 a=(
     'artist'
     'album'
@@ -42,4 +41,3 @@ while [[ '' != ${c-a} ]]; do
     esac
 done
 unset a i q w c;
-}

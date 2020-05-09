@@ -1,6 +1,5 @@
 #!/bin/sh
 # pape setter
-function pape () {
 a=( # feh bg options
   '--bg-center'
   '--bg-fill'
@@ -20,4 +19,3 @@ while [[ '' != ${c} ]]; do;
     [[ ${c} = "rand" ]] && (feh ${s-${a[4]}} $(ls -ap | grep -v '/' | /bin/sort -R | head -1) || break);
 done
 unset c a f s d w;
-}

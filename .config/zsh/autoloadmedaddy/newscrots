@@ -1,4 +1,2 @@
 #!/bin/zsh
-function newshots () {
 ls mpv-shot*(.) > /tmp/z; x=$(ls [0-9]*(.) | sort -n | tail -1 | sed 's/.jpg//'); while IFS= read -r z; do mv ${z} $((++x)).jpg; done < /tmp/z;
-}

@@ -110,7 +110,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 
 #define QSEARCH { \
     .v = (char *[]){"/bin/sh", "-c", \
-    "/root/.config/zsh/scripts/surf_qsearch $0 $1", \
+    "/root/.config/zsh/other/surf_qsearch $0 $1", \
     winid, NULL } \
 }
 
