@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 # browse a cache of twitch categories, pick out some, do the same for a language, then choose a live stream to start; use an mpv script to change quality mid-stream
 i='Client-ID: jzkbprff40iqj646a697cyrvl0zt2m6';
 
@@ -10,30 +10,30 @@ while getopts 'r' s; do
 done
 
 if ((${+q})); then;
-  rm -f ~/.cache/g{n,i};
-  echo 'rebuilding cache of 2500 categories';
+  rm -f ~/.cache/tg{n,i}
+  echo 'rebuilding cache';
   for a in {1..25}; do
     curl -sH ${i} -X GET "https://api.twitch.tv/helix/games/top?first=100${e}" > /tmp/t;
-    e="&after=$(jq -r '.pagination.cursor' /tmp/t)";
-    jq -r '.data[].name' /tmp/t >> ~/.cache/gn;
-    jq -r '.data[].id' /tmp/t >> ~/.cache/gi;
+    e="&after=$(jq -r '.pagination.cursor' /tmp/t)"; 
+    jq -r '.data[].name' /tmp/t >> ~/.cache/tgn || return;
+    jq -r '.data[].id' /tmp/t >> ~/.cache/tgi;
   done;
   unset e a; clear;
 fi;
 
 
 while [[ '' != ${s-a} ]]; do;
-  s=$(printf "%s\n" "$(<~/.cache/gn)" | dmenu -i -p 'select category(s)');
-  [[ -n ${s} ]] && c="&game_id=$(perl -sne '$. == ${s} && print && exit' -- -s=$(perl -sne '/^${s}$/ && print $. ' -- -s=${s} ~/.cache/tgn) ~/.cache/tgi)${c}";
+  s=$(printf "%s\n" "$(<~/.cache/tgn)" | dmenu -i -p 'select category(s)');
+  [[ -n ${s} ]] && c="&game_id=$(perl -sne '$. == ${s} && print && exit' -- -s=$(perl -sne '/^${s}$/ && print $.' -- -s=${s} ~/.cache/tgn) ~/.cache/tgi)${c}";
 done;
 [[ -n ${c} ]] && unset s || return;
 
 
-# l='&language=en&language=de&language=bg&language=ru';
-while [[ '' != ${s-a} ]]; do;
-  s=$(printf "aa\nab\nae\naf\nak\nam\nan\nar\nas\nav\nay\naz\nba\nbe\nbg\nbh\nbi\nbm\nbn\nbo\nbr\nbs\nca\nce\nch\nco\ncr\ncs\ncu\ncv\ncy\nda\nde\ndv\ndz\nee\nel\nen\neo\nes\net\neu\nfa\nff\nfi\nfj\nfo\nfr\nfy\nga\ngd\ngl\ngn\ngu\ngv\nha\nhe\nhi\nho\nhr\nht\nhu\nhy\nhz\nia\nid\nie\nig\nii\nik\nio\nis\nit\niu\nja\njv\nka\nkg\nki\nkj\nkk\nkl\nkm\nkn\nko\nkr\nks\nku\nkv\nkw\nky\nla\nlb\nlg\nli\nln\nlo\nlt\nlu\nlv\nmg\nmh\nmi\nmk\nml\nmn\nmr\nms\nmt\nmy\nna\nnb\nnd\nne\nng\nnl\nnn\nno\nnr\nnv\nny\noc\noj\nom\nor\nos\npa\npi\npl\nps\npt\nqu\nrm\nrn\nro\nru\nrw\nsa\nsc\nsd\nse\nsg\nsi\nsk\nsl\nsm\nsn\nso\nsq\nsr\nss\nst\nsu\nsv\nsw\nta\nte\ntg\nth\nti\ntk\ntl\ntn\nto\ntr\nts\ntt\ntw\nty\nug\nuk\nur\nuz\nve\nvi\nvo\nwa\nwo\nxh\nyi\nyo\nza\nzh\nzu" | dmenu -i);
-  [[ -n ${s} ]] && l="&language=${s}${l}";
-done;
+l='&language=en&language=de&language=bg&language=ru';
+# while [[ '' != ${s-a} ]]; do;
+#   s=$(printf "aa\nab\nae\naf\nak\nam\nan\nar\nas\nav\nay\naz\nba\nbe\nbg\nbh\nbi\nbm\nbn\nbo\nbr\nbs\nca\nce\nch\nco\ncr\ncs\ncu\ncv\ncy\nda\nde\ndv\ndz\nee\nel\nen\neo\nes\net\neu\nfa\nff\nfi\nfj\nfo\nfr\nfy\nga\ngd\ngl\ngn\ngu\ngv\nha\nhe\nhi\nho\nhr\nht\nhu\nhy\nhz\nia\nid\nie\nig\nii\nik\nio\nis\nit\niu\nja\njv\nka\nkg\nki\nkj\nkk\nkl\nkm\nkn\nko\nkr\nks\nku\nkv\nkw\nky\nla\nlb\nlg\nli\nln\nlo\nlt\nlu\nlv\nmg\nmh\nmi\nmk\nml\nmn\nmr\nms\nmt\nmy\nna\nnb\nnd\nne\nng\nnl\nnn\nno\nnr\nnv\nny\noc\noj\nom\nor\nos\npa\npi\npl\nps\npt\nqu\nrm\nrn\nro\nru\nrw\nsa\nsc\nsd\nse\nsg\nsi\nsk\nsl\nsm\nsn\nso\nsq\nsr\nss\nst\nsu\nsv\nsw\nta\nte\ntg\nth\nti\ntk\ntl\ntn\nto\ntr\nts\ntt\ntw\nty\nug\nuk\nur\nuz\nve\nvi\nvo\nwa\nwo\nxh\nyi\nyo\nza\nzh\nzu" | dmenu -i);
+#   [[ -n ${s} ]] && l="&language=${s}${l}";
+# done;
 [[ -n ${l} ]] || unset l; unset s;
 
 
