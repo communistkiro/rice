@@ -44,8 +44,8 @@ while [[ '' != ${s-a} ]]; do;
   case ${s%% *} in
     "next100"     ) e="&after=$(jq -r '.pagination.cursor' /tmp/t)";;
     "previous100" ) e="&before=$(jq -r '.pagination.cursor' /tmp/t)";;
-    ''             ) break;;
-    *              ) mpv --profile=low-latency https://www.twitch.tv/"${s%% *}" &>/dev/null & disown;;
+    ''            ) break;;
+    *             ) mpv --profile=low-latency https://www.twitch.tv/"${s%% *}" &>/dev/null & disown; break;;
   esac;
 done;
 unset s q a e c w;
