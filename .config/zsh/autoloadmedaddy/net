@@ -4,4 +4,5 @@ pkill wpa_supplicant;
 pkill dhcp;
 sleep 5;
 wpa_supplicant -B -i wlp3s0 -c /etc/wpa_supplicant/wpa_supplicant-wlp3s0.conf;
-sdhcp wlp3s0;
+dhcpcd -b;
+# sdhcp wlp3s0;

@@ -1,2 +1,0 @@
-#!/bin/sh
-firefox --new-tab /opt/texlive/2019/doc.html &> /dev/null & disown

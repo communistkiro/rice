@@ -1,0 +1,2 @@
+#!/bin/sh
+firefox --new-tab /opt/texlive/2020/doc.html

@@ -1,2 +1,0 @@
-#!/bin/sh
-cd ~/src/sbase && make uninstall && /opt/texlive/202-/bin/x86_64-linux/tlmgr gui && cd ~/src/sbase && make clean install && make clean;
