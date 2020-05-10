@@ -1,0 +1,22 @@
+#!/bin/zsh
+# pape setter
+a=( # feh bg options
+  '--bg-center'
+  '--bg-fill'
+  '--bg-max'
+  '--bg-scale'
+  '--bg-tile'
+);
+c=~/im; # starting dir & file/folder choice
+cd ${c};
+# until [[ -n ${w} ]]; do; w=$(xwininfo -name 'pape' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
+while [[ '' != ${c} ]]; do;
+    [ -d ${c} ] && f=($(/bin/ls -ap ${c} | grep -v '/')) && d=($(/bin/ls -ap ${c} | grep '/' | grep -v '^\./')); 
+    r=$(expr ${#d} + ${#f} + 2);
+    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l $([ 18 -ge ${r} ] && echo 18 || echo ${r})) || break; 
+    [ -d ${c} ] && cd ${c} && c=.;
+    [ -f ${c} ] && (feh ${s-${a[4]}} ${c} || break);
+    [[ ${c} = "bgopts" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options') && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
+    [[ ${c} = "rand" ]] && (feh ${s-${a[4]}} $(/bin/ls -ap . | grep -v '/' | /bin/sort -R | head -1) || break);
+done
+unset c a f s d w;

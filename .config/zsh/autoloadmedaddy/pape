@@ -9,7 +9,7 @@ a=( # feh bg options
 );
 c=~/im; # starting dir & file/folder choice
 cd ${c};
-until [[ -n ${w} ]]; do; w=$(xwininfo -name 'pape' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
+# until [[ -n ${w} ]]; do; w=$(xwininfo -name 'pape' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 while [[ '' != ${c} ]]; do;
     [ -d ${c} ] && f=($(ls -ap ${c} | grep -v '/')) && d=($(ls -ap ${c} | grep '/' | grep -v '^\./'));
     c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l $(zcalc -e 'min(18, ${#d} + ${#f} + 2)') -p $(pwd) -w ${w} ) || break;
