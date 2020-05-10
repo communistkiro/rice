@@ -45,8 +45,8 @@ static Key keys[] = {
     { MODKEY,               XK_backslash,    rotate,      { .i= +1 } },
     // { ControlMask,          XK_quote,        rotate,      { .i = 0 } },/* to previously selected tab */
     
-    { MODKEY|ShiftMask,     XK_semicolon,    movetab,     { .i= -1 } },
-    { MODKEY|ShiftMask,     XK_backslash,    movetab,     { .i= +1 } },
+    { MODKEY|ControlMask,   XK_semicolon,    movetab,     { .i= -1 } },
+    { MODKEY|ControlMask,   XK_backslash,    movetab,     { .i= +1 } },
     
     { MODKEY|ShiftMask,     XK_1,            move,        { .i= 0 } },
     { MODKEY|ShiftMask,     XK_2,            move,        { .i= 1 } },
