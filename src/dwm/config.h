@@ -7,7 +7,7 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "Fira Code:pixelsize=14:antialias=true:autohint=true" };
 static const char dmenufont[]       = "Fira Code:pixelsize=14:antialias=true:autohint=true";
-static const char col_gray1[]       = "#1a1a1a";
+static const char col_gray1[]       = "#202020";
 static const char col_gray2[]       = "#404040";
 static const char col_gray3[]       = "#bbc8c8";
 static const char col_gray4[]       = "#eeeecc";

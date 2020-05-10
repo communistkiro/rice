@@ -27,7 +27,7 @@ weather=$(${fetch} "api.openweathermap.org/data/2.5/${api_call}?q=${location}&ap
 if [ -z "${weather}" ]; then; echo "ERROR: Cannot fetch weather data"; return 69; fi;
 if [ "$(echo "${weather}" | jq -r '.cod' 2>/dev/null)" != 200 ]; then; echo "ERROR: Cannot fetch weather data for the given location"; return 75; fi;
 
-clear; figlet Weather for ${location};
+figlet Weather for ${location};
 
 if (($c > $d)); then;
     unset c d location; echo ${weather} | jq -r .; return 0;

@@ -10,5 +10,9 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
   done
   unset f
 fi
+keys
+xbacklight -set 15
+sh ~/src/dwmsss/dwmsss &
+
 DISPLAY:=127.0.0.1:0
 exec dwm
