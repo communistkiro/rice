@@ -4,15 +4,16 @@ function xrp () {
   cd ~/nm;
   while IFS= read -r a; do;
   if [[ ! -z $1 ]]; then; xrpp $1; fi;
-    curl ${a} > /tmp/z;
+    t1=$(mktemp); t2=$(mktemp); t3=$(tktemp);
+    curl ${a} > ${t1};
     # DETECT RIDIRECTION ATTEMPS
-    grep 'redirected' /tmp/z >& /dev/null && echo ${a} >> ~/nm/redir && sed -i '1,1d' ~/nm/newlinks && break;
+    grep 'redirected' ${t1} >& /dev/null && echo ${a} >> ~/nm/redir && sed -i '1,1d' ~/nm/newlinks && break;
     # PENDING RELEASE?
-    sed -n '15,/">/p' /tmp/z > /tmp/c;
+    sed -n '15,/">/p' ${t1} > ${t2};
     # TAGS ON PAGE
-    grep 'class="tag"' /tmp/z | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
+    grep 'class="tag"' ${t1} | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
 
-    grep 'releases' /tmp/c && echo ${a} >> ~/nm/soon && sort -uo ~/nm/soon ~/nm/soon || (
+    grep 'releases' ${t2} && echo ${a} >> ~/nm/soon && sort -uo ~/nm/soon ~/nm/soon || (
       # DOWNLOAD ALBUM
       # bcdl ${a};
       youtube-dl \
@@ -23,18 +24,19 @@ function xrp () {
         --embed-thumbnail \
         --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' ${a};
       # MISSING TRACKS?
-      (( $(sed -rn '/^[1-9]+\.\ /p' /tmp/c | tail -1 | /bin/grep -Po '^\d+') > $(ls *mp3 | wc -l) )) && echo ${a} >> ~/nm/missing && sort -uo ~/nm/missing ~/nm/missing;
+      (( $(sed -rn '/^[1-9]+\.\ /p' ${t2} | tail -1 | /bin/grep -Po '^\d+') > $(ls *mp3 | wc -l) )) && echo ${a} >> ~/nm/missing && sort -uo ~/nm/missing ~/nm/missing;
       # to-be-created dir(s)
-      echo "$(ls *.mp3 | /bin/grep -Po '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/')" > /tmp/s;
+      echo "$(ls *.mp3 | /bin/grep -Po '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/')" > ${t3};
       # FIXME figure out when v.a., feat., etc. -> TPE2
       # CREATE DIR `ARTIST [ALBUM (YYYY-MM-DD)]`, PUT MP3S INSIDE, TAG 'EM, (CREATE `ARTIST`), AND PUT IN DIR `ARTIST`
       while IFS= read -r s; do;
         mkdir -p ${s}; /bin/mv *mp3 ${s}; tagme ${s}; mkdir -p ${s%% \[*}; /bin/mv ${s} ${s%% \[*}; break;
-      done < /tmp/s | sort -u;
+      done < ${t3} | sort -u;
       # remove release from list after completion of process so interrupts possibles; remove blank lines from newlinks
       echo ${a} >> ~/nm/oldlinks && sort -uo ~/nm/oldlinks ~/nm/oldlinks;
       echo "\n\n";
     );
     /bin/sed -i '1,1d' ~/nm/newlinks;
   done < ~/nm/newlinks;
+  rm ${t1} ${t2} ${t3};
 }

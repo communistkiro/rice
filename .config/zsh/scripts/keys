@@ -31,13 +31,16 @@ pgrep subl3 || subl3 &
 # Screen lock
 pgrep xautolock || xautolock -time 20 -secure -locker 'setxkbmap us; export LANG=en_US.UTF-8; xbacklight -set 0; slock; xbacklight -set 15' &
 
+# mute mic
+amixer sset Capture nocap
+
 # Snowstorm
 # pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown
 
 # conky dzen2 RHS status bar
-FG='#9ffb00'
-BG='#202020'
-FONT="-otf-fira code-medium-r-*-*-14-*-*-*-*-*-*-*"
-pgrep conky && pkill -KILL conky
-dzen2 -e - -ta r -x '1084' -w '836' -h '16' -fg $FG -bg $BG -fn $FONT < <(conky -d -c ~/.config/conky/conky.conf) &
-pgrep pomo && dzen2 -e - -ta l -x '1080' -w '64' -h '16' -fg $FG -bg $BG -fn $FONT < <(/root/.config/zsh/scripts/pomo status) &
+# FG='#9ffb00'
+# BG='#202020'
+# FONT="-otf-fira code-medium-r-*-*-14-*-*-*-*-*-*-*"
+# pgrep conky && pkill -KILL conky
+# dzen2 -e - -ta r -x '1084' -w '836' -h '16' -fg $FG -bg $BG -fn $FONT < <(conky -d -c ~/.config/conky/conky.conf) &
+# pgrep pomo && dzen2 -e - -ta l -x '1080' -w '64' -h '16' -fg $FG -bg $BG -fn $FONT < <(/root/.config/zsh/scripts/pomo status) &

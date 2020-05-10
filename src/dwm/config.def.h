@@ -8,15 +8,15 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "Fira Code:pixelsize=14:antialias=true:autohint=true" };
 static const char dmenufont[]       = "Fira Code:pixelsize=14:antialias=true:autohint=true";
 static const char col_gray1[]       = "#1a1a1a";
-static const char col_gray2[]       = "#404040";
-static const char col_gray3[]       = "#9ffb00";
-static const char col_gray4[]       = "#f0f0b0";
+static const char col_gray2[]       = "#4a4040";
+static const char col_gray4[]       = "#f0f094";
 static const char col_c1[]          = "#171313";
 static const char col_c2[]          = "#9ffb00";
+static const char col_c3[]          = "#ffffdd";
 static const char *colors[][3]      = {
     /*               fg         bg          border   */
-    [SchemeNorm] = { col_gray3, col_c1,     col_gray2 },
-    [SchemeSel]  = { col_gray4, col_c1,     col_c2    },
+    [SchemeNorm] = { col_c2,    col_c1,     col_gray2 },
+    [SchemeSel]  = { col_c3,    col_c1,     col_gray2 },
 };
 
 /* tagging */
@@ -62,7 +62,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_c2, "-sb", col_c1, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_c1, "-nf", col_c2, "-sb", col_gray1, "-sf", col_c3, NULL };
 static const char *termcmd[] = { "st", NULL };
 static const char *termcmdd[]  = { "tabbed -p s-1 -dcr 2 st -w ''", NULL };
 

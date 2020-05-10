@@ -2,10 +2,11 @@
 # TAG SHIT DOWNLOADED WITH youtube-dl -o '.../%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s'
 # NO BACKSLASHES
 function tagme () {
+  t=${mktemp};
   if [[ ! -z $1 ]]; then;
-    find $1 -name '*.mp3' -type f > /tmp/z;
+    find $1 -name '*.mp3' -type f > ${t};
   else;
-    find . -name '*.mp3' -type f > /tmp/z;
+    find . -name '*.mp3' -type f > ${t};
   fi;
   while IFS= read -r z; do;
     # mp3info2 \
@@ -16,7 +17,7 @@ function tagme () {
     #   -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
     #   -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
     #   -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-    #   -g $(</tmp/x) \
+    #   -g $(</t/x) \
     #   -F TPE2=%a \
     #   ${z};
     tageditor set \
@@ -30,11 +31,11 @@ function tagme () {
       year=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      genre=$(</tmp/x) \
+      genre=$(</t/x) \
       albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
       --files ${z};
-  done < /tmp/z;
-  rm -f **/*.bak;
-  # echo "$(fd 'bak$' ${1:-.})" > /tmp/z; 
-  # while IFS= read -r f; do rm -f ${f}; done < /tmp/z;
+  done < ${t};
+  rm ${t}; rm -f **/*.bak;
+  # echo "$(fd 'bak$' ${1:-.})" > ${t}; 
+  # while IFS= read -r f; do rm -f ${f}; done < ${t};
 }

@@ -85,7 +85,6 @@ setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 alias vol='amixer set Master'
 alias xb='xbacklight -set'
 alias so='source /root/.zshrc'
-alias mix='amixer set Beep 0; amixer sset Capture toggle; xbacklight -set 20'
 # PROGRAMS AND PREFERENCES
 alias xbq='xbps-query --regex -Rs'
 alias xbqm='xbps-query -m'
