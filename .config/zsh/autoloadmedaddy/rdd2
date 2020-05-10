@@ -1,6 +1,6 @@
 #!/bin/zsh
 # DIR OF ALL MP3S, -> DIR OF ARTIST/ALBA/MP3S
-t=$(mktemp);
+t=$(mktemp /tmp/XXXXXX);
 ls *mp3 > ${t};
 while IFS= read -r m; do;
   z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";

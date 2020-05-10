@@ -1,7 +1,7 @@
 #!/bin/zsh
 # UPDATE /ETC/HOSTS
-tmp=$(mktemp -d XXXXXX);
-cd ${tmp}
+tmp=$(mktemp -d /tmp/XXXXXX);
+cd ${tmp};
 a=(
   "http://winhelp2002.mvps.org/hosts.txt"
   "https://github.com/adversarialtools/apple-telemetry/raw/master/blacklist"
@@ -37,7 +37,7 @@ head -29 22 | tail -14 > /etc/hosts;
 
 /bin/sed -i '1,40d' 22;
 
-cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe '
+cat ${tmp}/[0-9]* ~/dcs/blockme | perl -pe '
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n; 
   s/[\ \t\f\r]+/ /g;
   s/#+/#/g;
@@ -59,4 +59,4 @@ cat /tmp/hosts/[0-9]* ~/dcs/blockme | perl -pe '
 [[ -n $q ]] && for a in {1..${#q}}; do; /bin/sed -ir "s/.* ${q[a]}$/#&/" h; done;
 cat h >> /etc/hosts;
 
-rm -r ${tmp}; cd ~; unset a;
+cd ~; rm -r ${tmp}; unset a;

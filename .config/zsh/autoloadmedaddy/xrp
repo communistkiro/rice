@@ -4,7 +4,7 @@ function xrp () {
   cd ~/nm;
   while IFS= read -r a; do;
   if [[ ! -z $1 ]]; then; xrpp $1; fi;
-    t1=$(mktemp); t2=$(mktemp); t3=$(tktemp);
+    t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX); t3=$(mktemp /tmp/XXXXXX);
     curl ${a} > ${t1};
     # DETECT RIDIRECTION ATTEMPS
     grep 'redirected' ${t1} >& /dev/null && echo ${a} >> ~/nm/redir && sed -i '1,1d' ~/nm/newlinks && break;

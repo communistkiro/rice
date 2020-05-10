@@ -2,7 +2,7 @@
 # ADD NEW LINKS (FROM CTEBCM PAGE, FROM BANDCAMP EMBEDDED PLAYERS)
 function xrpp () {
   for a in $(lynx -listonly -dump $1); do;
-    t1=$(mktemp); t2=$(mktemp);
+    t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX);
     # EMBEDDED BC PLAYERS
     [[ ${a} =~ 'EmbeddedPlayer' ]] && lynx -listonly -dump ${a} | pre -o 'http.*/album/[\w-]+' >> ${t1};
     # DIRECT BC

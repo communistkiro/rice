@@ -1,7 +1,7 @@
 #!/bin/zsh
 # dir of alba -> dir of artist/alba or dir of mp3 if dirs don't follor format
 # assumes artist, album, year tags exist
-t1=$(mktemp); t2=$(mktemp);
+t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX);
 ls . > ${t1};
 while IFS= read -r d; do;
   if [[ -d ${d} ]]; then;
