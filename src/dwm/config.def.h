@@ -10,13 +10,13 @@ static const char dmenufont[]       = "Fira Code:pixelsize=14:antialias=true:aut
 static const char col_gray1[]       = "#1a1a1a";
 static const char col_gray2[]       = "#404040";
 static const char col_gray3[]       = "#bbc8c8";
-static const char col_gray4[]       = "#eeeecc";
-static const char col_c1[]          = "#181212";
+static const char col_gray4[]       = "#eeeebb";
+static const char col_c1[]          = "#171313";
 static const char col_c2[]          = "#9ffb00";
 static const char *colors[][3]      = {
-    /*               fg         bg         border   */
-    [SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-    [SchemeSel]  = { col_gray4, col_c1,    col_c1    },
+    /*               fg         bg          border   */
+    [SchemeNorm] = { col_gray3, col_c1,     col_gray2 },
+    [SchemeSel]  = { col_gray4, col_c1,     col_c2    },
 };
 
 /* tagging */
