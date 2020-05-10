@@ -3,6 +3,7 @@
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const unsigned int minwsz    = 20;       /* Minimal heigt of a client for smfact */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "Fira Code:pixelsize=14:antialias=true:autohint=true" };
@@ -39,6 +40,7 @@ static const Rule rules[] = {
 
 /* layout(s) */
 static const float mfact     = 0.65; /* factor of master area size [0.05..0.95] */
+static const float smfact     = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 
@@ -47,6 +49,8 @@ static const Layout layouts[] = {
     { "[]=",      tile },    /* first entry is default */
     { "><>",      NULL },    /* no layout function means floating behavior */
     { "[M]",      monocle },
+    { "|||",      col },
+    {  NULL,      NULL}
 };
 
 /* key definitions */
@@ -75,22 +79,29 @@ static Key keys[] = {
     { MODKEY|ShiftMask,             XK_p,           focusstack,     {.i = -1 } },
     { MODKEY|ShiftMask,             XK_apostrophe,  setmfact,       {.f = +0.05} },
     { MODKEY|ShiftMask,             XK_bracketleft, setmfact,       {.f = -0.05} },
+    { MODKEY|ControlMask,           XK_apostrophe,  setsmfact,      {.f = +0.05} },
+    { MODKEY|ControlMask,           XK_bracketleft, setsmfact,      {.f = -0.05} },
     { MODKEY|ShiftMask,             XK_bracketright,incnmaster,     {.i = +1 } },
     { MODKEY|ShiftMask,             XK_backslash,   incnmaster,     {.i = -1 } },
     { MODKEY,                       XK_Tab,         zoom,           {0} },
-    { MODKEY|ShiftMask,             XK_Tab,         view,           {0} },
+    // { MODKEY|ShiftMask,             XK_Tab,         view,           {0} },
     { MODKEY|ShiftMask,             XK_c,           killclient,     {0} },
     { MODKEY|ShiftMask,             XK_t,           setlayout,      {.v = &layouts[0]} },
     { MODKEY|ShiftMask,             XK_f,           setlayout,      {.v = &layouts[1]} },
     { MODKEY|ShiftMask,             XK_m,           setlayout,      {.v = &layouts[2]} },
-    { MODKEY,                       XK_space,       setlayout,      {0} },
+    { MODKEY|ShiftMask,             XK_n,           setlayout,      {.v = &layouts[2]} },
+    { MODKEY,                       XK_space,       cyclelayout,    {.i = +1 } },
+    // { MODKEY|ControlMask,           XK_comma,       cyclelayout,    {.i = -1 } },
+    // { MODKEY,                       XK_space,       setlayout,      {0} },
     { MODKEY|ShiftMask,             XK_space,       togglefloating, {0} },
     // { MODKEY,                       XK_0,           view,           {.ui = ~0 } },
     // { MODKEY|ShiftMask,             XK_0,           tag,            {.ui = ~0 } },
-    { MODKEY,                       XK_comma,       focusmon,       {.i = -1 } },
-    { MODKEY,                       XK_period,      focusmon,       {.i = +1 } },
-    { MODKEY|ShiftMask,             XK_comma,       tagmon,         {.i = -1 } },
-    { MODKEY|ShiftMask,             XK_period,      tagmon,         {.i = +1 } },
+    // { MODKEY,                       XK_comma,       focusmon,       {.i = -1 } },
+    // { MODKEY,                       XK_period,      focusmon,       {.i = +1 } },
+    // { MODKEY|ShiftMask,             XK_comma,       tagmon,         {.i = -1 } },
+    // { MODKEY|ShiftMask,             XK_period,      tagmon,         {.i = +1 } },
+    { MODKEY,                       XK_comma,       shiftview,      {.i = -1 } },
+    { MODKEY,                       XK_period,      shiftview,      {.i = +1 } },
 
     TAGKEYS(                        XK_F1,                          0)
     TAGKEYS(                        XK_F2,                          1)

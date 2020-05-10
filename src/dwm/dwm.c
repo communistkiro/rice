@@ -71,6 +71,7 @@ typedef union {
 	int i;
 	unsigned int ui;
 	float f;
+	float sf;
 	const void *v;
 } Arg;
 
@@ -114,6 +115,7 @@ typedef struct {
 struct Monitor {
 	char ltsymbol[16];
 	float mfact;
+	float smfact;
 	int nmaster;
 	int num;
 	int by;               /* bar geometry */
@@ -153,10 +155,12 @@ static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
 static void clientmessage(XEvent *e);
+static void col(Monitor *);
 static void configure(Client *c);
 static void configurenotify(XEvent *e);
 static void configurerequest(XEvent *e);
 static Monitor *createmon(void);
+static void cyclelayout(const Arg *arg);
 static void destroynotify(XEvent *e);
 static void detach(Client *c);
 static void detachstack(Client *c);
@@ -201,6 +205,7 @@ static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
+static void setsmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
@@ -227,6 +232,7 @@ static void updatetitle(Client *c);
 static void updatewindowtype(Client *c);
 static void updatewmhints(Client *c);
 static void view(const Arg *arg);
+static void shiftview(const Arg *arg);
 static Client *wintoclient(Window w);
 static Monitor *wintomon(Window w);
 static int xerror(Display *dpy, XErrorEvent *ee);
@@ -416,7 +422,7 @@ attachstack(Client *c)
 void
 buttonpress(XEvent *e)
 {
-	unsigned int i, x, click;
+	unsigned int i, x, click, occ = 0;
 	Arg arg = {0};
 	Client *c;
 	Monitor *m;
@@ -431,9 +437,14 @@ buttonpress(XEvent *e)
 	}
 	if (ev->window == selmon->barwin) {
 		i = x = 0;
-		do
-			x += TEXTW(tags[i]);
-		while (ev->x >= x && ++i < LENGTH(tags));
+		for (c = m->clients; c; c = c->next)
+			occ |= c->tags == 255 ? 0 : c->tags;
+		do {
+			/* do not reserve space for vacant tags */
+			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+				continue;
+		// while (ev->x >= x && ++i < LENGTH(tags));
+		} while (ev->x >= x && ++i < LENGTH(tags));
 		if (i < LENGTH(tags)) {
 			click = ClkTagBar;
 			arg.ui = 1 << i;
@@ -635,6 +646,7 @@ createmon(void)
 	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1;
 	m->mfact = mfact;
+	m->smfact = smfact;
 	m->nmaster = nmaster;
 	m->showbar = showbar;
 	m->topbar = topbar;
@@ -642,6 +654,23 @@ createmon(void)
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 	return m;
+}
+
+void
+cyclelayout(const Arg *arg) {
+   Layout *l;
+   for(l = (Layout *)layouts; l != selmon->lt[selmon->sellt]; l++);
+   if(arg->i > 0) {
+       if(l->symbol && (l + 1)->symbol)
+           setlayout(&((Arg) { .v = (l + 1) }));
+       else
+           setlayout(&((Arg) { .v = layouts }));
+   } else {
+       if(l != layouts && (l - 1)->symbol)
+           setlayout(&((Arg) { .v = (l - 1) }));
+       else
+           setlayout(&((Arg) { .v = &layouts[LENGTH(layouts) - 2] }));
+   }
 }
 
 void
@@ -709,19 +738,18 @@ drawbar(Monitor *m)
 	}
 
 	for (c = m->clients; c; c = c->next) {
-		occ |= c->tags;
+		occ |= c->tags == 255 ? 0 : c->tags;
 		if (c->isurgent)
 			urg |= c->tags;
 	}
 	x = 0;
 	for (i = 0; i < LENGTH(tags); i++) {
+		/* do not draw vacant tags */
+		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+		continue;
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
-		if (occ & 1 << i)
-			drw_rect(drw, x + boxs, boxs, boxw, boxw,
-				m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-				urg & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
@@ -1527,6 +1555,19 @@ setmfact(const Arg *arg)
 }
 
 void
+setsmfact(const Arg *arg) {
+	float sf;
+
+	if(!arg || !selmon->lt[selmon->sellt]->arrange)
+		return;
+	sf = arg->sf < 1.0 ? arg->sf + selmon->smfact : arg->sf - 1.0;
+	if(sf < 0 || sf > 0.9)
+		return;
+	selmon->smfact = sf;
+	arrange(selmon);
+}
+
+void
 setup(void)
 {
 	int i;
@@ -1670,10 +1711,36 @@ tagmon(const Arg *arg)
 	sendmon(selmon->sel, dirtomon(arg->i));
 }
 
+ void
+col(Monitor *m) {
+	unsigned int i, n, h, w, x, y,mw;
+	Client *c;
+
+	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0)
+		return;
+        if(n > m->nmaster)
+                mw = m->nmaster ? m->ww * m->mfact : 0;
+        else
+                mw = m->ww;
+	for(i = x = y = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++) {
+		if(i < m->nmaster) {
+			 w = (mw - x) / (MIN(n, m->nmaster)-i);
+                         resize(c, x + m->wx, m->wy, w - (2*c->bw), m->wh - (2*c->bw), False);
+			x += WIDTH(c);
+		}
+		else {
+			h = (m->wh - y) / (n - i);
+			resize(c, x + m->wx, m->wy + y, m->ww - x  - (2*c->bw), h - (2*c->bw), False);
+			y += HEIGHT(c);
+		}
+	}
+}
+
 void
 tile(Monitor *m)
 {
-	unsigned int i, n, h, mw, my, ty;
+	unsigned int i, n, h, smh, mw, my, ty;
 	Client *c;
 
 	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
@@ -1690,9 +1757,23 @@ tile(Monitor *m)
 			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
 			my += HEIGHT(c);
 		} else {
-			h = (m->wh - ty) / (n - i);
-			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
-			ty += HEIGHT(c);
+			smh = m->mh * m->smfact;
+			if(!(nexttiled(c->next)))
+				h = (m->wh - ty) / (n - i);
+			else
+				h = (m->wh - smh - ty) / (n - i);
+			if(h < minwsz) {
+				c->isfloating = True;
+				XRaiseWindow(dpy, c->win);
+				resize(c, m->mx + (m->mw / 2 - WIDTH(c) / 2), m->my + (m->mh / 2 - HEIGHT(c) / 2), m->ww - mw - (2*c->bw), h - (2*c->bw), False);
+				ty -= HEIGHT(c);
+			}
+			else
+				resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), False);
+			if(!(nexttiled(c->next)))
+				ty += HEIGHT(c) + smh;
+			else
+				ty += HEIGHT(c);
 		}
 }
 
@@ -2042,6 +2123,24 @@ view(const Arg *arg)
 		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
 	focus(NULL);
 	arrange(selmon);
+}
+
+/** Function to shift the current view to the left/right
+ * @param: "arg->i" stores the number of tags to shift right (positive value) or left (negative value)
+ */
+void
+shiftview(const Arg *arg) {
+    Arg shifted;
+
+    if(arg->i > 0) // left circular shift
+        shifted.ui = (selmon->tagset[selmon->seltags] << arg->i)
+           | (selmon->tagset[selmon->seltags] >> (LENGTH(tags) - arg->i));
+
+    else // right circular shift
+        shifted.ui = selmon->tagset[selmon->seltags] >> (- arg->i)
+           | selmon->tagset[selmon->seltags] << (LENGTH(tags) + arg->i);
+
+    view(&shifted);
 }
 
 Client *
