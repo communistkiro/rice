@@ -9,8 +9,8 @@ static const char *fonts[]          = { "Fira Code:pixelsize=14:antialias=true:a
 static const char dmenufont[]       = "Fira Code:pixelsize=14:antialias=true:autohint=true";
 static const char col_gray1[]       = "#1a1a1a";
 static const char col_gray2[]       = "#404040";
-static const char col_gray3[]       = "#bbc8c8";
-static const char col_gray4[]       = "#eeeebb";
+static const char col_gray3[]       = "#9ffb00";
+static const char col_gray4[]       = "#f0f0b0";
 static const char col_c1[]          = "#171313";
 static const char col_c2[]          = "#9ffb00";
 static const char *colors[][3]      = {
@@ -28,11 +28,13 @@ static const Rule rules[] = {
      *  WM_NAME(STRING) = title
      */
     /* class                instance    title       tags mask     isfloating   monitor */
-    { "Firefox",            NULL,       NULL,       2 << 8,       0,           -1 },
+    // { "Firefox",            NULL,       NULL,       2 << 8,       0,           -1 },
+    { "Firefox",            NULL,       NULL,       2,            0,           -1 },
+    { "qbittorrent",        NULL,       NULL,       9,            0,           -1 },
     { "nicotine",           NULL,       NULL,       9,            0,           -1 },
     { "octave",             NULL,       NULL,       3,            1,           -1 },
-    { "Gimp",               NULL,       NULL,       3,            1,           -1 },
     { "octave-cli",         NULL,       NULL,       3,            1,           -1 },
+    { "Gimp",               NULL,       NULL,       3,            1,           -1 },
 };
 
 /* layout(s) */
