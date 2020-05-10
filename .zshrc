@@ -157,8 +157,6 @@ alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --
 alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
 alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
-alias genn='keepassxc-cli generate -UlnseL64'
-alias gen='keepassxc-cli generate -UlnL64'
 alias tage='tageditor --no-sandbox'
 
 # FUNCTIONS

@@ -1,0 +1,12 @@
+#!/bin/sh
+function gen () {
+e='';
+while getopts 'l:e' o; do
+  case ${o} in
+    l) l=${OPTARG};;
+    e) unset e;;
+    esac
+done
+keepassxc-cli generate -UlnsL${l:-64} ${e=-e}
+unset n l
+}
