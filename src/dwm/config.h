@@ -9,7 +9,7 @@ static const char *fonts[]          = { "Fira Code:pixelsize=14:antialias=true:a
 static const char dmenufont[]       = "Fira Code:pixelsize=14:antialias=true:autohint=true";
 static const char col_gray1[]       = "#1a1a1a";
 static const char col_gray2[]       = "#404040";
-static const char col_gray3[]       = "#9ffb00"; 
+static const char col_gray3[]       = "#9ffb00";
 static const char col_gray4[]       = "#f0f0b0";
 static const char col_c1[]          = "#171313";
 static const char col_c2[]          = "#9ffb00";
