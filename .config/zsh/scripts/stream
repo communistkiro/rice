@@ -24,7 +24,8 @@ fi;
 
 while [[ '' != ${s-a} ]]; do;
   s=$(printf "%s\n" "$(<~/.cache/tgn)" | dmenu -i -p 'select category(s)');
-  [[ -n ${s} ]] && c="&game_id=$(perl -sne '$. == ${s} && print && exit' -- -s=$(perl -sne '/^${s}$/ && print $.' -- -s=${s} ~/.cache/tgn) ~/.cache/tgi)${c}";
+  # [[ -n ${s} ]] && c='&game_id='"$(perl -sne '$. == ${s} && print && exit' -- -s=$(perl -sne '/^${s}$/ && print $.' -- -s=${s} ~/.cache/tgn) ~/.cache/tgi)"${c};
+  [[ -n ${s} ]] && c='&game_id='"$(sed -n "$(sed -nr "/^${s}$/=" ~/.cache/tgn)p" ~/.cache/tgi)"${c};
 done;
 [[ -n ${c} ]] && unset s || return;
 
@@ -41,12 +42,12 @@ while [[ '' != ${s-a} ]]; do;
   curl -sH ${i} -X GET "https://api.twitch.tv/helix/streams?first=100${c}${e}${l}" > /tmp/t;
   q=(${(f)"$(jq -r '.data[].user_name' /tmp/t)"});
   w=(${(f)"$(jq -r '.data[].title' /tmp/t)"});
-  s=$(printf "%-20s%s\n" ${q:^w} "next100" "" "previous100" "" | dmenu -i -l 16 -p 'select streamer');
+  s=$(printf "%-20s%s\n" ${q:^w} "$([ ${#q} -ge 100 ] && echo next100)" "" "$([ ${#q} -ge 100 ] && echo previous100)" "" | dmenu -i -l $([ ${#q} -gt 16 ] && echo 16 || echo ${#q}) -p 'select streamer');
   case ${s%% *} in
     "next100"     ) e="&after=$(jq -r '.pagination.cursor' /tmp/t)";;
     "previous100" ) e="&before=$(jq -r '.pagination.cursor' /tmp/t)";;
     ''            ) break;;
-    *             ) mpv --profile=low-latency https://www.twitch.tv/"${s%% *}";;
+    *             ) mpv -- https://www.twitch.tv/"${s%% *}";;
   esac;
 done;
 unset s q a e c w;
