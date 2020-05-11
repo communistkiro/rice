@@ -168,5 +168,5 @@ autoload $(ll /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc && zmathfun
 . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 . /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 # . ~/.config/zkbd$TERM-${${DISPLAY:t}:-$VENDOR-$OSTYPE}
-bindkey '\' forward-char
+# bindkey '\' forward-char
 # bindkey ';' backward-char

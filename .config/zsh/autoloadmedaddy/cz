@@ -1,12 +1,11 @@
 #!/bin/sh
-c="z"
+c="cz"
 until [[ -n ${w} ]]; do; w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
-while [ -n "${c}" ]; do
+# while true; do; c="$(echo "$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')" | dmenu -i -p "$(pwd)?")" || break; cd ${c}; done;
+while true; do
     DIRS="$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')";
     clear; printf "\e[1;7;33m $(pwd)"; echo ''; lsd -a1;
     # c=$(echo "$DIRS" | dmenu -i -l $(echo $DIRS|wc -l));
     # c=$(echo "$DIRS" | dmenu -i -w ${w} -l 16);
-    c="$(echo "$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')" | dmenu -i -w ${w} -p "$(pwd)?")"; cd ${c}
-    cd "${c}"
+    c="$(echo "$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')" | dmenu -i -w ${w} -p "$(pwd)?")" || break; cd ${c};
 done
-# while [ -n ${c} ]; do; c="$(echo "$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')" | dmenu -i -w ${w} -p "$(pwd)?")"; cd ${c}; done;

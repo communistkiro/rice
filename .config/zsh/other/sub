@@ -7,18 +7,15 @@ h='/moviehash-'"$(hashmov.pl ${m})"; # hash identifying movie file via https://t
 b='/moviebytesize-'"$(du --bytes ${m} | /bin/grep -Po '^\d+')"; # movie bytesize
 if [[ ${m##*/} =~ '[sS]?[0-9]+?\.?[eE]?[0-9]+?' ]]; then e=$(echo ${m##*/}|perl -pe 's/.*?[sS]?(0?\d+)\.?[eE]?(\d+).*/\1---\2/'); fi; # season and episode
 [ -f /tmp/ISO_639-2.json ] || curl -s "https://raw.githubusercontent.com/wecodemore/ISO_639-2/master/ISO_639-2.json" > /tmp/ISO_639-2.json;
-l1=($(sed -rn 's/.*"([a-z]{3})":/\1/ p' /tmp/ISO_639-2.json));
-l2=($(sed -rn '/"[a-z]{3}"/ {n;n;n;p}' /tmp/ISO_639-2.json | sed ':a;/,$/{N;s/\n//;ba}' | tr -d '",'));
-l3='/sublanguageid-'"$()"
-
-a="$(pcre2grep -Mv '\s+"native": \[\s+(.*?\s)*?\]' ISO_639-2.json | sed '/"english": /d; /[{}]/d' | pcre2grep -Mv '^\s+"[a-z]{2}":(.*?\s)+?((?!\s+"[a-z]{3}":).+)')";
-
-echo ${a} | awk '{print $2}' FS='\t' | tr -s '\n' |tr -d '":'
-echo ${a} | awk '{print $4}' FS='\t' | tr -s '\n' |tr -d '"'
-
-
-d=("${(@f)$(echo ${a} | /bin/grep -Po '"[a-z]{3}":' | tr -d '":')}");
-s=("${(@f)$(pcre2grep -M ':([^:])*' /tmp/ISO_639-2.json)}");
+# l1=($(sed -rn 's/.*"([a-z]{3})":/\1/ p' /tmp/ISO_639-2.json));
+# l2=($(sed -rn '/"[a-z]{3}"/ {n;n;n;p}' /tmp/ISO_639-2.json | sed ':a;/,$/{N;s/\n//;ba}' | tr -d '",'));
+# s=...echo ${a} | awk '{print $2}' FS='\t' | tr -s '\n' |tr -d '":')
+# d=...echo ${a} | awk '{print $4}' FS='\t' | tr -s '\n' |tr -d '"'
+a="$(pcre2grep -Mv '\s+"native": \[\s+(.*?\s)*?\]' /tmp/ISO_639-2.json | sed '/"english": /d; /[{}]/d' | pcre2grep -Mv '^\s+"[a-z]{2}":(.*?\s)+?((?!\s+"[a-z]{3}":).+)')";
+s=("${(@f)$(echo ${a} | /bin/grep -Po '"[a-z]{3}(-[a-z]{3})?":' | tr -d '":\t')}");
+d=(${(ps:_:)"$(echo ${a} | pcre2grep -M ':([^:])*' | tr -s '\n' | tr -d '"\t' | tr ':' '_')"}); d[1]=();
+for a in {1..${#d}}; do d[$a]=$(echo ${d[$a]} | sed '1d; $d' | tr -d '\xd' | tr '\xa' ' '); done;
+l="$(printf "%s    %s\n" "${(@)s:^d}" | dmenu -i -p 'select language')" && l='/sublanguageid-'"${l%% *}";
 
 '/season-'"${e%---*}"
 '/episode-'"${e#*---}"
@@ -28,6 +25,8 @@ perl -ne 's/.*"(\w{3})".*/\1/ && print' ISO_639-2.json
 
 curl -A "$useragent" /sublanguageid-${l:-eng}
 \t+"[a-z]{3}":\s+{\s+"english": \[\s+"(.*?)"(?:,\s+"(.*?)")?
+
+
 
 
 
