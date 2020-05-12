@@ -50,8 +50,8 @@ case ${e} in
     'hj' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://howjsay.com/search?word=aposematism&word=${s}";;
     'l'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.last.fm/search?q=${s}";;
     'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
-    'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
     'sh' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://sci-hub.tw/${s}";;
     'bc' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://bandcamp.com/search?q=${s}";;
+    'mal') xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://myanimelist.net/?type=all&keyword=${s}";;
     *    ) exit 1;;
 esac

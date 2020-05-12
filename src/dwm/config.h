@@ -29,9 +29,8 @@ static const Rule rules[] = {
      *  WM_NAME(STRING) = title
      */
     /* class                instance    title       tags mask     isfloating   monitor */
-    // { "Firefox",            NULL,       NULL,       2 << 8,       0,           -1 },
     { "Firefox",            NULL,       NULL,       2,            0,           -1 },
-    { "qbittorrent",        NULL,       NULL,       9,            0,           -1 },
+    { "qBittorrent",        NULL,       NULL,       9,            0,           -1 },
     { "nicotine",           NULL,       NULL,       9,            0,           -1 },
     { "octave",             NULL,       NULL,       3,            1,           -1 },
     { "octave-cli",         NULL,       NULL,       3,            1,           -1 },
@@ -86,10 +85,10 @@ static Key keys[] = {
     { MODKEY,                       XK_Tab,         zoom,           {0} },
     // { MODKEY|ShiftMask,             XK_Tab,         view,           {0} },
     { MODKEY|ShiftMask,             XK_c,           killclient,     {0} },
-    { MODKEY|ShiftMask,             XK_t,           setlayout,      {.v = &layouts[0]} },
-    { MODKEY|ShiftMask,             XK_f,           setlayout,      {.v = &layouts[1]} },
-    { MODKEY|ShiftMask,             XK_m,           setlayout,      {.v = &layouts[2]} },
-    { MODKEY|ShiftMask,             XK_n,           setlayout,      {.v = &layouts[2]} },
+    // { MODKEY|ShiftMask,             XK_t,           setlayout,      {.v = &layouts[0]} },
+    // { MODKEY|ShiftMask,             XK_f,           setlayout,      {.v = &layouts[1]} },
+    // { MODKEY|ShiftMask,             XK_m,           setlayout,      {.v = &layouts[2]} },
+    // { MODKEY|ShiftMask,             XK_n,           setlayout,      {.v = &layouts[2]} },
     { MODKEY,                       XK_space,       cyclelayout,    {.i = +1 } },
     // { MODKEY|ControlMask,           XK_comma,       cyclelayout,    {.i = -1 } },
     // { MODKEY,                       XK_space,       setlayout,      {0} },

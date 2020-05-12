@@ -27,23 +27,8 @@
 
 
 
-
-
-
-
-
-
-
-
-
 # # z=$(printf "%s\n" "${(@)z}" | dmenu -i -l ${#z} -p 'select subtitle'); # comment/uncomment this line to download all/a selected sub(s)
 # for a in ${(@)z}; do wget -P "${m%/*}/" ${a}; done;
-
-
-
-
-
-
 
 
 
@@ -52,4 +37,5 @@
 
 
 a="$(pgrep -anx mpv)";
-subliminal --opensubtitles VwAxYImyiMgeaXWXOSkB HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS download -l en -hi -d "$(echo $a | /bin/grep -Po '/.*/')" "${a##*/}"
+subliminal --opensubtitles VwAxYImyiMgeaXWXOSkB HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS download -l en -hi -d "$(echo $a | /bin/grep -Po '/.*/')" "${a##*/}";
+pkill mpv; mpv "$(echo $a | /bin/grep -Po '/.*/')${a##*/}";

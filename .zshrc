@@ -81,16 +81,16 @@ setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 
 
 # ALII
-# UTILITIES
 alias vol='amixer set Master'
 alias xb='xbacklight -set'
 alias so='source /root/.zshrc'
-# PROGRAMS AND PREFERENCES
 alias xbq='xbps-query --regex -Rs'
 alias xbqm='xbps-query -m'
 alias xbql='xbps-query -l'
 alias xbs='xbps-install -Su'
 alias xbr='xbps-remove -R'
+alias clb="col -b"
+alias bb='bye'
 alias ll='lsd -A'
 alias ls1='lsd -A1'
 alias lsr='lsd -A --tree'
@@ -121,30 +121,25 @@ alias oc='octave-cli'
 alias oce='octave-cli --eval'
 alias espeak='espeak -p30 -k35 -s310 -g 2 -ven-sc'
 alias flite='flite -voice awb'
-alias loc='setxkbmap us; export LANG=en_US.UTF-8; xb 0; slock; xb 12'
+alias mpi='mp3info2'
+alias tage='tageditor --no-sandbox'
 alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias ff='firefox &>/dev/null & disown'
 alias vsc='sudo --user=v code-oss --user-data-dir ~/vsc/'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
 alias qpp='qpdfview --unique ${1} &>/dev/null & disown qpdfview'
-alias mpi='mp3info2'
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
 alias bustin='16t /media/ELEM/Music/N/Neil\ Cicierega/Neil\ Cicierega\ \[Mouth\ Moods\ \(2017\)\]/08\ Bustin.mp3'
-alias lmms='lmms --allowroot &>/dev/null & disown'
 alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
-alias clb="col -b"
-alias bb='bye'
-alias unb='bindkey -d'
+# alias unb='bindkey -d'
 alias mle='mle -i1 -w1'
 alias love='mpc sendmessage mpdas love'
 alias unlove='mpc sendmessage mpdas unlove'
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=36" & disown ; exit'
 alias ms1='tmines -fd22; clear'
 alias ms='ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1'
-alias cata='~/games/cataclysmdda-0.E/cataclysm-launcher &>/dev/null & disown'
-alias tetris='/root/games/NullpoMino7_5_0/play_slick >& /dev/null & disown'
 alias tome='cd /root/games/t-engine4-linux64-1.6.7; ./t-engine & disown'
 alias fzf='fzf -m\
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})"\
@@ -156,7 +151,6 @@ alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --
 alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
 alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
-alias tage='tageditor --no-sandbox'
 alias xc='xclip -selection clipboard'
 
 
