@@ -1,68 +1,29 @@
-u='VwAxYImyiMgeaXWXOSkB'; # username
-p='HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS'; # password
-
-m="$(pgrep -nx mpv | gre -o '/.*$')" || return 1; # currently playing video
-t="${m##*/}"; # title
-h='/moviehash-'"$(hashmov.pl ${m})"; # hash identifying movie file via https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
-b='/moviebytesize-'"$(du --bytes ${m} | /bin/grep -Po '^\d+')"; # movie bytesize
-if [[ ${m##*/} =~ '[sS]?[0-9]+?\.?[eE]?[0-9]+?' ]]; then e=$(echo ${m##*/}|perl -pe 's/.*?[sS]?(0?\d+)\.?[eE]?(\d+).*/\1---\2/'); fi; # season and episode
-[ -f /tmp/ISO_639-2.json ] || curl -s "https://raw.githubusercontent.com/wecodemore/ISO_639-2/master/ISO_639-2.json" > /tmp/ISO_639-2.json;
-# l1=($(sed -rn 's/.*"([a-z]{3})":/\1/ p' /tmp/ISO_639-2.json));
-# l2=($(sed -rn '/"[a-z]{3}"/ {n;n;n;p}' /tmp/ISO_639-2.json | sed ':a;/,$/{N;s/\n//;ba}' | tr -d '",'));
-# s=...echo ${a} | awk '{print $2}' FS='\t' | tr -s '\n' |tr -d '":')
-# d=...echo ${a} | awk '{print $4}' FS='\t' | tr -s '\n' |tr -d '"'
-a="$(pcre2grep -Mv '\s+"native": \[\s+(.*?\s)*?\]' /tmp/ISO_639-2.json | sed '/"english": /d; /[{}]/d' | pcre2grep -Mv '^\s+"[a-z]{2}":(.*?\s)+?((?!\s+"[a-z]{3}":).+)')";
-s=("${(@f)$(echo ${a} | /bin/grep -Po '"[a-z]{3}(-[a-z]{3})?":' | tr -d '":\t')}");
-d=(${(ps:_:)"$(echo ${a} | pcre2grep -M ':([^:])*' | tr -s '\n' | tr -d '"\t' | tr ':' '_')"}); d[1]=();
-for a in {1..${#d}}; do d[$a]=$(echo ${d[$a]} | sed '1d; $d' | tr -d '\xd' | tr '\xa' ' '); done;
-l="$(printf "%s    %s\n" "${(@)s:^d}" | dmenu -i -p 'select language')" && l='/sublanguageid-'"${l%% *}";
-
-'/season-'"${e%---*}"
-'/episode-'"${e#*---}"
-
-
-perl -ne 's/.*"(\w{3})".*/\1/ && print' ISO_639-2.json
-
-curl -A "$useragent" /sublanguageid-${l:-eng}
-\t+"[a-z]{3}":\s+{\s+"english": \[\s+"(.*?)"(?:,\s+"(.*?)")?
-
-
-
-
-
-
-curl -A "registeredUA"
-
-https://rest.opensubtitles.org/search/episode-20/imdbid-4145054/moviebytesize-750005572/moviehash-319b23c54e9cf314/season-2/sublanguageid-eng
-https://rest.opensubtitles.org/search
-
-http basic auth, or add sid parameter into download link.
-http://dl.opensubtitles.org/en/download/src-api/vrf-19d50c5e/sid-{YOUR_SID_HERE}/filead/1951976249.gz
-
-episode (number)
-season (number)
-imdbid (always format it as sprintf("%07d", $imdb) - when using imdb you can add /tags-hdtv for example.
-moviebytesize (number)
-moviehash (should be always 16 character, must be together with moviebytesize)
-query (use url_encode, make sure " " is converted to "%20")
-sublanguageid (if ommited, all languages are returned)
-tag (use url_encode, make sure " " is converted to "%20")
-
-
-
-curl -A 'TemporaryUserAgent'  https://rest.opensubtitles.org/search/moviebytesize-750005572/moviehash-319b23c54e9cf314
-curl -A 'TemporaryUserAgent'  https://rest.opensubtitles.org/search/episode-20/imdbid-4145054/moviebytesize-750005572/moviehash-319b23c54e9cf314/season-2/sublanguageid-eng
-curl -A 'TemporaryUserAgent'  https://rest.opensubtitles.org/search/episode-11/imdbid-4145054/season-1/tags-web-dl
-curl -A 'TemporaryUserAgent'  https://rest.opensubtitles.org/search/query-matrix%20reloaded/sublanguageid-eng
-curl -A 'TemporaryUserAgent'  https://rest.opensubtitles.org/search/episode-8/sublanguageid-eng/tag-heroess01e08
-
-curl -H "X-User-Agent: TemporaryUserAgent" https://rest.opensubtitles.org/search/query-matrix%20reloaded/sublanguageid-cze
-
-
-curl -A 'TemporaryUserAgent'  http://rest.opensubtitles.org/suggest/query-a/sublanguageid-eng
-curl -A 'TemporaryUserAgent'  http://rest.opensubtitles.org/getsublanguages/language-en
-curl -vvv -d 'username=${u}&password=${p}' -X POST -A 'TemporaryUserAgent v1.2' "https://rest.opensubtitles.org/auth"
-    
+# #!/bin/zsh
+# # searches, downloads, unzips, loads subs for currently playing mpv file
+# # u='VwAxYImyiMgeaXWXOSkB'; # username
+# # p='HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS'; # password
+# m="$(pgrep -nxa mpv | gre -o '/.*$')" || return 1; # currently playing video
+# h='/moviehash-'"$(hashmov.pl ${m})"; # hash identifying movie file via https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
+# b='/moviebytesize-'"$(du --bytes ${m} | /bin/grep -Po '^\d+')"; # movie bytesize
+# if [[ ${m##*/} =~ '[sS]?\d{1,3}.?[eE]?\d{1,3}?' ]]; then 
+#     e=$(echo ${m##*/}|perl -pe 's/.*?[sS]?(0?\d+)\.?[eE]?(\d+).*/\1---\2/'); # season and episode
+#     s='/episode-'"${e#*---}"; # season
+#     e='/season-'"${e%---*}" # episode
+#     [[ ${#s} -ge 11 ]] && unset s; # no 3-digit seasons, even with leading zero
+#     [[ ${#e} -ge 12 ]] && unset e; # no 4-digit episodes, even with leading zero
+# fi;
+# [ -f /tmp/ISO_639-2.json ] || curl -s "https://raw.githubusercontent.com/wecodemore/ISO_639-2/master/ISO_639-2.json" > /tmp/ISO_639-2.json;
+# # l1=($(sed -rn 's/.*"([a-z]{3})":/\1/ p' /tmp/ISO_639-2.json));
+# # l2=($(sed -rn '/"[a-z]{3}"/ {n;n;n;p}' /tmp/ISO_639-2.json | sed ':a;/,$/{N;s/\n//;ba}' | tr -d '",'));
+# # s=...echo ${a} | awk '{print $2}' FS='\t' | tr -s '\n' |tr -d '":')
+# # d=...echo ${a} | awk '{print $4}' FS='\t' | tr -s '\n' |tr -d '"'
+# z="$(pcre2grep -Mv '\s+"native": \[\s+(.*?\s)*?\]' /tmp/ISO_639-2.json | sed '/"english": /d; /[{}]/d' | pcre2grep -Mv '^\s+"[a-z]{2}":(.*?\s)+?((?!\s+"[a-z]{3}":).+)')";
+# x=("${(@f)$(echo ${z} | /bin/grep -Po '"[a-z]{3}(-[a-z]{3})?":' | tr -d '":\t')}");
+# c=(${(ps:_:)"$(echo ${z} | pcre2grep -M ':([^:])*' | tr -s '\n' | tr -d '"\t' | tr ':' '_')"}); c[1]=();
+# for z in {1..${#x}}; do c[$z]=$(echo ${c[$z]} | sed '1d; $d' | tr -d '\xd' | tr '\xa' ' '); done;
+# l="$(printf "%-11s%s\n" "${(@)x:^c}" | dmenu -i -p 'select language')" && l='/sublanguageid-'"${l%% *}";
+# # z=$(lynx -listonly -dump "https://opensubtitles.org/search/${m##*/}${h}${b}${s}${e}${l}" | /bin/grep -Po 'http.*/subtitleserve/sub/.*$' | sed 's/www/dl/; s/subtitleserve/download/; s/http/https/'); 
+# for a in $(lynx -listonly -dump "https://opensubtitles.org/search/${m##*/}${h}${b}${s}${e}${l}" | /bin/grep -Po 'http.*/subtitleserve/sub/.*$'); do lynx -listonly -dump "${a}" | /bin/grep -Po 'http://dl.*' | grep '/file/'; done;
 
 
 
@@ -71,5 +32,26 @@ curl -vvv -d 'username=${u}&password=${p}' -X POST -A 'TemporaryUserAgent v1.2' 
 
 
 
-perl -ne '/\t+"([a-z]{3})":\s+\{\s+"english": \[\s+"(.*?)"(?:,\s+"(.*?)")?/m && print $1."\n".$2." ".$3."\n"' 
+
+
+
+
+# # z=$(printf "%s\n" "${(@)z}" | dmenu -i -l ${#z} -p 'select subtitle'); # comment/uncomment this line to download all/a selected sub(s)
+# for a in ${(@)z}; do wget -P "${m%/*}/" ${a}; done;
+
+
+
+
+
+
+
+
+
+
+
+
+
+# unzip "${m%/*}"/*.zip;
+# unset u p m t h b e s z;
+
 

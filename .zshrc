@@ -158,6 +158,7 @@ alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
 alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
 alias tage='tageditor --no-sandbox'
+alias xc='xclip -selection clipboard'
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)

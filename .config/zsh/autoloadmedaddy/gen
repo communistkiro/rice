@@ -1,12 +1,12 @@
 #!/bin/sh
 function gen () {
-e='';
-while getopts 'l:e' o; do
+s=''; e='';
+while getopts 'sel:' o; do
   case ${o} in
     l) l=${OPTARG};;
+    s) unset s;;
     e) unset e;;
     esac
 done
-keepassxc-cli generate -UlnsL${l:-64} ${e=-e}
-unset n l
+keepassxc-cli generate -Uln ${s=-s} ${e=-e} -L${l:-64} | xclip -selection clipboard
 }
