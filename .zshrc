@@ -110,7 +110,6 @@ alias feh='feh --scale-down'
 alias cmat='cmatrix -au2'
 alias kl='khal interactive'
 alias kln='khal new'
-alias mpv='mpv --gpu-dumb-mode=yes'
 alias rr='ranger --cmd="chain set preview_files true"'
 alias hl='hledger-ui --watch'
 alias cow='cowthink -e "^^" -f xxx -T "U"'
@@ -159,6 +158,7 @@ alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -d
 alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
 alias tage='tageditor --no-sandbox'
 alias xc='xclip -selection clipboard'
+
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)

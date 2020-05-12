@@ -1,4 +1,4 @@
-# #!/bin/zsh
+#!/bin/zsh
 # # browse a cache of twitch categories, pick out some, do the same for a language, then choose a live stream to start; use an mpv script to change quality mid-stream
 
 # while getopts 'r' s; do
@@ -55,3 +55,5 @@
 #   esac;
 # done;
 # unset s q a e c w;
+mpv -- https://www.twitch.tv/"$(print "ryuquezacotl/\nmrllamasc/\nnumidium3rd/" | dmenu -i -l 3)" || return;
+

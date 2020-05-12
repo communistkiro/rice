@@ -1,0 +1,3 @@
+#!/bin/zsh
+a="$(pgrep -anx mpv)";
+subliminal --opensubtitles VwAxYImyiMgeaXWXOSkB HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS download -l en -hi -d "$(echo $a | /bin/grep -Po '/.*/')" "${a##*/}"
