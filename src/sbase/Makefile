@@ -100,6 +100,7 @@ BIN =\
 	cron\
 	cut\
 	date\
+	dd\
 	dirname\
 	du\
 	echo\
@@ -108,6 +109,7 @@ BIN =\
 	expand\
 	expr\
 	false\
+	find\
 	flock\
 	fold\
 	getconf\
@@ -126,6 +128,7 @@ BIN =\
 	mkfifo\
 	mknod\
 	mktemp\
+	mv\
 	nice\
 	nl\
 	nohup\
@@ -157,6 +160,7 @@ BIN =\
 	strings\
 	sync\
 	tail\
+	tar\
 	tee\
 	test\
 	tftp\
@@ -178,9 +182,6 @@ BIN =\
 	xargs\
 	xinstall\
 	yes
-# 	mv\
-# 	tar\
-# 	find\
 
 LIBUTFOBJ = $(LIBUTFSRC:.c=.o)
 LIBUTILOBJ = $(LIBUTILSRC:.c=.o)
