@@ -14,7 +14,7 @@ a=(
 i=0;
 # until [[ -n ${w} ]]; do; w=$(xwininfo -name 'mpp' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 q[1]=''; q[2]='';
-while [[ '' != ${c-a} ]]; do
+while true; do
     c=$(printf "%s\n" "${a[@]}" | dmenu -i -l ${#a});
     case ${c} in
         ${a[1]} )
@@ -36,8 +36,8 @@ while [[ '' != ${c-a} ]]; do
             q[++i]=${a[6]};
             q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -i -p "${a[6]}" -l 8);;
         ${a[7]} )
-            mpc search ${q} | mpc insert;
-            break;;
+            mpc search ${q} | mpc insert;&
+        *       ) break ;;
     esac
 done
 unset a i q w c;
