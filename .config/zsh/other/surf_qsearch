@@ -29,10 +29,7 @@ e="${q%% *}"
 # here, but xxd is part of vim packages on some systems, whereas od is
 # ubiquitous. A search script that breaks if someone accidentally removes
 # vim is stupid.
-# s=$(printf %s "${q#* }" | tr -d '\n' | od -t x1 -An |  tr ' ' '%')
-# s=$(printf %s "${q#* }" | tr -d '\n' | sed 's/ /_/g' od -t x1 -An |  tr ' ' '%')
 s=$(printf %s "${q#* }")
-# id=$(xdotool search --class 'surf' | tail -1)     
 
 case ${e} in
     'd'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://duckduckgo.com/?q=${s}";;
@@ -52,6 +49,6 @@ case ${e} in
     'i'  ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://www.imdb.com/find?ref_=nv_sr_fn&q=${s}&s=all";;
     'sh' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://sci-hub.tw/${s}";;
     'bc' ) xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://bandcamp.com/search?q=${s}";;
-    'mal') xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://myanimelist.net/?type=all&keyword=${s}";;
+    'mal') xprop -id $1 -f _SURF_GO 8s -set _SURF_GO "https://myanimelist.net/search/?all&q=%{s}";;
     *    ) exit 1;;
 esac
