@@ -1,0 +1,130 @@
+#!/bin/sh
+# countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 d
+
+alarm=~/.local/CartoonFoghorn.wav;
+a=0;
+while getopts 'a' o; do
+    case $o in
+        a) a=1;;
+        *) echo "\nUsage:"
+less <<HEREDOC
+NAME
+    tmr - a countdown/alarm script    
+
+SYNOPSIS
+    tmr [-a] ...
+        [days hours minutes seconds]
+        [days hours minutes]
+        [hours minutes]
+        [minutes]
+
+DESCRIPTION
+    Start a countdown, or set up an alarm, from the given time paramters. Days are 
+    always relative to today's, i.e., 1 is tomorrow, or +24h. Negatives values are 
+    allowed (as corrections), so long as the final value is not in the past for 
+    coundowns; for alarms, because the day is relative, a future alarm is always 
+    set unless all values are zero (default, if given empty string). Months don't 
+    coming into play in tmr.
+
+EXAMPLES
+    An alarm for 00:55:57 on the 8. days after today;
+        tmr -a 7 26 -61 -183
+
+    An alarm for midnight;
+        tmr -a 1 0 0;
+
+    An alarm for 22:57:59 tonight, or tomorrow, if current time ;
+        tmr -a 1 -1 -1 -1
+
+    An alarm for 00:06:34; 
+        tmr -a 7 -26
+
+    An alarm for the next time the minutes are 26; 
+        tmr -a 26
+
+    A 59-minute, 59-second countdown;
+        tmr 1 0 -1
+
+    A 1-minute countdown;
+        tmr 1
+
+EXIT STATUS
+    1, if all values are zero, or corrections yield a value in the past.
+HEREDOC
+        return 1;;
+    esac
+done
+shift $((OPTIND-1));
+
+# tmp file storing current remaining time
+tmp=$(mktemp /tmp/countdown.XXXXXX);
+
+trap 'rm -rf "$tmp"; trap - EXIT; exit' EXIT INT HUP
+
+if [ $# -eq 4 ]; then
+    d=$1;
+    h=$2;
+    m=$3;
+    s=$4;
+elif [ $# -eq 3 ]; then
+    d=$1;
+    h=$2;
+    m=$3;
+elif [ $# -eq 2 ]; then
+    h=$1;
+    m=$2;
+elif [ $# -eq 1 ]; then
+    m=$1;
+else
+    echo "Set alarm $([ $a -eq 1] && echo at || echo in):";
+    read -r -p 'days (rel. not abs.): ' d
+    read -r -p 'hours: ' h
+    read -r -p 'minutes: ' m
+    read -r -p 'seconds: ' s
+fi
+
+[ "$d" = '' ] && d=0;
+[ "$h" = '' ] && h=0;
+[ "$m" = '' ] && m=0;
+[ "$s" = '' ] && s=0;
+[ "$d" -eq 0 ] && [ "$h" -eq 0 ] && [ "$m" -eq 0 ] && [ "$s" -eq 0 ] && return 1;
+
+if [ $a -eq 1 ]; then
+    # -59 <= s <= 59; -59 <= m <= 59; -24 <= h <= 24; 0 <= d
+    m=$((m + s / 60)); s=$((s % 60));
+    h=$((h + m / 60)); m=$((m % 60));
+    d=$((d + h / 24)); h=$((h % 24)); 
+    
+    S=$(/bin/date +%S);
+    M=$(/bin/date +%M);
+    H=$(/bin/date +%H);
+
+    if   [ $S -ge $s ] && [ $m -eq 0 ] && [ $h -eq 0 ] && [ $d -eq 0 ]; then m=$((M + 1)); h=$((H));
+    elif [ $M -gt $m ] || ([ $M -eq $m ] && [ $S -ge $s ]) && [ $h -eq 0 ] && [ $d -eq 0 ]; then h=$((H + 1));
+    elif [ $M -lt $m ] && [ $h -eq 0 ] && [ $d -eq 0 ]; then h=$H;
+    elif [ $H -gt $h ] || ([ $H -eq $h ] && [ $M -ge $m ]) && [ $d -eq 0 ]; then d=$((d + 1));
+    fi;
+
+    [ $d -lt 0 ] || [ $((60 * (60 * (24 * d + h) + m) + s)) -lt 0 ] && return 1;
+
+    t=$(/bin/date -d "$(/bin/date +%Y-%m-%d) +${d}days +${h}hours +${m}minutes +${s}seconds" '+%Y-%m-%d %H:%M:%S');
+    printf "Alarm set for %s.\n" "$t";
+
+    t=$(($(/bin/date -d "$(/bin/date +%Y-%m-%d) +${d}days ${h}hours +${m}minutes +${s}seconds" '+%s') - $(/bin/date +%s)));
+else;
+    t=$((60 * (60 * (24 * d + h) + m) + s)); [ $t -lt 0 ] && return 1;
+fi;
+
+# output remainind time left as HH:MM:SS to stdout and tmpfile
+while [ $t -ge 0 ]; do
+    # printf "%02dh:%02dm:%02ds\n" $((t/3600)) $((t%3600/60)) $((t%60));
+    printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) > ${tmp};
+    sleep 1;
+    t=$((t - 1));
+done
+
+if mpc status | grep -q 'playing'; then 
+    mpc toggle; sleep 1; mpv --no-config $alarm; mpc toggle; 
+else 
+    mpv --no-config $alarm;
+fi

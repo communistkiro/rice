@@ -55,5 +55,5 @@
 #   esac;
 # done;
 # unset s q a e c w;
-mpv -- https://www.twitch.tv/"$(print "ryuquezacotl/\nmrllamasc/\nnumidium3rd/" | dmenu -i -l 3)" || return;
-
+a=$(printf "ryuquezacotl\nnaysayer88\nmrllamasc\nnumidium3rd" | dmenu -i) || return;
+mpv -- https://www.twitch.tv/${a}/

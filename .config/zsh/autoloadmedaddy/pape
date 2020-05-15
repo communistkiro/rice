@@ -15,7 +15,7 @@ while true; do;
     c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l $(zcalc -e 'min(18, ${#d} + ${#f} + 2)') -p $(pwd) -w ${w} ) || break;
     [ -d ${c} ] && cd ${c} && c=.;
     [ -f ${c} ] && (feh ${s-${a[4]}} ${c} || break);
-    [[ ${c} = "bgopts" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options' -w ${w}) && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
-    [[ ${c} = "rand" ]] && (feh ${s-${a[4]}} $(ls -ap | grep -v '/' | /bin/sort -R | head -1) || break);
+    [ ${c} = "bgopts" ] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options' -w ${w}) && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
+    [ ${c} = "rand" ] && (feh ${s-${a[4]}} $(ls -ap | grep -v '/' | /bin/sort -R | head -1) || break);
 done
 unset c a f s d w;

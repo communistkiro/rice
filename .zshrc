@@ -65,7 +65,7 @@ plugins=(
   colorize
   # timer 
 )
-# TIMER_PRECISION=6
+TIMER_PRECISION=6
 
 autoload -U +X compinit && compinit 
 autoload -U +X bashcompinit && bashcompinit
@@ -92,8 +92,8 @@ alias xbr='xbps-remove -R'
 alias clb="col -b"
 alias bb='bye'
 alias ll='lsd -A'
-alias ls1='lsd -A1'
-alias lsr='lsd -A --tree'
+alias ll1='lsd -A1'
+alias llr='lsd -A --tree'
 alias less='less --ignore-case --LONG-PROMPT --tabs 4'
 alias du='/bin/du -hs'
 alias rm='sudo rm -r'
