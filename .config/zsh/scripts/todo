@@ -11,7 +11,7 @@ touch "$file"
 height=$(wc -l "$file" | awk '{print $1}')
 prompt="Add/delete a task: "
 
-cmd=$(dmenu -l "$height" -p "$prompt" "$@" < "$file")
+cmd=$(dmenu -i -l "$height" -p "$prompt" "$@" < "$file")
 while [ -n "$cmd" ]; do
  	if grep -q "^$cmd\$" "$file"; then
 		grep -v "^$cmd\$" "$file" > "$file.$$"

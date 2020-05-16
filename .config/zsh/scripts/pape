@@ -13,7 +13,7 @@ cd ${c};
 while true; do;
     [ -d ${c} ] && f=($(/bin/ls -ap ${c} | grep -v '/')) && d=($(/bin/ls -ap ${c} | grep '/' | grep -v '^\./')); 
     r=$((${#d} + ${#f} + 2));
-    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l $([ 18 -le ${r} ] && echo 18 || echo ${r})) || break; 
+    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l $([ 10 -le ${r} ] && echo 10 || echo ${r})) || break; 
     [ -d ${c} ] && cd ${c} && c=.;
     [ -f ${c} ] && (feh ${s-${a[4]}} ${c} || break);
     [[ ${c} = "bgopts" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options') && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);

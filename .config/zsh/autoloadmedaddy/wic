@@ -1,6 +1,6 @@
 #!/bin/zsh
 function wic () {
-if ! pgrep wicd &> /dev/null; then;
+if ! ps -C wicd &> /dev/null; then;
     echo 'wicd not running!';
 elif [ -z ${1} ]; then; 
     echo 'SSID needed!';

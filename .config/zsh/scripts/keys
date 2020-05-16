@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 # This script is called on startup for one-off cmds
 
 # /usr/share/X11/xkb/rules for `-option ""'
@@ -11,28 +11,28 @@ xset r rate 240 80 &
 # setxkbmap -option caps:super
 
 # But when it is pressed only once, treat it as escape.
-pgrep xcape || xcape -e 'Super_L=Escape' &
+pgrep -x xcape &>/dev/null || xcape -e 'Super_L=Escape' &
 
 # Map the menu button to right super as well.
 xmodmap -e 'keycode 135 = Super_R' &
 
 # Shortcuts
-pgrep xbindkeys || xbindkeys &
+pgrep -x xbindkeys &>/dev/null || xbindkeys &
 
 # fuck trackpad
-pgrep syndaemon || syndaemon -d -i 131072
+pgrep -x syndaemon &>/dev/null || syndaemon -d -i 131072
 
 # Make sure an instance of Sublime Text 3 is running
-pgrep subl3 || subl3 &
+pgrep -x subl3 &>/dev/null || subl3 &
 
 # Set last set background
 ~/.fehbg &
 
 # Screen lock
-pgrep xautolock || xautolock -time 20 -secure -locker 'setxkbmap us; export LANG=en_US.UTF-8; xbacklight -set 0; slock; xbacklight -set 15' &
+pgrep -x xautolock &>/dev/null || xautolock -time 20 -secure -locker 'setxkbmap us; export LANG=en_US.UTF-8; xbacklight -set 0; slock; xbacklight -set 15' &
 
 # mute mic
-amixer sset Capture nocap
+amixer sset Capture nocap &
 
 # Snowstorm
 # pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown

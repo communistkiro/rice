@@ -1,12 +1,12 @@
 #!/bin/sh
-# countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 d
+# countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 days
 
 alarm=~/.local/CartoonFoghorn.wav;
 a=0;
 while getopts 'a' o; do
     case $o in
         a) a=1;;
-        *) echo "\nUsage:"
+        *) 
 less <<HEREDOC
 NAME
     tmr - a countdown/alarm script    
@@ -19,13 +19,14 @@ SYNOPSIS
         [minutes]
 
 DESCRIPTION
-    Start a countdown, or set up an alarm, from the given time paramters. Days are 
-    always relative to today's, i.e., 1 is tomorrow, or +24h. Negatives values are 
-    allowed (as corrections), so long as the final value is not in the past for 
-    coundowns; for alarms, because the day is relative, a future alarm is always 
-    set unless all values are zero (default, if given empty string). Months don't 
-    coming into play in tmr.
-
+    Start a countdown, or set up an alarm, from the given time paramters, and play
+    an audio file only completion. Days are always relative to today's, i.e., 1 is 
+    tomorrow, or +24h. Negatives values are parsed as corrections, so long as the 
+    final value is not in the past, for coundowns; for alarms, because the day is 
+    relative, a future alarm is always set unless all values are zero (default, if 
+    given empty string). All values are integers, months don't coming into play in 
+    tmr.
+    
 EXAMPLES
     An alarm for 00:55:57 on the 8. days after today;
         tmr -a 7 26 -61 -183
@@ -48,8 +49,19 @@ EXAMPLES
     A 1-minute countdown;
         tmr 1
 
+    Negative final value, just returns; preprend negative first arguments w/ -- ;
+        tmr -- -1 
+
 EXIT STATUS
-    1, if all values are zero, or corrections yield a value in the past.
+    0
+        successfully completed countdown or alarm.
+    1
+        if all values are zero, or corrections yield a value in the past.
+
+BUGS
+    Please report any aberrant behavior or bugs to vlg@tutamail.com
+
+
 HEREDOC
         return 1;;
     esac
@@ -57,9 +69,10 @@ done
 shift $((OPTIND-1));
 
 # tmp file storing current remaining time
-tmp=$(mktemp /tmp/countdown.XXXXXX);
+# tmp=$(mktemp /tmp/countdown.XXXXXX);
+tmp="/tmp/tmr.tmr.tmr";
 
-trap 'rm -rf "$tmp"; trap - EXIT; exit' EXIT INT HUP
+trap 'rm -rf "$tmp"; trap - EXIT; unset a d h m s tmp alarm; return $?' EXIT INT HUP
 
 if [ $# -eq 4 ]; then
     d=$1;
@@ -89,6 +102,10 @@ fi
 [ "$s" = '' ] && s=0;
 [ "$d" -eq 0 ] && [ "$h" -eq 0 ] && [ "$m" -eq 0 ] && [ "$s" -eq 0 ] && return 1;
 
+for a in $d $h $m $s; do
+case $a in *[!0-9-]*) echo "Non-integer value!"; return 1;; esac
+done
+
 if [ $a -eq 1 ]; then
     # -59 <= s <= 59; -59 <= m <= 59; -24 <= h <= 24; 0 <= d
     m=$((m + s / 60)); s=$((s % 60));
@@ -117,14 +134,16 @@ fi;
 
 # output remainind time left as HH:MM:SS to stdout and tmpfile
 while [ $t -ge 0 ]; do
-    # printf "%02dh:%02dm:%02ds\n" $((t/3600)) $((t%3600/60)) $((t%60));
-    printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) > ${tmp};
+    printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60));
+    printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) > $tmp;
     sleep 1;
     t=$((t - 1));
 done
 
-if mpc status | grep -q 'playing'; then 
+if [ $? -eq 0 ] && mpc status &>/dev/null | grep -q 'playing'; then 
     mpc toggle; sleep 1; mpv --no-config $alarm; mpc toggle; 
 else 
     mpv --no-config $alarm;
 fi
+
+unset a d h m s tmp alarm; rm -f $tmp;

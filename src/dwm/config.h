@@ -73,7 +73,7 @@ static Key keys[] = {
     /* modifier                     key             function        argument */
     { MODKEY,                       XK_Escape,      spawn,          {.v = dmenucmd } },
     { MODKEY,                       XK_t,           spawn,          {.v = termcmdd } },
-    { MODKEY,                       XK_b,           togglebar,      {0} },
+    { MODKEY|ShiftMask,             XK_b,           togglebar,      {0} },
     { MODKEY|ShiftMask,             XK_semicolon,   focusstack,     {.i = +1 } },
     { MODKEY|ShiftMask,             XK_p,           focusstack,     {.i = -1 } },
     { MODKEY|ShiftMask,             XK_apostrophe,  setmfact,       {.f = +0.05} },

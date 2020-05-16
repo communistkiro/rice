@@ -1,7 +1,15 @@
-#!/bin/zsh
-while IFS= read -r t; do;
-    [[ ${t} =~ '^1:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/root;
-    [[ ${t} =~ '^2:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/root/.config;
-    [[ ${t} =~ '^3:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/root/dcs;
-    [[ ${t} =~ '^e:' ]] && rsync --include "*/" ${t#??} /media/ELEM/zbackup/etc;
-done < /root/.local/share/ranger/tagged;
+# #!/bin/zsh
+# while IFS= read -r t; do;
+#     [[ ${t} =~ '^1:' ]] && rsync -R ${t#??} /media/ELEM/zbackup/root;
+#     [[ ${t} =~ '^3:' ]] && rsync -R ${t#??} /media/ELEM/zbackup/root/dcs;
+#     [[ ${t} =~ '^e:' ]] && rsync -R ${t#??} /media/ELEM/zbackup/etc;
+# done < /root/.local/share/ranger/tagged;
+
+# # q=(${(@f)"$(<.local/share/ranger/tagged)"});
+# # for w in ${(@)q}; do;
+# #       if [[ ${w} =~ '^1:' ]]; then rsync -R --include "*/" ${w#??} /media/ELEM/zbackup/root;
+# #     elif [[ ${w} =~ '^3:' ]]; then rsync -R --include "*/" ${w#??} /media/ELEM/zbackup/root/dcs;
+# #     elif [[ ${w} =~ '^e:' ]]; then rsync -R --include "*/" ${w#??} /media/ELEM/zbackup/etc;
+# #       fi
+# # done
+#suddenly doesn't fucking work

@@ -1,3 +1,3 @@
 #!/bin/sh
-b=$(if pgrep firefox 1&>/dev/null; then echo '/sbin/firefox'; else echo '/sbin/lynx'; fi);
+b=$(if ps -C firefox &>/dev/null; then echo '/sbin/firefox'; else echo '/sbin/lynx'; fi);
 surfraw $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i) -browser="${b}"
