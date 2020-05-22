@@ -94,7 +94,6 @@ alias bb='bye'
 alias ll='lsd -A'
 alias ll1='lsd -A1'
 alias llr='lsd -A --tree'
-alias less='less --ignore-case --LONG-PROMPT --tabs 4'
 alias du='/bin/du -hs'
 alias rm='sudo rm -r'
 alias cp='cp -vR'
@@ -156,12 +155,11 @@ alias tetris='/root/games/NullpoMino7_5_0/play_slick &>/dev/null & disown'
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
-autoload $(ll /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc && zmathfunc
+autoload $(ll --classic /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc && zmathfunc
 
 
 # SOURCE
 . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 . /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-# . ~/.config/zkbd$TERM-${${DISPLAY:t}:-$VENDOR-$OSTYPE}
 # bindkey '\' forward-char
 # bindkey ';' backward-char

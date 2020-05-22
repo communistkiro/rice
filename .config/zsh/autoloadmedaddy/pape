@@ -1,5 +1,25 @@
 #!/bin/sh
 # pape setter
+while getopts '' o; do case $o in *) 
+less <<HEREDOC
+NAME
+    pape - wallpaper setter
+
+SYNOPSIS
+    pape 
+
+DESCRIPTION
+    Browse your filesystem, looking for image formats, choose one or pick 'rand' to 
+    get a random selection from current directory, change feh's background setting 
+    options with 'bgopt', exit when you're content.
+    
+BUGS
+    Please report any aberrant behavior or bugs to vlg@tutamail.com
+
+
+HEREDOC
+return 1;;esac; done;
+
 a=( # feh bg options
   '--bg-center'
   '--bg-fill'

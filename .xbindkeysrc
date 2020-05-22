@@ -106,7 +106,7 @@
 
 
 # Kill everything bad
-"pkill -9 -i 'firefox|cataclysm'"
+"pkill -9 -i 'firefox|cataclysm|gimp|subl3'"
   alt + Print
 
 

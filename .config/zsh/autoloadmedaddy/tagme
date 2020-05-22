@@ -2,24 +2,42 @@
 # TAG SHIT DOWNLOADED WITH youtube-dl -o '.../%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s'
 # NO BACKSLASHES
 function tagme () {
-  t=$(mktemp /tmp/XXXXXX);
-  if [[ ! -z $1 ]]; then;
-    find $1 -name '*.mp3' -type f > ${t};
-  else;
-    find . -name '*.mp3' -type f > ${t};
-  fi;
-  while IFS= read -r z; do;
-    # mp3info2 \
-    #   -C id3v2_fix_encoding_on_write=1 -u2R \
-    #   -C write_v24=1 \
-    #   -t ${${z##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3} \
-    #   -a ${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
-    #   -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
-    #   -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
-    #   -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-    #   -g $(</t/x) \
-    #   -F TPE2=%a \
-    #   ${z};
+while getopts '' o; do case $o in *) 
+less <<HEREDOC
+NAME
+    tagmet - tag audio files.
+
+SYNOPSIS
+    tagme 
+    tagme [dir(s)]
+
+DESCRIPTION
+    Uses tageditor or mp3info2 to tag .mp3 (format can be expanded) files that have 
+    been named in format 'ARTIST [ALBUM #TRACK (RELEASEDATE)] TITLE'. Makes use of 
+    zsh's parameter expansion, though this could be done with sed or perl, too.
+
+EXAMPLES
+    tagme
+        Tags .mp3 files in current working directory.
+
+    tagme dir1 dir2
+        Tags .mp3 files in dir1 and dir2.
+    
+BUGS
+    Please report any aberrant behavior or bugs to vlg@tutamail.com
+
+
+HEREDOC
+return 1;;esac; done;
+
+t=$(mktemp /tmp/XXXXXX);
+if [ $# -gt 0 ]; then;
+  find $@ -name '*.mp3' -type f > ${t};
+else;
+  find . -name '*.mp3' -type f > ${t};
+fi;
+while IFS= read -r z; do;
+  if which tageditor &>/dev/null; then
     tageditor set \
       --id3v2-version=4 \
       --force-rewrite \
@@ -34,8 +52,21 @@ function tagme () {
       genre=$(</t/x) \
       albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
       --files ${z};
-  done < ${t};
-  rm ${t}; rm -f **/*.bak;
-  # echo "$(fd 'bak$' ${1:-.})" > ${t}; 
-  # while IFS= read -r f; do rm -f ${f}; done < ${t};
+  elif which mp3info2 &>/dev/null; then
+    mp3info2 \
+      -C id3v2_fix_encoding_on_write=1 -u2R \
+      -C write_v24=1 \
+      -t ${${z##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3} \
+      -a ${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
+      -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
+      -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
+      -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
+      -g $(</t/x) \
+      -F TPE2=%a \
+      ${z};
+  fi
+done < ${t};
+rm ${t}; rm -f **/*.bak;
+# echo "$(fd 'bak$' ${1:-.})" > ${t}; 
+# while IFS= read -r f; do rm -f ${f}; done < ${t};
 }

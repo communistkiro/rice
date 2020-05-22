@@ -1,25 +1,50 @@
 #!/bin/zsh
 # ADD NEW LINKS (FROM CTEBCM PAGE, FROM BANDCAMP EMBEDDED PLAYERS)
 function xrpp () {
-  for a in $(lynx -listonly -dump $1); do;
-    t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX);
-    # EMBEDDED BC PLAYERS
-    [[ ${a} =~ 'EmbeddedPlayer' ]] && lynx -listonly -dump ${a} | pre -o 'http.*/album/[\w-]+' >> ${t1};
-    # DIRECT BC
-    [[ ${a} =~ 'bandcamp.com(/album/)|(/track/)' ]] && echo ${${(S)a/*http/http}%%\?*} >> ${t1};
-    # SC??
-    # [[ ${a} =~ 'soundcloud' ]] && echo ${${(S)a/*http/http}%%\?*} >> /tmp/a1;
-    # DZR??
-    # [[ ${a} =~ 'deezer' ]] && echo ${${(S)a/*http/http}%%\?*} >> /tmp/a1;
-  done;
-  # REMOVE ALREADY TO-BE-DL'D AND ALREADY DL'D URLS; NO SPOTIFY EXTACTOR YET
-  sort -u ${t1} | sed '/spotify/d' > ${t2};
-  diff ~/nm/newlinks ${t2} | pre '^> ' | sed -r 's/^> //' > ${t1};
-  diff ~/nm/oldlinks ${t1} | pre '^> ' | sed -r 's/^> //' > ${t2};
-  diff ~/nm/soon ${t2} | pre '^> ' | sed -r 's/^> //' > ${t1};
-  cat ~/nm/newlinks >> ${t1};
-  sort -u ${t1} > ~/nm/newlinks;
-  # cat ${t1} | sort -u > ~/nm/newlinks
-  rm ${t1} ${t2};
+while getopts '' o; do case $o in *) 
+less <<HEREDOC
+NAME
+  xrpp - scrape alba and tracks from websites.
+
+SYNOPSIS
+  xrpp [website(s)]
+
+DESCRIPTION
+  Scrapes embedded bandcamp (and possibly deezer and soundcloud) alba and tracks, 
+  from website(s), remove entries found in current list of to-be-downloaded alba, 
+  and from list of previously downloaded ones, as well as from the (at the time) 
+  soon-to-be released ones.
+
+EXAMPLES
+  Scape a website
+    xrpp https://canthisevenbecalledmusic.com/monthly-recommendations-january-2020
+
+BUGS
+  Please report any aberrant behavior or bugs to vlg@tutamail.com
+
+
+HEREDOC
+return 1;;esac; done;
+
+for a in $(lynx -listonly -dump $@); do;
+  t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX);
+  # EMBEDDED BC PLAYERS
+  [[ ${a} =~ 'EmbeddedPlayer' ]] && lynx -listonly -dump ${a} | pre -o 'http.*/album/[\w-]+' >> ${t1};
+  # DIRECT BC
+  [[ ${a} =~ 'bandcamp.com(/album/)|(/track/)' ]] && echo ${${(S)a/*http/http}%%\?*} >> ${t1};
+  # SC??
+  # [[ ${a} =~ 'soundcloud' ]] && echo ${${(S)a/*http/http}%%\?*} >> /tmp/a1;
+  # DZR??
+  # [[ ${a} =~ 'deezer' ]] && echo ${${(S)a/*http/http}%%\?*} >> /tmp/a1;
+done;
+# REMOVE ALREADY TO-BE-DL'D AND ALREADY DL'D URLS; NO SPOTIFY EXTACTOR YET
+sort -u ${t1} | sed '/spotify/d' > ${t2};
+diff ~/nm/newlinks ${t2} | pre '^> ' | sed -r 's/^> //' > ${t1};
+diff ~/nm/oldlinks ${t1} | pre '^> ' | sed -r 's/^> //' > ${t2};
+diff ~/nm/soon ${t2} | pre '^> ' | sed -r 's/^> //' > ${t1};
+cat ~/nm/newlinks >> ${t1};
+sort -u ${t1} > ~/nm/newlinks;
+# cat ${t1} | sort -u > ~/nm/newlinks
+rm ${t1} ${t2};
 }
 

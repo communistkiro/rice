@@ -1,7 +1,8 @@
+#!/bin/sh
 #!/bin/zsh
 # # searches, downloads, unzips, loads subs for currently playing mpv file
-# # u='VwAxYImyiMgeaXWXOSkB'; # username
-# # p='HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS'; # password
+u='VwAxYImyiMgeaXWXOSkB'; # username
+p='HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS'; # password
 # m="$(pgrep -nxa mpv | gre -o '/.*$')" || return 1; # currently playing video
 # h='/moviehash-'"$(hashmov.pl ${m})"; # hash identifying movie file via https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
 # b='/moviebytesize-'"$(du --bytes ${m} | /bin/grep -Po '^\d+')"; # movie bytesize
@@ -25,17 +26,14 @@
 # # z=$(lynx -listonly -dump "https://opensubtitles.org/search/${m##*/}${h}${b}${s}${e}${l}" | /bin/grep -Po 'http.*/subtitleserve/sub/.*$' | sed 's/www/dl/; s/subtitleserve/download/; s/http/https/'); 
 # for a in $(lynx -listonly -dump "https://opensubtitles.org/search/${m##*/}${h}${b}${s}${e}${l}" | /bin/grep -Po 'http.*/subtitleserve/sub/.*$'); do lynx -listonly -dump "${a}" | /bin/grep -Po 'http://dl.*' | grep '/file/'; done;
 
-
-
 # # z=$(printf "%s\n" "${(@)z}" | dmenu -i -l ${#z} -p 'select subtitle'); # comment/uncomment this line to download all/a selected sub(s)
 # for a in ${(@)z}; do wget -P "${m%/*}/" ${a}; done;
-
-
 
 # unzip "${m%/*}"/*.zip;
 # unset u p m t h b e s z;
 
-
 a="$(pgrep -anx mpv)";
-subliminal --opensubtitles VwAxYImyiMgeaXWXOSkB HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS download -l en -hi -d "$(echo $a | /bin/grep -Po '/.*/')" "${a##*/}";
+subliminal --opensubtitles $u $p download -l en -hi -d "$(echo $a | /bin/grep -Po '/.*/')" "${a##*/}";
 pkill mpv; mpv "$(echo $a | /bin/grep -Po '/.*/')${a##*/}";
+
+rescan-external-files

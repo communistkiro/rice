@@ -1,11 +1,31 @@
 #!/bin/sh
-c="cz"
-until [[ -n ${w} ]]; do; w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
-# while true; do; c="$(echo "$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')" | dmenu -i -p "$(pwd)?")" || break; cd ${c}; done;
-while true; do
-    DIRS="$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')";
-    clear; printf "\e[1;7;33m $(pwd)"; echo ''; lsd -a1;
-    # c=$(echo "$DIRS" | dmenu -i -l $(echo $DIRS|wc -l));
-    # c=$(echo "$DIRS" | dmenu -i -w ${w} -l 16);
-    c="$(echo "$(/bin/ls -ap | /bin/grep -iP '^[\.\w][^\$/]+/$')" | dmenu -i -w ${w} -p "$(pwd)?")" || break; cd ${c};
-done
+while getopts 'n' o; do case $o in n) n=1;; *) 
+less <<HEREDOC
+NAME
+    cz - filesystem navigator
+
+SYNOPSIS
+    cz [-n]
+
+DESCRIPTION
+    Browse the filesystem from current working directory. Parent directory is always 
+    first item, the rest are directory present in the current directory. Use -n to 
+    surpress listing of all directories and files in the terminal.
+
+BUGS
+    Please report any aberrant behavior or bugs to vlg@tutamail.com
+
+
+HEREDOC
+return 1;;esac; done;
+
+until [[ -n ${w} ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
+
+if [ -z $n ]; then
+    while true; do
+        clear; echo ''; lsd -a
+        c="$(echo "$(/bin/ls -ap | /bin/grep -P '^[\.\w][^\$/]+/$')" | dmenu -i -w ${w} -p "$(pwd)")" || break; cd ${c};
+    done
+else
+    while true; do c="$(/bin/ls -ap | /bin/grep -P '^[\.\w][^\$/]+/$' | dmenu -i -w ${w} -p "$(pwd)")" || break; cd ${c}; done;
+fi;

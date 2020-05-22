@@ -13,7 +13,8 @@ static const char col_gray2[]       = "#4a4040";
 static const char col_gray4[]       = "#f0f094";
 static const char col_c1[]          = "#171313";
 static const char col_c2[]          = "#9ffb00";
-static const char col_c3[]          = "#ffffdd";
+// static const char col_c3[]          = "#ffffdd";
+static const char col_c3[]          = "#fbdeef";
 static const char *colors[][3]      = {
     /*               fg         bg          border   */
     [SchemeNorm] = { col_c2,    col_c1,     col_gray2 },
@@ -29,17 +30,17 @@ static const Rule rules[] = {
      *  WM_NAME(STRING) = title
      */
     /* class                instance    title       tags mask     isfloating   monitor */
-    { "Firefox",            NULL,       NULL,       2,            0,           -1 },
-    { "qBittorrent",        NULL,       NULL,       9,            0,           -1 },
+    { "Firefox",            NULL,       NULL,       1 << 1,       0,           -1 },
+    { "tabbedsurf",         NULL,       NULL,       1 << 1,       0,           -1 },
+    { "Gimp",               NULL,       NULL,       1 << 2,       1,           -1 },
+    { "qpdfview",           NULL,       NULL,       1 << 3,       0,           -1 },
+    { "qbittorrent",        NULL,       NULL,       9,            0,           -1 },
     { "nicotine",           NULL,       NULL,       9,            0,           -1 },
-    { "octave",             NULL,       NULL,       3,            1,           -1 },
-    { "octave-cli",         NULL,       NULL,       3,            1,           -1 },
-    { "Gimp",               NULL,       NULL,       3,            1,           -1 },
 };
 
 /* layout(s) */
-static const float mfact     = 0.65; /* factor of master area size [0.05..0.95] */
-static const float smfact     = 0.00; /* factor of tiled clients [0.00..0.95] */
+static const float mfact     = 0.30; /* factor of master area size [0.05..0.95] */
+static const float smfact    = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 

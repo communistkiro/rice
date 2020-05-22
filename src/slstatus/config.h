@@ -71,7 +71,7 @@ static const struct arg args[] = {
     { cpu_freq               , "%.3s]"  , NULL                                      } ,
     { ram_perc               , "[%s🐏"  , NULL                                      } ,
     { swap_perc              , "%s]"    , NULL                                      } ,
-    { wifi_essid             , "[%s"   , "wlp3s0"                                  } ,
+    { wifi_essid             , "[%s"   , "wlp3s0"                                   } ,
     // { wifi_perc              , "%s "    , "wlp3s0"                                  } ,
     // { ipv4                   , "%s "    , "wlp3s0"                                  } ,
     { netspeed_tx            , "%s"     , "wlp3s0"                                  } ,

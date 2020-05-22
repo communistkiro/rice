@@ -15,4 +15,4 @@ my config for the most part;
   - `dmnt` - mount and umount disks and drives with `findmnt` and `lsblk`;
   - `pomo` - tomoto timer integrated into a `dzen2` bar over the normal bar; inteded use with `herbstluft`
   - ~~`stream` - selct twitch category(s), language(s) and choose a stream to watch, uses `dmenu`, `sed/perl`, `mpv`~~ new api is shite;
-  - `tmr` - relative or (mostly) absolute timer; based off of Joe Standring's two scripts in github; comes with a real nice foghorn i audacity'd;
+  - `tmr` - countdown/alarm, based off of Joe Standring's two scripts; comes with a real nice foghorn i audacity'd;

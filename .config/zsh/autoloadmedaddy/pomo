@@ -1,16 +1,12 @@
 #!/bin/bash
 
-#--- Check environment ---
 DATE_CMD="/bin/date"
 STAT_CMD="stat"
 
-#--- Configuration (can be set via environment variables) ---
 
-[[ -n $POMO_FILE ]] && POMO=$POMO_FILE || POMO=$HOME/.local/share/pomo
-[[ -n $POMO_WORK_TIME ]] && WORK_TIME=$POMO_WORK_TIME || WORK_TIME=40
-[[ -n $POMO_BREAK_TIME ]] && BREAK_TIME=$POMO_BREAK_TIME || BREAK_TIME=5
-
-#--- Pomodoro functions ---
+[ -n $POMO_FILE ] && POMO=$POMO_FILE || POMO=$HOME/.local/share/pomo
+[ -n $POMO_WORK_TIME ] && WORK_TIME=$POMO_WORK_TIME || WORK_TIME=40
+[ -n $POMO_BREAK_TIME ] && BREAK_TIME=$POMO_BREAK_TIME || BREAK_TIME=5
 
 function pomo_bar {
   # smack dab in the middle of the dzen bar, a tomato
@@ -31,23 +27,23 @@ function pomo_stop {
     /bin/rm -f $POMO
 }
 
-function pomo_ispaused {
+# function pomo_ispaused {
     # Return 0 if paused, 1 otherwise.
     # pomo.sh is paused if the POMO file contains any information.
-    [[ $(/bin/wc -l $POMO | /bin/cut -d" " -f1) -gt 0 ]]
-    return $?
-}
+    # [ $(/bin/wc -l $POMO | /bin/cut -d" " -f1) -gt 0 ]
+    # return $?
+# }
 
 function pomo_pause {
     # Toggle the pause status on the POMO file.
-    if pomo_ispaused; then
+    if [ $(/bin/wc -l $POMO | /bin/cut -d" " -f1) -gt 0 ]; then
         # Restart a paused pomo block by updating the time stamp of the POMO
         # file.
         running=$(pomo_stat)
 
         mtime=$(${DATE_CMD} --date "@$(( $(/bin/date +%s) - running))" +%m%d%H%M.%S)
-        /bin/rm $POMO # erase saved time stamp.
-        /bin/touch -m -t $mtime $POMO
+        rm -f $POMO # erase saved time stamp.
+        touch -m -t $mtime $POMO
     else
         # Pause a pomo block.
         running=$(pomo_stat)
@@ -91,7 +87,7 @@ function pomo_clock {
         else
             prefix=W
         fi
-        pomo_ispaused && prefix=P$prefix
+        [ $(/bin/wc -l $POMO | /bin/cut -d" " -f1) -gt 0 ] && prefix=P$prefix
         min=$(( left / 60 ))
         sec=$(( left - 60*min ))
         printf "%2s%02d:%02d\n" $prefix $min $sec
@@ -102,7 +98,7 @@ function pomo_clock {
 
 function pomo_status {
     while true; do
-        /bin/echo $(pomo_clock)
+        echo $(pomo_clock)
         sleep 1
     done
 }
@@ -124,7 +120,7 @@ function pomo_notify {
                     left=$(( left + BREAK_TIME*60 ))
                     work=false
                 fi
-                /bin/sleep $left
+                sleep $left
                 # Check that the block is actually done (i.e. pomo was not
                 # paused whilst we were sleeping).
                 stat=$(pomo_stat)
@@ -139,7 +135,7 @@ function pomo_notify {
             fi
             # sleep for a second so that the timestamp of POMO is not the
             # current time (i.e. allow next unit to start).
-            /bin/sleep 1
+            sleep 1
         done
     fi
 }
