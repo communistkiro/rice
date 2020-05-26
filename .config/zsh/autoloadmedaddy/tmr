@@ -110,8 +110,8 @@ fi
 [ "$s" = '' ] && s=0;
 [ "$d" -eq 0 ] && [ "$h" -eq 0 ] && [ "$m" -eq 0 ] && [ "$s" -eq 0 ] && return 1;
 
-for a in $d $h $m $s; do
-case $a in *[!0-9-]*) echo "Non-integer value!"; return 1;; esac
+for r in $d $h $m $s; do
+case $r in *[!0-9-]*) echo "Non-integer value!"; return 1;; esac
 done
 
 if [ $a -eq 1 ]; then
@@ -143,7 +143,7 @@ fi;
 trap 'rm -f "$tmp"; unset t a tmp alarm; trap - QUIT; return 2;' QUIT HUP
 trap 'a=$((a * -1));' INT
 
-unset d h m s; a=1;
+unset d h m s r; a=1;
 # output remainind time left as HH:MM:SS to stdout and tmpfile
 while [ $t -ge 0 ]; do
     if [ $a -eq 1 ]; then
@@ -154,7 +154,7 @@ while [ $t -ge 0 ]; do
     sleep 1;
 done
 
-if [ $? -eq 0 ] && mpc status &>/dev/null | grep -q 'playing'; then 
+if [ $? -eq 0 ] && mpc status &>/dev/null | /bin/grep -s 'playing'; then 
     mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle; 
 else 
     mpv --no-config --really-quiet $alarm;

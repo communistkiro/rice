@@ -28,12 +28,12 @@ BUGS
 
 
 HEREDOC
-return 1;;esac; done;
+return 1;; esac; done;
 
 t=$(mktemp /tmp/XXXXXX);
-if [ $# -gt 0 ]; then;
+if [ $# -gt 0 ]; then
   find $@ -name '*.mp3' -type f > ${t};
-else;
+else
   find . -name '*.mp3' -type f > ${t};
 fi;
 while IFS= read -r z; do;
@@ -49,7 +49,7 @@ while IFS= read -r z; do;
       year=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      genre=$(</t/x) \
+      genre="$(</tmp/x)" \
       albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
       --files ${z};
   elif which mp3info2 &>/dev/null; then
@@ -61,12 +61,10 @@ while IFS= read -r z; do;
       -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
       -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      -g $(</t/x) \
+      -g "$(</tmp/x)" \
       -F TPE2=%a \
       ${z};
   fi
 done < ${t};
-rm ${t}; rm -f **/*.bak;
-# echo "$(fd 'bak$' ${1:-.})" > ${t}; 
-# while IFS= read -r f; do rm -f ${f}; done < ${t};
+rm -f ${t};
 }

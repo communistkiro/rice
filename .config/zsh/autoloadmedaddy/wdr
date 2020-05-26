@@ -2,7 +2,7 @@
 # function wdr () {
 # https://openweathermap.org/api/
 c=0; d=0;
-while getopts 'hcdl:' o; do
+while getopts 'cdl:' o; do
   case ${o} in
     c) c=1;;
     d) d=1;;
@@ -41,8 +41,12 @@ api_call='onecall';
 weather=$(fetch "https://api.openweathermap.org/data/2.5/${api_call}?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric") || return 22;
 
 if [ $d -eq 1 ]; then
-    d=(${(@f)"$(echo ${weather} | jq -r '.hourly[].weather[].description' | sed -ne 'x; /^$/ s/^.*$/1/; G; h; s/^/      /; s/^ *\(......\)\n/\1  /p; g; s/\n.*$//; /^9*$/ s/^/0/; s/.9*$/x&/; h; s/^.*x//; y/0123456789/1234567890/; x; s/x.*$//; G; s/\n//; h')"});
-    # printf "%-28s\n" ${(@)d} | paste - - ;
+    # d=(${(@f)"$(echo ${weather} | jq -r '.hourly[].weather[].description' | sed -ne 'x; /^$/ s/^.*$/1/; G; h; s/^/      /; s/^ *\(......\)\n/\1  /p; g; s/\n.*$//; /^9*$/ s/^/0/; s/.9*$/x&/; h; s/^.*x//; y/0123456789/1234567890/; x; s/x.*$//; G; s/\n//; h')"});
+    d=(${(@f)"$(echo ${weather} | jq -r '.hourly[].weather[].description')"});
+    f=(${(@f)$(echo ${weather} | jq -r '.hourly[].dt' | awk '{print strftime("%H:%M",$1)}')});
+    a=(${(@f)$(seq 24)}); s=(${(@f)$(seq 48)}); s[1,24]=(); g=(${a:^s}); unset a s;
+    for h in $g; do; a[++i]=${f[h]}"  "${d[h]}; done; unset d;
+    printf "%-28s%-28s\n" "Today" "Tomorrow" ${(@)a};
     return 0;
 fi;
 
@@ -58,6 +62,8 @@ echo ${weather} | jq -r '.hourly[].dew_point'       > dew_point48h;
 echo ${weather} | jq -r '.hourly[].clouds'          > clouds48h;
 echo ${weather} | jq -r '.hourly[].wind_speed'      > wind_speed48h;
 echo ${weather} | jq -r '.hourly[].wind_deg'        > wind_deg48h;
+echo ${weather} | jq '.hourly[].rain | walk (if type == "null" then 0 else . end)' | sed -r '/\{|\}/d; s/ +"1h": //' > rain48h;
+echo ${weather} | jq '.hourly[].snow | walk (if type == "null" then 0 else . end)' | sed -r '/\{|\}/d; s/ +"1h": //' > snow48h;
 
 # 7 DAY FORECAST
 echo ${weather} | jq -r '.daily[].temp.min'         > min7d;
@@ -79,8 +85,12 @@ echo ${weather} | jq -r '.daily[].clouds'           > clouds7d;
 echo ${weather} | jq -r '.daily[].dew_point'        > dew_point7d;
 echo ${weather} | jq -r '.daily[].wind_deg'         > wind_deg7d;
 echo ${weather} | jq -r '.daily[].wind_speed'       > wind_speed7d;
+echo ${weather} | jq -r '.daily[].rain | walk (if type == "null" then 0 else . end)' > rain7d;
+echo ${weather} | jq -r '.daily[].snow | walk (if type == "null" then 0 else . end)' > snow7d;
+
+
 
 octave-cli --persist ~/.config/zsh/other/wdr.m;
 # cd ~; rm -r ${tmp};
-cd ~; rm -r /tmp/wdr;
+# cd ~; rm -r /tmp/wdr;
 # }

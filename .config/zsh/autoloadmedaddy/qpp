@@ -1,0 +1,8 @@
+#!/bin/sh
+function qpp () {
+if [ $# -gt 0 ]; then
+    qpdfview --unique $@ &>/dev/null & disown;
+else
+    qpdfview --unique &>/dev/null & disown;
+fi
+}

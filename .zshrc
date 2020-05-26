@@ -75,10 +75,6 @@ source $ZSH/oh-my-zsh.sh
 setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
 # REMATCH_PCRE
 
-# STACK TAB-AUTOCOMPLETION
-# https://docs.haskellstack.org/en/stable/shell_autocompletion/
-# eval "$(stack --bash-completion-script stack)"
-
 
 # ALII
 alias vol='amixer set Master'
@@ -127,7 +123,6 @@ alias ff='firefox &>/dev/null & disown'
 alias vsc='sudo --user=v code-oss --user-data-dir ~/vsc/'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
-alias qpp='qpdfview --unique $@ &>/dev/null & disown'
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
 alias bustin='16t /media/ELEM/Music/N/Neil\ Cicierega/Neil\ Cicierega\ \[Mouth\ Moods\ \(2017\)\]/08\ Bustin.mp3'
@@ -152,10 +147,18 @@ alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -d
 alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
 alias xc='xclip -selection clipboard'
 alias tetris='/root/games/NullpoMino7_5_0/play_slick &>/dev/null & disown'
+alias pomo='tmr 45 && tmr 5 && tmr 45 && tmr 5 && tmr 45 && tmr 15'
+
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
 autoload $(ll --classic /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc && zmathfunc
+
+# STACK TAB-AUTOCOMPLETION # https://docs.haskellstack.org/en/stable/shell_autocompletion/
+# eval "$(stack --bash-completion-script stack)"
+
+# qpdf autocompletion
+# autoload -U +X bashcompinit && bashcompinit && complete -o bashdefault -o default -o nospace -C qpdf qpdf
 
 
 # SOURCE
