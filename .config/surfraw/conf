@@ -1,0 +1,44 @@
+# autoconf guessed prefix
+prefix=/usr
+
+# graphical browser? defaults to yes for meatminds. text browser users can
+# work it out how to change it.
+SURFRAW_graphical=no
+
+# name/path of text browser executable
+# e.g links, lynx, w3m
+SURFRAW_text_browser=$(pgrep firefox && echo '/sbin/firefox' || echo '/sbin/lynx')
+
+# text browser arguments, or "none"
+# SURFRAW_text_browser_args=force-secure
+
+# name of screen command to run
+SURFRAW_screen=screen
+
+# If surfraw is running under screen(1), start a new screen
+# for each text browser invocation?
+SURFRAW_new_screen=yes
+
+# arguments for the screen command
+# SURFRAW_screen_args=""
+
+# "quote" arguments
+#SURFRAW_quote_args=no
+
+# requote arguments if they have spaces in
+# ie so:
+#  sr google foo "bar baz" bam
+# works.
+# SURFRAW_quote_ifs=yes
+
+# default number of results to return
+SURFRAW_results=32
+
+# Language/country (for elvi that support it)
+# Should be a 2-letter iso country code
+# SURFRAW_lang=""
+
+# provider for searches that use a search engine
+# with (eg) site: specifiers
+# supported: google duckduckgo
+# SURFRAW_customsearch_provider=duckduckgo

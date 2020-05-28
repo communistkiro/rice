@@ -10,10 +10,9 @@ SYNOPSIS
   xrpp [website(s)]
 
 DESCRIPTION
-  Scrapes embedded bandcamp (and possibly deezer and soundcloud) alba and tracks, 
-  from website(s), remove entries found in current list of to-be-downloaded alba, 
-  and from list of previously downloaded ones, as well as from the (at the time) 
-  soon-to-be released ones.
+  Scrapes embedded bandcamp (and possibly deezer and soundcloud) alba and tracks, from web-
+  site(s), remove entries found in current list of to-be-downloaded alba, and from list of 
+  previously downloaded ones, as well as from the (at the time) soon-to-be released ones.
 
 EXAMPLES
   Scape a website

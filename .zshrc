@@ -88,14 +88,14 @@ alias xbr='xbps-remove -R'
 alias clb="col -b"
 alias bb='bye'
 alias ll='lsd -A'
-alias ll1='lsd -A1'
-alias llr='lsd -A --tree'
+alias l1='lsd -A1'
+alias lr='lsd -A --tree'
 alias du='/bin/du -hs'
 alias rm='sudo rm -r'
 alias cp='cp -vR'
 alias gre='/bin/grep -P --color -i'
 alias pre='pcre2grep -i --color'
-alias man='man -a -T ascii -O width=94,indent=2'
+alias man='man -a'
 alias catdoc='catdoc -m256'
 alias pk='pkill -KILL -i'
 alias rsync='rsync -vah --progress'
@@ -140,15 +140,12 @@ alias fzf='fzf -m\
   --bind "alt-r:execute(micro {+})"\
   --bind "alt-f:clear-selection"\
   --bind "alt-v:select-all"'
-alias sf="tabbed -n tabbedsurf -dr 2 surf -e '' &> /dev/null & disown"
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
 alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
 alias xc='xclip -selection clipboard'
 alias tetris='/root/games/NullpoMino7_5_0/play_slick &>/dev/null & disown'
-alias pomo='tmr 45 && tmr 5 && tmr 45 && tmr 5 && tmr 45 && tmr 15'
-
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
@@ -166,3 +163,6 @@ autoload $(ll --classic /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc &
 . /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 # bindkey '\' forward-char
 # bindkey ';' backward-char
+
+
+# wget -P /root/.surf/script/ https://www.4chan-x.net/builds/4chan-X.user.js

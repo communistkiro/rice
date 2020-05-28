@@ -1,5 +1,6 @@
 #!/bin/sh
 function gen () {
+local c; local s; local e; local a;
 s=''; e='';
 while getopts 'csel:' o; do
   case ${o} in
@@ -16,9 +17,9 @@ SYNOPSIS
     gen [-c ] [-s] [-e] [-l length]
 
 DESCRIPTION
-    Generate a pass of length <length> or 64, possibly using special characters (-s), 
-    or extended ASCII (-e), with all alphanumeric characters being enabled by default.
-    To silently copy generated passed, use -c.
+    Generate a pass of length <length> or 64, possibly using special characters (-s), or 
+    extended ASCII (-e), with all alphanumeric characters being enabled by default. To 
+    silently copy generated passed, use -c.
 
 BUGS
     Please report any aberrant behavior or bugs to vlg@tutamail.com

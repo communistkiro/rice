@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+# kill most recently called album art feh
+# a=$(pgrep -af feh | grep '/media/Music/ELEM' | /bin/grep -Po '^\d+'| sort | tail -1) && [ "$a" -ne '' ] && pkill --pidQile=$a; 
+# try to open in given dims or return
+# feh -q -W 125 -W 125 "/media/ELEM/Music/$(mpc -f %file% | head -1)" >&/dev/null || return 1;

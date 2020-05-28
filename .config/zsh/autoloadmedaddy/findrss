@@ -1,0 +1,4 @@
+#!/bin/sh
+function findrss() {
+curl -L -s "$1" | sfeed_web "$1"
+}

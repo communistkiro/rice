@@ -1,3 +1,10 @@
 #!/bin/sh
-b=$(if ps -C firefox &>/dev/null; then echo '/sbin/firefox'; else echo '/sbin/lynx'; fi);
-surfraw $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i) -browser="${b}"
+if ps -C firefox; then
+    b='/sbin/firefox';
+elif ps -C surf; then
+    b="~/.config/zsh/scripts/sf"
+else
+    b='/sbin/lynx';
+fi
+q=$(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i) || return 1;
+surfraw ${q%% *} -browser="$b" ${q#* }

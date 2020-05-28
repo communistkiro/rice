@@ -11,26 +11,25 @@ SYNOPSIS
     xrp [website(s)]
 
 DESCRIPTION
-    Downloads .mp3s (can be modified to 'bestaudio', but 128k .mp3 is the standard 
-    free format), naming them in format 'ARITST [ALBUM #TRACK (RELEASEDATE)] TITLE' 
-    and embedding album/track art, puts these files in a directory in the format 
-    'ARITST [ALBUM (RELEASEDATE)]', calls 'tagme' (which then tags them with their 
-    respective artist (track-wise), albumartist, album, release date (as state in 
-    the bandcamp page), genre (camelcases listed tags in bandcamp page), and track 
-    number), puts this directory in a parent directory in the format 'ARTIST', 
-    removes the processed link and adds it to the list of downloaded alba/tracks. 
-    If the album is yet to be released, the link gets added to the list of future 
-    releases; if the album is missing some tracks, the link is added to a list of 
-    alba missing tracks. Optional argument of website can be added to bypass the 
-    scraping step with xrpp.
+    Downloads .mp3s (can be modified to 'bestaudio', but 128k .mp3 is the standard free for-
+    mat), naming them in format 'ARITST [ALBUM #TRACK (RELEASEDATE)] TITLE', and embedding 
+    album/track art, puts these files in a directory in the format 'ARITST [ALBUM (RELEASE-
+    DATE)]', calls 'tagme' (which then tags them with their respective artist (track-wise), 
+    albumartist, album, release date (as state in the bandcamp page), genre (camelcases 
+    listed tags in bandcamp page), and track number), puts this directory in a parent direc-
+    tory in the format 'ARTIST', removes the processed link and adds it to the list of down-
+    loaded alba/tracks. If the album is yet to be released, the link gets added to the list 
+    of future releases; if the album is missing some tracks, the link is added to a list of 
+    alba missing tracks. Optional argument of website can be added to bypass the scraping 
+    step with xrpp.
 
 EXAMPLES
     xrp
         Do everything as per description, with your current newlinks files.
 
     xrp https://canthisevenbecalledmusic.com/monthly-recommendations-january-2020
-        Scrape the website, then do everything as per description with possibly newly 
-        acquired links.
+        Scrape the website, then do everything as per description with possibly newly ac-
+        quired links.
         
 BUGS
     Please report any aberrant behavior or bugs to vlg@tutamail.com

@@ -328,9 +328,7 @@ def_key "5"
 
 #def_key "6"
 # show_visualizer
-
-def_key "6"
- show_server_info
+# show_server_info
 
 def_key "p"
  pause

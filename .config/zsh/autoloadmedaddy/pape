@@ -1,5 +1,7 @@
 #!/bin/sh
 # pape setter
+function pape() {
+local c ; local a ; local f ; local s ; local d ; local w;
 while getopts '' o; do case $o in *) 
 less <<HEREDOC
 NAME
@@ -9,9 +11,9 @@ SYNOPSIS
     pape 
 
 DESCRIPTION
-    Browse your filesystem, looking for image formats, choose one or pick 'rand' to 
-    get a random selection from current directory, change feh's background setting 
-    options with 'bgopt', exit when you're content.
+    Browse your filesystem, looking for image formats, choose one or pick 'rand' to get a 
+    random selection from current directory, change feh's background setting options with 
+    'bgopt', exit when you're content.
     
 BUGS
     Please report any aberrant behavior or bugs to vlg@tutamail.com
@@ -36,6 +38,6 @@ while true; do;
     [ -d ${c} ] && cd ${c} && c=.;
     [ -f ${c} ] && (feh ${s-${a[4]}} ${c} || break);
     [ ${c} = "bgopts" ] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options' -w ${w}) && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
-    [ ${c} = "rand" ] && (feh ${s-${a[4]}} $(ls -ap | grep -v '/' | /bin/sort -R | head -1) || break);
+    [ ${c} = "rand" ] && (feh ${s-${a[4]}} $(ls -ap | grep -v '/' | shuf | head -1) || break);
 done
-unset c a f s d w;
+}

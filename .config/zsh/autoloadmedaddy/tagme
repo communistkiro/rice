@@ -12,10 +12,10 @@ SYNOPSIS
     tagme [dir(s)]
 
 DESCRIPTION
-    Uses tageditor or mp3info2 to tag .mp3 (format can be expanded) files that have 
-    been named in format 'ARTIST [ALBUM #TRACK (RELEASEDATE)] TITLE'. Makes use of 
-    zsh's parameter expansion, though this could be done with sed or perl, too.
-
+    Uses tageditor or mp3info2 to tag .mp3 (format can be expanded) files that have been named 
+    in format 'ARTIST [ALBUM #TRACK (RELEASEDATE)] TITLE'. Makes use of zsh's parameter 
+    expansion, though this could be done with sed or perl, too.
+    
 EXAMPLES
     tagme
         Tags .mp3 files in current working directory.

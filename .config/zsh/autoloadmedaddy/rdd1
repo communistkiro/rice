@@ -1,19 +1,21 @@
 #!/bin/zsh
 # dir of alba -> dir of artist/alba or dir of mp3 if dirs don't follor format
 # assumes artist, album, year tags exist
+function rdd1() {
+local t1;local t2; local t3; local z; local d
 t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX);
 ls . > ${t1};
 while IFS= read -r d; do;
   if [[ -d ${d} ]]; then;
-    /bin/find ${d} -regextype posix-extended -iregex ".*(mp3|wav|flac|acc|m4a|ogg)" -type f > ${t2} && (
-      while IFS= read -r m; do;
-        z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
-        mkdir ${z};
-        /bin/mv ${m} ${z};
-        /bin/mv ${d}/*jpg ${z} || /bin/mv ${d}/*png ${z} || /bin/mv ${d}/*jpeg ${z};
-      done < ${t2};
-      rmdir * 2&> /dev/null;
-    )
+    /bin/find ${d} -regextype posix-extended -iregex ".*(mp3|wav|flac|acc|m4a|ogg)" -type f > ${t2};
+    if ! [ -s ${t2} ]; then printf "No .mp3's found!"; return 1; fi;
+    while IFS= read -r m; do;
+      z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
+      mkdir ${z};
+      /bin/mv ${m} ${z};
+      /bin/mv ${d}/*jpg ${z} || /bin/mv ${d}/*png ${z} || /bin/mv ${d}/*jpeg ${z};
+    done < ${t2};
+    rmdir * 2&> /dev/null;
   fi;
 done < ${t1};
 
@@ -28,3 +30,4 @@ while IFS= read -r d; do;
   fi;
 done < ${t1};
 rmdir ${d}*; rm ${t1} ${t2};
+}

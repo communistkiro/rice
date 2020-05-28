@@ -1,12 +1,14 @@
 #!/bin/sh
 
+function tmr() {
 # countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 days
 
-alarm=~/.local/CartoonFoghorn.wav;
-a=0;
-while getopts 'a' o; do
+local alarm=~/.local/CartoonFoghorn.wav;
+local d; local h; local m; local s; local a=0; local p=0; local t; local tmp; local H; local M; local S; local w; local b;
+while getopts 'ap' o; do
     case $o in
         a) a=1;;
+        p) p=1;;
         *) 
 less <<HEREDOC
 NAME
@@ -14,46 +16,54 @@ NAME
 
 SYNOPSIS
     tmr [-a] ...
+        [-p] [minutes minutes]
         [days hours minutes seconds]
         [days hours minutes]
         [hours minutes]
         [minutes]
 
 DESCRIPTION
-    Start a countdown, or set up an alarm, from the given time paramters, and play
-    an audio file on completion. Days are always relative to today's, i.e., 1 is 
-    tomorrow, or +24h. For coundowns. negatives values are parsed as corrections, 
-    for alarms, because the day is relative, a future alarm is always set unless 
-    all values are zero (default, if given empty string). All values are integers. 
-    Months don't coming into play in tmr. 
+    Start a countdown, set up an alarm, or start a pomodoro session from the given time 
+    paramters, and play an audio file on completion. Days are always relative to today's, 
+    i.e., 1 is tomorrow, or +24h. For coundowns. negatives values are parsed as corrections, 
+    for alarms, because the day is relative, a future alarm is always set unless all values 
+    are zero (default, if given empty string). All values are integers. Months don't coming 
+    into play in tmr. Default cycle count, work-, and break-section durations can be editted 
+    in the script.
 
 CONTROLS
     SIGINT (^c) to pause; SIGQUIT (^\) to quit.
     
 EXAMPLES
-    An alarm for 00:55:57 on the 8. days after today;
+    An alarm for 00:55:57 on the 8. days after today
         tmr -a 7 26 -61 -183
 
-    An alarm for midnight;
+    An alarm for midnight
         tmr -a 1 0 0;
 
-    An alarm for 22:57:59 tonight, or tomorrow, if current time ;
+    An alarm for 22:57:59 tonight, or tomorrow, depending on current time
         tmr -a 1 -1 -1 -1
 
-    An alarm for 00:06:34; 
+    An alarm for 00:06:34
         tmr -a 7 -26
 
-    An alarm for the next time the minutes are 26; 
+    An alarm for the next time the minutes are 26
         tmr -a 26
 
-    A 59-minute, 59-second countdown;
+    A 59-minute, 59-second countdown
         tmr 1 0 -1
 
-    A 1-minute countdown;
-        tmr 1
+    A 45-minute countdown
+        tmr 45
 
-    Negative final value, just returns; preprend negative first arguments w/ -- ;
+    Negative final value, just returns; preprend negative first arguments w/ --
         tmr -- -1 
+
+    A 3-cycle pomodoro sesh with 45-minute work-, and 5-minute break-sections
+        tmr -p
+
+    A 3-cycle pomodoro sesh with 30-minute work-, and 10-minute break-sections
+        tmr -p 30 10
 
 EXIT STATUS
     0
@@ -71,6 +81,23 @@ HEREDOC
     esac
 done
 shift $((OPTIND-1));
+
+if [ $p -eq 1 ]; then
+    if [ $# -eq 2 ]; then
+        w=$1;
+        b=$2;
+        [ $w -le 0 ] || [ $b -le 0 ] && return 1;
+    else
+        w=45;
+        b=5;
+    fi
+    for a in $(seq 3); do
+        printf "Starting %d. pomodoro cycle\nWork!\n" $a;
+        tmr $w; [ $? -eq 2 ] && break;
+        printf "Break!\n"; tmr $b;[ $? -eq 2 ] && break; 
+    done
+    return $?;
+fi
 
 # tmp file storing current remaining time
 # tmp=$(mktemp /tmp/countdown.XXXXXX);
@@ -140,7 +167,7 @@ else;
     t=$((60 * (60 * (24 * d + h) + m) + s)); [ $t -lt 0 ] && return 1;
 fi;
 
-trap 'rm -f "$tmp"; unset t a tmp alarm; trap - QUIT; return 2;' QUIT HUP
+trap 'rm -f "$tmp"; trap - QUIT; return 2;' QUIT HUP
 trap 'a=$((a * -1));' INT
 
 unset d h m s r; a=1;
@@ -161,4 +188,4 @@ else
 fi
 
 rm -f $tmp;
-unset t a tmp alarm; 
+}

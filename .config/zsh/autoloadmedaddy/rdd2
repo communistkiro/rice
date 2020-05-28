@@ -1,7 +1,9 @@
 #!/bin/zsh
 # DIR OF ALL MP3S, -> DIR OF ARTIST/ALBA/MP3S
-t=$(mktemp /tmp/XXXXXX);
+function rdd2() {
+local t=$(mktemp /tmp/XXXXXX); local z; local d;
 ls *mp3 > ${t};
+if ! [ -s ${t} ]; then printf "No .mp3's found!"; return 1; fi;
 while IFS= read -r m; do;
   z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
   mkdir -p ${z};
@@ -13,3 +15,4 @@ while IFS= read -r d; do;
   mkdir -p ${d%% \[*};
   zmv ${d} ${d%% \[*};
 done < ${t};
+}

@@ -29,27 +29,28 @@ static const Rule rules[] = {
      *  WM_CLASS(STRING) = instance, class
      *  WM_NAME(STRING) = title
      */
-    /* class                instance    title       tags mask     isfloating   monitor */
-    { "Firefox",            NULL,       NULL,       1 << 1,       0,           -1 },
-    { "tabbedsurf",         NULL,       NULL,       1 << 1,       0,           -1 },
-    { "Gimp",               NULL,       NULL,       1 << 2,       1,           -1 },
-    { "qpdfview",           NULL,       NULL,       1 << 3,       0,           -1 },
-    { "qbittorrent",        NULL,       NULL,       9,            0,           -1 },
-    { "nicotine",           NULL,       NULL,       9,            0,           -1 },
+    /* class                instance        title       tags mask     isfloating   monitor */
+    { "feh",                NULL,           NULL,       0,            1,           -1 },
+    { "Firefox",            NULL,           NULL,       1 << 1,       0,           -1 },
+    { "tabbed",             "tabbedsurf",   NULL,       1 << 1,       0,           -1 },
+    { "Gimp",               NULL,           NULL,       1 << 2,       1,           -1 },
+    { "qpdfview",           NULL,           NULL,       1 << 3,       0,           -1 },
+    { "qBittorrent",        "qbittorrent",  NULL,       1 << 8,       0,           -1 },
+    { "Nicotine",           "nicotine",     NULL,       1 << 8,       0,           -1 },
 };
 
 /* layout(s) */
-static const float mfact     = 0.30; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.80; /* factor of master area size [0.05..0.95] */
 static const float smfact    = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
     /* symbol     arrange function */
+    { "|||",      col },
+    { "[M]",      monocle },
     { "[]=",      tile },    /* first entry is default */
     { "><>",      NULL },    /* no layout function means floating behavior */
-    { "[M]",      monocle },
-    { "|||",      col },
     {  NULL,      NULL}
 };
 
