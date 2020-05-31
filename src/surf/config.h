@@ -109,15 +109,15 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 
 #define HOMEPAGE "file:///root/.config/startpage/ss1.htm"
 
-#define QSEARCH { \
-    .v = (char *[]){"/bin/sh", "-c", \
-    "/root/.config/zsh/other/surf_qsearch $0 $1", \
-    winid, NULL } \
-}
-
+/* surfraw search 
+ * instead of 
+ * "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))", \
+ * do this
+ * echo '/etc/crontab 00 16 * * 0 surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks >> ~/.config/surfraw/cache' >> /etc/crontab
+ */
 #define SR_SEARCH {\
     .v = (char *[]){ "/bin/sh", "-c", \
-    "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))", \
+    "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(cat ~/.config/surfraw/cache | dmenu -i))", \
     winid, NULL }\
 }
 
@@ -146,8 +146,8 @@ static SiteSpecific scripts[] = {
  */
 static SiteSpecific certs[] = {
     /* regexp                           file in $certdir */
-    { "://medicalexpress\\.com/",       "medicalxpress-com.pem" },
-    { "://phys\\.org/",                 "phys-org.epm" },
+    // { "://medicalexpress\\.com/",       "medicalxpress-com.pem" },
+    // { "://phys\\.org/",                 "phys-org.epm" },
 };
 
 #define MODKEY GDK_MOD1_MASK
@@ -161,8 +161,7 @@ static Key keys[] = {
     /* modifier                keyval                      function            arg */
     { MODKEY,                  GDK_KEY_g,                  spawn,              SETPROP("_SURF_URI", "_SURF_GO", PROMPT_GO) },
     { MODKEY,                  GDK_KEY_f,                  spawn,              SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
-    { MODKEY,                  GDK_KEY_q,                  spawn,              QSEARCH },
-    { MODKEY,                  GDK_KEY_w,                     spawn,              SR_SEARCH },
+    { MODKEY,                  GDK_KEY_q,                  spawn,              SR_SEARCH },
 
     { 0,                       GDK_KEY_Escape,             stop,               { 0 } },
 

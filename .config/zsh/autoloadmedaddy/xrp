@@ -67,7 +67,12 @@ if [ $# -gt 0 ]; then; xrpp $@; fi;
         # FIXME figure out when v.a., feat., etc. -> TPE2
         # CREATE DIR `ARTIST [ALBUM (YYYY-MM-DD)]`, PUT MP3S INSIDE, TAG 'EM, (CREATE `ARTIST`), AND PUT IN DIR `ARTIST`
         while IFS= read -r s; do;
-            mkdir -p ${s}; /bin/mv *mp3 ${s}; tagme ${s}; mkdir -p ${s%% \[*}; /bin/mv ${s} ${s%% \[*}; break;
+            mkdir -p ${s};
+            /bin/mv *mp3 ${s};
+            tagme ${s};
+            for b in ${(@f)"$(find ${s} -name '*.bak')"}; do rm -f "$b"; done;
+            mkdir -p ${s%% \[*}; /bin/mv ${s} ${s%% \[*};
+            break;
         done < ${t3} | sort -u;
         # remove release from list after completion of process so interrupts possibles; remove blank lines from newlinks
         echo ${a} >> ~/nm/oldlinks && sort -uo ~/nm/oldlinks ~/nm/oldlinks;

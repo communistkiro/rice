@@ -1,6 +1,6 @@
 #!/bin/sh
 function cz() {
-local n=0;
+n=0;
 while getopts 'n' o; do case $o in n) n=1;; *) 
 less <<HEREDOC
 NAME

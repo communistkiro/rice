@@ -1,6 +1,5 @@
 #!/bin/sh
 function gen () {
-local c; local s; local e; local a;
 s=''; e='';
 while getopts 'csel:' o; do
   case ${o} in

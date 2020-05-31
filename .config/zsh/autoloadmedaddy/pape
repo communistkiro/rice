@@ -1,7 +1,6 @@
 #!/bin/sh
 # pape setter
 function pape() {
-local c ; local a ; local f ; local s ; local d ; local w;
 while getopts '' o; do case $o in *) 
 less <<HEREDOC
 NAME

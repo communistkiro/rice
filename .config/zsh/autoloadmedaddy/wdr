@@ -1,14 +1,14 @@
 #!/bin/sh
 function wdr() {
 # https://openweathermap.org/api/
-local c=0; local d=0; local location; local api_key; local api_call; local weather; local lat; local lon;
+c=0; d=0;
 
 while getopts 'cdl:' o; do
   case ${o} in
     c) c=1;;
     d) d=1;;
     l) location=${OPTARG};;
-    *) echo "Usage: $0 [-c (current only)][-d (descriptions only)] [-l location]" 1>&2; return 1;;
+    *) echo "Usage: $0 [-c (current only)] [-d (descriptions only)] [-l location]" 1>&2; return 1;;
     esac
 done
 
@@ -24,8 +24,11 @@ api_key=85a4e3c55b73909f42c6a23ec35b7147;
 api_call='weather';
 weather=$(fetch "api.openweathermap.org/data/2.5/${api_call}?q=${location}&appid=${api_key}&units=metric") || (echo 'Sum Ting Wong!'; return 22);
 
-if [ -z "${weather}" ]; then echo "ERROR: Cannot fetch weather data"; return 69; fi;
-if [ "$(echo $weather | jq -r '.cod' 2>/dev/null)" != 200 ]; then echo "ERROR: Cannot fetch weather data for the given location"; return 75; fi;
+if [ -z "${weather}" ]; then 
+    echo "ERROR: Cannot fetch weather data"; return 69; 
+elif [ "$(echo $weather | jq -r '.cod' 2>/dev/null)" != 200 ]; then 
+    echo "ERROR: Cannot fetch weather data for the given location"; return 75;
+fi;
 
 figlet Weather for ${location};
 
@@ -39,7 +42,7 @@ lat=$(echo $weather | jq -r '.coord.lat');
 lon=$(echo $weather | jq -r '.coord.lon');
 
 api_call='onecall';
-weather=$(fetch "https://api.openweathermap.org/data/2.5/${api_call}?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric") || return 22;
+weather=$(fetch "api.openweathermap.org/data/2.5/${api_call}?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric") || return 22;
 
 if [ $d -eq 1 ]; then
     d=(${(@f)"$(echo $weather | jq -r '.hourly[].weather[].description')"});

@@ -1,25 +1,14 @@
-surfraw		 	http://alioth.debian.org/projects/surfraw/
-ntk			 	http://www.ntk.net/
-perlmodlist		http://www.cpan.org/modules/00modlist.long.html
-d               https://duckduckgo.com/?q=%s
-s               https://www.startpage.com/do/mypage.pl?prfe=36c84513558a2d34bf0d89ea505333ad761002405484af240c1c89932309a9bc5065027ac0acf304530bea21aa54bdf5?q=%s
-w               https://en.wiktionary.org/w/index.php?search=%s&go=Go
-wd              https://de.wiktionary.org/w/index.php?title=Spezial%3ASuche&search=%s
-o               https://www.onelook.com/?w=%s&ls=a
-dd              https://www.dict.cc/?s=%s&=DEEN&=
-ti              https://tineye.com/search?q=%s
-r               https://www.reddit.com/search?include_over_18=on&q=%s
-hj              https://howjsay.com/search?word=aposematism&word=%s
-sh              https://sci-hub.tw/%s
 bc              https://bandcamp.com/search?q=%s
-we              https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=%s
 c               https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=%s
 cpp             https://www.cplusplus.com/search.do?q=%s
-
-
-
-
-
-
-
-
+d               https://duckduckgo.com/?q=%s
+dd              https://www.dict.cc/?s=%s&=DEEN&=
+hj              https://howjsay.com/search?word=aposematism&word=%s
+o               https://www.onelook.com/?w=%s&ls=a
+r               https://www.reddit.com/search?include_over_18=on&q=%s
+s               https://www.startpage.com/do/mypage.pl?prfe=36c84513558a2d34bf0d89ea505333ad761002405484af240c1c89932309a9bc5065027ac0acf304530bea21aa54bdf5?q=%s
+sh              https://sci-hub.tw/%s
+ti              https://tineye.com/search?q=%s
+w               https://en.wiktionary.org/w/index.php?search=%s&go=Go
+wd              https://de.wiktionary.org/w/index.php?title=Spezial%3ASuche&search=%s
+we              https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=%s

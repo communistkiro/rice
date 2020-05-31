@@ -66,5 +66,10 @@ while IFS= read -r z; do;
       ${z};
   fi
 done < ${t};
+if [ $# -gt 0 ]; then
+  find $@ -name '*.mp3' -type f > ${t};
+else
+  find . -name '*.mp3' -type f > ${t};
+fi;
 rm -f ${t};
 }

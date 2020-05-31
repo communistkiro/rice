@@ -2,9 +2,8 @@
 
 function tmr() {
 # countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 days
-
-local alarm=~/.local/CartoonFoghorn.wav;
-local d; local h; local m; local s; local a=0; local p=0; local t; local tmp; local H; local M; local S; local w; local b;
+alarm=~/.local/CartoonFoghorn.wav;
+a=0; p=0;
 while getopts 'ap' o; do
     case $o in
         a) a=1;;
