@@ -109,15 +109,23 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 
 #define HOMEPAGE "file:///root/.config/startpage/ss1.htm"
 
-/* surfraw search 
+/* surfraw as default search
  * instead of 
  * "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))", \
  * do this
  * echo '/etc/crontab 00 16 * * 0 surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks >> ~/.config/surfraw/cache' >> /etc/crontab
+ * and just cat the file into dmenu - it's several times fasters
  */
 #define SR_SEARCH {\
     .v = (char *[]){ "/bin/sh", "-c", \
-    "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(cat ~/.config/surfraw/cache | dmenu -i))", \
+    "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(cat ~/.config/surfraw/cache | dmenu -i))", \
+    winid, NULL }\
+}
+
+/* sneed's feed and seed, 
+ * formally chuck's */
+#define FEED {\
+    .v = (char *[]){ "/bin/sh", "-c", "~/.config/zsh/scripts/feed", "sf" \
     winid, NULL }\
 }
 
@@ -162,6 +170,7 @@ static Key keys[] = {
     { MODKEY,                  GDK_KEY_g,                  spawn,              SETPROP("_SURF_URI", "_SURF_GO", PROMPT_GO) },
     { MODKEY,                  GDK_KEY_f,                  spawn,              SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
     { MODKEY,                  GDK_KEY_q,                  spawn,              SR_SEARCH },
+    { MODKEY,                  GDK_KEY_w,                  spawn,              FEED },
 
     { 0,                       GDK_KEY_Escape,             stop,               { 0 } },
 

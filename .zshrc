@@ -63,7 +63,7 @@ plugins=(
   extract
   colored-man-pages
   colorize
-  #timer 
+  # timer 
 )
 TIMER_PRECISION=6
 
