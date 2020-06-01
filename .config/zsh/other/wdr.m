@@ -73,7 +73,7 @@ ylabel (ax1(2), 'Pressure AGL, mbar');
 [ax2, h3, h4] = plotyy (dt48h, rain48h, dt48h, snow48h);
 for a=[1 2];xlabel (ax1(a), 'UTC'); endfor;
 for a=[1 2];xlabel (ax2(a), 'UTC'); endfor;
-legend ('Cloud coverage, %', 'Relative humidity, %', 'Rain, % of max', 'Atmospheric pressure, mbar', 'Snow, % of max')
+legend ('Atmospheric pressure, mbar', 'Relative humidity, %', 'Rain, % of max', 'Cloud coverage, %', 'Snow, % of max')
 grid minor; axis tight; dateaxis (ax1(1), 'x', '%d.'); dateaxis (ax1(2), 'x', '%d.');  dateaxis (ax2(1), 'x', '%d.'); dateaxis (ax2(2), 'x', '%d.'); 
 set (ax1(:),'fontsize', 12, 'fontweight', 'bold');
 set (ax2(:),'fontsize', 12, 'fontweight', 'bold');

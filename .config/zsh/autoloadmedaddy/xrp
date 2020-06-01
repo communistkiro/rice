@@ -38,9 +38,9 @@ BUGS
 HEREDOC
 return 1;;esac; done;
 
+if [ $# -gt 0 ]; then; xrpp $@; fi;
 cd ~/nm;
 while IFS= read -r a; do;
-if [ $# -gt 0 ]; then; xrpp $@; fi;
     t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX); t3=$(mktemp /tmp/XXXXXX);
     curl ${a} > ${t1};
     # DETECT RIDIRECTION ATTEMPS
@@ -50,11 +50,15 @@ if [ $# -gt 0 ]; then; xrpp $@; fi;
     # TAGS ON PAGE
     grep 'class="tag"' ${t1} | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
 
-    grep 'releases' ${t2} && echo ${a} >> ~/nm/soon && sort -uo ~/nm/soon ~/nm/soon || (
+    if /bin/grep -s 'releases' ${t2}; then
+        echo ${a} >> ~/nm/soon;
+        sort -uo ~/nm/soon ~/nm/soon;
+    else
         # DOWNLOAD ALBUM
         # bcdl ${a};
         youtube-dl \
             --ignore-config \
+            --ignore-errors \
             --retries 64 \
             --fragment-retries 256 \
             --format mp3 \
@@ -77,7 +81,7 @@ if [ $# -gt 0 ]; then; xrpp $@; fi;
         # remove release from list after completion of process so interrupts possibles; remove blank lines from newlinks
         echo ${a} >> ~/nm/oldlinks && sort -uo ~/nm/oldlinks ~/nm/oldlinks;
         echo "\n\n";
-    );
+    fi;
     /bin/sed -i '1,1d' ~/nm/newlinks;
     rm  ${t1} ${t2} ${t3};
 done < ~/nm/newlinks;

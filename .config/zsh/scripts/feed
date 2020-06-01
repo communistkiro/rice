@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ $# -eq 1 ]; then b=$1; elif ps -C firefox; then b=firefox; else b=sf; fi;
+if [ "$#" -eq 1 ]; then b="$1"; elif ps -C firefox; then b=firefox; else b=sf; fi;
 url=$(cat ~/.sfeed/feeds.txt | dmenu -l 36 -i | sed -n 's@^.* \([a-zA-Z]*://\)\(.*\)$@\1\2@p')
 test -n "$url" && $b "$url"
     

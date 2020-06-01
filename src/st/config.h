@@ -172,22 +172,12 @@ static uint forcemousemod = ShiftMask;
  * Internal mouse shortcuts.
  * Beware that overloading Button1 will disable the selection.
  */
-// const unsigned int mousescrollincrement = 1;
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
 	{ XK_ANY_MOD,           Button5, ttysend,        {.s = "\005"} },
-	// { XK_ANY_MOD,           Button4, kscrollup,      {.i = mousescrollincrement},      0, /* !alt */ -1 },
-// { XK_ANY_MOD,           Button5, kscrolldown,    {.i = mousescrollincrement},      0, /* !alt */ -1 },
 };
-
-// static MouseKey mkeys[] = {
-//  	/* button               mask            function        argument */
-// 	{ Button4,              ShiftMask,      kscrollup,      {.i =  mousescrollincrement} },
-// 	{ Button5,              ShiftMask,      kscrolldown,    {.i =  mousescrollincrement} },
-//  };
-
 
 /* Internal keyboard shortcuts. */
 #define MODKEY Mod1Mask
@@ -195,8 +185,8 @@ static MouseShortcut mshortcuts[] = {
 
 static Shortcut shortcuts[] = {
 	/* mask                 keysym          function        argument */
-	{ XK_NO_MOD,            XK_Break,       sendbreak,      {.i =  0} },
-	{ XK_NO_MOD,            XK_Pause,       sendbreak,      {.i =  0} },
+	{ XK_ANY_MOD,           XK_Break,       sendbreak,      {.i =  0} },
+	{ XK_ANY_MOD,           XK_Pause,       sendbreak,      {.i =  0} },
 	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
 	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
 	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
