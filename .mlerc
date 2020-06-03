@@ -6,7 +6,7 @@ echo '-Kmle_normal,,0'
     echo '-kcmd_indent,C-]'
     echo '-kcmd_outdent,C-['
     echo '-kcmd_fsearch,C-p,fzf --cycle -m'
-    echo '-kcmd_search_next,F3'
+    echo '-kcmd_search_next,M-n'
     echo '-kcmd_ctag,F4'
 
 echo '-Kmle_prompt_isearch,,1'

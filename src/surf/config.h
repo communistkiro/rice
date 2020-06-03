@@ -48,7 +48,7 @@ static Parameter defconfig[ParameterLast] = {
     [SmoothScrolling]     =       { { .i = 0 },     },
     [SpellChecking]       =       { { .i = 0 },     },
     [SpellLanguages]      =       { { .v = ((char *[]){ "en_US", NULL }) }, },
-    [StrictTLS]           =       { { .i = 0 },     },
+    [StrictTLS]           =       { { .i = 1 },     },
     [Style]               =       { { .i = 1 },     },
     [UserScript]          =       { { .i = 1 },     },
     [WebGL]               =       { { .i = 0 },     },
