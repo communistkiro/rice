@@ -1,5 +1,5 @@
 #!/bin/zsh
-ping -c &>/dev/null abv.bg || return 1;
+ping -c 1 abv.bg &>/dev/null  || return 1;
 # UPDATE /ETC/HOSTS
 tmp=$(mktemp -d /tmp/XXXXXX);
 cd ${tmp};

@@ -43,10 +43,12 @@ cd ~/nm;
 while IFS= read -r a; do;
     t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX); t3=$(mktemp /tmp/XXXXXX);
     curl ${a} > $t1;
-    grep -q 'redirected' $t1 && echo ${a} >> ~/nm/redir && /bin/sed -i '1,1d' ~/nm/newlinks && break;
+    if grep -q 'redirected' $t1; then
+        a=$(/bin/grep -Po '"http.*?"' $t1 | tr -d '"');
+        curl ${a} > $t1;
+    fi;
     sed -n '15,/">/p' $t1 > $t2;
     grep 'class="tag"' $t1 | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
-
     if /bin/grep -s 'releases' $t2; then
         echo ${a} >> ~/nm/soon;
         sort -uo ~/nm/soon ~/nm/soon;

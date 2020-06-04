@@ -138,15 +138,15 @@ alias ms='ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; 
 alias tome='cd /root/games/t-engine4-linux64-1.6.7; ./t-engine & disown'
 alias fzf='fzf -m\
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})"\
-  --bind "alt-r:execute(micro {+})"\
+  --bind "alt-r:execute(mle {+})"\
   --bind "alt-f:clear-selection"\
   --bind "alt-v:select-all"'
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias fd='fd -uu -i'
 alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
-alias d2re='cd /root/.wine/drive_c/Resurgence; wine Plugy.exe &>/dev/null & disown'
 alias xc='xclip -selection clipboard'
 alias tetris='/root/games/NullpoMino7_5_0/play_slick &>/dev/null & disown'
+alias fread="feed 'lynx -dump' | less"
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
