@@ -72,9 +72,7 @@ autoload -U +X bashcompinit && bashcompinit
 
 source $ZSH/oh-my-zsh.sh
 
-setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB
-# REMATCH_PCRE
-
+setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB RE_MATCH_PCRE
 
 # ALII
 alias vol='amixer set Master'
@@ -101,7 +99,6 @@ alias pk='pkill -KILL -i'
 alias rsync='rsync -vah --progress'
 alias ncm='ncmpcpp'
 alias mpdd='pgrep mpd &>/dev/null && pk mpd && sleep 5 && mpdd || mpd && mpdas -d && ncm'
-alias feh='feh --scale-down'
 alias cmat='cmatrix -au2'
 alias kl='khal interactive'
 alias kln='khal new'

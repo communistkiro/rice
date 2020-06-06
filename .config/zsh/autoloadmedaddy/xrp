@@ -41,14 +41,15 @@ return 1;;esac; done;
 if [ $# -gt 0 ]; then; xrpp $@; fi;
 cd ~/nm;
 while IFS= read -r a; do;
-    t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX); t3=$(mktemp /tmp/XXXXXX);
+    t1=$(mktemp /tmp/xrp.XXXXXX); t2=$(mktemp /tmp/xrp.XXXXXX); t3=$(mktemp /tmp/xrp.XXXXXX);
     curl ${a} > $t1;
-    if grep -q 'redirected' $t1; then
+    if /bin/grep -s 'redirected' $t1; then
         a=$(/bin/grep -Po '"http.*?"' $t1 | tr -d '"');
         curl ${a} > $t1;
     fi;
     sed -n '15,/">/p' $t1 > $t2;
-    grep 'class="tag"' $t1 | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/x;
+    grep 'class="tag"' $t1 | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/genre;
+    # rymgenre "$(sed -rn '1s/(.*) by (.*), rel.*/\2 \1/p' $t2)" >> /tmp/genre;
     if /bin/grep -s 'releases' $t2; then
         echo ${a} >> ~/nm/soon;
         sort -uo ~/nm/soon ~/nm/soon;
@@ -76,11 +77,13 @@ while IFS= read -r a; do;
                 /bin/mv ${(@)w} ${s};
                 tagme ${s};
                 for b in ${(@f)"$(find "${s}" -name '*.bak')"}; do rm -f "$b"; done;
-                mkdir -p ${s%% \[*}; /bin/mv ${s} ${s%% \[*};
+                mkdir -p ${s%% \[*};
+                /bin/mv ${s} ${s%% \[*};
                 break;
             done < $t3 | sort -u;
         fi;
-        echo ${a} >> ~/nm/oldlinks && sort -uo ~/nm/oldlinks ~/nm/oldlinks;
+        echo ${a} >> ~/nm/oldlinks;
+        sort -uo ~/nm/oldlinks ~/nm/oldlinks;
         echo "\n\n";
     fi;
     /bin/sed -i '1,1d' ~/nm/newlinks;

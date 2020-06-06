@@ -8,7 +8,6 @@ NAME
     tagmet - tag audio files.
 
 SYNOPSIS
-    tagme 
     tagme [dir(s)]
 
 DESCRIPTION
@@ -49,7 +48,7 @@ while IFS= read -r z; do;
       year=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      genre="$(</tmp/x)" \
+      genre="$(</tmp/genre)" \
       albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
       --files ${z};
   elif which mp3info2 &>/dev/null; then
@@ -61,15 +60,10 @@ while IFS= read -r z; do;
       -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
       -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      -g "$(</tmp/x)" \
+      -g "$(</tmp/genre)" \
       -F TPE2=%a \
       ${z};
   fi
 done < ${t};
-if [ $# -gt 0 ]; then
-  find $@ -name '*.mp3' -type f > ${t};
-else
-  find . -name '*.mp3' -type f > ${t};
-fi;
 rm -f ${t};
 }

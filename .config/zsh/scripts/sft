@@ -1,2 +1,0 @@
-#!/bin/sh
-tabbed -dn tabbedsurf -r 2 surf -e '' 

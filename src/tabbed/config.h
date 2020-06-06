@@ -37,7 +37,7 @@ static Bool npisrelative  = True;
 
 #define MODKEY Mod1Mask
 static Key keys[] = {
-	/* modifier             key              function     argument */
+    /* modifier             key              function     argument */
     { MODKEY,               XK_grave,        focusonce,   { 0 } },
     { MODKEY,               XK_grave,        spawn,       { 0 } },
     

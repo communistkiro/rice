@@ -1,0 +1,22 @@
+#!/bin/zsh
+function rymgenre() {
+local a s d t;
+
+if [ $# -gt 0 ]; then 
+  a="$@";
+else
+  a="$(mpc status -f '%artist% %album%' | head -1)";
+fi
+
+t=$(mktemp /tmp/genre.XXXXXX);
+
+
+until s=$(sed -nr 's/.+(https?:\/\/rateyourmusic\.com\/release\/.*)/\1/p' $t | dmenu -l 18 -p "$a"); do
+    lynx -dump -listonly "https://rateyourmusic.com/search?searchtype=l&searchterm=${a}&page=$((++d))" >> $t;
+done;
+
+[[ ! $s =~ '^https?:\/\/rateyourmusic\.com\/release\/' ]] && return 0;
+lynx -dump "$s" | sed -n '/Genres/,/Descriptors/p' | sed -r '1d; $d; s/\ +[[0-9]+\]//g' | tr '\n,' ';' | tr -s ';';
+
+rm -f $t;
+}

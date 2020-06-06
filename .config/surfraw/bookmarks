@@ -9,3 +9,5 @@ r               https://www.reddit.com/search?include_over_18=on&q=%s
 s               https://www.startpage.com/do/mypage.pl?prfe=36c84513558a2d34bf0d89ea505333ad761002405484af240c1c89932309a9bc5065027ac0acf304530bea21aa54bdf5?q=%s
 sh              https://sci-hub.tw/%s
 ti              https://tineye.com/search?q=%s
+rym             https://rateyourmusic.com/search?searchtype=a&searchterm=%s
+rymr            https://rateyourmusic.com/search?searchtype=l&searchterm=%s

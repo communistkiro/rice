@@ -125,7 +125,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 /* sneed's feed and seed, 
  * formally chuck's */
 #define FEED {\
-    .v = (char *[]){ "/bin/sh", "-c", "~/.config/zsh/scripts/feed", "sf", NULL}\
+    .v = (char *[]){ "/bin/sh", "-c", "~/.config/zsh/scripts/feed $0", "sf", NULL}\
 }
 
 /* styles */

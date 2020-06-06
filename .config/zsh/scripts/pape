@@ -16,6 +16,6 @@ while true; do;
     [ -d ${c} ] && cd ${c} && c=.;
     [ -f ${c} ] && (feh ${s-${a[4]}} ${c} || break);
     [[ ${c} = "bgopts" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options') && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
-    [[ ${c} = "rand" ]] && (feh ${s-${a[4]}} $(/bin/ls -ap . | grep -v '/' | shuf | head -1) || break);
+    [[ ${c} = "rand" ]] && (feh ${s-${a[4]}} $(/bin/ls -ap . | grep -v '/' | shuf -n 1) || break);
 done
 unset c a f s d w;
