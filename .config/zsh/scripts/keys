@@ -2,10 +2,11 @@
 # This script is called on startup for one-off cmds
 
 # /usr/share/X11/xkb/rules for `-option ""'
-setxkbmap -layout "us,bg,de" -variant ",phonetic," -geometry "pc" -option "grp:win_space_toggle" -option caps:super &
+setxkbmap -layout "us,bg,de" -variant ",phonetic,deadgraveacute" -geometry "pc" -option "grp:win_space_toggle" -option caps:super &
+
 
 # ... delay repeatrate
-xset r rate 240 80 &
+xset r rate 220 85 &
 
 # Map the caps lock key to super...
 # setxkbmap -option caps:super

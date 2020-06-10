@@ -1,6 +1,3 @@
-; define my kmap
-; echo '-Kmy,,0'
-
 # default normal kmap
 echo '-Kmle_normal,,0'
 echo '-kcmd_outdent,C-['

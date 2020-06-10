@@ -1,5 +1,5 @@
 #!/bin/sh
-function cz() {
+cz() {
 n=0;
 while getopts 'n' o; do case $o in n) n=1;; *) 
 less <<HEREDOC
@@ -21,16 +21,16 @@ BUGS
 HEREDOC
 return 1;;esac; done;
 
-until [[ -n ${w} ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
+until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 
 if [ $n -eq 0 ]; then
     while true; do 
         clear; echo ''; lsd -a
-        c="$(/bin/ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w ${w} -p "$(pwd)")" || break; cd $c;
+        c="$(/bin/ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
     done
 else
     while true; do
-        c="$(/bin/ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w ${w} -p "$(pwd)")" || break; cd $c;
+        c="$(/bin/ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
     done
 fi;
 }

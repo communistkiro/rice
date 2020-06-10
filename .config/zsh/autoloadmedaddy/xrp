@@ -48,7 +48,7 @@ while IFS= read -r a; do;
         curl ${a} > $t1;
     fi;
     sed -n '15,/">/p' $t1 > $t2;
-    grep 'class="tag"' $t1 | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/genre;
+    /bin/grep 'class="tag"' $t1 | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/genre;
     # rymgenre "$(sed -rn '1s/(.*) by (.*), rel.*/\2 \1/p' $t2)" >> /tmp/genre;
     if /bin/grep -s 'releases' $t2; then
         echo ${a} >> ~/nm/soon;

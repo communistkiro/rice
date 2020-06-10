@@ -34,7 +34,7 @@ static const Rule rules[] = {
     { "Firefox",            NULL,           NULL,       1 << 1,       0,           -1 },
     { "tabbed",             "tabbedsurf",   NULL,       1 << 1,       0,           -1 },
     { "Gimp",               NULL,           NULL,       1 << 2,       1,           -1 },
-    { "qpdfview",           NULL,           NULL,       1 << 3,       0,           -1 },
+    { "qpdfview",           NULL,           NULL,       1 << 2,       0,           -1 },
     { "qBittorrent",        "qbittorrent",  NULL,       1 << 8,       0,           -1 },
     { "Nicotine",           "nicotine",     NULL,       1 << 8,       0,           -1 },
 };

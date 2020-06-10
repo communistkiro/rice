@@ -1,7 +1,7 @@
 # rice
 my config for the most part;
 - navigation with `[ ; ' \` instead of cursor keys or `w a s d`;
-- config files `zsh`, `subl3`, `ranger`, `ncmpcpp`, `mpd`, `less`, `conky`, other editors, other small shit;
+- config files for `zsh`, `subl3`, `ranger`/`lf` `ncmpcpp`, `mpd`, `less`, `conky`, other editors, other small shit;
 - clones of suckless programs with relevant to me patches and configs;
 - shell funcs and scripts, located in .config/zsh/{autoloadmedaddy,scripts,other}:
   - `xrp` - downloads and tags alba from bandcamp, and structures it `ARTIST/ARTIST [ALBUM (DATE)]/TRACKS`; these can then be easily be `rsync`ed to dirs by letter
@@ -14,7 +14,8 @@ my config for the most part;
   ~~- `backup` -  `rsync` files and folders according to tagging glyph used in `ranger`~~ doesn't work anymore?
   - `cz` - small terminal navigation script with `dmenu`
   - `dmnt` - mount and umount disks and drives with `findmnt`, `lsblk`, and `dmenu`;
-  - `pomo` - tomoto timer integrated into a `dzen2` bar over `herbstluft`'s normal bar;
+  - `pomo` - tomoto timer integrated into a `dzen2` bar over `herbstluft`'s normal top bar;
   - ~~`stream` - selct twitch category(s), language(s) and choose a stream to watch, uses `dmenu`, `sed/perl`, `mpv`~~ new api is shite;
   - `tmr` - countdown/alarm/pomodoro script, based off of Joe Standring's two; comes with a real nice foghorn i audacity'd;
   - `dwmsss` dwm status bar script made obsolete by `slstatus` 
+- `cfastread` spritz reader in C, wherein I added optional wpm as first arg to facilitate input from `sfeed` script 

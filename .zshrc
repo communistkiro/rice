@@ -144,6 +144,9 @@ alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -d
 alias xc='xclip -selection clipboard'
 alias tetris='/root/games/NullpoMino7_5_0/play_slick &>/dev/null & disown'
 alias fread="feed 'lynx -dump' | less"
+alias ab='mpv --force-window=yes'
+alias ccl='calcurse -q'
+
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
