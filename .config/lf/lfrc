@@ -105,21 +105,35 @@ cmd cock %subl3 -n --command toggle_side_bar $fx
 
 
 # compress current file or selected files with tar and gunzip
-cmd tar ${{
-    set -f
-    mkdir $1
-    cp -r $fx $1
-    tar czf $1.tar.gz $1
-    rm -rf $1
-}}
+# cmd tar ${{
+#     set -f
+#     mkdir $1
+#     cp -r $fx $1
+#     tar czf $1.tar.gz $1
+#     rm -rf $1
+# }}
 
 # compress current file or selected files with zip
-cmd zip ${{
-    set -f
-    mkdir $1
-    cp -r $fx $1
-    zip -r $1.zip $1
-    rm -rf $1
+# cmd zip ${{
+#     set -f
+#     mkdir $1
+#     cp -r $fx $1
+#     zip -r $1.zip $1
+#     rm -rf $1
+# }}
+
+# cmd fzfsel ${{
+#     fzf --phony
+# }}
+
+cmd fzf ${{
+    fzf \
+        --algo=v1 \
+        -m \
+        --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
+        --bind "alt-r:execute(mle {+})" \
+        --bind "alt-f:clear-selection" \
+        --bind "alt-v:select-all"
 }}
 
 cmd 7z ${{
@@ -133,18 +147,6 @@ cmd rifle ${{
     read -p "Open with: " runner
     rifle -p $runner $f
 }}
-
-# cmd on-cd &{{
-#     # display git repository status in your prompt
-#     source /usr/share/git/completion/git-prompt.sh
-#     GIT_PS1_SHOWDIRTYSTATE=auto
-#     GIT_PS1_SHOWSTASHSTATE=auto
-#     GIT_PS1_SHOWUNTRACKEDFILES=auto
-#     GIT_PS1_SHOWUPSTREAM=auto
-#     git=$(__git_ps1 " (%s)") || true
-#     fmt="\033[32;1m%u@%h\033[0m:\033[34;1m%w/\033[0m\033[1m%f$git\033[0m"
-#     lf -remote "send $id set promptfmt \"$fmt\""
-# }}
 
 # show copypaste progress
 # cmd paste &{{
@@ -301,7 +303,7 @@ map d           cut
 map p           paste
 # map P           :Link
 map e           find
-map f           search
+map f           fzf
 map n           search-next
 map N           search-prev
 map a           rename
@@ -329,6 +331,7 @@ map .           push :glob-unselect<space>*
 map q           clear
 map v           invert
 map n           push %mkdir<space>
+map Z           7z
 
 # OPTS
 map R           push :set<space>ratios<space>

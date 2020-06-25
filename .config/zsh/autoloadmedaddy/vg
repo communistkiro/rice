@@ -1,0 +1,28 @@
+#!/bin/zsh
+
+# fuzzy grep open via ag
+# vg() {
+#   local file
+
+#   file="$(ag --nobreak --noheading $@ | fzf -0 -1 | awk -F: '{print $1}')"
+
+#   if [[ -n $file ]]
+#   then
+#      # vim $file
+#      subl3 -n --command toggle_side_bar -a $file
+#   fi
+# }
+
+# fuzzy grep open via ag with line number
+vg() {
+  local file
+  local line
+
+  read -r file line <<<"$(ag --nobreak --noheading $@ | fzf -0 -1 | awk -F: '{print $1, $2}')"
+
+  if [[ -n $file ]]
+  then
+     # vim $file +$line
+     subl3 -n --command toggle_side_bar -a $file:$line
+  fi
+}

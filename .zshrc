@@ -3,6 +3,7 @@ export PATH=$PATH:/opt/texlive/2020/bin/x86_64-linux:/root/.config/zsh/scripts:$
 
 # Path to your oh-my-zsh installation.
 export ZSH=/root/.config/omz
+# export FZF_BASE=/usr/share/doc/fzf
 
 # ZSH_THEME=""
 source /root/.config/zsh/prompts/qqq
@@ -63,6 +64,7 @@ plugins=(
   extract
   colored-man-pages
   colorize
+  # fzf
   # timer 
 )
 TIMER_PRECISION=6
@@ -133,16 +135,14 @@ alias book='st -n "cfastread" -f "Fira Code:pixelsize=72:antialias=true:autohint
 alias ms1='tmines -fd22; clear'
 alias ms='ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1'
 alias tome='cd /root/games/t-engine4-linux64-1.6.7; ./t-engine & disown'
-alias fzf='fzf -m\
-  --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})"\
-  --bind "alt-r:execute(mle {+})"\
-  --bind "alt-f:clear-selection"\
-  --bind "alt-v:select-all"'
+alias fzf='fzf -m \
+  --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
+  --bind "alt-r:execute(mle {+})" \
+  --bind "alt-f:clear-selection" \
+  --bind "alt-v:select-all" '
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias fd='fd -uu -i'
-alias d2ra='cd /root/.wine/drive_c/D2-plugy-base-randomizer; wine Game.exe -w -direct -txt -ddraw -direct -txt &>/dev/null & disown'
 alias xc='xclip -selection clipboard'
-alias tetris='/root/games/NullpoMino7_5_0/play_slick &>/dev/null & disown'
 alias fread="feed 'lynx -dump' | less"
 alias ab='mpv --force-window=yes'
 alias ccl='calcurse -q'
