@@ -192,25 +192,26 @@ static Key keys[] = {
 
     { GDK_CONTROL_MASK,        GDK_KEY_c,                  clipboard,          { .i = 0 } },
     { GDK_CONTROL_MASK,        GDK_KEY_v,                  clipboard,          { .i = 1 } },
+    // { GDK_CONTROL_MASK,        GDK_KEY_v,                  spawn,              PASTE() },
 
     { MODKEY,                  GDK_KEY_n,                  find,               { .i = +1 } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_n,                  find,               { .i = -1 } },
 
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_p,                  print,              { 0 } },
 
-    // { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_y,                  showcert,           { 0 } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_a,                  togglecookiepolicy, { 0 } },
     { 0,                       GDK_KEY_F11,                togglefullscreen,   { 0 } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_o,                  toggleinspector,    { 0 } },
+    // { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_y,                  showcert,           { 0 } },
 
     // { GDK_MOD4_MASK,                   c,                  toggle,             { .i = CaretBrowsing } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_f,                  toggle,             { .i = FrameFlattening } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_s,                  toggle,             { .i = JavaScript } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_i,                  toggle,             { .i = LoadImages } },
     // { MODKEY|GDK_CONTROL_MASK, GDK_KEY_g,                  toggle,             { .i = Geolocation } },
-    { MODKEY|GDK_CONTROL_MASK, GDK_KEY_v,                  toggle,             { .i = Plugins } },
-    { MODKEY|GDK_CONTROL_MASK, GDK_KEY_b,                  toggle,             { .i = ScrollBars } },
-    { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_t,                  toggle,             { .i = StrictTLS } },
+    // { MODKEY|GDK_CONTROL_MASK, GDK_KEY_v,                  toggle,             { .i = Plugins } },
+    // { MODKEY|GDK_CONTROL_MASK, GDK_KEY_b,                  toggle,             { .i = ScrollBars } },
+    // { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_t,                  toggle,             { .i = StrictTLS } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_m,                  toggle,             { .i = Style } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_w,                  playexternal,       { 0 } },
 };

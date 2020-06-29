@@ -1,0 +1,14 @@
+#!/bin/zsh
+# Like f, but not recursive.
+fm() f "$@" --max-depth 1
+
+# Deps
+alias fz="fzf-noempty --bind 'tab:toggle,shift-tab:toggle+beginning-of-line+kill-line,ctrl-j:toggle+beginning-of-line+kill-line,ctrl-t:top' --color=light -1 -m"
+fzf-noempty () {
+    local in="$(</dev/stdin)"
+    test -z "$in" && (
+        exit 130
+    ) || {
+        print "$in" | fzf "$@"
+    }
+}

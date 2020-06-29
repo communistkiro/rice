@@ -8,14 +8,13 @@ a=(
   '--bg-tile'
 );
 c=~/im; # starting dir & file/folder choice
-cd ${c};
+cd $c;
 while true; do;
-    [ -d ${c} ] && f=($(/bin/ls -ap ${c} | grep -v '/')) && d=($(/bin/ls -ap ${c} | grep '/' | grep -v '^\./')); 
-    r=$((${#d} + ${#f} + 2));
-    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l $([ 10 -le ${r} ] && echo 10 || echo ${r})) || break; 
-    [ -d ${c} ] && cd ${c} && c=.;
-    [ -f ${c} ] && (feh ${s-${a[4]}} ${c} || break);
-    [[ ${c} = "bgopts" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options') && feh ${s} $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
-    [[ ${c} = "rand" ]] && (feh ${s-${a[4]}} $(/bin/ls -ap . | grep -v '/' | shuf -n 1) || break);
+    [ -d $c ] && f=($(/bin/ls -ap $c | grep -v '/')) && d=($(/bin/ls -ap $c | grep '/' | grep -v '^\./')); 
+    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l 10 -p $(pwd) ) || break; 
+    [ -d $c ] && cd $c && c=.;
+    [ -f $c ] && (feh ${s-${a[4]}} $c || break);
+    [[ $c = "bgopts" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options') && feh $s $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
+    [[ $c = "rand" ]] && (feh ${s-${a[4]}} $(/bin/ls -ap . | grep -v '/' | shuf -n 1) || break);
 done
 unset c a f s d w;

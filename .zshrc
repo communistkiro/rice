@@ -3,7 +3,6 @@ export PATH=$PATH:/opt/texlive/2020/bin/x86_64-linux:/root/.config/zsh/scripts:$
 
 # Path to your oh-my-zsh installation.
 export ZSH=/root/.config/omz
-# export FZF_BASE=/usr/share/doc/fzf
 
 # ZSH_THEME=""
 source /root/.config/zsh/prompts/qqq
@@ -67,7 +66,7 @@ plugins=(
   # fzf
   # timer 
 )
-TIMER_PRECISION=6
+# TIMER_PRECISION=6
 
 autoload -U +X compinit && compinit 
 autoload -U +X bashcompinit && bashcompinit
@@ -141,10 +140,11 @@ alias fzf='fzf -m \
   --bind "alt-f:clear-selection" \
   --bind "alt-v:select-all" '
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
+alias tetris='/root/games/NullpoMino7_5_0/play_slick &>/dev/null & disown'
 alias fd='fd -uu -i'
 alias xc='xclip -selection clipboard'
 alias fread="feed 'lynx -dump' | less"
-alias ab='mpv --force-window=yes'
+alias abook='mpv --force-window=yes'
 alias ccl='calcurse -q'
 
 

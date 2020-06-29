@@ -61,12 +61,13 @@ cmd open ${{
         *.pdf|*.djvu|*.ps|*.eps) qpdfview --unique $fx;;
         *.eps) gv -- $fx;;
         *.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $fx;;
-        *.doc|*.docx) doc2txt $fx | less;;
+        *.docx) docx2txt $fx - | less;;
+        *.doc) catdoc -m94 $fx | less;;
         *.epub) epub2txt -n $fx | less;;
         *.htm|*.html|*.xhtml) firefox --new-tab $fx;;
-        *.exe) wine $fx;;
         *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man $fx;;
         *.info) info $fx;;
+        *.exe) wine $fx;;
         *) subl3 -n $fx;;
     esac
 }}
@@ -290,19 +291,19 @@ map <a-[>       half-up
 map <a-\'>      half-down
 map ]           bottom
 map \}          top
-#map             page-up
-#map             page-down
+# map             page-up
+# map             page-down
 
 # ACTIONS
 map Q           quit
-#map ~           panes
-map <c-r>       rifle $fx
+# map ~           panes
+map r           rifle $fx
 map <esc>       cmd-escape
 map y           copy
 map d           cut
 map p           paste
 # map P           :Link
-map e           find
+# map e           find
 map f           fzf
 map n           search-next
 map N           search-prev
@@ -317,8 +318,10 @@ map i           $$PAGER $f
 map l           $$PAGER $f
 map <tab>       cmd-complete
 map <c-l>       redraw
-map r           reload
-map <enter>     $$f
+map <c-l>       reload
+map R           redraw
+map R           reload
+# map <enter>     $$f
 map X           !$f
 map <space>     toggle
 map u           unmark
@@ -334,7 +337,7 @@ map n           push %mkdir<space>
 map Z           7z
 
 # OPTS
-map R           push :set<space>ratios<space>
+map \~          push :set<space>ratios<space>
 map zh          :set hidden!
 map zr          :set reverse!
 map zn          :set info
