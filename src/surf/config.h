@@ -145,6 +145,7 @@ static SiteSpecific scripts[] = {
    /* regexp               file in $scriptdir */
    // { ".*",                 "default.js" },
     { "://boards\\.4chan.*", "4chan-X.user.js" },
+    // { "://news\\.ycombinator.*", "hn-filter.js" },
 };
 
 /* certificates */
@@ -153,8 +154,6 @@ static SiteSpecific scripts[] = {
  */
 static SiteSpecific certs[] = {
     /* regexp                           file in $certdir */
-    // { "://medicalexpress\\.com/",       "medicalxpress-com.pem" },
-    // { "://phys\\.org/",                 "phys-org.epm" },
 };
 
 #define MODKEY GDK_MOD1_MASK

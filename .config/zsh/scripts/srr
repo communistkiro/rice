@@ -8,3 +8,4 @@ else
 fi
 q=$(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i) || return 1;
 surfraw ${q%% *} -browser="$b" ${q#* }
+unset b q

@@ -1,8 +1,9 @@
 #!/bin/zsh
 # DOWNLOADS FROM LIST OR, GIVEN A NEW LINK, SCRAPES ALBA FROM EMBEDDED PLAYER AND DIRECT LINKS RELEASES TO LIST
 function xrp () {
-while getopts '' o; do case $o in *) 
-less <<HEREDOC
+local o a t1 t2 t3 w s;
+while getopts 'h' o; do case $o in h) ;& *) 
+less -F <<HEREDOC
 NAME
     xrp - download, tag, and structure alba from list of links.
 

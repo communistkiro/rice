@@ -65,3 +65,4 @@ a=(
 );
 s=$(printf "%s\n" ${(@)a} | dmenu -i) || return;
 mpv -- https://www.twitch.tv/${s}/
+unset a s

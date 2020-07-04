@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Like f, but not recursive.
-fm() f "$@" --max-depth 1
+function fm() f "$@" --max-depth 1
 
 # Deps
 alias fz="fzf-noempty --bind 'tab:toggle,shift-tab:toggle+beginning-of-line+kill-line,ctrl-j:toggle+beginning-of-line+kill-line,ctrl-t:top' --color=light -1 -m"

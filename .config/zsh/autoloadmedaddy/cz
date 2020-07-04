@@ -1,8 +1,13 @@
 #!/bin/sh
 cz() {
-n=0;
-while getopts 'n' o; do case $o in n) n=1;; *) 
-less <<HEREDOC
+local n=0;
+local o c w;
+while getopts 'nh' o; do 
+    case $o in 
+        n) n=1;;
+        h) ;&
+        *)
+less -F <<HEREDOC
 NAME
     cz - filesystem navigator
 
@@ -19,7 +24,7 @@ BUGS
 
 
 HEREDOC
-return 1;;esac; done;
+return 1;; esac; done;
 
 until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 

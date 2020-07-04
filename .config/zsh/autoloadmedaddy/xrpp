@@ -1,8 +1,9 @@
 #!/bin/zsh
 # ADD NEW LINKS (FROM CTEBCM PAGE, FROM BANDCAMP EMBEDDED PLAYERS)
 function xrpp () {
-while getopts '' o; do case $o in *) 
-less <<HEREDOC
+local o t1 t2 a;
+while getopts 'h' o; do case $o in h) ;& *) 
+less -F <<HEREDOC
 NAME
   xrpp - scrape alba and tracks from websites.
 

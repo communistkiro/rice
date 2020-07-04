@@ -26,3 +26,4 @@ while [ -n "$cmd" ]; do
 done
 
 exit 0
+unset file height prompt cmd

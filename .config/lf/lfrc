@@ -1,3 +1,4 @@
+#!/bin/sh
 # github.com/gokcehan/lf/
 
 # ===================== OPTIONS =====================
@@ -42,6 +43,7 @@ set scrolloff 1
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to use either file extensions and/or mime types here. Below uses an editor for text files and a file opener for the rest.
 cmd open ${{
+    # set -f
     # case $(file --mime-type $f -b) in
     #     text*|*ini|*json) subl3 -n $fx;;
     #     *pdf|*djvu|*postscript ) qpdfview --unique $fx;; 
@@ -53,12 +55,12 @@ cmd open ${{
     #     *spreadsheet*) gnumeric $fx;;
     #     *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
     # esac
-    # set -f
+    set -f
     case $f in
         *.gif|*.png|*.jpeg|*.jpg|*.gif|*.tiff|*.pnm|*.tiff|*.bmp) feh --scale-down $fx;;
         *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx | less; yn 'Unpack?' "aunpack $fx";;
-        *.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi) mpv $fx;;
-        *.pdf|*.djvu|*.ps|*.eps) qpdfview --unique $fx;;
+        *.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi) mpv --no-input-terminal --really-quiet $fx &;;
+        *.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $fx;;
         *.eps) gv -- $fx;;
         *.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $fx;;
         *.docx) docx2txt $fx - | less;;
@@ -68,16 +70,16 @@ cmd open ${{
         *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man $fx;;
         *.info) info $fx;;
         *.exe) wine $fx;;
-        *) subl3 -n $fx;;
+        *) yn "sublime?" "subl3 -n $fx";;
     esac
 }}
 
 cmd cock %subl3 -n --command toggle_side_bar $fx
 
-
-# define a custom 'rename' command without prompt for overwrite
-# cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
-# map r push :rename<space>
+cmd rename ${{
+    [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
+    [ -e ${d%?} ] && return 1  || mv $f ${d%?};
+}}
 
 # make sure trash folder exists
 # %mkdir -p /tmp/.trash
@@ -98,12 +100,6 @@ cmd cock %subl3 -n --command toggle_side_bar $fx
 # use '<delete>' key for either 'trash' or 'delete' command
 # map <delete> trash
 # map <delete> delete
-
-# cmd panes ${{
-#     set preview!
-#     [ preview ] && set ratios '1:5' || set rations '1:3:4'
-# }}
-
 
 # compress current file or selected files with tar and gunzip
 # cmd tar ${{
@@ -126,6 +122,14 @@ cmd cock %subl3 -n --command toggle_side_bar $fx
 # cmd fzfsel ${{
 #     fzf --phony
 # }}
+cmd mkdir ${{
+    if [ $# -gt 0 ]; then
+        d="$(printf '%s ' $@)";
+        mkdir -p ${d%?};
+    else
+        mktemp -d tmp.XXXXXXXXXX;
+    fi
+}}
 
 cmd fzf ${{
     fzf \
@@ -134,19 +138,22 @@ cmd fzf ${{
         --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
         --bind "alt-r:execute(mle {+})" \
         --bind "alt-f:clear-selection" \
-        --bind "alt-v:select-all"
+        --bind "alt-v:select-all";
 }}
 
 cmd 7z ${{
     set -f
-    7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m GODCOCK.7z $fx
+    [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
+    [ -e ${d%?} ] && return 1;
+    7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m ${d%?}.7z $fx;
+    unset d;
 }}
 
 cmd rifle ${{
-    set -f
-    rifle -l $f
-    read -p "Open with: " runner
-    rifle -p $runner $f
+    set -f;
+    rifle -l $f;
+    read -p "Open with: " runner;
+    rifle -p $runner $f;
 }}
 
 # show copypaste progress
@@ -188,14 +195,9 @@ cmd rifle ${{
 #         /bin/ln $files -t .
 #     fi
 # }}
-
-
 # =================== KEYBINDINGS ===================
 
 # UNMAP ALL SHIT KEYBINDINGS
-map \"
-map \;
-map \'
 map ,
 map /
 map 0
@@ -212,12 +214,9 @@ map <bs2>
 map <bs>
 map <c-a>
 map <c-b>
-map <c-b>
 map <c-c>
 map <c-d>
-map <c-d>
 map <c-e>
-map <c-f>
 map <c-f>
 map <c-j>
 map <c-k>
@@ -227,26 +226,24 @@ map <c-p>
 map <c-r>
 map <c-t>
 map <c-u>
-map <c-u>
 map <c-w>
 map <c-y>
 map <delete>
 map <down>
 map <end>
-map <end>
 map <enter>
 map <esc>
 map <home>
-map <home>
-map <left>
 map <left>
 map <pgdn>
 map <pgup>
 map <right>
-map <right>
 map <space>
 map <tab>
 map <up>
+map \"
+map \'
+map \;
 map \?
 map c
 map d
@@ -266,8 +263,8 @@ map q
 map r
 map u
 map v
-map y
 map w
+map y
 
 # PREFIXES
 map \:          read
@@ -296,7 +293,6 @@ map \}          top
 
 # ACTIONS
 map Q           quit
-# map ~           panes
 map r           rifle $fx
 map <esc>       cmd-escape
 map y           copy
@@ -307,7 +303,8 @@ map p           paste
 map f           fzf
 map n           search-next
 map N           search-prev
-map a           rename
+# map a           rename
+map a           push :rename<space>
 map gh          cd ~
 map gp          cd /tmp
 map ge          cd /etc
@@ -333,8 +330,8 @@ map ,           push :glob-select<space>*
 map .           push :glob-unselect<space>*
 map q           clear
 map v           invert
-map n           push %mkdir<space>
-map Z           7z
+map n           push :mkdir<space>
+map Z           push :7z<space>
 
 # OPTS
 map \~          push :set<space>ratios<space>
@@ -345,6 +342,8 @@ map zs          :set info size
 map zt          :set info time
 map za          :set info size:time
 map zp          :set preview!
+map zx          :set nopreview; set ratios '1:9'
+map zz          :set preview; set ratios '1:4:5'
 map sn          :set sortby natural; set info
 map ss          :set sortby size; set info size
 map st          :set sortby time; set info time
@@ -375,5 +374,5 @@ map <a-l>       cmd-lowercase-word
 # map <a-t>       cmd-transpose-word
 
 # MARKS
-map m           mark-save
+map M           mark-save
 map `           mark-load

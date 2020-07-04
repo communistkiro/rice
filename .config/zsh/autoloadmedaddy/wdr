@@ -1,13 +1,16 @@
 #!/bin/sh
-function wdr() {
+wdr() {
 # https://openweathermap.org/api/
-c=0; d=0;
+local c=0;
+local d=0;
+local lon lat api_call weather o d f a location;
 
-while getopts 'cdl:' o; do
+while getopts 'cdl:h' o; do
   case ${o} in
     c) c=1;;
     d) d=1;;
     l) location=${OPTARG};;
+    h) ;&
     *) echo "Usage: $0 [-c (current only)] [-d (descriptions only)] [-l location]" 1>&2; return 1;;
     esac
 done
@@ -53,7 +56,6 @@ if [ $d -eq 1 ]; then
     return 0;
 fi;
 
-# tmp=$(mktemp -d /tmp/wdr.XXXXXX);
 mkdir -p /tmp/wdr; cd /tmp/wdr;
 # 48 HOUR FORECAST
 echo $weather | jq -r '.hourly[].dt'              > dt48h;

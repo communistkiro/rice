@@ -1,5 +1,6 @@
 #!/bin/zsh
 function wic () {
+local a;
 if ! ps -C wicd &> /dev/null; then;
     echo 'wicd not running!';
 elif [ -z ${1} ]; then; 
@@ -9,5 +10,4 @@ elif ! a=$(wicd-cli -yxSl | gre ${1} | pre -o '^[0-9]+'); then;
 else; 
     wicd-cli -ycn ${a};
 fi;
-unset a;
 }

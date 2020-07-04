@@ -1,19 +1,21 @@
 #!/bin/sh
-function gen () {
-s=''; e='';
-while getopts 'csel:' o; do
+gen () {
+local s='';
+local e='';
+local a o l c
+while getopts 'hcsel:' o; do
   case ${o} in
     c) c=1;;
     s) unset s;;
     e) unset e;;
     l) l=${OPTARG};;
-    *) 
-less <<HEREDOC
+    *)
+less -F <<HEREDOC
 NAME
     gen - password genertor using keepassxc-cli
 
 SYNOPSIS
-    gen [-c ] [-s] [-e] [-l length]
+    gen [-c] [-s] [-e] [-l length]
 
 DESCRIPTION
     Generate a pass of length <length> or 64, possibly using special characters (-s), or 
@@ -25,8 +27,8 @@ BUGS
 
 
 HEREDOC
-return 1;; esac; done
+return 1;; esac; done;
 
 a=$(keepassxc-cli generate -Uln ${s=-s} ${e=-e} -L${l:-64});
-if [ -z $c ]; then printf "%s" $a; else printf "%s" $a | xclip -selection clipboard; fi;
+if [ -z $c ]; then printf "%s" $a; else printf "%s" $a | xclip -sel c; fi;
 }
