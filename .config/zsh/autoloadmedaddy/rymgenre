@@ -8,7 +8,7 @@ else
   a="$(mpc status -f '%artist% %album%' | head -1)";
 fi
 
-t=$(mktemp /tmp/genre.XXXXXX);
+t=$(mktemp /tmp/rymgenre.XXXXXXXX);
 
 
 until s=$(sed -nr 's/.+(https?:\/\/rateyourmusic\.com\/release\/.*)/\1/p' $t | dmenu -l 18 -p "$a"); do

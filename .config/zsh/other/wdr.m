@@ -78,7 +78,7 @@ grid minor; axis tight; dateaxis (ax1(1), 'x', '%d.'); dateaxis (ax1(2), 'x', '%
 set (ax1(:),'fontsize', 12, 'fontweight', 'bold');
 set (ax2(:),'fontsize', 12, 'fontweight', 'bold');
 set(ax2(1),'ycolor','b')
-set(ax2(2),'ycolor','y')
+% set(ax2(2),'ycolor','y')
 set (h3, 'Color', 'c'); set (h4, 'Color', 'g');
 set ([h1 h2 h3 h4], 'linewidth', 2);
 

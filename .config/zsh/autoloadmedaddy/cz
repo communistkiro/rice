@@ -31,11 +31,11 @@ until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: (
 if [ $n -eq 0 ]; then
     while true; do 
         clear; echo ''; lsd -a
-        c="$(/bin/ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
+        c="$(ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
     done
 else
     while true; do
-        c="$(/bin/ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
+        c="$(ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
     done
 fi;
 }

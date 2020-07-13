@@ -2,7 +2,7 @@
 # TAG SHIT DOWNLOADED WITH youtube-dl -o '.../%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s'
 # NO BACKSLASHES
 function tagme () {
-local o t z;
+local o t z a;
 while getopts 'h' o; do case $o in h) ;& *) 
 less -F <<HEREDOC
 NAME
@@ -30,12 +30,17 @@ BUGS
 HEREDOC
 return 1;; esac; done;
 
-t=$(mktemp /tmp/XXXXXX);
+t=$(mktemp /tmp/tagme.XXXXXXXX);
 if [ $# -gt 0 ]; then
   find $@ -name '*.mp3' -type f > ${t};
 else
   find . -name '*.mp3' -type f > ${t};
 fi;
+if [ $(sed -r 's/ \[.*//; s/^..//' ${t} | sort -u | wc -l) -gt 1 ]; then
+  [ "$(printf "0 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists";
+else
+  a="$(sed -r 's/ \[.*//; s/^..//' ${t} | sort -u | head -1)";
+fi
 while IFS= read -r z; do;
   if which tageditor &>/dev/null; then
     tageditor set \
@@ -50,8 +55,9 @@ while IFS= read -r z; do;
       recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
       genre="$(</tmp/genre)" \
-      albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
+      albumartist=${a} \
       --files ${z};
+      # albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
   elif which mp3info2 &>/dev/null; then
     mp3info2 \
       -C id3v2_fix_encoding_on_write=1 -u2R \
@@ -62,8 +68,9 @@ while IFS= read -r z; do;
       -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
       -g "$(</tmp/genre)" \
-      -F TPE2=%a \
+      -F TPE2="$a" \
       ${z};
+      # -F TPE2=%a \
   fi
 done < ${t};
 rm -f ${t};

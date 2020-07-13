@@ -7,6 +7,7 @@
 
 #include "util.h"
 
+static struct tm tmnow;
 static time_t now;
 static char *line;
 static size_t linesize;
@@ -47,12 +48,6 @@ printfeed(FILE *fp, const char *feedname)
 			line[--linelen] = '\0';
 		parseline(line, fields);
 
-		parsedtime = 0;
-		if (strtotime(fields[FieldUnixTimestamp], &parsedtime))
-			continue;
-		if (!(tm = localtime(&parsedtime)))
-			err(1, "localtime");
-
 		fputs("<entry>\n\t<title>", stdout);
 		if (feedname[0]) {
 			fputs("[", stdout);
@@ -78,9 +73,15 @@ printfeed(FILE *fp, const char *feedname)
 			xmlencode(fields[FieldEnclosure], stdout);
 			fputs("\" />\n", stdout);
 		}
+
+		parsedtime = 0;
+		if (strtotime(fields[FieldUnixTimestamp], &parsedtime) ||
+		    !(tm = gmtime(&parsedtime)))
+			tm = &tmnow;
 		fprintf(stdout, "\t<updated>%04d-%02d-%02dT%02d:%02d:%02dZ</updated>\n",
 		        tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
 		        tm->tm_hour, tm->tm_min, tm->tm_sec);
+
 		if (fields[FieldAuthor][0]) {
 			fputs("\t<author><name>", stdout);
 			xmlencode(fields[FieldAuthor], stdout);
@@ -120,8 +121,8 @@ main(int argc, char *argv[])
 
 	if ((now = time(NULL)) == -1)
 		err(1, "time");
-	if (!(tm = gmtime(&now)))
-		err(1, "gmtime");
+	if (!(tm = gmtime_r(&now, &tmnow)))
+		err(1, "gmtime_r");
 
 	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 	      "<feed xmlns=\"http://www.w3.org/2005/Atom\">\n"

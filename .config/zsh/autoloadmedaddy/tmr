@@ -149,9 +149,9 @@ if [ $a -eq 1 ]; then
     h=$((h + m / 60)); m=$((m % 60));
     d=$((d + h / 24)); h=$((h % 24)); 
     
-    S=$(/bin/date +%S);
-    M=$(/bin/date +%M);
-    H=$(/bin/date +%H);
+    S=$(date +%S);
+    M=$(date +%M);
+    H=$(date +%H);
 
     if   [ $S -ge $s ] && [ $m -eq 0 ] && [ $h -eq 0 ] && [ $d -eq 0 ]; then m=$((M + 1)); h=$((H));
     elif [ $M -gt $m ] || ([ $M -eq $m ] && [ $S -ge $s ]) && [ $h -eq 0 ] && [ $d -eq 0 ]; then h=$((H + 1));
@@ -161,10 +161,10 @@ if [ $a -eq 1 ]; then
 
     [ $d -lt 0 ] || [ $((60 * (60 * (24 * d + h) + m) + s)) -lt 0 ] && return 1;
 
-    t=$(/bin/date -d "$(/bin/date +%Y-%m-%d) +${d}days +${h}hours +${m}minutes +${s}seconds" '+%Y-%m-%d %H:%M:%S');
+    t=$(date -d "$(date +%Y-%m-%d) +${d}days +${h}hours +${m}minutes +${s}seconds" '+%Y-%m-%d %H:%M:%S');
     printf "Alarm set for %s.\n" "$t";
 
-    t=$(($(/bin/date -d "$(/bin/date +%Y-%m-%d) +${d}days ${h}hours +${m}minutes +${s}seconds" '+%s') - $(/bin/date +%s)));
+    t=$(($(date -d "$(date +%Y-%m-%d) +${d}days ${h}hours +${m}minutes +${s}seconds" '+%s') - $(date +%s)));
 else;
     t=$((60 * (60 * (24 * d + h) + m) + s)); [ $t -lt 0 ] && return 1;
 fi;
@@ -183,7 +183,7 @@ while [ $t -ge 0 ]; do
     sleep 1;
 done
 
-if [ $? -eq 0 ] && mpc status &>/dev/null | /bin/grep -s 'playing'; then 
+if [ $? -eq 0 ] && mpc status &>/dev/null | grep -s 'playing'; then 
     mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle; 
 else 
     mpv --no-config --really-quiet $alarm;

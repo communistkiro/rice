@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATE_CMD="/bin/date"
+DATE_CMD="date"
 STAT_CMD="stat"
 
 
@@ -18,30 +18,30 @@ function pomo_bar {
 
 function pomo_start {
     # Start new pomo block (work+break cycle).
-    /bin/test -e $(dirname $POMO) || /bin/mkdir $(dirname $POMO)
-    /bin/touch $POMO
+    test -e $(dirname $POMO) || mkdir $(dirname $POMO)
+    touch $POMO
 }
 
 function pomo_stop {
     # Stop pomo cycles.
-    /bin/rm -f $POMO
+    rm -f $POMO
 }
 
 # function pomo_ispaused {
     # Return 0 if paused, 1 otherwise.
     # pomo.sh is paused if the POMO file contains any information.
-    # [ $(/bin/wc -l $POMO | /bin/cut -d" " -f1) -gt 0 ]
+    # [ $(wc -l $POMO | cut -d" " -f1) -gt 0 ]
     # return $?
 # }
 
 function pomo_pause {
     # Toggle the pause status on the POMO file.
-    if [ $(/bin/wc -l $POMO | /bin/cut -d" " -f1) -gt 0 ]; then
+    if [ $(wc -l $POMO | cut -d" " -f1) -gt 0 ]; then
         # Restart a paused pomo block by updating the time stamp of the POMO
         # file.
         running=$(pomo_stat)
 
-        mtime=$(${DATE_CMD} --date "@$(( $(/bin/date +%s) - running))" +%m%d%H%M.%S)
+        mtime=$(${DATE_CMD} --date "@$(( $(date +%s) - running))" +%m%d%H%M.%S)
         rm -f $POMO # erase saved time stamp.
         touch -m -t $mtime $POMO
     else
@@ -57,8 +57,8 @@ function pomo_update {
     block_time=$(( (WORK_TIME+BREAK_TIME)*60 ))
     if [[ $running -ge $block_time ]]; then
         ago=$(( running % block_time )) # We should've started the new cycle a while ago?
-        mtime=$(${DATE_CMD} --date "@$(( $(/bin/date +%s) - ago))" +%m%d%H%M.%S)
-        /bin/touch -m -t $mtime $POMO
+        mtime=$(${DATE_CMD} --date "@$(( $(date +%s) - ago))" +%m%d%H%M.%S)
+        touch -m -t $mtime $POMO
     fi
 }
 
@@ -70,7 +70,7 @@ function pomo_stat {
         now=$(${DATE_CMD} +%s)
         running=$((now-pomo_start))
     fi
-    /bin/echo $running
+    echo $running
 }
 
 function pomo_clock {
@@ -87,7 +87,7 @@ function pomo_clock {
         else
             prefix=W
         fi
-        [ $(/bin/wc -l $POMO | /bin/cut -d" " -f1) -gt 0 ] && prefix=P$prefix
+        [ $(wc -l $POMO | cut -d" " -f1) -gt 0 ] && prefix=P$prefix
         min=$(( left / 60 ))
         sec=$(( left - 60*min ))
         printf "%2s%02d:%02d\n" $prefix $min $sec
@@ -153,7 +153,7 @@ function send_msg {
 
 function pomo_usage {
     # Print out usage message.
-    /bin/cat <<END
+    cat <<END
 pomo.sh [-h] [bar | start | stop | pause | clock | status | notify | usage]
 
 pomo.sh - a simple Pomodoro timer.

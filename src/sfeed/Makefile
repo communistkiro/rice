@@ -1,7 +1,7 @@
 .POSIX:
 
 NAME = sfeed
-VERSION = 0.9.17
+VERSION = 0.9.18
 
 # paths
 PREFIX = /usr/local
@@ -80,7 +80,7 @@ ${OBJ}: ${HDR}
 	${CC} ${SFEED_CFLAGS} ${SFEED_CPPFLAGS} -o $@ -c $<
 
 ${LIBUTIL}: ${LIBUTILOBJ}
-	${AR} rc $@ $?
+	${AR} -rc $@ $?
 	${RANLIB} $@
 
 ${LIBXML}: ${LIBXMLOBJ}
@@ -96,7 +96,7 @@ dist:
 		sfeedrc.example style.css \
 		"${NAME}-${VERSION}"
 	# make tarball
-	tar -cf - "${NAME}-${VERSION}" | \
+	tar cf - "${NAME}-${VERSION}" | \
 		gzip -c > "${NAME}-${VERSION}.tar.gz"
 	rm -rf "${NAME}-${VERSION}"
 

@@ -26,7 +26,7 @@ BUGS
 HEREDOC
 return 1;;esac; done;
 
-t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX);
+t1=$(mktemp /tmp/xrpp.XXXXXXXX); t2=$(mktemp /tmp/xrpp.XXXXXXXX);
 
 for a in $(lynx -listonly -dump $@); do;
   # EMBEDDED BC PLAYERS

@@ -42,16 +42,16 @@ return 1;;esac; done;
 if [ $# -gt 0 ]; then; xrpp $@; fi;
 cd ~/nm;
 while IFS= read -r a; do;
-    t1=$(mktemp /tmp/xrp.XXXXXX); t2=$(mktemp /tmp/xrp.XXXXXX); t3=$(mktemp /tmp/xrp.XXXXXX);
+    t1=$(mktemp /tmp/xrp.XXXXXXXX); t2=$(mktemp /tmp/xrp.XXXXXXXX); t3=$(mktemp /tmp/xrp.XXXXXXXX);
     curl ${a} > $t1;
-    if /bin/grep -s 'redirected' $t1; then
-        a=$(/bin/grep -Po '"http.*?"' $t1 | tr -d '"');
+    if grep -s 'redirected' $t1; then
+        a=$(grep -Po '"http.*?"' $t1 | tr -d '"');
         curl ${a} > $t1;
     fi;
     sed -n '15,/">/p' $t1 > $t2;
-    /bin/grep 'class="tag"' $t1 | /bin/grep -Po 'tag/[a-z-]+' | cut -c 5- | /bin/sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/genre;
+    grep 'class="tag"' $t1 | grep -Po 'tag/[a-z-]+' | cut -c 5- | sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/genre;
     # rymgenre "$(sed -rn '1s/(.*) by (.*), rel.*/\2 \1/p' $t2)" >> /tmp/genre;
-    if /bin/grep -s 'releases' $t2; then
+    if grep -s 'releases' $t2; then
         echo ${a} >> ~/nm/soon;
         sort -uo ~/nm/soon ~/nm/soon;
     else
@@ -67,19 +67,20 @@ while IFS= read -r a; do;
             echo ${a} >> ~/nm/missing;
             sort -uo ~/nm/missing ~/nm/missing;
         else
-            if [ $(sed -rn '/^[1-9]+\.\ /p' $t2 | tail -1 | /bin/grep -Po '^\d+') -gt ${#w} ]; then
+            if [ $(sed -rn '/^[1-9]+\.\ /p' $t2 | tail -1 | grep -Po '^\d+') -gt ${#w} ]; then
                 echo ${a} >> ~/nm/missing;
                 sort -uo ~/nm/missing ~/nm/missing;
             fi;
-            printf "%s\n" ${(@)w} | /bin/grep -Po '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/' > $t3;
-            # FIXME figure out when v.a., feat., etc. -> TPE2
+            printf "%s\n" ${(@)w} | grep -Po '^.*\(\d{8}\)]' | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\])/\2-\3-\4/' > $t3;
+            [ $(sort -u $t3 | wc -l) -eq $(wc -l $t3) ] && [ "$(printf "0 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && sed -ir 's/^.* \[/Various Artists [/' $t3
             while IFS= read -r s; do;
                 mkdir -p ${s};
-                /bin/mv ${(@)w} ${s};
+                mv ${(@)w} ${s};
                 tagme ${s};
-                for b in ${(@f)"$(find "${s}" -name '*.bak')"}; do rm -f "$b"; done;
+                rm ${(@f)"$(find "${s}" -name '*.bak')"};
+                # rm ${(@f)"$(fd -e bak ${s})"};
                 mkdir -p ${s%% \[*};
-                /bin/mv ${s} ${s%% \[*};
+                mv ${s} ${s%% \[*};
                 break;
             done < $t3 | sort -u;
         fi;
@@ -87,7 +88,7 @@ while IFS= read -r a; do;
         sort -uo ~/nm/oldlinks ~/nm/oldlinks;
         echo "\n\n";
     fi;
-    /bin/sed -i '1,1d' ~/nm/newlinks;
+    sed -i '1,1d' ~/nm/newlinks;
     rm -f $t1 $t2 $t3;
 done < ~/nm/newlinks;
 }

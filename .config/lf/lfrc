@@ -67,7 +67,7 @@ cmd open ${{
         *.doc) catdoc -m94 $fx | less;;
         *.epub) epub2txt -n $fx | less;;
         *.htm|*.html|*.xhtml) firefox --new-tab $fx;;
-        *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man $fx;;
+        *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $fx;;
         *.info) info $fx;;
         *.exe) wine $fx;;
         *) yn "sublime?" "subl3 -n $fx";;

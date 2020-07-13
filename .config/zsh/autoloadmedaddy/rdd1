@@ -3,17 +3,17 @@
 # assumes artist, album, year tags exist
 function rdd1() {
 local t1 t2 t3 z d;
-t1=$(mktemp /tmp/XXXXXX); t2=$(mktemp /tmp/XXXXXX);
+t1=$(mktemp /tmp/rdd1.XXXXXXXX); t2=$(mktemp /tmp/rdd1.XXXXXXXX);
 ls . > ${t1};
 while IFS= read -r d; do;
   if [[ -d ${d} ]]; then;
-    /bin/find ${d} -regextype posix-extended -iregex ".*(mp3|wav|flac|acc|m4a|ogg)" -type f > ${t2};
+    find ${d} -regextype posix-extended -iregex ".*(mp3|wav|flac|acc|m4a|ogg)" -type f > ${t2};
     if ! [ -s ${t2} ]; then printf "No .mp3's found!"; return 1; fi;
     while IFS= read -r m; do;
       z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
       mkdir ${z};
-      /bin/mv ${m} ${z};
-      /bin/mv ${d}/*jpg ${z} || /bin/mv ${d}/*png ${z} || /bin/mv ${d}/*jpeg ${z};
+      mv ${m} ${z};
+      mv ${d}/*jpg ${z} || mv ${d}/*png ${z} || mv ${d}/*jpeg ${z};
     done < ${t2};
     rmdir * 2&> /dev/null;
   fi;
@@ -23,10 +23,10 @@ ls . > ${t1};
 while IFS= read -r d; do;
   mkdir -p ${d%% \[*}; 
   if [[ ${d} =~ ',[0-9]{4})]' ]]; then;
-    /bin/mv ${d} ${d/,[0-9](#c4))]/)]};
-    /bin/mv ${d/,[0-9](#c4))]/)]} ${d%% \[*}; 
+    mv ${d} ${d/,[0-9](#c4))]/)]};
+    mv ${d/,[0-9](#c4))]/)]} ${d%% \[*}; 
   else;
-    /bin/mv ${d} ${d%% \[*}; 
+    mv ${d} ${d%% \[*}; 
   fi;
 done < ${t1};
 rmdir ${d}*; rm ${t1} ${t2};

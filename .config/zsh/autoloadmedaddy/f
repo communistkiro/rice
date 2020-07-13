@@ -9,5 +9,5 @@
 function f() {
     local sels;
     sels=( "${(@f)$(fd "${fd_default[@]}" "${@:2}"| fzf)}" )
-    /bin/test -n "$sels" && print -z -- "$1 ${sels[@]:q:q}"
+    test -n "$sels" && print -z -- "$1 ${sels[@]:q:q}"
 }

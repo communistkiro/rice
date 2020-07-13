@@ -10,11 +10,11 @@ a=(
 c=~/im; # starting dir & file/folder choice
 cd $c;
 while true; do;
-    [ -d $c ] && f=($(/bin/ls -ap $c | grep -v '/')) && d=($(/bin/ls -ap $c | grep '/' | grep -v '^\./')); 
+    [ -d $c ] && f=($(ls -ap $c | grep -v '/')) && d=($(ls -ap $c | grep '/' | grep -v '^\./')); 
     c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l 10 -p $(pwd) ) || break; 
     [ -d $c ] && cd $c && c=.;
     [ -f $c ] && (feh ${s-${a[4]}} $c || break);
     [[ $c = "bgopts" ]] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options') && feh $s $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
-    [[ $c = "rand" ]] && (feh ${s-${a[4]}} $(/bin/ls -ap . | grep -v '/' | shuf -n 1) || break);
+    [[ $c = "rand" ]] && (feh ${s-${a[4]}} $(ls -ap . | grep -v '/' | shuf -n 1) || break);
 done
 unset c a f s d w;

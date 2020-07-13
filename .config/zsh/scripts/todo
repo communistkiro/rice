@@ -13,7 +13,7 @@ prompt="Add/delete a task: "
 
 cmd=$(dmenu -i -l "$height" -p "$prompt" "$@" < "$file")
 while [ -n "$cmd" ]; do
- 	if grep -q "^$cmd\$" "$file"; then
+ 	if grep -s "^$cmd\$" "$file"; then
 		grep -v "^$cmd\$" "$file" > "$file.$$"
 		mv "$file.$$" "$file"
         height=$(( height - 1 ))

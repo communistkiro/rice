@@ -8,7 +8,7 @@
 
 #include "util.h"
 
-static struct feed **feeds;
+static struct feed *feeds;
 static char *line;
 static size_t linesize;
 static time_t comparetime;
@@ -41,19 +41,19 @@ printfeed(FILE *fpitems, FILE *fpin, struct feed *f)
 		parseline(line, fields);
 
 		parsedtime = 0;
-		if (strtotime(fields[FieldUnixTimestamp], &parsedtime))
-			continue;
-		if (!(tm = localtime(&parsedtime)))
-			err(1, "localtime");
-
-		isnew = (parsedtime >= comparetime) ? 1 : 0;
-		totalnew += isnew;
-		f->totalnew += isnew;
+		if (!strtotime(fields[FieldUnixTimestamp], &parsedtime) &&
+		    (tm = localtime(&parsedtime))) {
+			isnew = (parsedtime >= comparetime) ? 1 : 0;
+			totalnew += isnew;
+			f->totalnew += isnew;
+			fprintf(fpitems, "%04d-%02d-%02d&nbsp;%02d:%02d ",
+			        tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+			        tm->tm_hour, tm->tm_min);
+		} else {
+			fputs("                 ", fpitems);
+		}
 		f->total++;
 
-		fprintf(fpitems, "%04d-%02d-%02d&nbsp;%02d:%02d ",
-		        tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-		        tm->tm_hour, tm->tm_min);
 		if (fields[FieldLink][0]) {
 			fputs("<a href=\"", fpitems);
 			xmlencode(fields[FieldLink], fpitems);
@@ -82,7 +82,7 @@ main(int argc, char *argv[])
 	if (pledge("stdio rpath wpath cpath", NULL) == -1)
 		err(1, "pledge");
 
-	if (!(feeds = calloc(argc, sizeof(struct feed *))))
+	if (!(feeds = calloc(argc, sizeof(struct feed))))
 		err(1, "calloc");
 
 	if ((comparetime = time(NULL)) == -1)
@@ -111,20 +111,16 @@ main(int argc, char *argv[])
 	      "<body class=\"frame\"><div id=\"items\">", fpitems);
 
 	if (argc == 1) {
-		if (!(feeds[0] = calloc(1, sizeof(struct feed))))
-			err(1, "calloc");
-		feeds[0]->name = "";
-		printfeed(fpitems, stdin, feeds[0]);
+		feeds[0].name = "";
+		printfeed(fpitems, stdin, &feeds[0]);
 	} else {
 		for (i = 1; i < argc; i++) {
-			if (!(feeds[i - 1] = calloc(1, sizeof(struct feed))))
-				err(1, "calloc");
 			name = ((name = strrchr(argv[i], '/'))) ? name + 1 : argv[i];
-			feeds[i - 1]->name = name;
+			feeds[i - 1].name = name;
 
 			if (!(fp = fopen(argv[i], "r")))
 				err(1, "fopen: %s", argv[i]);
-			printfeed(fpitems, fp, feeds[i - 1]);
+			printfeed(fpitems, fp, &feeds[i - 1]);
 			if (ferror(fp))
 				err(1, "ferror: %s", argv[i]);
 			fclose(fp);
@@ -142,7 +138,7 @@ main(int argc, char *argv[])
 		      "<body class=\"frame\">\n<div id=\"sidebar\">\n", fpmenu);
 
 		for (i = 1; i < argc; i++) {
-			f = feeds[i - 1];
+			f = &feeds[i - 1];
 			if (f->totalnew)
 				fputs("<a class=\"n\" href=\"items.html#", fpmenu);
 			else

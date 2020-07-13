@@ -1,7 +1,7 @@
 #!/bin/zsh
 ping -c 1 abv.bg &>/dev/null  || return 1;
 # UPDATE /ETC/HOSTS
-tmp=$(mktemp -d /tmp/XXXXXX);
+tmp=$(mktemp -d);
 cd ${tmp};
 a=(
   "http://winhelp2002.mvps.org/hosts.txt"
@@ -36,7 +36,7 @@ q=("${(@f)$(perl -ne 's/^#(0\.0\.0\.0|::) //n && print' /etc/hosts)}");
 
 head -29 22 | tail -14 > /etc/hosts;
 
-/bin/sed -i '1,40d' 22;
+sed -i '1,40d' 22;
 
 cat ${tmp}/[0-9]* ~/dcs/blockme | perl -pe '
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n; 
@@ -57,7 +57,7 @@ cat ${tmp}/[0-9]* ~/dcs/blockme | perl -pe '
 #   while IFS= read -r h; do perl -ie "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;
 # else; cat h >> /etc/hosts; fi;
 # [[ -n $q ]] && for a in {1..${#q}}; do; perl -ipe "s/(.*\b${q[a]}$)/#\1/" h; done;
-[[ -n $q ]] && for a in {1..${#q}}; do; /bin/sed -ir "s/.* ${q[a]}$/#&/" h; done;
+[[ -n $q ]] && for a in {1..${#q}}; do; sed -ir "s/.* ${q[a]}$/#&/" h; done;
 cat h >> /etc/hosts;
 
 cd ~; rm -r ${tmp}; unset a q s tmp;
