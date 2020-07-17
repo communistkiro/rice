@@ -1,0 +1,30 @@
+#!/bin/zsh
+whn () {
+[ $# -eq 0 ] && printf 'No text given!\n' && return 1;
+# init date
+[ -e ~/.cache/whend ] || \
+y=$(date +'%y') && \
+for a in {$y..$((y+4))}; do
+  for s in {01..12}; do
+    for d in {01..31}; do
+      printf '20%s-%s-%s\n' $a $s $d >> ~/.cache/whend;
+    done
+  done
+done && unset a s d;
+
+# init (and fin) times 
+[ -e ~/.cache/whent ] || \
+for a in {00..23}; do
+  for s in {00..59}; do
+    printf "%s:%s\n" $a $s >> ~/.cache/whent;
+  done
+done && unset a s;
+
+unset d i f;
+d=$(cat ~/.cache/whend | fzf --height=20 --border=horizontal | tr '-' ' ') || return 1;
+i=$(cat ~/.cache/whent | fzf --height=20 --border=horizontal) && f=$(cat ~/.cache/whent | fzf --height=20 --border=horizontal);
+printf '%s, %-11s\t' $d $i ${f:+-$f} >> ~/.when/calendar;
+printf '%s ' $@ >> ~/.when/calendar;
+printf '\n' >> ~/.when/calendar;
+unset q d f
+}
