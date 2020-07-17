@@ -40,10 +40,10 @@ printfeed(FILE *fp, const char *feedname)
 		}
 
 		if (feedname[0]) {
-			printutf8pad(stdout, feedname, 15, ' ');
+			printutf8pad(stdout, feedname, 8, ' ');
 			fputs("  ", stdout);
 		}
-		printutf8pad(stdout, fields[FieldTitle], 120, ' ');
+		printutf8pad(stdout, fields[FieldTitle], 100, ' ');
 		printf(" %s\n", fields[FieldLink]);
 	}
 }

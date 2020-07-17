@@ -6,7 +6,7 @@ setxkbmap -layout "us,bg,de" -variant ",phonetic,deadgraveacute" -geometry "pc" 
 
 
 # ... delay repeatrate
-xset r rate 220 85 &
+xset r rate 275 85 &
 
 # Map the caps lock key to super...
 # setxkbmap -option caps:super

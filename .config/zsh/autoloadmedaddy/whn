@@ -1,30 +1,49 @@
 #!/bin/zsh
-whn () {
-[ $# -eq 0 ] && printf 'No text given!\n' && return 1;
-# init date
-[ -e ~/.cache/whend ] || \
-y=$(date +'%y') && \
-for a in {$y..$((y+4))}; do
-  for s in {01..12}; do
-    for d in {01..31}; do
-      printf '20%s-%s-%s\n' $a $s $d >> ~/.cache/whend;
+function whn () {
+while getopts '' o; do case $o in (*)
+less -F <<HEREDOC
+NAME
+  whn - script using fzf facilitate when entry input.
+
+SYNOPSIS
+  whn <reminder text>
+
+DESCRIPTION
+  Creates an event in when's calendar file for chosen date and beginning and ending times. 
+  Returns 1 if no date chosen or no text input; all-day event if no initial time chosen; only start, if no 
+  final time chosen. Delete ~/.cache/{whend,whent} files to recreate them for next 4 years.
+
+HEREDOC
+return 1;; esac; done;
+
+[ ! $# -gt 0 ] && printf 'No text input!\n' && return 1;
+
+local a s d;
+
+if [ ! -e ~/.cache/whend ]; then
+  local f=$(date +'%y');
+  for a in {$f..$((f+4))}; do
+    for s in {01..12}; do
+      for d in {01..31}; do
+        printf '20%s-%s-%s\n' $a $s $d >> ~/.cache/whend;
+      done
     done
   done
-done && unset a s d;
+  d=
+fi
 
-# init (and fin) times 
-[ -e ~/.cache/whent ] || \
-for a in {00..23}; do
-  for s in {00..59}; do
-    printf "%s:%s\n" $a $s >> ~/.cache/whent;
+if [ ! -e ~/.cache/whent ]; then
+  for a in {00..23}; do
+    for s in {00..59}; do
+      printf '%s:%s\n' $a $s >> ~/.cache/whent;
+    done
   done
-done && unset a s;
+fi
 
-unset d i f;
-d=$(cat ~/.cache/whend | fzf --height=20 --border=horizontal | tr '-' ' ') || return 1;
-i=$(cat ~/.cache/whent | fzf --height=20 --border=horizontal) && f=$(cat ~/.cache/whent | fzf --height=20 --border=horizontal);
-printf '%s, %-11s\t' $d $i ${f:+-$f} >> ~/.when/calendar;
+a=$(cat ~/.cache/whend | fzf +m --prompt='date: ' --border=horizontal --height=20) || return 1;
+s=$(cat ~/.cache/whent | fzf +m --prompt='init: ' --border=horizontal --height=20) && d=$(cat ~/.cache/whent | fzf +m --prompt='fint: ' --border=horizontal --height=20);
+
+printf '%s, %-12s\t' ${a//-/ } ${s:+${s}${d:+-$d}} >> ~/.when/calendar;
 printf '%s ' $@ >> ~/.when/calendar;
 printf '\n' >> ~/.when/calendar;
-unset q d f
 }

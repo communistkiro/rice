@@ -63,10 +63,13 @@ plugins=(
   extract
   colored-man-pages
   colorize
-  # fzf
+  fzf
   # timer 
 )
+
 # TIMER_PRECISION=6
+
+export FZF_BASE=/root/src/fzf
 
 autoload -U +X compinit && compinit 
 autoload -U +X bashcompinit && bashcompinit
@@ -78,14 +81,13 @@ setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB RE_MATCH_PCRE
 # ALII
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
-alias audoibook='mpv --force-window=yes'
+alias abook='mpv --force-window=yes'
 alias bb='bye'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
-alias book='st -n "cfastread" -f "Fira Code:pixelsize=72:antialias=true:autohint:true" -g=32x4 &>/dev/null & disown'
 alias bustin='16t /media/ELEM/Music/N/Neil\ Cicierega/Neil\ Cicierega\ \[Mouth\ Moods\ \(2017\)\]/08\ Bustin.mp3'
 alias catdoc='catdoc -m256'
-alias ccl='calcurse -q'
+alias ccal='calcurse -q'
 alias clb="col -b"
 alias cmat='cmatrix -au2'
 alias cow='cowthink -e "^^" -f xxx -T "U"'
@@ -98,7 +100,8 @@ alias ff='firefox &>/dev/null & disown'
 alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
 alias flite='flite -voice awb'
 alias fort='/bin/fortune | cow'
-alias fread="feed 'lynx -dump' | less"
+alias fread='feed flinks'
+alias lread="feed 'lynx -dump' | less"
 alias fzf='fzf -m \
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
   --bind "alt-r:execute(mle {+})" \
@@ -116,8 +119,6 @@ alias man='man -a'
 alias mle='mle -i1 -w1'
 alias mpdd='pgrep mpd &>/dev/null && pk mpd && sleep 5 && mpdd || mpd && mpdas -d && ncm'
 alias mpi='mp3info2'
-alias ms1='tmines -fd22; clear'
-alias ms='ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1; ms1'
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=36" &>/dev/null & disown'
 alias ncm='ncmpcpp'
 alias oc='octave-cli'
@@ -145,23 +146,15 @@ alias xbr='xbps-remove -R'
 alias xbs='xbps-install -Su'
 alias xc='xclip -selection clipboard'
 
+# bindkey '\' forward-char
+# bindkey ';' backward-char
 
 # FUNCTIONS
 fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
-autoload $(ll --classic /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc && zmathfunc
+autoload $(ls /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc
 
-# STACK TAB-AUTOCOMPLETION # https://docs.haskellstack.org/en/stable/shell_autocompletion/
-# eval "$(stack --bash-completion-script stack)"
-
-# qpdf autocompletion
-# autoload -U +X bashcompinit && bashcompinit && complete -o bashdefault -o default -o nospace -C qpdf qpdf
-
+# wget -P /root/.surf/script/ https://www.4chan-x.net/builds/4chan-X.user.js
 
 # SOURCE
 . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 . /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-# bindkey '\' forward-char
-# bindkey ';' backward-char
-
-
-# wget -P /root/.surf/script/ https://www.4chan-x.net/builds/4chan-X.user.js

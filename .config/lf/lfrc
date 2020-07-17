@@ -21,14 +21,14 @@ set number          on
 set relativenumber  on
 set globsearch      on
 set tabstop         4
-set shell           sh
-# set shell           zsh
+# set shell           sh
+set shell           zsh
 
 # set '-eu' options for shell commands
 # These options are used to have safer shell commands. Option '-e' is used to exit on error and option '-u' is used to give error for unset variables. Option '-f' disables pathname expansion which can be useful when $f, $fs, and $fx variables contain names with '*' or '?' characters. However, this option
 # is used selectively within individual commands as it can be limiting at times.
-set shellopts '-eu'
-# set shellopts '-eu:--shwordsplit'
+# set shellopts '-eu'
+set shellopts '-eu:--shwordsplit'
 
 # set internal field separator (IFS) to "\n" for shell commands
 # This is useful to automatically split file names in $fs and $fx properly since default file separator used in these variables (i.e. 'filesep' option) is newline. You need to consider the values of these options and create your commands accordingly.
@@ -66,7 +66,7 @@ cmd open ${{
         *.docx) docx2txt $fx - | less;;
         *.doc) catdoc -m94 $fx | less;;
         *.epub) epub2txt -n $fx | less;;
-        *.htm|*.html|*.xhtml) firefox --new-tab $fx;;
+        *.htm|*.html|*.xhtml) firefox --new-tab $fx &>/dev/null & disown;;
         *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $fx;;
         *.info) info $fx;;
         *.exe) wine $fx;;
@@ -76,10 +76,10 @@ cmd open ${{
 
 cmd cock %subl3 -n --command toggle_side_bar $fx
 
-cmd rename ${{
-    [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
-    [ -e ${d%?} ] && return 1  || mv $f ${d%?};
-}}
+# cmd rename ${{
+#     [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
+#     [ -e ${d%?} ] && return 1 || mv $f ${d%?};
+# }}
 
 # make sure trash folder exists
 # %mkdir -p /tmp/.trash
@@ -119,9 +119,6 @@ cmd rename ${{
 #     rm -rf $1
 # }}
 
-# cmd fzfsel ${{
-#     fzf --phony
-# }}
 cmd mkdir ${{
     if [ $# -gt 0 ]; then
         d="$(printf '%s ' $@)";
@@ -174,27 +171,129 @@ cmd rifle ${{
 #     lf -remote 'send clear'
 # }}
 
-# hard and soft symlinkage
-# cmd Link %{{
-#     lf -remote 'load' | while read file; do
-#         if [ ! -n "${mode+1}" ]; then
-#             mode="$file"
-#             continue
-#         fi
-#         files+=("$file")
-#     done
-#     if [ "${#files[@]}" -le 1 ]; then
-#         lf -remote "send $id echo no files to link"
-#         exit 0
-#     fi
-#     # symbolicly copy mode is indicating a soft link
-#     if [[ "$mode" == copy ]]; then
-#         /bin/ln -sr $files -t .
-#     # while a move mode is indicating a hard link
-#     elif [[ "$mode" == move ]]; then
-#         /bin/ln $files -t .
-#     fi
-# }}
+cmd fzfcd ${{
+    local s="$(fd -uu -i -t d | fzf +m)";
+    test -d "$s" && lf -remote "send $id cd \"$s\""
+}}
+
+cmd Link %{{
+    lf -remote 'load' | while read file; do
+        if [ ! -n "${mode+1}" ]; then
+            mode="$file"
+            continue
+        fi
+        files+=("$file")
+    done
+    if [ "${#files[@]}" -le 1 ]; then
+        lf -remote "send $id echo no files to link"
+        exit 0
+    fi
+    # symbolicly copy mode is indicating a soft link
+    if [[ "$mode" == copy ]]; then
+        ln -sr $files -t .
+    # while a move mode is indicating a hard link
+    elif [[ "$mode" == move ]]; then
+        ln $files -t .
+    fi
+}}
+
+cmd cut-add %{{
+    files=$(lf -remote load | tail -n +2)
+    newline=$'\n'
+
+    # change to $fx to add current file when no toggled
+    # files exist.
+    if [ -n "$files" ]; then
+        new_files=$(echo "$files${newline}$fx" | sort | uniq)
+    else
+        new_files=$fx
+    fi
+    # remove empty lines from the file list, because they keep messing
+    # up the selection.
+    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+
+    lf -remote "save${newline}move${newline}${new_files}${newline}"
+    lf -remote "send $id unselect${newline}send $id sync"
+}}
+
+cmd copy-add %{{
+    files=$(lf -remote load | tail -n +2)
+    newline=$'\n'
+
+    # change to $fx to add current file when no toggled
+    # files exist.
+    if [ -n "$files" ]; then
+        new_files=$(echo "$files${newline}$fx" | sort | uniq)
+    else
+        new_files=$fx
+    fi
+    # remove empty lines from the file list, because they keep messing
+    # up the selection.
+    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+
+    lf -remote "save${newline}copy${newline}${new_files}${newline}"
+    lf -remote "send $id unselect${newline}send $id sync"
+}}
+
+cmd cut-remove %{{
+    files=$(lf -remote load)
+    operation=$(echo "$files" | head -n1)
+
+    if [ "$operation" != "move" ]; then
+        lf -remote "send $id echoerr no files in cut list."
+        exit 1
+    fi
+
+    files=$(echo "$files" | tail -n +2)
+    newline=$'\n'
+
+    # change to $fx to remove current file when no toggled
+    # files exist.
+    if [ -n "$files" ]; then
+        # here we want all files in $files that aren't in $fs, making sure
+        # that none of the entries in $fs are included, even when they aren't
+        # in $files. To do this we concatenate $files and $fs (twice), printing
+        # only the uniqe lines.
+        new_files=$(echo "$files$newline$fx$newline$fx" | sort | uniq -u)
+    else
+        new_files=$files
+    fi
+    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+
+    lf -remote "save${newline}move${newline}${new_files}${newline}"
+    lf -remote "send $id unselect${newline}send $id sync"
+}}
+
+cmd copy-remove %{{
+    files=$(lf -remote load)
+    operation=$(echo "$files" | head -n1)
+
+    if [ "$operation" != "move" ]; then
+        lf -remote "send $id echoerr no files in cut list."
+        exit 1
+    fi
+
+    files=$(echo "$files" | tail -n +2)
+    newline=$'\n'
+
+    # change to $fx to remove current file when no toggled
+    # files exist.
+    if [ -n "$files" ]; then
+        # here we want all files in $files that aren't in $fs, making sure
+        # that none of the entries in $fs are included, even when they aren't
+        # in $files. To do this we concatenate $files and $fs (twice), printing
+        # only the uniqe lines.
+        new_files=$(echo "$files$newline$fx$newline$fx" | sort | uniq -u)
+    else
+        new_files=$files
+    fi
+    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+
+    lf -remote "save${newline}copy${newline}${new_files}${newline}"
+    lf -remote "send $id unselect${newline}send $id sync"
+}}
+
+
 # =================== KEYBINDINGS ===================
 
 # UNMAP ALL SHIT KEYBINDINGS
@@ -288,31 +387,33 @@ map <a-[>       half-up
 map <a-\'>      half-down
 map ]           bottom
 map \}          top
-# map             page-up
-# map             page-down
 
 # ACTIONS
 map Q           quit
 map r           rifle $fx
 map <esc>       cmd-escape
-map y           copy
-map d           cut
+map yy          copy
+map ya          copy-add
+map yr          copy-remove
+map dd          cut
+map da          cut-add
+map dr          cut-remove
 map p           paste
-# map P           :Link
+map P           :Link
 # map e           find
 map f           fzf
 map n           search-next
 map N           search-prev
-# map a           rename
-map a           push :rename<space>
+map a           rename
+# map a           push :rename<space>
 map gh          cd ~
 map gp          cd /tmp
 map ge          cd /etc
 map gu          cd /usr
-map cd          push :cd<space>
+map c           push :cd<space>
+map e           fzfcd
 map E           cock
-map i           $$PAGER $f
-map l           $$PAGER $f
+map l           $$PAGER $fx
 map <tab>       cmd-complete
 map <c-l>       redraw
 map <c-l>       reload
@@ -321,14 +422,14 @@ map R           reload
 # map <enter>     $$f
 map X           !$f
 map <space>     toggle
-map u           unmark
+map q           unselect
 map x           read 
 map w           shell
 map S           $$SHELL
 map D           push :delete<space>$fx<enter>
 map ,           push :glob-select<space>*
 map .           push :glob-unselect<space>*
-map q           clear
+# map q           clear
 map v           invert
 map n           push :mkdir<space>
 map Z           push :7z<space>
