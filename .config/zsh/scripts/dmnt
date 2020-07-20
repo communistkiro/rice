@@ -6,12 +6,12 @@ case $(printf "mount\numount" | dmenu -i -l 2 -p '?') in
     d=(${(@F)$(findmnt --real -nlo 'source')/[0-9]*/ }); # FIXME
     a=(${(@f)"$(lsblk -nlpo 'name,label,type,size,uuid,state,mountpoint' 2>/dev/null | grep -Pv '/boot$|/$|SWAP' | grep -v "${(@F)$(findmnt --real -nlo 'source')} " | grep -v ${(@F)d} | column)"});
     s=$(printf "%s\n" ${(@)a} | dmenu -i -p 'device  label  type  size  uuid  status' -l ${#a} | awk '{print $1}') || return 1;
-    mount ${s} 2&>/dev/null && return 0;
-    while true; do c=$(ls -ap | grep -P '^(?!\./$).+/$' | dmenu -i -p "$(pwd)") || break; cd ${c}; done;
-    [ "$(printf "no\\nyes" | dmenu -i -p "mount ${s} to $(pwd)?" -l 2)" = "yes" ] && mount ${s} $(pwd);;
+    mount $s 2&>/dev/null && return 0;
+    while true; do c=$(ls -ap | grep -P '^(?!\./$).+/$' | dmenu -i -p "$(pwd)") || break; [ -d $c ] && cd $c; done;
+    [ "$(printf "no\\nyes" | dmenu -i -p "mount ${s} to $(pwd)?" -l 2)" = "yes" ] && mount $s $(pwd);;
 'umount') 
     a=(${(@f)"$(findmnt --real -nlo 'target,source,fstype' | column | tr '\t' '\n')"});
     s=$(printf "%s\n" ${(@)a} | dmenu -i -l ${#a} -p 'target  source  fstdype' | grep -oP '^[\w/]+') || return 1;
-    [ "$(printf "no\\nyes" | dmenu -i -p "unmount ${s}?" -l 2)" = "Yes" ] && umount ${s};;
+    [ "$(printf "no\\nyes" | dmenu -i -p "unmount ${s}?" -l 2)" = "Yes" ] && umount $s;;
 esac;
 unset d a s c

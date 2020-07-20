@@ -30,7 +30,7 @@ pgrep -x subl3 &>/dev/null || subl3 &
 ~/.fehbg &
 
 # Screen lock
-pgrep -x xautolock &>/dev/null || xautolock -time 20 -secure -locker 'setxkbmap us; export LANG=en_US.UTF-8; xbacklight -set 0; slock; xbacklight -set 15' &
+pgrep -x xautolock &>/dev/null || xautolock -time 20 -secure -locker 'xbacklight -set 0; slock; xbacklight -set 15' &
 
 # mute mic
 amixer sset Capture nocap &

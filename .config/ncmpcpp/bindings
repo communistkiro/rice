@@ -146,6 +146,9 @@
 def_key "H"
  dummy
 
+def_key "F"
+ dummy
+
 def_key "C"
  dummy
 
@@ -418,8 +421,8 @@ def_key "e"
 def_key "e"
  edit_playlist_name
 
-def_key "e"
- edit_lyrics
+#def_key "e"
+# edit_lyrics
 
 def_key "a"
  add_selected_items

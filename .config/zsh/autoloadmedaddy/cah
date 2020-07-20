@@ -1,0 +1,23 @@
+#!/bin/zsh
+# using https://github.com/crhallberg/json-against-humanity and 'official' rules from https://www.cardsagainsthumanity.com - draw ten white cards and black card
+function cah () {
+cd ~/src/json-against-humanity;
+# local a s q w; # for some reason the 10 white cards don't show up with local vars
+
+# q=$(jq '.white[].text' full.md.json | wc -l);
+# w=$(jq '.black[].text' full.md.json | wc -l);
+q=$(jq '.cards.white[].text' compact.md.json|wc -l);
+w=$(jq '.cards.black[].text' compact.md.json|wc -l);
+
+while true; do
+  clear;
+  for s in {1..10}; do
+    a[s]=$((RANDOM % q));
+  done
+  # jq -r ".white[${(j:,:)a}].text" full.md.json | dmenu -i  -l 5 -g 2 -p "$(jq -r ".black[$((RANDOM % w + 1))].text" full.md.json)" || break;
+  # jq -r ".white[${(j:,:)a}].text" full.md.json | fzf --layout=reverse --border=horizontal --height=15 --prompt="$(jq -r ".black[$((RANDOM % w))].text" full.md.json)" || break;
+  jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzf --layout=reverse --border=horizontal --height=15 --prompt="$(jq ".cards.black[$((RANDOM % w))].text" compact.md.json)" || break;
+done
+cd ~; 
+unset q w a s;
+}

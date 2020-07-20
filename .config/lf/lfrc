@@ -56,21 +56,22 @@ cmd open ${{
     #     *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
     # esac
     set -f
-    case $f in
-        *.gif|*.png|*.jpeg|*.jpg|*.gif|*.tiff|*.pnm|*.tiff|*.bmp) feh --scale-down $fx;;
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx | less; yn 'Unpack?' "aunpack $fx";;
-        *.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi) mpv --no-input-terminal --really-quiet $fx &;;
-        *.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $fx;;
-        *.eps) gv -- $fx;;
-        *.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $fx;;
-        *.docx) docx2txt $fx - | less;;
-        *.doc) catdoc -m94 $fx | less;;
-        *.epub) epub2txt -n $fx | less;;
-        *.htm|*.html|*.xhtml) firefox --new-tab $fx &>/dev/null & disown;;
-        *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $fx;;
-        *.info) info $fx;;
-        *.exe) wine $fx;;
-        *) yn "sublime?" "subl3 -n $fx";;
+    case $fx in
+        (*.gif|*.png|*.jpeg|*.jpg|*.gif|*.tiff|*.pnm|*.tiff|*.bmp) feh --scale-down $fx;;
+        # (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx | less; yn 'Unpack?' "aunpack $fx";;
+        (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx;;
+        (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi) mpv --no-input-terminal --really-quiet $fx &;;
+        (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $fx;;
+        (*.eps) gv -- $fx;;
+        (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $fx &>/dev/null & disown;;
+        (*.docx) docx2txt $fx - | less;;
+        (*.doc) catdoc -m94 $fx | less;;
+        (*.epub) epub2txt -n $fx | less;;
+        (*.htm|*.html|*.xhtml) firefox --new-tab $fx &>/dev/null & disown;;
+        (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $fx;;
+        (*.info) info $fx;;
+        (*.exe) wine $fx &>/dev/null & disown;;
+        (*) yn "sublime?" "subl3 -n $fx";;
     esac
 }}
 
@@ -138,7 +139,7 @@ cmd fzf ${{
         --bind "alt-v:select-all";
 }}
 
-cmd 7z ${{
+cmd 7za ${{
     set -f
     [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
     [ -e ${d%?} ] && return 1;
@@ -146,33 +147,23 @@ cmd 7z ${{
     unset d;
 }}
 
+cmd extract ${{
+    set -f
+    case $fx in
+        (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) aunpack $fx;;
+    esac
+}}
+
 cmd rifle ${{
     set -f;
     rifle -l $f;
-    read -p "Open with: " runner;
+    # read -p "Open with: " runner;
+    read runner\?"Open with: ";
     rifle -p $runner $f;
 }}
 
-# show copypaste progress
-# cmd paste &{{
-#     load=$(lf -remote 'load')
-#     mode=$(echo "$load" | sed -n '1p')
-#     list=$(echo "$load" | sed '1d')
-#     if [ $mode = 'copy' ]; then
-#         rsync -av --ignore-existing --progress $list . \
-#         | stdbuf -i0 -o0 -e0 tr '\r' '\n' \
-#         | while read line; do
-#             lf -remote "send $id echo $line"
-#         done
-#     elif [ $mode = 'move' ]; then
-#         mv -n $list .
-#     fi
-#     lf -remote 'send load'
-#     lf -remote 'send clear'
-# }}
-
 cmd fzfcd ${{
-    local s="$(fd -uu -i -t d | fzf +m)";
+    local s="$(fd -uu -d 1 -i -t d | fzf +m)";
     test -d "$s" && lf -remote "send $id cd \"$s\""
 }}
 
@@ -420,19 +411,20 @@ map <c-l>       reload
 map R           redraw
 map R           reload
 # map <enter>     $$f
-map X           !$f
+# map X           !$f
 map <space>     toggle
 map q           unselect
+# map q           clear
 map x           read 
 map w           shell
 map S           $$SHELL
 map D           push :delete<space>$fx<enter>
 map ,           push :glob-select<space>*
 map .           push :glob-unselect<space>*
-# map q           clear
 map v           invert
 map n           push :mkdir<space>
-map Z           push :7z<space>
+map Z           push :7za<space>
+map X           push :extract<space>$fx<enter>
 
 # OPTS
 map \~          push :set<space>ratios<space>

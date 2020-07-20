@@ -40,10 +40,10 @@ if [ ! -e ~/.cache/whent ]; then
   done
 fi
 
-a=$(cat ~/.cache/whend | fzf +m --prompt='date: ' --border=horizontal --height=20) || return 1;
+a=$(cat ~/.cache/whend | fzf +m --prompt='date: ' --border=horizontal --height=20 -q $(date +'%Y-%m-%d')) || return 1;
 s=$(cat ~/.cache/whent | fzf +m --prompt='init: ' --border=horizontal --height=20) && d=$(cat ~/.cache/whent | fzf +m --prompt='fint: ' --border=horizontal --height=20);
 
-printf '%s, %-12s\t' ${a//-/ } ${s:+${s}${d:+-$d}} >> ~/.when/calendar;
+printf '%s, %-12s    ' ${a//-/ } ${s:+${s}${d:+-$d}} >> ~/.when/calendar;
 printf '%s ' $@ >> ~/.when/calendar;
 printf '\n' >> ~/.when/calendar;
 }

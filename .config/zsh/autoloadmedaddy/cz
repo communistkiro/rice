@@ -16,8 +16,8 @@ SYNOPSIS
 
 DESCRIPTION
     Browse the filesystem from current working directory. Parent directory is always first 
-    item, the rest are directory present in the current directory. Use -n to surpress listing 
-    of all directories and files in the terminal.
+    item, the rest are directory present in the current directory. Use -n to surpress 
+    listing of files in the terminal.
 
 BUGS
     Please report any aberrant behavior or bugs to vlg@tutamail.com
@@ -28,14 +28,27 @@ return 1;; esac; done;
 
 until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 
+# if which fd; then
+#     alias cmd="fd -uu -i -t d -d 1"
+# else
+    alias cmd="ls -ap | sed -r '/[^/]$/d; /^\.\/$/d'";
+# fi
+
 if [ $n -eq 0 ]; then
     while true; do 
-        clear; echo ''; lsd -a
-        c="$(ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
+        clear; printf '\n'; lsd -a;
+        # c="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $c ] && cd $c;
+        c="$(cmd | slmenu -i -p "$(pwd)")" || break;
+        [ -d $c ] && cd $c;
     done
+    clear
 else
     while true; do
-        c="$(ls -ap | sed -r '/[^/]$/d; /^\.\/$/d' | dmenu -i -w $w -p "$(pwd)")" || break; cd $c;
+        clear;
+        # c="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $c ] && cd $c;
+        c="$(cmd | slmenu -i -p "$(pwd)")" || break;
+        [ -d $c ] && cd $c;
     done
 fi;
+unalias cmd
 }
