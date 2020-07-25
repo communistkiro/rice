@@ -50,6 +50,7 @@ COMPLETION_WAITING_DOTS="true"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
 HIST_STAMPS="yyyy-mm-dd"
+SAVE_HIST=10000
 
 # Would you like to use another custom folder than $ZSH/custom?
 #ZSH_CUSTOM=/path/to/new-custom-folder
@@ -67,7 +68,7 @@ plugins=(
   # timer 
 )
 
-# TIMER_PRECISION=6
+# TIMER_PRECISION=7
 
 export FZF_BASE=/root/src/fzf
 
@@ -81,7 +82,7 @@ setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB RE_MATCH_PCRE
 # ALII
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
-alias abook='mpv --force-window=yes'
+alias mpva='mpv --force-window=yes'
 alias bb='bye'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
@@ -95,7 +96,7 @@ alias cow='cowthink -e "^^" -f xxx -T "U"'
 alias cp='cp -vR'
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias du='/bin/du -hs'
-alias espeak='espeak -p30 -k35 -s310 -g 2 -ven-sc'
+# alias espeak='espeak -p30 -k35 -s310 -g 2 -ven-sc'
 alias fd='fd -uu -i'
 alias ff='firefox &>/dev/null & disown'
 alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
@@ -106,7 +107,7 @@ alias lread="feed 'lynx -dump' | less"
 alias fzf='fzf -m \
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
   --bind "alt-r:execute(mle {+})" \
-  --bind "alt-f:clear-selection" \
+  --bind "alt-c:clear-selection" \
   --bind "alt-v:select-all" '
 alias gre='grep -P --color -i'
 alias hl='hledger-ui --watch'
@@ -132,7 +133,6 @@ alias sex='sex | cow'
 alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias so='source /root/.zshrc'
 alias tage='tageditor --no-sandbox'
-alias tome='cd /root/games/t-engine4-linux64-1.6.7; ./t-engine & disown'
 # alias unb='bindkey -d'
 alias unlove='mpc sendmessage mpdas unlove'
 alias vol='amixer set Master'

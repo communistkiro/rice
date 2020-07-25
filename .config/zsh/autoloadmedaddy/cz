@@ -1,12 +1,8 @@
 #!/bin/sh
 cz() {
 local n=0;
-local o c w;
-while getopts 'nh' o; do 
-    case $o in 
-        n) n=1;;
-        h) ;&
-        *)
+local o c w l;
+while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
     cz - filesystem navigator
@@ -16,8 +12,8 @@ SYNOPSIS
 
 DESCRIPTION
     Browse the filesystem from current working directory. Parent directory is always first 
-    item, the rest are directory present in the current directory. Use -n to surpress 
-    listing of files in the terminal.
+    item, the rest are directory present in the current directory. Use -n to list files in the 
+    terminal.
 
 BUGS
     Please report any aberrant behavior or bugs to vlg@tutamail.com
@@ -26,29 +22,19 @@ BUGS
 HEREDOC
 return 1;; esac; done;
 
-until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
+# until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 
 # if which fd; then
 #     alias cmd="fd -uu -i -t d -d 1"
 # else
     alias cmd="ls -ap | sed -r '/[^/]$/d; /^\.\/$/d'";
 # fi
+l=$(stty -a | head -1 | sed -r 's/.*rows ([0-9]+).*/\1/');
 
-if [ $n -eq 0 ]; then
-    while true; do 
-        clear; printf '\n'; lsd -a;
-        # c="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $c ] && cd $c;
-        c="$(cmd | slmenu -i -p "$(pwd)")" || break;
-        [ -d $c ] && cd $c;
-    done
-    clear
-else
-    while true; do
-        clear;
-        # c="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $c ] && cd $c;
-        c="$(cmd | slmenu -i -p "$(pwd)")" || break;
-        [ -d $c ] && cd $c;
-    done
-fi;
-unalias cmd
+while true; do
+    # c="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $c ] && cd $c;
+    c="$(cmd | slmenu -i -l $l -t)" || break;
+    [ -d $c ] && cd $c;
+done
+unalias cmd; clear;
 }
