@@ -8,11 +8,12 @@ w=$(jq '.cards.black[].text' compact.md.json|wc -l);
 
 while true; do
   clear;
-  for s in {1..16}; do
+  for s in {1..10}; do
     a[s]=$((RANDOM % q));
   done
   # jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzf --reverse --border=horizontal --height=15 --prompt="$(jq ".cards.black[$((RANDOM % w))].text" compact.md.json)" || break;
-  jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzf --no-info --reverse --border=horizontal --tiebreaker=length,end --height=15 --header="$(jq -r ".cards.black[$((RANDOM % w))].text" compact.md.json)" || break;
+  jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzf --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".cards.black[$((RANDOM % w))].text" compact.md.json)" || break;
+  # jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzy --prompt="$(jq -r ".cards.black[$((RANDOM % w))].text" compact.md.json)"" " || break;
 done
 cd ~; 
 unset q w a s;

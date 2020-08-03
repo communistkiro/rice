@@ -32,15 +32,17 @@ return 1;; esac; done;
 
 t=$(mktemp /tmp/tagme.XXXXXXXX);
 if [ $# -gt 0 ]; then
-  find $@ -name '*.mp3' -type f > ${t};
+  find $@ -name '*.mp3' -type f > $t;
 else
-  find . -name '*.mp3' -type f > ${t};
+  find . -name '*.mp3' -type f > $t;
 fi;
-if [ $(sed -r 's/ \[.*//; s/^..//' ${t} | sort -u | wc -l) -gt 1 ]; then
-  [ "$(printf "0 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists";
-else
-  a="$(sed -r 's/ \[.*//; s/^..//' ${t} | sort -u | head -1)";
-fi
+# FIXME
+# if [ $(sed -r 's/ \[.*//; s/^..//' $t | sort -u | wc -l) -gt 1 ]; then
+#   [ "$(printf "2 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists";
+# else
+#   a=$(sed -r 's/ \[.*//; s/^..//' $t | sort -u | head -1);
+# fi
+[ $(sed -r 's/ \[.*//; s/^..//' $t | sort -u | wc -l) -gt 1 ] && [ "$(printf "2 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists" || a=$(sed -r 's/ \[.*//; s/^..//' $t | sort -u | head -1);
 while IFS= read -r z; do;
   if which tageditor &>/dev/null; then
     tageditor set \
@@ -55,8 +57,8 @@ while IFS= read -r z; do;
       recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
       genre="$(</tmp/genre)" \
-      albumartist=${a} \
-      --files ${z};
+      albumartist="$a" \
+      --files $z;
       # albumartist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
   elif which mp3info2 &>/dev/null; then
     mp3info2 \
@@ -69,9 +71,9 @@ while IFS= read -r z; do;
       -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
       -g "$(</tmp/genre)" \
       -F TPE2="$a" \
-      ${z};
+      $z;
       # -F TPE2=%a \
   fi
-done < ${t};
-rm -f ${t};
+done < $t;
+rm $t;
 }

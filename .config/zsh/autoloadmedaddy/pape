@@ -33,11 +33,11 @@ c=~/im; # starting dir & file/folder choice
 cd $c;
 until [[ -n $w ]]; do; w=$(xwininfo -name 'pape' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 while true; do;
-    [ -d $c ] && f=($(ls -ap $c | grep -v '/')) && d=($(ls -ap $c | grep '/' | grep -Pv '^\./'));
+    [ -d $c ] && f=($(ls -ap $c | pcre2grep -v '/')) && d=($(ls -ap $c | pcre2grep '/' | pcre2grep -v '^\./'));
     c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l 10 -p $(pwd) -w $w ) || break;
     [ -d $c ] && cd $c && c=.;
     [ -f $c ] && (feh ${s-${a[4]}} $c || break);
     [ $c = "bgopts" ] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options' -w $w) && feh $s $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
-    [ $c = "rand" ] && (feh ${s-${a[4]}} $(ls -ap | grep -v '/' | shuf -n 1) || break);
+    [ $c = "rand" ] && (feh ${s-${a[4]}} $(ls -ap | pcre2grep -v '/' | shuf -n 1) || break);
 done
 }

@@ -1,17 +1,19 @@
 #!/bin/zsh
 # Gives a dmenu prompt to mount disk/drives that are not already mounted, not swap, not root, not boot. Mounted partitions will have their disks removed from mount menu, as well as mounted disks themselves.. If found in /etc/fstab, it'll be mounted; otherwise, you'll be prompted to give a mountpoint from already existing directories. 
 
-case $(printf "mount\numount" | dmenu -i -l 2 -p '?') in
-'mount') 
-    d=(${(@F)$(findmnt --real -nlo 'source')/[0-9]*/ }); # FIXME
-    a=(${(@f)"$(lsblk -nlpo 'name,label,type,size,uuid,state,mountpoint' 2>/dev/null | grep -Pv '/boot$|/$|SWAP' | grep -v "${(@F)$(findmnt --real -nlo 'source')} " | grep -v ${(@F)d} | column)"});
+case $(printf "mount\numount" | dmenu -i -l 2) in
+('mount')
+    d=(${(@F)$(findmnt --real -nlo 'source')}); # FIXME
+    a=(${(@f)"$(lsblk -nlpo 'name,label,type,size,uuid,state,mountpoint' 2>/dev/null | pcre2grep -v '/boot$|/$|SWAP' | pcre2grep -v "${(@f)d} " | pcre2grep -v ${(@f)d/[0-9]*/ } | column)"});
     s=$(printf "%s\n" ${(@)a} | dmenu -i -p 'device  label  type  size  uuid  status' -l ${#a} | awk '{print $1}') || return 1;
     mount $s 2&>/dev/null && return 0;
-    while true; do c=$(ls -ap | grep -P '^(?!\./$).+/$' | dmenu -i -p "$(pwd)") || break; [ -d $c ] && cd $c; done;
-    [ "$(printf "no\\nyes" | dmenu -i -p "mount ${s} to $(pwd)?" -l 2)" = "yes" ] && mount $s $(pwd);;
-'umount') 
+    while true; do c=$(ls -ap | pcre2grep '^(?!\./$).+/$' | dmenu -i -p "$(pwd)") || break; [ -d $c ] && cd $c; done;
+    [ "$(printf "no\\nyes" | dmenu -i -p "mount $s to $(pwd)?" -l 2)" = "yes" ] && mount $s "$(pwd)";;
+('umount')
     a=(${(@f)"$(findmnt --real -nlo 'target,source,fstype' | column | tr '\t' '\n')"});
-    s=$(printf "%s\n" ${(@)a} | dmenu -i -l ${#a} -p 'target  source  fstdype' | grep -oP '^[\w/]+') || return 1;
-    [ "$(printf "no\\nyes" | dmenu -i -p "unmount ${s}?" -l 2)" = "Yes" ] && umount $s;;
+    s=$(printf "%s\n" ${(@)a} | dmenu -i -l ${#a} -p 'target  source  fstype' | pcre2grep -o '^[\w/]+') || return 1;
+    # [ "$(printf "no\\nyes" | dmenu -i -p "unmount $s?" -l 2)" = "yes" ] && umount $s;;
+    # [ "$(printf "no\\nyes" | dmenu -i -p "kill processes to unmount?" -l 2)" = "yes" ] && fuser -kim "$s" && umount "$s"
+    [ "$(printf "no\\nyes" | dmenu -i -p "kill processes to unmount?" -l 2)" = "yes" ] && lsof | pcre2grep "$s" | awk '{print $2}' | xargs kill && umount $s;;
 esac;
 unset d a s c

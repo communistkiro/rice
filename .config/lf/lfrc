@@ -12,7 +12,7 @@ set smartcase       on
 set ignorecase      on
 set smartdia        off
 set ignoredia       on
-set incsearch       on
+set incsearch       off
 set preview         on
 set reverse         off
 set wrapscan        on
@@ -75,7 +75,10 @@ cmd open ${{
     esac
 }}
 
-cmd cock %subl3 -n --command toggle_side_bar $fx
+cmd sublime %{{
+    set -f
+    subl3 -n --command toggle_side_bar $fx
+}}
 
 # cmd rename ${{
 #     [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
@@ -163,8 +166,9 @@ cmd rifle ${{
 }}
 
 cmd fzfcd ${{
-    local s="$(fd -uu -d 1 -i -t d | fzf +m)"
-    test -d "$s" && lf -remote "send $id cd \"$s\""
+    local s="$(ls -A | fzy -l 50)"
+    # ls -ap | sed -r '/[^/]$/d; /^\.\/$/d
+    test -d "$s" && lf -remote "send $id cd \"$s\"" || break
 }}
 
 cmd Link %{{
@@ -282,6 +286,11 @@ cmd copy-remove %{{
 
     lf -remote "save${newline}copy${newline}${new_files}${newline}"
     lf -remote "send $id unselect${newline}send $id sync"
+}}
+
+cmd pageme ${{
+    set -f
+    chroma -s monokai -- $fx | $PAGER;
 }}
 
 
@@ -403,8 +412,9 @@ map ge          cd /etc
 map gu          cd /usr
 map c           push :cd<space>
 map e           fzfcd
-map E           cock
-map l           $$PAGER $fx
+map E           sublime
+# map l           $$PAGER $fx
+map l           pageme
 map <tab>       cmd-complete
 map <c-l>       redraw
 map <c-l>       reload

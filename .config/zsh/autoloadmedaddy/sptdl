@@ -1,0 +1,23 @@
+#!/bin/zsh
+# -l LIST | -p PLAYLIST | -a ALBUM | -aa ALL_ALBUMS | -u USERNAME)
+# s=$(printf '%s' $a | awk -F/ '{ print $4 }')
+# [ $s = 'artist' ] && s='aa' || s=${(M)s#?};
+function sptdl () {
+cd ~/nm;
+local a s d;
+
+[ $# -gt 0 ] && for a in "$@"; do 
+  [[ $a =~ 'playlist' ]] && s=p || [[ $a =~ 'album' ]] && s=a || return 3;
+  spotdl -$s $a || return 1;
+  spotdl -l "$(ls -c *.txt)" || return 2;
+  rm "$(ls -c *.txt)";
+done && return 0;
+
+while IFS= read -r d; do
+  [[ $a =~ 'playlist' ]] && s=p || [[ $a =~ 'album' ]] && s=a || return 3;
+  spotdl -$s $a || return 1;
+  spotdl -l "$(ls -c *.txt)" || return 2;
+  rm "$(ls -c *.txt)";
+  printf "$a\n" >> ~/nm/spold && sed -i '1,1d' ~/spnew;
+done < ~/nm/spnew;
+}

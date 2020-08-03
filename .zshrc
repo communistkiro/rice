@@ -68,9 +68,17 @@ plugins=(
   # timer 
 )
 
+# TIMER_FORMAT='[%d]'
 # TIMER_PRECISION=7
 
-export FZF_BASE=/root/src/fzf
+FZF_BASE=/root/src/fzf
+
+ZSH_COLORIZE_TOOL=chroma
+ZSH_COLORIZE_CHROMA_FORMATTER=terminal256
+ZSH_COLORIZE_STYLE=monokai
+
+
+
 
 autoload -U +X compinit && compinit 
 autoload -U +X bashcompinit && bashcompinit
@@ -88,20 +96,19 @@ alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
 alias bustin='16t /media/ELEM/Music/N/Neil\ Cicierega/Neil\ Cicierega\ \[Mouth\ Moods\ \(2017\)\]/08\ Bustin.mp3'
 alias catdoc='catdoc -m256'
-alias ccal='calcurse -q'
+# alias ccal='calcurse -q'
 alias clb="col -b"
+alias cls='cless -c'
 alias clock='tty-clock -sbc'
 alias cmat='cmatrix -au2'
 alias cow='cowthink -e "^^" -f xxx -T "U"'
 alias cp='cp -vR'
 alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
-alias du='/bin/du -hs'
+alias du='du -h'
 # alias espeak='espeak -p30 -k35 -s310 -g 2 -ven-sc'
 alias fd='fd -uu -i'
-alias ff='firefox &>/dev/null & disown'
 alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
 alias flite='flite -voice awb'
-alias fort='/bin/fortune | cow'
 alias fread='feed flinks'
 alias lread="feed 'lynx -dump' | less"
 alias fzf='fzf -m \
@@ -111,7 +118,7 @@ alias fzf='fzf -m \
   --bind "alt-v:select-all" '
 alias gre='grep -P --color -i'
 alias hl='hledger-ui --watch'
-alias kl='khal interactive'
+# alias kl='khal interactive'
 alias kln='khal new'
 alias l1='lsd -A1'
 alias ll='lsd -A'
@@ -127,16 +134,16 @@ alias oce='octave-cli --eval'
 alias pk='pkill -KILL -i'
 alias pre='pcre2grep -i --color'
 alias rm='sudo rm -r'
+alias rg='rg -S --engine auto'
 alias rr='ranger --cmd="chain set preview_files true"'
 alias rsync='rsync -vah --progress'
 alias sex='sex | cow'
-alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
+# alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias so='source /root/.zshrc'
-alias tage='tageditor --no-sandbox'
+alias tage='tageditor'
 # alias unb='bindkey -d'
 alias unlove='mpc sendmessage mpdas unlove'
 alias vol='amixer set Master'
-alias vsc='sudo --user=v code-oss --user-data-dir ~/vsc/'
 alias xb='xbacklight -set'
 alias xbq='xbps-query --regex -Rs'
 alias xbql='xbps-query -l'
@@ -157,3 +164,5 @@ autoload $(ls /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc
 # SOURCE
 . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 . /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

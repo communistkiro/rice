@@ -2,7 +2,7 @@
 
 function tmr() {
 # countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 days
-# local alarm=~/.local/CartoonFoghorn.wav;
+local alarm=~/.local/CartoonFoghorn.m4a;
 local a=0;
 local p=0;
 local o w b d h m s D H M S r t
@@ -183,7 +183,7 @@ while [ $t -ge 0 ]; do
     sleep 1;
 done
 
-if [ $? -eq 0 ] && mpc status &>/dev/null | grep -s 'playing'; then 
+if [ $? -eq 0 ] && mpc status &>/dev/null | pcre2grep -q 'playing'; then 
     mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle; 
 else 
     mpv --really-quiet $alarm;

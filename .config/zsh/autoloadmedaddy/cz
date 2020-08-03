@@ -24,16 +24,19 @@ return 1;; esac; done;
 
 # until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 
-# if which fd; then
-#     alias cmd="fd -uu -i -t d -d 1"
-# else
-    alias cmd="ls -ap | sed -r '/[^/]$/d; /^\.\/$/d'";
-# fi
-l=$(stty -a | head -1 | sed -r 's/.*rows ([0-9]+).*/\1/');
+alias cmd="ls -ap | pcre2grep '/$' | tail -n +2";
+# alias cmd="ls -ap | pcregrep '/$'";
+# alias cmd="fd -uu -i -t d -d 1"
+# alias cmd="ls -ap | sed -r '/[^/]$/d; /^\.\/$/d'";
+
+# l=$(stty -a | head -1 | sed -r 's/.*rows ([0-9]+).*/\1/');
+l=48
 
 while true; do
     # c="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $c ] && cd $c;
-    c="$(cmd | slmenu -i -l $l -t)" || break;
+    # c="$(cmd | slmenu -i -l $l -t)" || break;
+    # c="$(cmd | fzf -i +m --reverse --border=horizontal)" || break;
+    c="$(cmd | fzy -l $l)" || break;
     [ -d $c ] && cd $c;
 done
 unalias cmd; clear;

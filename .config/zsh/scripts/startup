@@ -1,5 +1,5 @@
 #!/bin/zsh
-# This script is called on startup for one-off cmds
+# one-off cmds script called somewhere sometime durring xstart
 
 # /usr/share/X11/xkb/rules for `-option ""'
 setxkbmap -layout "us,bg,de" -variant ",phonetic,deadgraveacute" -geometry "pc" -option "grp:win_space_toggle" -option caps:super &
@@ -8,35 +8,52 @@ setxkbmap -layout "us,bg,de" -variant ",phonetic,deadgraveacute" -geometry "pc" 
 # ... delay repeatrate
 xset r rate 275 85 &
 
-# Map the caps lock key to super...
+
+# Map the caps lock key to super with single press treated as escape
 # setxkbmap -option caps:super
+ps -aux | awk '{ print $11 }' | pcre2grep -q '^xcape$' || xcape -e 'Super_L=Escape' &
 
-# But when it is pressed only once, treat it as escape.
-pgrep -x xcape &>/dev/null || xcape -e 'Super_L=Escape' &
 
-# Map the menu button to right super as well.
+# Map the menu button to right super
 xmodmap -e 'keycode 135 = Super_R' &
 
+
 # Shortcuts
-pgrep -x xbindkeys &>/dev/null || xbindkeys &
+ps -aux | awk '{ print $11 }' | pcre2grep -q '^xbindkeys$' || xbindkeys &
+
 
 # fuck trackpad
-pgrep -x syndaemon &>/dev/null || syndaemon -d -i 131072
+ps -aux | awk '{ print $11 }' | pcre2grep -q '^syndaemon$' || syndaemon -d -i 131072 &
 
-# Make sure an instance of Sublime Text 3 is running
-pgrep -x subl3 &>/dev/null || subl3 &
+
+# Screen lock
+ps -aux | awk '{ print $11 }' | pcre2grep -q 'xautolock' || xautolock -time 20 -secure -locker 'xbacklight -set 0; slock; xbacklight -set 15' &
+
+# mic mute 
+amixer sset Capture nocap &
+
+# backlight
+xbacklight -set 15 &
+
+# music 
+ps -aux | awk '{ print $11 }' | pcre2grep -q '^mpd$' || mpd && mpdas -d &
+
+
+#cron
+ps -aux | awk '{ print $11 }' | pcre2grep -q '^crond$' || crond &
+
+
+# Snowstorm
+# pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown
+
 
 # Set last set background
 ~/.fehbg &
 
-# Screen lock
-pgrep -x xautolock &>/dev/null || xautolock -time 20 -secure -locker 'xbacklight -set 0; slock; xbacklight -set 15' &
 
-# mute mic
-amixer sset Capture nocap &
+# ~/src/dwmsss/dwmsss &
+slstatus &
 
-# Snowstorm
-# pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown
 
 # conky dzen2 RHS status bar
 # FG='#9ffb00'

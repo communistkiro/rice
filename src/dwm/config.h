@@ -29,14 +29,15 @@ static const Rule rules[] = {
      *  WM_CLASS(STRING) = instance, class
      *  WM_NAME(STRING) = title
      */
-    /* class                instance        title       tags mask     isfloating   monitor */
-    { "feh",                NULL,           NULL,       0,            1,           -1 },
-    { "Firefox",            NULL,           NULL,       1 << 1,       0,           -1 },
-    { "tabbed",             "tabbedsurf",   NULL,       1 << 1,       0,           -1 },
-    { "Gimp",               NULL,           NULL,       1 << 2,       1,           -1 },
-    { "qpdfview",           NULL,           NULL,       1 << 2,       0,           -1 },
-    { "qBittorrent",        "qbittorrent",  NULL,       1 << 8,       0,           -1 },
-    { "Nicotine",           "nicotine",     NULL,       1 << 8,       0,           -1 },
+    /* class                instance            title       tags mask     isfloating   monitor */
+    { "feh",                NULL,               NULL,       0,            1,           -1 },
+    { "mpv",                NULL,               NULL,       0,            1,           -1 },
+    { "Firefox",            NULL,               NULL,       1 << 1,       0,           -1 },
+    { "tabbed",             "tabbedsurf",       NULL,       1 << 1,       0,           -1 },
+    { "surf-download",      "surf-download",    NULL,       1 << 8,       1,           -1 },
+    { "Gimp",               NULL,               NULL,       1 << 2,       1,           -1 },
+    { "qpdfview",           NULL,               NULL,       1 << 2,       0,           -1 },
+    { "qBittorrent",        "qbittorrent",      NULL,       1 << 8,       0,           -1 },
 };
 
 /* layout(s) */
@@ -48,8 +49,8 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
 static const Layout layouts[] = {
     /* symbol     arrange function */
     { "|||",      col },
-    { "[M]",      monocle },
     { "[]=",      tile },    /* first entry is default */
+    { "[M]",      monocle },
     { "><>",      NULL },    /* no layout function means floating behavior */
     {  NULL,      NULL}
 };
