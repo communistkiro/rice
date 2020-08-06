@@ -20,7 +20,7 @@ HEREDOC
 return 1;; esac; done;
 
 # [ ! $# -gt 0 ] && printf 'No text input!\n' && return 1;
-[ ! $# -gt 0 ] && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d  ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-13s", $5; else printf "%13s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
+[ $# -eq 0 ] && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d  ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-13s", $5; else printf "%13s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
 
 local a s d;
 
@@ -48,6 +48,5 @@ a=$(cat ~/.cache/whend | fzf +m --prompt='date: ' --border=horizontal --height=2
 s=$(cat ~/.cache/whent | fzf +m --prompt='init: ' --border=horizontal --height=20) && d=$(cat ~/.cache/whent | fzf +m --prompt='fint: ' --border=horizontal --height=20);
 
 printf '%s, %-12s    ' ${a//-/ } ${s:+${s}${d:+-$d}} >> ~/.when/calendar;
-printf '%s ' $@ >> ~/.when/calendar;
-printf '\n' >> ~/.when/calendar;
+printf '%s\n' "$*" >> ~/.when/calendar;
 }

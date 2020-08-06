@@ -60,7 +60,7 @@ cmd open ${{
         (*.gif|*.png|*.jpeg|*.jpg|*.gif|*.tiff|*.pnm|*.tiff|*.bmp) feh --scale-down $fx;;
         # (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx | less; yn 'Unpack?' "aunpack $fx";;
         (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx;;
-        (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi) mpv --no-input-terminal --really-quiet $fx &;;
+        (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac) mpv --no-input-terminal --really-quiet $fx &;;
         (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $fx;;
         (*.eps) gv -- $fx;;
         (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $fx &>/dev/null & disown;;
@@ -166,9 +166,9 @@ cmd rifle ${{
 }}
 
 cmd fzfcd ${{
-    local s="$(ls -A | fzy -l 50)"
-    # ls -ap | sed -r '/[^/]$/d; /^\.\/$/d
-    test -d "$s" && lf -remote "send $id cd \"$s\"" || break
+    local s="$(ls -Ap | pcre2grep '/$' | fzy -l 50)"
+    # local s="$(fd -uu -i -t d -ed 1 | fzy -l 50)"
+    [ -d $s ] && lf -remote "send $id cd \"$s\"" || break
 }}
 
 cmd Link %{{

@@ -189,14 +189,13 @@ static Key keys[] = {
     { MODKEY,                  GDK_KEY_minus,              zoom,               { .i = -1 } },
     { MODKEY,                  GDK_KEY_equal,              zoom,               { .i = +1 } },
 
-    { GDK_CONTROL_MASK,        GDK_KEY_c,                  clipboard,          { .i = 0 } },
-    { GDK_CONTROL_MASK,        GDK_KEY_v,                  clipboard,          { .i = 1 } },
-    // { GDK_CONTROL_MASK,        GDK_KEY_v,                  spawn,              PASTE() },
+    { GDK_CONTROL_MASK,        GDK_KEY_o,                  clipboard,          { .i = 0 } },
+    { GDK_CONTROL_MASK,        GDK_KEY_p,                  clipboard,          { .i = 1 } },
 
     { MODKEY,                  GDK_KEY_n,                  find,               { .i = +1 } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_n,                  find,               { .i = -1 } },
 
-    { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_p,                  print,              { 0 } },
+    // { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_p,                  print,              { 0 } },
 
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_a,                  togglecookiepolicy, { 0 } },
     { 0,                       GDK_KEY_F11,                togglefullscreen,   { 0 } },

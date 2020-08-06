@@ -61,7 +61,7 @@ EXAMPLES
     Negative final value, just returns; preprend negative first arguments w/ --
         tmr -- -1 
 
-    A 3-cycle pomodoro sesh with 45-minute work-, and 5-minute break-sections
+    A 3-cycle pomodoro sesh with 45-minute work-, and 8-minute break-sections
         tmr -p
 
     A 3-cycle pomodoro sesh with 30-minute work-, and 10-minute break-sections
@@ -91,12 +91,12 @@ if [ $p -eq 1 ]; then
         [ $w -le 0 ] || [ $b -le 0 ] && return 1;
     else
         w=45;
-        b=5;
+        b=8;
     fi
     for a in $(seq 3); do
-        printf "Starting %d. pomodoro cycle\nWork!\n" $a;
+        clear; printf "Starting %d. pomodoro cycle\nWork!\n" $a;
         tmr $w; [ $? -eq 2 ] && break;
-        printf "Break!\n"; tmr $b;[ $? -eq 2 ] && break; 
+        printf '\aBreak!\n'; tmr $b;[ $? -eq 2 ]; printf '\a'; break; 
     done
     return $?;
 fi

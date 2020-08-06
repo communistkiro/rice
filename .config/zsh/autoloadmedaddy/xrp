@@ -52,7 +52,7 @@ while IFS= read -r a; do;
     pcre2grep -o1 'class="tag" href="http.+?/tag/(.+?)"' $t1 |  sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/genre;
     # rymgenre "$(sed -rn '1s/(.*) by (.*), rel.*/\2 \1/p' $t2)" >> /tmp/genre;
     if pcre2grep -q 'releases' $t2; then
-        printf "$a\n" >> ~/nm/soon;
+        printf "%s\n" $a >> ~/nm/soon;
         sort -uo ~/nm/soon ~/nm/soon;
     else
         youtube-dl \
@@ -64,11 +64,11 @@ while IFS= read -r a; do;
             --embed-thumbnail \
             --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' $a;
         if ! w=(${(@f)"$(ls *mp3)"}); then
-            printf "$a\n" >> ~/nm/missing;
+            printf "%s\n" $a >> ~/nm/missing;
             sort -uo ~/nm/missing ~/nm/missing;
         else
             if [ $(sed -rn '/^[1-9]+\.\ /p' $t2 | tail -1 | pcre2grep -o '^\d+') -gt ${#w} ]; then
-                printf "$a\n" >> ~/nm/missing;
+                printf "%s\n" $a >> ~/nm/missing;
                 sort -uo ~/nm/missing ~/nm/missing;
             fi;
             printf "%s\n" ${(@)w} | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\]).*/\2-\3-\4/' > $t3;
@@ -84,7 +84,7 @@ while IFS= read -r a; do;
                 break;
             done < $t3 | sort -u;
         fi;
-        printf "$a\n" >> ~/nm/bcold && sort -uo ~/nm/bcold ~/nm/bcold;
+        printf "%s\n" $a >> ~/nm/bcold && sort -uo ~/nm/bcold ~/nm/bcold;
         printf "\n\n";
     fi;
     sed -i '1,1d' ~/nm/bcnew;

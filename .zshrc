@@ -129,13 +129,13 @@ alias mle='mle -i1 -w1'
 alias mpi='mp3info2'
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=36" &>/dev/null & disown'
 alias ncm='ncmpcpp'
-alias oc='octave-cli'
-alias oce='octave-cli --eval'
+alias oc='octave-cli -q'
+alias oce='octave-cli -q --eval'
 alias pk='pkill -KILL -i'
 alias pre='pcre2grep -i --color'
 alias rm='sudo rm -r'
-alias rg='rg -S --engine auto'
-alias rr='ranger --cmd="chain set preview_files true"'
+alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted'
+# alias rr='ranger --cmd="chain set preview_files true"'
 alias rsync='rsync -vah --progress'
 alias sex='sex | cow'
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
@@ -164,5 +164,3 @@ autoload $(ls /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc
 # SOURCE
 . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 . /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

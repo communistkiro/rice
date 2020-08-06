@@ -3,17 +3,23 @@
 function rdd2() {
 local t=$(mktemp /tmp/rdd2.XXXXXXXX);
 local z d m;
-ls *mp3 > ${t};
-if ! [ -s ${t} ]; then printf "No .mp3's found!"; return 1; fi;
-while IFS= read -r m; do;
-  z="$(mp3info2 -D -p '%a [%l (%y)]' ${m})";
-  mkdir -p ${z};
-  zmv ${m} ${z};
-done < ${t};
+ls *mp3 > $t;
 
-ls . > ${t};
-while IFS= read -r d; do;
+if ! [ -s $t ]; then
+  printf "No .mp3's found!";
+  # find . -type f -name '*.mp3' -exec 
+  [ "$(printf '%s\n' '2 No' '1 Yes' | dmenu -i -p "Move all .mp3's recursively into current directory?" -l 2)" = "1 Yes" ] && fd -t f -e mp3 -X mv {} . && ls *mp3 > $t || return 1;
+fi
+
+while IFS= read -r m; do
+  z="$(mp3info2 -D -p '%a [%l (%y)]' $m)";
+  mkdir -p $z;
+  mv $m $z;
+done < $t;
+
+ls . > $t;
+while IFS= read -r d; do
   mkdir -p ${d%% \[*};
-  zmv ${d} ${d%% \[*};
-done < ${t};
+  mv $d ${d%% \[*};
+done < $t;
 }

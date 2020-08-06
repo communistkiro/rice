@@ -1,5 +1,8 @@
 #!/bin/sh
-if [ "$#" -eq 1 ]; then b="$1"; elif ps -C firefox; then b=firefox; else b=sf; fi;
-url=$(cat ~/.sfeed/feeds.txt | dmenu -l 48 -i | sed -n 's@^.* \([a-zA-Z]*://\)\(.*\)$@\1\2@p')
+if [ "$#" -eq 1 ]; then 
+    b="$1"; 
+elif ps -C firefox &>/dev/null; then b=firefox; else b=sf; fi;
+# url=$(cat ~/.sfeed/feeds.txt | dmenu -l 48 -i | sed -n 's@^.* \([a-zA-Z]*://\)\(.*\)$@\1\2@p')
+url=$(cat ~/.sfeed/feeds.txt | dmenu -l 48 -i | pcre2grep -o1 '(http.*$)')
 test -n "$url" && $b "$url"
 unset b url

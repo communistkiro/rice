@@ -188,8 +188,8 @@ def_key "i"
 def_key "I"
  dummy
 
-def_key "l"
- dummy
+#def_key "l"
+# dummy
 
 def_key "L"
  dummy
@@ -208,6 +208,18 @@ def_key "ctrl-h"
 
 def_key "insert"
  dummy
+
+def_key "m"
+  dummy
+
+def_key "n"
+  dummy
+
+
+###################################################################################
+###################################################################################
+###################################################################################
+
 
 def_key "mouse"
  mouse_event
@@ -392,6 +404,21 @@ def_key "."
 
 def_key ","
  previous_found_item
+
+def_key "o"
+  move_sort_order_up
+
+def_key "o"
+  move_selected_items_up
+
+def_key "l"
+  move_sort_order_down
+
+def_key "l"
+  move_selected_items_down
+
+def_key "M"
+  move_selected_items_to
 
 def_key "R"
  reverse_selection
