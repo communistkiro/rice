@@ -19,33 +19,13 @@ DESCRIPTION
 HEREDOC
 return 1;; esac; done;
 
-# [ ! $# -gt 0 ] && printf 'No text input!\n' && return 1;
-[ $# -eq 0 ] && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d  ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-13s", $5; else printf "%13s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
+[ $# -eq 0 ] && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d    ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-15s", $5; else printf "%15s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
 
 local a s d;
 
-if [ ! -e ~/.cache/whend ]; then
-  local f=$(date +'%y');
-  for a in {$f..$((f+4))}; do
-    for s in {01..12}; do
-      for d in {01..31}; do
-        printf '20%s-%s-%s\n' $a $s $d >> ~/.cache/whend;
-      done
-    done
-  done
-  d=
-fi
-
-if [ ! -e ~/.cache/whent ]; then
-  for a in {00..23}; do
-    for s in {00..59}; do
-      printf '%s:%s\n' $a $s >> ~/.cache/whent;
-    done
-  done
-fi
-
-a=$(cat ~/.cache/whend | fzf +m --prompt='date: ' --border=horizontal --height=20 -q $(date +'%Y-%m-%d')) || return 1;
-s=$(cat ~/.cache/whent | fzf +m --prompt='init: ' --border=horizontal --height=20) && d=$(cat ~/.cache/whent | fzf +m --prompt='fint: ' --border=horizontal --height=20);
+d=$(date +'%y');
+a=$(printf '%s\n' 20$d-{01..12}-{01..31} | fzy --prompt='date: ' --query=$(date +'%Y-%m-%d')) || return 1;
+s=$(printf '%s\n' {00..23}:{00..59} | fzy --prompt='init: ') && d=$(printf '%s\n' {00..23}:{00..59} | fzy --prompt='fint: ');
 
 printf '%s, %-12s    ' ${a//-/ } ${s:+${s}${d:+-$d}} >> ~/.when/calendar;
 printf '%s\n' "$*" >> ~/.when/calendar;

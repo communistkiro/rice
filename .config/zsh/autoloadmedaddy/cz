@@ -1,7 +1,6 @@
-#!/bin/sh
+#!/bin/zsh
 cz() {
-local n=0;
-local o c w l;
+local o s l d;
 while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
@@ -24,21 +23,23 @@ return 1;; esac; done;
 
 # until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 
-alias cmd="ls -ap | pcre2grep '/$' | tail -n +2";
-# alias cmd="ls -ap | pcregrep '/$'";
+# alias cmd="ls -ap | pcre2grep '/$' | tail -n +2";
 # alias cmd="find . -maxdepth 1 -mindepth 1 -type d"
 # alias cmd="fd -uu -t d -d 1 ."
-# alias cmd="ls -ap | sed -r '/[^/]$/d; /^\.\/$/d'";
 
-# l=$(stty -a | head -1 | sed -r 's/.*rows ([0-9]+).*/\1/');
-l=48
-
+l=$(stty -a | head -n1 | pcre2grep -o1 'rows (\d+)');
+clear;
+setopt nonomatch;
 while true; do
-    # c="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $c ] && cd $c;
-    # c="$(cmd | slmenu -i -l $l -t)" || break;
-    # c="$(cmd | fzf -i +m --reverse --border=horizontal)" || break;
-    c="$(cmd | fzy -l $l)" || break;
-    [ -d $c ] && cd $c;
+  # s="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $s ] && cd $s;
+  # s="$(cmd | slmenu -t -i -l $l )" || break;
+  # s="$(cmd | fzf -i +m --reverse --border=horizontal)" || break;
+  # s="$(cmd | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
+  d=(*(D-/)); [ $d[1] = '*(D-/)' ] && d[1]=();
+  s="$(printf '%s/\n' '..' ${(@)d} | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
+    [ -d $s ] && cd $s;
 done
-unalias cmd; clear;
+# unalias cmd;
+clear; 
+setopt nomatch;
 }

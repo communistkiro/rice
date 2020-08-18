@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/zsh
 # pape setter
 pape() {
-local a s c o w f;
-while getopts 'h' o; do case $o in h) ;& *) 
+local a s c l f d;
+while getopts 'h' a; do case $a in (*) 
 less -F <<HEREDOC
 NAME
     pape - wallpaper setter
@@ -13,11 +13,9 @@ SYNOPSIS
 DESCRIPTION
     Browse your filesystem, looking for image formats, choose one or hit enter to get a 
     random selection from current directory, change feh's background setting options with 
-    'bgopt', exit when you're content.
+    'bgopt', exit when you're content. 'slide' sets random files from either current directory 
+    only or recursively, and will halt on SIGINT (^C). 
     
-BUGS
-    Please report any aberrant behavior or bugs to vlg@tutamail.com
-
 
 HEREDOC
 return 1;;esac; done;
@@ -29,15 +27,20 @@ a=( # feh bg options
   '--bg-scale'
   '--bg-tile'
 );
-c=~/im; # starting dir & file/folder choice
+setopt nonomatch;
+c=~/im/wp; # starting directory
 cd $c;
-until [[ -n $w ]]; do; w=$(xwininfo -name 'pape' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
-while true; do;
-    [ -d $c ] && f=($(ls -ap $c | pcre2grep -v '/')) && d=($(ls -ap $c | pcre2grep '/' | pcre2grep -v '^\./'));
-    c=$(printf "%s\n" "${d[@]}" "${f[@]}" "bgopts" "rand" | tr -s '\n' | dmenu -i -l 10 -p $(pwd) -w $w ) || break;
-    [ -d $c ] && cd $c && c=.;
-    [ -f $c ] && (feh ${s-${a[4]}} $c || break);
-    [ $c = "bgopts" ] && s=$(printf "%s\n" "${a[@]}" | tr -s '\n' | dmenu -i -l ${#a} -p 'bg image options' -w $w) && feh $s $(perl -ne 's/.* [[:punct:]](.+)[[:punct:]]/$1/ && print' ~/.fehbg);
-    [ $c = "rand" ] && (feh ${s-${a[4]}} $(ls -ap | pcre2grep -v '/' | shuf -n 1) || break);
-done
+l=$(stty -a | head -n1 | pcre2grep -o1 'rows (\d+)');
+while true; do 
+  # [ -d $c ] && { f=($(ls -ap $c | pcre2grep -v '/')); d=($(ls -ap $c | pcre2grep '/' | pcre2grep -v '^\./')) };
+  [ -d $c ] && { f=(*(D-^/)); [ $f[1] = '*(D-^/)' ] && f[1]=(); d=(*(D-/)); [ $d[1] = '*(D-/)' ] && d[1]=(); } ;
+  c=$(printf "%s\n" '..' "${d[@]}" "${f[@]}" 'opts' 'rand' 'slide' | fzy -l $((l-1)) -p "$(pwd) ") || break;
+  if [ -d $c ]; then cd $c && c=.;
+  elif [ -f $c ]; then feh ${s:-${a[4]}} $c || break;
+  elif [ $c = opts ]; then s=$(printf "%s\n" "${(@)a}" | fzy -l 5 -p 'options ') && feh ${s:-${a[4]}} "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";
+  elif [ $c = rand ]; then feh ${s:-${a[4]}} ${f[$((RANDOM % $#f + 1))]} || break;
+  elif [ $c = slide ]; then while true; do feh ${s:-${a[4]}} ${f[$((RANDOM % $#f + 1))]}; sleep .75; done;
+  fi;
+done;
+setopt nomatch;
 }

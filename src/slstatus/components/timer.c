@@ -8,5 +8,5 @@ timer(void)
     if (pscanf("/tmp/tmr.tmr.tmr", "%s", &time_left) != 1) {         
         return NULL;
     }
-    return bprintf("[%s]", time_left);
+    return bprintf("%s", time_left);
 }

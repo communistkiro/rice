@@ -1,93 +1,88 @@
-# If you come from bash you might have to change your $PATH.
-export PATH=$PATH:/opt/texlive/2020/bin/x86_64-linux:/root/.config/zsh/scripts:$HOME/bin # /usr/local/plan9/bin:
+export PATH=$PATH:/opt/texlive/2020/bin/x86_64-linux:/root/.config/zsh/scripts:/root/bin
+export PS1="%? %d |> "
 
-# Path to your oh-my-zsh installation.
-export ZSH=/root/.config/omz
+####    OPTS
+setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB RE_MATCH_PCRE
 
-# ZSH_THEME=""
-source /root/.config/zsh/prompts/qqq
-
-# Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
 HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-DISABLE_UPDATE_PROMPT="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
 # Uncomment the following line if pasting URLs and other text is messed up.
-DISABLE_MAGIC_FUNCTIONS=true
+# autoload -Uz bracketed-paste-magic
+# autoload -Uz url-quote-magic
+# zle -N bracketed-paste bracketed-paste-magic
+# zle -N self-insert url-quote-magic
 
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
+## History command configuration
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=20000
+SAVEHIST=20000
+# setopt extended_history         # record timestamp of command in HISTFILE
+setopt hist_ignore_dups         # ignore duplicated commands history list
+setopt hist_expire_dups_first   # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_space        # ignore commands that start with space
+setopt hist_verify              # show command with history expansion to user before running it
+setopt share_history            # share command history data
 
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
+setopt No_Beep                  # no beep
 
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+setopt auto_cd                  # don't try to execute directories, change into them
 
-# Uncomment the following line to display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
+setopt interactivecomments      # all after # ignored
 
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-HIST_STAMPS="yyyy-mm-dd"
-SAVE_HIST=10000
+####    PLUGINS
+autoload -U compaudit compinit
+autoload -U +X compinit && compinit 
+autoload -U +X bashcompinit && bashcompinit
+autoload -U compdef
 
-# Would you like to use another custom folder than $ZSH/custom?
-#ZSH_CUSTOM=/path/to/new-custom-folder
+source /root/.config/omz/lib/completion.zsh
 
-# Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(
-  extract
-  colored-man-pages
-  colorize
-  fzf
-  # timer 
-)
+source /root/.config/omz/plugins/extract/extract.plugin.zsh
 
+FZF_BASE=/root/src/fzf
+source /root/.config/omz/plugins/fzf/fzf.plugin.zsh
+
+source /root/.config/zsh/plugins/zsh-colored-man-pages/colored-man-pages.plugin.zsh
+
+# . /root/.config/omz/plugins/timer/timer.plugin.zsh
 # TIMER_FORMAT='[%d]'
 # TIMER_PRECISION=7
 
-FZF_BASE=/root/src/fzf
+source /root/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-ZSH_COLORIZE_TOOL=chroma
-ZSH_COLORIZE_CHROMA_FORMATTER=terminal256
-ZSH_COLORIZE_STYLE=monokai
+source /root/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+# source /root/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
+# source /root/.config/omz/lib/directories.zsh
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushdminus
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+alias -g ......='../../../../..'
+alias 1='cd -'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias 6='cd -6'
+alias 7='cd -7'
+alias 8='cd -8'
+alias 9='cd -9'
+function d () {
+  if [[ -n $1 ]]; then
+    dirs "$@"
+  else
+    dirs -v | head -10
+  fi
+}
+compdef _dirs d
 
-
-autoload -U +X compinit && compinit 
-autoload -U +X bashcompinit && bashcompinit
-
-source $ZSH/oh-my-zsh.sh
-
-setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB RE_MATCH_PCRE
-
-# ALII
+####    ALII
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
 alias mpva='mpv --force-window=yes'
@@ -97,20 +92,17 @@ alias bll='subl3 -n --command toggle_side_bar -a'
 alias bustin='16t /media/ELEM/Music/N/Neil\ Cicierega/Neil\ Cicierega\ \[Mouth\ Moods\ \(2017\)\]/08\ Bustin.mp3'
 alias catdoc='catdoc -m256'
 # alias ccal='calcurse -q'
-alias clb="col -b"
-alias cls='cless -c'
+# alias clb="col -b"
 alias clock='tty-clock -sbc'
 alias cmat='cmatrix -au2'
 alias cow='cowthink -e "^^" -f xxx -T "U"'
 alias cp='cp -vR'
-alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
+# alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias du='du -h'
-# alias espeak='espeak -p30 -k35 -s310 -g 2 -ven-sc'
 alias fd='fd -uu -i'
-alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
-alias flite='flite -voice awb'
+# alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
+alias fltrdr='fltrdr --config "/root/src/fltrdr/config/default"'
 alias fread='feed flinks'
-alias lread="feed 'lynx -dump' | less"
 alias fzf='fzf -m \
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
   --bind "alt-r:execute(mle {+})" \
@@ -118,30 +110,27 @@ alias fzf='fzf -m \
   --bind "alt-v:select-all" '
 alias gre='grep -P --color -i'
 alias hl='hledger-ui --watch'
-# alias kl='khal interactive'
-alias kln='khal new'
 alias l1='lsd -A1'
 alias ll='lsd -A'
 alias love='mpc sendmessage mpdas love'
 alias lr='lsd -A --tree'
+alias lread="feed 'lynx -dump' | less"
 alias man='man -a'
 alias mle='mle -i1 -w1'
 alias mpi='mp3info2'
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=36" &>/dev/null & disown'
 alias ncm='ncmpcpp'
-alias oc='octave-cli -q'
-alias oce='octave-cli -q --eval'
-alias pk='pkill -KILL -i'
+alias oc='octave-cli --quiet'
+alias oce='octave-cli --quiet --no-history --eval'
+alias pk='pkill -KILL -i -x'
 alias pre='pcre2grep -i --color'
-alias rm='sudo rm -r'
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted'
-# alias rr='ranger --cmd="chain set preview_files true"'
+# alias rm='rm -I'
 alias rsync='rsync -vah --progress'
 alias sex='sex | cow'
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias so='source /root/.zshrc'
 alias tage='tageditor'
-# alias unb='bindkey -d'
 alias unlove='mpc sendmessage mpdas unlove'
 alias vol='amixer set Master'
 alias xb='xbacklight -set'
@@ -150,17 +139,13 @@ alias xbql='xbps-query -l'
 alias xbqm='xbps-query -m'
 alias xbr='xbps-remove -R'
 alias xbs='xbps-install -Su'
+alias which='which -a'
 alias xc='xclip -selection clipboard'
-
+# alias unb='bindkey -d'
 # bindkey '\' forward-char
 # bindkey ';' backward-char
 
-# FUNCTIONS
-fpath=(/root/.config/zsh/autoloadmedaddy $fpath)
+
+####    AUTOLOAD
+fpath=(/root/.config/zsh/zsh-completions /root/.config/zsh/autoloadmedaddy $fpath)
 autoload $(ls /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc
-
-# wget -P /root/.surf/script/ https://www.4chan-x.net/builds/4chan-X.user.js
-
-# SOURCE
-. /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-. /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh

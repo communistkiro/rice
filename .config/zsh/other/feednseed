@@ -1,7 +1,0 @@
-#!/bin/sh
-ping -c 1 abv.bg &>/dev/null && (
-  sfeed_update && \
-  sfeed_plain /root/.sfeed/feeds/* | awk '!t[$3]++' | /bin/sed -r '/corona|apple|mac|mask|covid|tiktok|kubernet|vue|chrome|iphone|ipad|bill gates|washingtonpost|nytime|bbc|vice|twitter|blm|vaccine|black lives|lgbt|transg|homophob|race|racis|sexis|android|racial|bbc|newyork|gender|iphone/Id' | sort -r > /root/.sfeed/feeds.txt && \
-  printf '<head><meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>FEED AND SEED</title><link rel="stylesheet" type="text/css" href="file:///root/.sfeed/sty.css"></head>\n' > /root/.sfeed/feeds.html && \
-  awk 'BEGIN { FS = " {2,}" } ; NF == 4 { printf "<pre>%-18s  %-8s    <a href=\"%s\" target=\"_blank\">%s</a></pre>\n", $1, $2, $4, $3}  ; NF == 5 { printf "<pre>  %-16s  %-8s    <a href=\"%s\" target=\"_blank\">%s</a></pre>\n", $2, $3, $5, $4}' /root/.sfeed/feeds.txt >> /root/.sfeed/feeds.html;
-)

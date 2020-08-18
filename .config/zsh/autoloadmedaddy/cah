@@ -1,7 +1,7 @@
 #!/bin/zsh
 # using https://github.com/crhallberg/json-against-humanity, rules https://www.cardsagainsthumanity.com
 function cah () {
-cd ~/src/json-against-humanity;
+cd ~/games/json-against-humanity;
 # local a s q w; # for some reason the 10 white cards don't show up with local vars
 q=$(jq '.cards.white[].text' compact.md.json|wc -l);
 w=$(jq '.cards.black[].text' compact.md.json|wc -l);

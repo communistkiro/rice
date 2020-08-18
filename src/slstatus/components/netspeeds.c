@@ -29,10 +29,10 @@
             return NULL;
         }
 
-        // return fmt_human((rxbytes - oldrxbytes) * 1000 / interval,
-        //                  1024);
-        return strcat(fmt_human((rxbytes - oldrxbytes) * 1000 / interval,
-                         1024),"]");
+        return fmt_human((rxbytes - oldrxbytes) * 1000 / interval,
+                         1024);
+        // return strcat(fmt_human((rxbytes - oldrxbytes) * 1000 / interval,
+        //                  1024),"]");
     }
 
     const char *

@@ -81,4 +81,4 @@ const char *wifi_perc(const char *interface);
 const char *wifi_essid(const char *interface);
 
 /* timer */
-const char *timer(const char *interface);
+const char *timer(const char *);

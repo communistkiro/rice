@@ -11,18 +11,3 @@ if stest -dqr -n "$cache" $PATH; then
 else
 	cat "$cache"
 fi
-
-# sorted by atime; only first apparent
-# echo $PATH | tr ':' '\n' | uniq | sed 's#$#/#' | xargs /bin/ls -lu --time-style=+%s | awk '/^(-|l)/ { print $6, $7 }' | sort -rn | cut -d' ' -f 2 | uniq;
-
-# EMA'S GITHUB
-# dmenu_path: Override dmenu_path sorting results by atime.
-#
-# By default, dmenu_path sorts executables alphabetically. It seems to make
-# more sense to sort them by atime in an effort to reduce the number of
-# keystrokes needed to start a program.
-# 
-# echo $PATH | tr ':' '\n' | uniq | sed 's#$#/#' | # List directories in $PATH
-#     xargs /bin/ls -lu --time-style=+%s |         # Add atime epoch
-#     awk '/^(-|l)/ { print $6, $7 }' |            # Only print timestamp and name
-#     sort -rn | cut -d' ' -f 2

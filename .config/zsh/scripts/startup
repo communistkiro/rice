@@ -1,6 +1,7 @@
 #!/bin/zsh
 # one-off cmds script called somewhere sometime durring xstart
 
+xset b off &
 
 # mic mute 
 amixer sset Capture nocap &
@@ -23,33 +24,28 @@ xmodmap -e 'keycode 135 = Super_R' &
 
 
 # Shortcuts
-# ps -aux | awk '{ print $11 }' | pcre2grep -q '^xbindkeys$' || xbindkeys &
 ps -C xbindkeys &>/dev/null || xbindkeys &
 
 
 # Map the caps lock key to super with single press treated as escape
 # setxkbmap -option caps:super
-# ps -aux | awk '{ print $11 }' | pcre2grep -q '^xcape$' || xcape -e 'Super_L=Escape' &
 ps -C xcape || xcape -e 'Super_L=Escape' &
 
 
 # fuck trackpad
-# ps -aux | awk '{ print $11 }' | pcre2grep -q '^syndaemon$' || syndaemon -d -i 131072 &
 ps -C syndaemon &>/dev/null || syndaemon -d -i 131072 &
 
 
 # Screen lock
-# ps -aux | awk '{ print $11 }' | pcre2grep -q 'xautolock' || xautolock -time 20 -secure -locker 'xbacklight -set 0; slock; xbacklight -set 15' &
 ps -C xautolock &>/dev/null || xautolock -time 20 -secure -locker 'xbacklight -set 0; slock; xbacklight -set 15' &
 
 
 # music 
-# ps -aux | awk '{ print $11 }' | pcre2grep -q '^mpd$' || mpd && mpdas -d &
-ps -C mpd &>/dev/null || mpd && mpdas -d &
+ps -C mpd &>/dev/null || mpd &
+ps -C mpdas &>/dev/null || mpdas -d &
 
 
 #cron
-# ps -aux | awk '{ print $11 }' | pcre2grep -q '^crond$' || crond &
 ps -C crond &>/dev/null || crond &
 
 

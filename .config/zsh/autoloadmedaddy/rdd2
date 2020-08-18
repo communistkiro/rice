@@ -1,25 +1,27 @@
 #!/bin/zsh
 # DIR OF ALL MP3S, -> DIR OF ARTIST/ALBA/MP3S
 function rdd2() {
-local t=$(mktemp /tmp/rdd2.XXXXXXXX);
-local z d m;
-ls *mp3 > $t;
+t1=$(mktemp /tmp/rdd2.XXXXXXXX);
+t2=$(mktemp /tmp/rdd2.XXXXXXXX);
+local z d f;
+ls -UN1 *.mp3 > $t1 || return 1;
 
-if ! [ -s $t ]; then
-  printf "No .mp3's found!";
-  # find . -type f -name '*.mp3' -exec 
-  [ "$(printf '%s\n' '2 No' '1 Yes' | dmenu -i -p "Move all .mp3's recursively into current directory?" -l 2)" = "1 Yes" ] && fd -t f -e mp3 -X mv {} . && ls *mp3 > $t || return 1;
-fi
+if [ ! -s $t1 ]; then
+  printf 'No .mp3's found!\n';
+  [ "$(printf '%s\n' '2 No' '1 Yes' | dmenu -i -p "Move all .mp3's recursively into current directory?" -l 2)" = '1 Yes' ] && fd -t f -e mp3 -X mv {} . && ls -UN1 *.mp3 > $t1 || return 1;
+fi;
 
-while IFS= read -r m; do
-  z="$(mp3info2 -D -p '%a [%l (%y)]' $m)";
-  mkdir -p $z;
-  mv $m $z;
-done < $t;
+while IFS= read -r f; do
+  z="$(mp3info2 -D -p '%a [%l (%y)]' $f)";
+  if [ ! -d $z ]; then mkdir $z; printf '%s\n' $z >> $t2; fi;
+  mv $f $z;
+done < $t1;
 
-ls . > $t;
 while IFS= read -r d; do
-  mkdir -p ${d%% \[*};
-  mv $d ${d%% \[*};
-done < $t;
+  z=${d%% \[*};
+  if [ ! -d $z ]; then mkdir $z; fi;
+  mv $d $z;
+done < $t2;
+
+rm $t1 $t2;
 }

@@ -65,19 +65,19 @@
 
 # Increase volume
 "amixer set Master 2+"
-   XF86AudioRaiseVolume
+    XF86AudioRaiseVolume
 
 # Decrease volume
 "amixer set Master 2-"
-   XF86AudioLowerVolume
+    XF86AudioLowerVolume
 
 # Mute volume
 "amixer set Master toggle"
-   XF86AudioMute
+    XF86AudioMute
 
 # Increase backlight
 "xbacklight -inc 0.75"
-   XF86MonBrightnessUp
+    XF86MonBrightnessUp
 
 # Decrease backlight
 "xbacklight -dec 0.75"
@@ -85,31 +85,33 @@
 
 # Lock screen
 "xbacklight -set 0 && slock && xbacklight -set 12"
-  XF86ScreenSaver
+    XF86ScreenSaver
 
 # Next track
 "mpc next"
-  XF86AudioNext
+    XF86AudioNext
 
 # Previous track
 "mpc prev"
-  XF86AudioPrev
+    XF86AudioPrev
 
 # Pause playback
 "mpc toggle"
-  XF86AudioPlay
+    XF86AudioPlay
 
 # Stop playback
 "mpc stop"
-  XF86AudioStop
+    XF86AudioStop
 
+# printscreen
+"scrot --silent --quality=85 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
+   Print
 
+# printscreen cropped
+# "scrot --silent --select --line style=dash,width=2,color='red' --quality=85 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
+#    Mod4 + Print
 
-# Kill everything bad
-"pkill -9 -i 'firefox|cataclysm|gimp|subl3'"
-  alt + Print
-
-
-
-
-
+# play link in clipboards
+#    Super_L + w
+"u=$(xclip -o -sel c) || return 2; [ -n $u ] && mpv $u"
+    Mod4 + w

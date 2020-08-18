@@ -3,7 +3,7 @@
 
 # ===================== OPTIONS =====================
 
-set ratios          '1:4:5'
+set ratios          '1:2:6'
 set timefmt         '2006-01-03 15:04:05 '
 set color256        on
 set dircounts       on
@@ -14,7 +14,8 @@ set smartdia        off
 set ignoredia       on
 set incsearch       off
 set preview         on
-set reverse         off
+set previewer       '/root/.config/lf/previewer'
+# set reverse         off
 set wrapscan        on
 set wrapscroll      off
 set number          on
@@ -43,47 +44,52 @@ set scrolloff 1
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to use either file extensions and/or mime types here. Below uses an editor for text files and a file opener for the rest.
 cmd open ${{
-    # set -f
-    # case $(file --mime-type $f -b) in
-    #     text*|*ini|*json) subl3 -n $fx;;
-    #     *pdf|*djvu|*postscript ) qpdfview --unique $fx;; 
-    #     *postscript) gv $fx;;
-    #     image*) feh --scale-down $fx;;
-    #     *html|*xhtml+xml) firefox --new-tab $fx;;
-    #     *epub+zip) epub2txt | less;;
-    #     *msword) doc2txt | less;;
-    #     *spreadsheet*) gnumeric $fx;;
-    #     *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
-    # esac
-    set -f
-    case $fx in
-        (*.gif|*.png|*.jpeg|*.jpg|*.gif|*.tiff|*.pnm|*.tiff|*.bmp) feh --scale-down $fx;;
-        # (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx | less; yn 'Unpack?' "aunpack $fx";;
-        (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als $fx;;
-        (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac) mpv --no-input-terminal --really-quiet $fx &;;
-        (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $fx;;
-        (*.eps) gv -- $fx;;
-        (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $fx &>/dev/null & disown;;
-        (*.docx) docx2txt $fx - | less;;
-        (*.doc) catdoc -m94 $fx | less;;
-        (*.epub) epub2txt -n $fx | less;;
-        (*.htm|*.html|*.xhtml) firefox --new-tab $fx &>/dev/null & disown;;
-        (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $fx;;
-        (*.info) info $fx;;
-        (*.exe) wine $fx &>/dev/null & disown;;
-        (*) yn "sublime?" "subl3 -n $fx";;
-    esac
+  set -f;
+  local a;
+  for a in $fx; do
+    case $a in
+      (*.jpg|*.png|*.gif|*.tiff|*.jpeg|*.GIF|*.TIFF|*.PNG|*.BMP|*.JPEG|*.JPG) feh --scale-down --quiet $a 2>/dev/null &;;
+      (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
+      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac) mpv --no-input-terminal --really-quiet $a &;;
+      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null &;;
+      (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
+      (*.eps) gv -- $a;;
+      (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null & disown;;
+      (*.docx) docx2txt $a - | less;;
+      (*.doc) catdoc -m94 $a | less;;
+      (*.epub) epub2txt -n $a | less;;
+      (*.htm|*.html|*.xhtml) firefox --new-tab $a &>/dev/null & disown;;
+      (*.info) info $a;;
+      (*.exe) wine $a &>/dev/null & disown;;
+    esac;
+  done;
 }}
 
 cmd sublime %{{
-    set -f
-    subl3 -n --command toggle_side_bar $fx
+  set -f;
+  subl3 -n --command toggle_side_bar $fx;
 }}
 
-# cmd rename ${{
-#     [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
-#     [ -e ${d%?} ] && return 1 || mv $f ${d%?};
-# }}
+cmd rndrename ${{
+  set -f;
+  local a s d;
+  for a in $fx; do
+    d=${a#*.};
+    if [ $d = $a ]; then
+      while true; do
+        s=$(cat /dev/random | tr -cd 'a-f0-9' | head -c 32);
+        [ ! -f $s ] && break;
+      done;
+      mv $a $s;
+    else;
+      while true; do
+        s=$(cat /dev/random | tr -cd 'a-f0-9' | head -c 32);
+        [ ! -f $s.$d ] && break;
+      done;
+      mv $a $s.$d;
+    fi
+  done
+}}
 
 # make sure trash folder exists
 # %mkdir -p /tmp/.trash
@@ -105,192 +111,160 @@ cmd sublime %{{
 # map <delete> trash
 # map <delete> delete
 
-# compress current file or selected files with tar and gunzip
-# cmd tar ${{
-#     set -f
-#     mkdir $1
-#     cp -r $fx $1
-#     tar czf $1.tar.gz $1
-#     rm -rf $1
-# }}
-
-# compress current file or selected files with zip
-# cmd zip ${{
-#     set -f
-#     mkdir $1
-#     cp -r $fx $1
-#     zip -r $1.zip $1
-#     rm -rf $1
-# }}
-
 cmd mkdir ${{
-    if [ $# -gt 0 ]; then
-        d="$(printf '%s ' $@)";
-        mkdir -p ${d%?};
-    else
-        mktemp -d tmp.XXXXXXXXXX;
-    fi
+  if [ $# -gt 0 ]; then
+    d="$(printf '%s ' $@)";
+    mkdir -p ${d%?};
+  else
+    mktemp -d tmp.XXXXXXXXXX;
+  fi
 }}
 
 cmd fzf ${{
-    fzf \
-        --algo=v1 \
-        -m \
-        --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
-        --bind "alt-r:execute(mle {+})" \
-        --bind "alt-f:clear-selection" \
-        --bind "alt-v:select-all";
+  fzf \
+    --algo=v1 \
+    -m \
+    --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
+    --bind "alt-r:execute(mle {+})" \
+    --bind "alt-f:clear-selection" \
+    --bind "alt-v:select-all";
 }}
 
 cmd 7za ${{
-    set -f
-    [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
-    [ -e ${d%?} ] && return 1;
-    7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m ${d%?}.7z $fx;
-    unset d;
+  set -f
+  [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
+  [ -e ${d%?} ] && return 1;
+  7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m ${d%?}.7z $fx;
+  unset d;
 }}
 
 cmd extract ${{
-    set -f
-    case $fx in
-        (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) aunpack $fx;;
-    esac
+  set -f
+  aunpack -e $fx
 }}
 
-cmd rifle ${{
-    set -f
-    rifle -l $f
-    # read -p "Open with: " runner
-    read runner\?"Open with: "
-    rifle -p $runner $f
-}}
+# cmd rifle ${{
+#   set -f
+#   rifle -l $f
+#   # read -p "Open with: " runner
+#   read runner\?"Open with: "
+#   rifle -p $runner $f
+# }}
 
 cmd fzfcd ${{
-    local s="$(ls -Ap | pcre2grep '/$' | fzy -l 50)"
-    # local s="$(fd -uu -i -t d -ed 1 | fzy -l 50)"
-    [ -d $s ] && lf -remote "send $id cd \"$s\"" || break
+  local s="$(ls -Ap | pcre2grep '/$' | fzy -l 50)"
+  # local s="$(fd -uu -i -t d -ed 1 | fzy -l 50)"
+  [ -d $s ] && lf -remote "send $id cd \"$s\"" || break
 }}
 
 cmd Link %{{
-    lf -remote 'load' | while read file; do
-        if [ ! -n "${mode+1}" ]; then
-            mode="$file"
-            continue
-        fi
-        files+=("$file")
-    done
-    if [ "${#files[@]}" -le 1 ]; then
-        lf -remote "send $id echo no files to link"
-        exit 0
+  lf -remote 'load' | while read file; do
+    if [ ! -n "${mode+1}" ]; then
+      mode="$file"
+      continue
     fi
-    # symbolicly copy mode is indicating a soft link
-    if [[ "$mode" == copy ]]; then
-        ln -sr $files -t .
-    # while a move mode is indicating a hard link
-    elif [[ "$mode" == move ]]; then
-        ln $files -t .
-    fi
+    files+=("$file")
+  done
+  if [ "${#files[@]}" -le 1 ]; then
+    lf -remote "send $id echo no files to link"
+    exit 0
+  fi
+  # symbolicly copy mode is indicating a soft link
+  if [[ "$mode" == copy ]]; then
+    ln -sr $files -t .
+  # while a move mode is indicating a hard link
+  elif [[ "$mode" == move ]]; then
+    ln $files -t .
+  fi
 }}
 
 cmd cut-add %{{
-    files=$(lf -remote load | tail -n +2)
-    newline=$'\n'
+  files=$(lf -remote load | tail -n +2)
+  newline=$'\n'
 
-    # change to $fx to add current file when no toggled
-    # files exist.
-    if [ -n "$files" ]; then
-        new_files=$(echo "$files${newline}$fx" | sort | uniq)
-    else
-        new_files=$fx
-    fi
-    # remove empty lines from the file list, because they keep messing
-    # up the selection.
-    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+  # change to $fx to add current file when no toggled files exist.
+  if [ -n "$files" ]; then
+    new_files=$(echo "$files${newline}$fx" | sort | uniq)
+  else
+    new_files=$fx
+  fi
+  # remove empty lines from the file list, because they keep messing up the selection.
+  new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
 
-    lf -remote "save${newline}move${newline}${new_files}${newline}"
-    lf -remote "send $id unselect${newline}send $id sync"
+  lf -remote "save${newline}move${newline}${new_files}${newline}"
+  lf -remote "send $id unselect${newline}send $id sync"
 }}
 
 cmd copy-add %{{
-    files=$(lf -remote load | tail -n +2)
-    newline=$'\n'
+  files=$(lf -remote load | tail -n +2)
+  newline=$'\n'
 
-    # change to $fx to add current file when no toggled
-    # files exist.
-    if [ -n "$files" ]; then
-        new_files=$(echo "$files${newline}$fx" | sort | uniq)
-    else
-        new_files=$fx
-    fi
-    # remove empty lines from the file list, because they keep messing
-    # up the selection.
-    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+  # change to $fx to add current file when no toggled files exist.
+  if [ -n "$files" ]; then
+    new_files=$(echo "$files${newline}$fx" | sort | uniq)
+  else
+    new_files=$fx
+  fi
+  # remove empty lines from the file list, because they keep messing up the selection.
+  new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
 
-    lf -remote "save${newline}copy${newline}${new_files}${newline}"
-    lf -remote "send $id unselect${newline}send $id sync"
+  lf -remote "save${newline}copy${newline}${new_files}${newline}"
+  lf -remote "send $id unselect${newline}send $id sync"
 }}
 
 cmd cut-remove %{{
-    files=$(lf -remote load)
-    operation=$(echo "$files" | head -n1)
+  files=$(lf -remote load)
+  operation=$(echo "$files" | head -n1)
 
-    if [ "$operation" != "move" ]; then
-        lf -remote "send $id echoerr no files in cut list."
-        exit 1
-    fi
+  if [ "$operation" != "move" ]; then
+    lf -remote "send $id echoerr no files in cut list."
+    exit 1
+  fi
 
-    files=$(echo "$files" | tail -n +2)
-    newline=$'\n'
+  files=$(echo "$files" | tail -n +2)
+  newline=$'\n'
 
-    # change to $fx to remove current file when no toggled
-    # files exist.
-    if [ -n "$files" ]; then
-        # here we want all files in $files that aren't in $fs, making sure
-        # that none of the entries in $fs are included, even when they aren't
-        # in $files. To do this we concatenate $files and $fs (twice), printing
-        # only the uniqe lines.
-        new_files=$(echo "$files$newline$fx$newline$fx" | sort | uniq -u)
-    else
-        new_files=$files
-    fi
-    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+  # change to $fx to remove current file when no toggled files exist.
+  if [ -n "$files" ]; then
+    # here we want all files in $files that aren't in $fs, making sure that none of the entries in $fs are included, even when they aren't in $files. To do this we concatenate $files and $fs (twice), printing only the uniqe lines.
+    new_files=$(echo "$files$newline$fx$newline$fx" | sort | uniq -u)
+  else
+    new_files=$files
+  fi
+  new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
 
-    lf -remote "save${newline}move${newline}${new_files}${newline}"
-    lf -remote "send $id unselect${newline}send $id sync"
+  lf -remote "save${newline}move${newline}${new_files}${newline}"
+  lf -remote "send $id unselect${newline}send $id sync"
 }}
 
 cmd copy-remove %{{
-    files=$(lf -remote load)
-    operation=$(echo "$files" | head -n1)
+  files=$(lf -remote load)
+  operation=$(echo "$files" | head -n1)
 
-    if [ "$operation" != "move" ]; then
-        lf -remote "send $id echoerr no files in cut list."
-        exit 1
-    fi
+  if [ "$operation" != "move" ]; then
+    lf -remote "send $id echoerr no files in cut list."
+    exit 1
+  fi
 
-    files=$(echo "$files" | tail -n +2)
-    newline=$'\n'
+  files=$(echo "$files" | tail -n +2)
+  newline=$'\n'
 
-    # change to $fx to remove current file when no toggled
-    # files exist.
-    if [ -n "$files" ]; then
-        # here we want all files in $files that aren't in $fs, making sure
-        # that none of the entries in $fs are included, even when they aren't
-        # in $files. To do this we concatenate $files and $fs (twice), printing
-        # only the uniqe lines.
-        new_files=$(echo "$files$newline$fx$newline$fx" | sort | uniq -u)
-    else
-        new_files=$files
-    fi
-    new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
+  # change to $fx to remove current file when no toggled files exist.
+  if [ -n "$files" ]; then
+    # here we want all files in $files that aren't in $fs, making sure that none of the entries in $fs are included, even when they aren't in $files. To do this we concatenate $files and $fs (twice), printing only the uniqe lines.
+    new_files=$(echo "$files$newline$fx$newline$fx" | sort | uniq -u)
+  else
+    new_files=$files
+  fi
+  new_files=$(echo "$new_files" | sed --quiet -e '/^$/d' -e 'p')
 
-    lf -remote "save${newline}copy${newline}${new_files}${newline}"
-    lf -remote "send $id unselect${newline}send $id sync"
+  lf -remote "save${newline}copy${newline}${new_files}${newline}"
+  lf -remote "send $id unselect${newline}send $id sync"
 }}
 
 cmd pageme ${{
-    set -f
-    chroma -s monokai -- $fx | $PAGER;
+  set -f
+  chroma -s monokai -- $fx | $PAGER;
 }}
 
 
@@ -390,27 +364,28 @@ map \}          top
 
 # ACTIONS
 map Q           quit
-map r           rifle $fx
+# map r           rifle $fx
+map @           push :<space>$fx
 map <esc>       cmd-escape
 map yy          copy
 map ya          copy-add
 map yr          copy-remove
+map yp          push $realpath<space>$fx<space>|<space>xclip<space>-sel<space>clip<enter>
+map yd          push $realpath<space>$fx<space>|<space>xargs<space>--delimiter='\n'<space>dirname<space>|<space>xclip<space>-sel<space>clip<enter>
 map dd          cut
 map da          cut-add
 map dr          cut-remove
-map p           paste
+map p           paste; reload
 map P           :Link
-# map e           find
 map f           fzf
 map n           search-next
 map N           search-prev
 map a           rename
-# map a           push :rename<space>
+map A           rndrename
 map gh          cd ~
 map gp          cd /tmp
-map ge          cd /etc
-map gu          cd /usr
 map c           push :cd<space>
+# map e           find
 map e           fzfcd
 map E           sublime
 # map l           $$PAGER $fx
@@ -429,7 +404,7 @@ map x           read
 map S           $$SHELL
 map D           push :delete<space>$fx<enter>
 map ,           push :glob-select<space>*
-map .           push :glob-unselect<space>*
+map '<'         push :glob-unselect<space>*
 map v           invert
 map n           push :mkdir<space>
 map Z           push :7za<space>
@@ -444,8 +419,8 @@ map zs          :set info size
 map zt          :set info time
 map za          :set info size:time
 map zp          :set preview!
-map zx          :set nopreview; set ratios '1:9'
-map zz          :set preview; set ratios '1:4:5'
+map zx          :set nopreview; set ratios '1:8'
+map zz          :set preview; set ratios '1:2:6'
 map sn          :set sortby natural; set info
 map ss          :set sortby size; set info size
 map st          :set sortby time; set info time

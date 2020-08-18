@@ -29,9 +29,10 @@ DESCRIPTION
     paramters, and play an audio file on completion. Days are always relative to today's, 
     i.e., 1 is tomorrow, or +24h. For coundowns. negatives values are parsed as corrections, 
     for alarms, because the day is relative, a future alarm is always set unless all values 
-    are zero (default, if given empty string). All values are integers. Months don't coming 
+    are zero (default, if given empty string). All values are integers. Months don't come  
     into play in tmr. Default cycle count, work-, and break-section durations can be editted 
-    in the script.
+    in the script. Given no arguments, it prompt for the days, hours, minutes, seconds for 
+    the alarm or countdown separately.
 
 CONTROLS
     SIGINT (^c) to pause; SIGQUIT (^\) to quit.
@@ -94,9 +95,9 @@ if [ $p -eq 1 ]; then
         b=8;
     fi
     for a in $(seq 3); do
-        clear; printf "Starting %d. pomodoro cycle\nWork!\n" $a;
+        clear; printf "\aStarting %d. pomodoro cycle\nWork!\n" $a;
         tmr $w; [ $? -eq 2 ] && break;
-        printf '\aBreak!\n'; tmr $b;[ $? -eq 2 ]; printf '\a'; break; 
+        printf '\aBreak!\n'; tmr $b;[ $? -eq 2 ] && break; 
     done
     return $?;
 fi
@@ -120,7 +121,7 @@ elif [ $# -eq 2 ]; then
 elif [ $# -eq 1 ]; then
     m=$1;
 else
-    echo "Set alarm $([ $a -eq 1 ] && echo at || echo in):";
+    [ $a -eq 1 ] && printf 'Set alarm for\n' || printf 'Set countdown for '
     # sh
     # read -r -p 'days (rel. not abs.): ' d
     # read -r -p 'hours: ' h
@@ -162,7 +163,7 @@ if [ $a -eq 1 ]; then
     [ $d -lt 0 ] || [ $((60 * (60 * (24 * d + h) + m) + s)) -lt 0 ] && return 1;
 
     t=$(date -d "$(date +%Y-%m-%d) +${d}days +${h}hours +${m}minutes +${s}seconds" '+%Y-%m-%d %H:%M:%S');
-    printf "Alarm set for %s.\n" "$t";
+    printf "\nAlarm set for %s.\n" "$t";
 
     t=$(($(date -d "$(date +%Y-%m-%d) +${d}days ${h}hours +${m}minutes +${s}seconds" '+%s') - $(date +%s)));
 else;

@@ -7,17 +7,21 @@ cd ~/nm;
 local a s d;
 
 [ $# -gt 0 ] && for a in "$@"; do 
-  [[ $a =~ 'playlist' ]] && s=p || [[ $a =~ 'album' ]] && s=a || return 3;
+  if [[ $a =~ 'playlist' ]]; then s=p;
+  elif [[ $a =~ 'album' ]]; then s=a; 
+  else return 33; fi;
   spotdl -$s $a || return 1;
   spotdl -l "$(ls -c *.txt)" || return 2;
   rm "$(ls -c *.txt)";
 done && return 0;
 
-while IFS= read -r d; do
-  [[ $a =~ 'playlist' ]] && s=p || [[ $a =~ 'album' ]] && s=a || return 3;
+while IFS= read -r a; do
+  if [[ $a =~ 'playlist' ]]; then s=p;
+  elif [[ $a =~ 'album' ]]; then s=a;
+  else return 3; fi;
   spotdl -$s $a || return 1;
   spotdl -l "$(ls -c *.txt)" || return 2;
   rm "$(ls -c *.txt)";
-  printf "$a\n" >> ~/nm/spold && sed -i '1,1d' ~/spnew;
+  printf '%s\n' $a >> ~/nm/spold && sed -i '1,1d' ~/nm/spnew;
 done < ~/nm/spnew;
 }
