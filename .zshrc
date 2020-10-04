@@ -1,8 +1,10 @@
 export PATH=$PATH:/opt/texlive/2020/bin/x86_64-linux:/root/.config/zsh/scripts:/root/bin
-export PS1="%? %d |> "
+# export PS1="%? %d |> "
+export PS1="%B%F{red}%?%f %F{cyan}%d%f %F{green}|>%f%b "
+
 
 ####    OPTS
-setopt EXTENDED_GLOB KSH_GLOB NO_SH_GLOB RE_MATCH_PCRE
+setopt extended_glob ksh_glob no_sh_glob re_match_pcre
 
 # CASE_SENSITIVE="true"
 HYPHEN_INSENSITIVE="true"
@@ -15,11 +17,13 @@ HYPHEN_INSENSITIVE="true"
 
 ## History command configuration
 HISTFILE="$HOME/.zsh_history"
-HISTSIZE=20000
 SAVEHIST=20000
-# setopt extended_history         # record timestamp of command in HISTFILE
+HISTSIZE=20000 # cushion large than SAVEHIST, if hist_expire_dups_first set
+setopt no_extended_history      # record timestamp of command in HISTFILE
+setopt hist_reduce_blanks
 setopt hist_ignore_dups         # ignore duplicated commands history list
-setopt hist_expire_dups_first   # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_all_dups     # remove old dupes
+# setopt hist_expire_dups_first   # delete duplicates first when HISTFILE size exceeds HISTSIZE
 setopt hist_ignore_space        # ignore commands that start with space
 setopt hist_verify              # show command with history expansion to user before running it
 setopt share_history            # share command history data
@@ -46,7 +50,7 @@ source /root/.config/omz/plugins/fzf/fzf.plugin.zsh
 
 source /root/.config/zsh/plugins/zsh-colored-man-pages/colored-man-pages.plugin.zsh
 
-# . /root/.config/omz/plugins/timer/timer.plugin.zsh
+# source /root/.config/omz/plugins/timer/timer.plugin.zsh
 # TIMER_FORMAT='[%d]'
 # TIMER_PRECISION=7
 
@@ -85,7 +89,6 @@ compdef _dirs d
 ####    ALII
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
-alias mpva='mpv --force-window=yes'
 alias bb='bye'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
@@ -100,16 +103,18 @@ alias cp='cp -vR'
 # alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" 
 alias du='du -h'
 alias fd='fd -uu -i'
+alias feeds='sfeed_curses /root/.sfeed/feeds/*'
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33"
 alias fltrdr='fltrdr --config "/root/src/fltrdr/config/default"'
 alias fread='feed flinks'
-alias fzf='fzf -m \
+alias fzf='fzf -i -m --reverse --border=horizontal \
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
   --bind "alt-r:execute(mle {+})" \
   --bind "alt-c:clear-selection" \
   --bind "alt-v:select-all" '
 alias gre='grep -P --color -i'
 alias hl='hledger-ui --watch'
+alias l='less -F'
 alias l1='lsd -A1'
 alias ll='lsd -A'
 alias love='mpc sendmessage mpdas love'
@@ -118,6 +123,9 @@ alias lread="feed 'lynx -dump' | less"
 alias man='man -a'
 alias mle='mle -i1 -w1'
 alias mpi='mp3info2'
+alias mpva='mpv --force-window=yes'
+alias mpvn='mpv --no-video'
+alias mpvp='mpv --vo=tct --profiles=sw-fast'
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=36" &>/dev/null & disown'
 alias ncm='ncmpcpp'
 alias oc='octave-cli --quiet'
@@ -141,6 +149,7 @@ alias xbr='xbps-remove -R'
 alias xbs='xbps-install -Su'
 alias which='which -a'
 alias xc='xclip -selection clipboard'
+
 # alias unb='bindkey -d'
 # bindkey '\' forward-char
 # bindkey ';' backward-char

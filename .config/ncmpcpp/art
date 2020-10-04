@@ -1,6 +1,14 @@
 #!/bin/zsh
 
 # kill most recently called album art feh
-# a=$(pgrep -af feh | grep '/media/Music/ELEM' | /bin/grep -Po '^\d+'| sort | tail -1) && [ "$a" -ne '' ] && pkill --pidQile=$a; 
-# try to open in given dims or return
-# feh -q -W 125 -W 125 "/media/ELEM/Music/$(mpc -f %file% | head -1)" >&/dev/null || return 1;
+# a=$(pgrep -af feh | pcre2grep -o1 '^(\d+) feh .+/media/ELEM/Music/.+') && [[ "$a" -ne '' ]] && kill $a;
+# feh -q -W 64 -W 64 "/media/ELEM/Music/$(mpc -f '%file%' | head -n 1)" || return 1;
+# sleep 2;
+# xdotool search --screen 0 --class feh windowactivate windowmove 100 100;
+
+
+# s=$(stty size) || return 1;
+# # ${s#* }
+# # printf '\033[$(({s% *}-32-4));4f';
+# printf '\033[$(({s% *}-32-3));3f';
+# catimg -H 64 "/media/ELEM/Music/$(mpc -f '%file%' | head -n 1)";

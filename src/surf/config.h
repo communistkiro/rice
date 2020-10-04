@@ -144,7 +144,8 @@ static SiteSpecific styles[] = {
 static SiteSpecific scripts[] = {
    /* regexp               file in $scriptdir */
    // { ".*",                 "default.js" },
-    { "://boards\\.4chan.*", "4chan-X.user.js" },
+    { "boards\\.4chan.*", "4chan-X.user.js" },
+    { "(www\\.)?reddit.com/.*", "oldreddit.js" },
     // { "://news\\.ycombinator.*", "hn-filter.js" },
 };
 

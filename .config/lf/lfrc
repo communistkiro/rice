@@ -74,19 +74,20 @@ cmd rndrename ${{
   set -f;
   local a s d;
   for a in $fx; do
-    d=${a#*.};
+    # d=${a#*.};
+    d=${a##*.};
     if [ $d = $a ]; then
       while true; do
-        s=$(cat /dev/random | tr -cd 'a-f0-9' | head -c 32);
+        s=$(cat /dev/random | tr -cd '[:alnum:]' | head -c 32);
         [ ! -f $s ] && break;
       done;
       mv $a $s;
-    else;
+    else
       while true; do
-        s=$(cat /dev/random | tr -cd 'a-f0-9' | head -c 32);
+        s=$(cat /dev/random | tr -cd '[:alnum:]' | head -c 32);
         [ ! -f $s.$d ] && break;
       done;
-      mv $a $s.$d;
+      mv $a ./$s.$d;
     fi
   done
 }}
@@ -262,7 +263,7 @@ cmd copy-remove %{{
   lf -remote "send $id unselect${newline}send $id sync"
 }}
 
-cmd pageme ${{
+cmd cless ${{
   set -f
   chroma -s monokai -- $fx | $PAGER;
 }}
@@ -364,6 +365,7 @@ map \}          top
 
 # ACTIONS
 map Q           quit
+map <c-q>       quit
 # map r           rifle $fx
 map @           push :<space>$fx
 map <esc>       cmd-escape
@@ -388,8 +390,8 @@ map c           push :cd<space>
 # map e           find
 map e           fzfcd
 map E           sublime
-# map l           $$PAGER $fx
-map l           pageme
+map l           cless
+map L           $$PAGER $fx
 map <tab>       cmd-complete
 map <c-l>       redraw
 map <c-l>       reload
@@ -402,9 +404,9 @@ map q           unselect
 # map q           clear
 map x           read 
 map S           $$SHELL
-map D           push :delete<space>$fx<enter>
+map D           delete
 map ,           push :glob-select<space>*
-map '<'         push :glob-unselect<space>*
+map .           push :glob-unselect<space>*
 map v           invert
 map n           push :mkdir<space>
 map Z           push :7za<space>

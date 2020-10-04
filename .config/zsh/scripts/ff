@@ -1,0 +1,7 @@
+#!/bin/sh
+if [ $# -gt 0 ]; then
+nohup firefox $(printf ' --new-tab %s ' $@) >/tmp/ff.out &
+else
+nohup firefox >/tmp/ff.out &
+fi
+exit

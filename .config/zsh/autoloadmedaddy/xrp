@@ -55,12 +55,14 @@ while IFS= read -r a; do;
         printf "%s\n" $a >> ~/nm/soon;
         sort -uo ~/nm/soon ~/nm/soon;
     else
+            # --format mp3 \
         youtube-dl \
             --ignore-config \
             --ignore-errors \
             --retries 64 \
-            --fragment-retries 256 \
-            --format mp3 \
+            --audio-format mp3 \
+            --audio-quality 0 \
+            --fragment-retries 64 \
             --embed-thumbnail \
             --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' $a;
         if ! w=(${(@f)"$(ls *mp3)"}); then

@@ -260,7 +260,7 @@ browser_sort_format = "format"
 ## Note: Custom command that will be executed each time song changes. Useful for
 ## notifications etc.
 ##
-execute_on_song_change = "~/.config/ncmpcpp/art"
+#execute_on_song_change = "~/.config/ncmpcpp/art"
 
 ##
 ## Note: Custom command that will be executed each time player state

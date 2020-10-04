@@ -1,0 +1,22 @@
+#!/bin/sh
+
+case "$1" in
+  # (*.pdf) pdftotext $1 -;; pdf2ps ps2ascii?
+  # (*.eps) gv -- $1;;
+  (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e -- "$1";;
+  # (*.jpg|*.jpeg) jp2a --width=96 "$1";;
+  # (*.jpg|*.jpeg|*.tiff|*.png) python /root/.config/lf/braille.py -s 4.6 -c 40 "$1";;
+  # (*.jpg|*.jpeg|*.png|*.gif|*.tiff|*.webm) img2txt -d random -W 125 -g 0.75 "$1";;
+  # (*.jpg|*.jpeg|*.png|*.gif) a=$(file "$1" | pcre2grep -o1 -o2 -o3',(\d+) ?(x) ?(\d+),?'); [ ${a%x*} -ge ${a#*x} ] && img2txt -d fstein -H 49 -g 0.6 -y 12 "$1" || img2txt -d fstein -W 125 -g 0.6 -y 12 "$1";;
+  # (*.tiff) a=$(file "$1" | pcre2grep -o1 -o2 'height=(\d+,).*width=(\d+)'); [ ${a%,*} -gt ${a#*,} ] && img2txt -d random -W 125 -g 0.75 -y 12 "$1" || img2txt -d random -H 49 -g 0.75 -y 12 "$1";;
+  # (*.jpg|*.jpeg|*.png|*.gif|*.tiff) tiv -h 49 -w 125 -256 "$1";;
+  (*.jpg|*.jpeg|*.png) catimg -H 98 -t "$1";;
+  (*.gif) catimg -H 98 -t -l -1 "$1";;
+  (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l -- "$1";;
+  (*.mp3) mp3info2 "$1";;
+  (*.doc) catdoc -m94 -- "$1";;
+  (*.docx) docx2txt -- "$1" -;;
+  (*.epub) epub2txt -n -- "$1";;
+  (*.info) info -- "$1";;
+  (*) head -n 100 "$1";;
+esac;

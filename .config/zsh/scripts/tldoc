@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ $# -gt 0 ]; then
+  for a in $@; do
+    fd -e pdf $a /opt/texlive/2020/texmf-dist/doc -X ff {} 
+  done
+else
+  ff /opt/texlive/2020/doc.html
+fi

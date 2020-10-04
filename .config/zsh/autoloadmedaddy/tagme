@@ -5,7 +5,7 @@ local o t z a;
 while getopts 'h' o; do case $o in *) 
 less -F <<HEREDOC
 NAME
-    tagmet - tag audio files.
+    tagme - tag audio files.
 
 SYNOPSIS
     tagme [dir(s)]

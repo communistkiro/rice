@@ -35,9 +35,12 @@ while true; do
   # s="$(cmd | slmenu -t -i -l $l )" || break;
   # s="$(cmd | fzf -i +m --reverse --border=horizontal)" || break;
   # s="$(cmd | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
+  
   d=(*(D-/)); [ $d[1] = '*(D-/)' ] && d[1]=();
-  s="$(printf '%s/\n' '..' ${(@)d} | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
-    [ -d $s ] && cd $s;
+  # s="$(printf '%s/\n' '..' ${d} | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
+  s="$(printf '%s/\n' '..' ${d} | fzf -i +m --reverse --cycle --prompt="$(pwd) " --bind 'right:accept' --bind 'left:top+accept' --preview='if [[ -d {} ]]; then printf "%s\n" {}*(D-); elif [[ -f {} ]]; then head -n 64 {} | less; fi')" || break;
+
+  [[ -d $s ]] && cd $s;
 done
 # unalias cmd;
 clear; 

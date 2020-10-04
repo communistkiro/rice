@@ -10,15 +10,15 @@ a=(
 c=~/im/wp; # starting direcotry
 cd $c;
 setopt nonomatch
-while true; do;
+while true; do
   # [ -d $c ] && f=($(ls -ap $c | pcre2grep -v '/')) && d=($(ls -ap $c | pcre2grep '/' | pcre2grep -v '^\./')); 
-  [ -d $c ] && { f=(*(D-^/)); d=(*(D-/)); [ $d[1] = '*(D-/)' ] && d[1]=(); };
+  [ -d $c ] && { f=(*(.D-)); d=(*(/D-)); [ $d[1] = '*(/D-)' ] && d[1]=(); [ $f[1] = '*(.D-)' ] && f[1]=(); };
   c=$(printf '%s\n' '..' "${(@)d}" "${(@)f}" 'opts' 'rand' 'slide' | dmenu -i -p "$(pwd) " ) || break; 
   [ -d $c ] && cd $c && c=.;
   [ -f $c ] && { feh ${s:-${a[4]}} $c || break };
   if [ $c = 'opts' ]; then s=$(printf "%s\n" "${(@)a}" | dmenu -i -p 'options ') && feh ${s:-${a[4]}} "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";
   elif [ $c = 'rand' ]; then feh ${s:-${a[4]}} ${f[$((RANDOM % $#f + 1))]} || break;
   fi;
-done
+done;
 unset c a f s d;
 setopt nomatch;
