@@ -1,0 +1,70 @@
+#!/bin/zsh
+function box () {
+[[ $# -eq 0 ]] && return 0;
+local a h B T H ul ur dl dr uh dh lv rv z r; local s=1;
+while getopts 'tsdbh:B:T:H:' a; do case $a in
+(t) s=1; ((z+=1));; # thicc
+(s) s=2; ((z+=1));; # sticc
+(d) s=3; ((z+=1));; # double
+(b) s=4; ((z+=1));; # braile
+(h) h=${OPTARG}; ((z+=2));; # header
+(B) B=${OPTARG}; ((z+=2));; # box color
+(T) T=${OPTARG}; ((z+=2));; # text color
+(H) H=${OPTARG}; ((z+=2));; # header color
+(*) less -F << HEREDOC # help wanted.
+NAME
+    box - enclose strings in box
+
+SYNOPSIS
+    box [-tsdb] [-BTH color] [-h header] [string(s)]
+
+DESCRIPTION
+    box is a zsh script that encloses one or more strings, extending to 4 above the lengthiest 
+    string, header included. The box may be thick, thin, double, or dotted; may have a title; 
+    and may color the box's line, text, and header in different colors according to ANSI C 
+    escape codes. The color is a 2-character sequence of a number 0-7 and the letter 'b', 
+    the former corresponding to black, red, green, yellow, blue, magenta, cyan, and white, and 
+    the latter turning the color to bold. Defaults to thick lines and white for box, text, and 
+    header. Don't use = for options accepting arguments.
+
+
+EXAMPLES
+    box -h header 'This is a sentence on the first row' 'This is a second row'
+    a=Zz; box -h 'looooooooooooooooong snooze' ${(pr.16..$a)a} "padding works, too"
+
+HEREDOC
+;; esac; done; unset a; ((z+=1));
+
+B='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $B || <<< 7)$(pcre2grep -qio1 'b' <<< $B && <<< ';1')m";
+T='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $T || <<< 7)$(pcre2grep -qio1 'b' <<< $T && <<< ';1')m";
+H='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $H || <<< 7)$(pcre2grep -qio1 'b' <<< $H && <<< ';1')m";
+r='\033[0m'
+
+ul=(┏ ┌ ╔ ⡏);
+dl=(┗ └ ╚ ⣇);
+ur=(┓ ┐ ╗ ⢹);
+dr=(┛ ┘ ╝ ⣸);
+uh=(━ ─ ═ ⠉);
+dh=(━ ─ ═ ⣀);
+lv=(┃ │ ║ ⡇);
+rv=(┃ │ ║ ⢸);
+
+ul=${ul[$s]};
+ur=${ur[$s]};
+dl=${dl[$s]};
+dr=${dr[$s]};
+uh=${uh[$s]};
+dh=${dh[$s]};
+lv=${lv[$s]};
+rv=${rv[$s]};
+
+s=0; for a in $@[$z,-1]; do [[ ${(c)#a} -gt $s ]] && s=${(c)#a}; done; 
+if ((${+h})) && [[ $#h -gt $s ]]; then s=$#h; ((s+=2)); fi; ((s+=2)); 
+
+
+((${+h})) && printf "$B$ul${(pr.(((s-$#h)/2))..$uh.)uh}$r$H$h$r$B${(pr.(((s-$#h)/2+$#h+s-($#h+s)/2*2))..$uh.)uh}$ur\n" || printf "$B$ul${(pr.((s-1))..$uh.)uh}$ur\n";
+
+for a in $@[$z,-1]; do printf "$lv $r$T${(r.((s-2)).. .)a} $r$B$rv\n"; done;
+
+printf "$dl${(pr.$s..$dh.)dh}$dr$r\n";
+}

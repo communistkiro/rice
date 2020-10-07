@@ -18,4 +18,5 @@ my config for the most part;
   - ~~`stream` - selct twitch category(s), language(s) and choose a stream to watch, uses `dmenu`, `sed/perl`, `mpv`~~ new api is shite;
   - `tmr` - countdown/alarm/pomodoro script, based off of Joe Standring's two; comes with a real nice foghorn i audacity'd;
   - `dwmsss` dwm status bar script made obsolete by `slstatus` 
+  - `box` script to embox strings, optional header, and box/text/header color choice, zsh and C;
 - `cfastread` spritz reader in C, wherein I added optional wpm as first arg to facilitate input from `sfeed` script 

@@ -1,0 +1,9 @@
+#!/bin/zsh
+function menu () {
+  local m t a z;
+  while getopts 'm:t:' a; do case $a in
+  (m) m=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
+  (t) t=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
+  esac; done; ((z+=1));
+  for a in $@[$z,-1]; do printf '%s%4s    %s%s\n' $m ${a%% *} $t ${a#* }; done; printf '\033[0m';
+}
