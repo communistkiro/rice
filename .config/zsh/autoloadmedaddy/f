@@ -1,0 +1,5 @@
+#!/bin/zsh
+function f () {
+  setopt extended_glob;
+  printf '%s\n' ${1:-$(realpath .)}/(*/)#* | fzf -i -m --reverse;
+}

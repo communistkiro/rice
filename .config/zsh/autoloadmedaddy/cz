@@ -27,7 +27,7 @@ return 1;; esac; done;
 # alias cmd="find . -maxdepth 1 -mindepth 1 -type d"
 # alias cmd="fd -uu -t d -d 1 ."
 
-l=$(stty -a | head -n1 | pcre2grep -o1 'rows (\d+)');
+l=${"$(stty size)"% *};
 clear;
 setopt nonomatch;
 while true; do
@@ -36,7 +36,7 @@ while true; do
   # s="$(cmd | fzf -i +m --reverse --border=horizontal)" || break;
   # s="$(cmd | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
   
-  d=(*(D-/)); [ $d[1] = '*(D-/)' ] && d[1]=();
+  d=(*(/D-)); [[ $d[1] = '*(/D-)' ]] && d[1]=();
   # s="$(printf '%s/\n' '..' ${d} | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
   s="$(printf '%s/\n' '..' ${d} | fzf -i +m --reverse --cycle --prompt="$(pwd) " --bind 'right:accept' --bind 'left:top+accept' --preview='if [[ -d {} ]]; then printf "%s\n" {}*(D-); elif [[ -f {} ]]; then head -n 64 {} | less; fi')" || break;
 
@@ -44,5 +44,4 @@ while true; do
 done
 # unalias cmd;
 clear; 
-setopt nomatch;
 }

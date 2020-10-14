@@ -1,17 +1,15 @@
-#!/bin/sh
+#!/bin/zsh
 
 function tmr() {
 # countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 days
 # local alarm=~/.local/CartoonFoghorn.m4a;
-local a=0;
-local p=0;
-local o w b d h m s D H M S r t
-while getopts 'aph' o; do
+local o tmp;
+integer w b d h m s D H M S r t;
+while getopts 'ap' o; do
     case $o in
-        a) a=1;;
-        p) p=1;;
-        h) ;&
-        *) 
+        (a) local a;;
+        (p) local p;;
+        (*) 
 less -F <<HEREDOC
 NAME
     tmr - a countdown/alarm script    
@@ -80,71 +78,50 @@ BUGS
 
 
 HEREDOC
-return 1;; esac; done;
+return 1;; esac; shift $((OPTIND-1)); done;
 
-shift $((OPTIND-1));
-
-if [ $p -eq 1 ]; then
-    if [ $# -eq 2 ]; then
+if ((${+p})); then
+    if (($# == 2)); then
+        (($1 < 0)) || (($2 < 0)) && return 1;
         w=$1;
         b=$2;
-        [ $w -le 0 ] || [ $b -le 0 ] && return 1;
     else
         w=45;
         b=8;
     fi
     for a in $(seq 3); do
-        clear; printf "\aStarting %d. pomodoro cycle\nWork!\n" $a;
-        tmr $w; [ $? -eq 2 ] && break;
-        printf '\aBreak!\n'; tmr $b;[ $? -eq 2 ] && break; 
+        clear; printf '\aStarting %d. pomodoro cycle\nWork!\n' $a;
+        tmr $w; (($? == 2)) && break;
+        clear; printf '\aBreak!\n'; tmr $b; (($? == 2)) && break; 
     done
     return $?;
 fi
 
-# tmp file storing current remaining time
-# tmp=$(mktemp /tmp/countdown.XXXXXX);
-tmp="/tmp/tmr.tmr.tmr";
+tmp=/tmp/tmr.tmr.tmr;
 
-if [ $# -eq 4 ]; then
-    d=$1;
-    h=$2;
-    m=$3;
-    s=$4;
-elif [ $# -eq 3 ]; then
-    d=$1;
-    h=$2;
-    m=$3;
-elif [ $# -eq 2 ]; then
-    h=$1;
-    m=$2;
-elif [ $# -eq 1 ]; then
-    m=$1;
+if   (($# == 4)); then
+    d=$1; h=$2; m=$3; s=$4;
+elif (($# == 3)); then
+    d=$1; h=$2; m=$3;
+elif (($# == 2)); then
+          h=$1; m=$2;
+elif (($# == 1)); then
+                m=$1;
 else
-    [ $a -eq 1 ] && printf 'Set alarm for\n' || printf 'Set countdown for '
-    # sh
-    # read -r -p 'days (rel. not abs.): ' d
-    # read -r -p 'hours: ' h
-    # read -r -p 'minutes: ' m
-    # read -r -p 'seconds: ' s
-    # zsh
-    read -r d\?'days (rel. not abs.): '
-    read -r h\?'hours: '
-    read -r m\?'minutes: '
-    read -r s\?'seconds: '
+    ((${+a})) && printf 'Set alarm for\n' || printf 'Set countdown for '
+    read 'd?days (rel. not abs.): ';
+    read 'h?hours: ';
+    read 'm?minutes: ';
+    read 's?seconds: ';
 fi
 
-[ "$d" = '' ] && d=0;
-[ "$h" = '' ] && h=0;
-[ "$m" = '' ] && m=0;
-[ "$s" = '' ] && s=0;
-[ "$d" -eq 0 ] && [ "$h" -eq 0 ] && [ "$m" -eq 0 ] && [ "$s" -eq 0 ] && return 1;
+[[ $d = '' ]] && d=0;
+[[ $h = '' ]] && h=0;
+[[ $m = '' ]] && m=0;
+[[ $s = '' ]] && s=0;
+((d == 0)) && ((h == 0)) && ((m == 0)) && ((s == 0)) && return 1;
 
-for r in $d $h $m $s; do
-case $r in *[!0-9-]*) echo "Non-integer value!"; return 1;; esac
-done
-
-if [ $a -eq 1 ]; then
-    # -59 <= s <= 59; -59 <= m <= 59; -24 <= h <= 24; 0 <= d
+if ((${+a})); then
     m=$((m + s / 60)); s=$((s % 60));
     h=$((h + m / 60)); m=$((m % 60));
     d=$((d + h / 24)); h=$((h % 24)); 
@@ -153,20 +130,19 @@ if [ $a -eq 1 ]; then
     M=$(date +%M);
     H=$(date +%H);
 
-    if   [ $S -ge $s ] && [ $m -eq 0 ] && [ $h -eq 0 ] && [ $d -eq 0 ]; then m=$((M + 1)); h=$((H));
-    elif [ $M -gt $m ] || ([ $M -eq $m ] && [ $S -ge $s ]) && [ $h -eq 0 ] && [ $d -eq 0 ]; then h=$((H + 1));
-    elif [ $M -lt $m ] && [ $h -eq 0 ] && [ $d -eq 0 ]; then h=$H;
-    elif [ $H -gt $h ] || ([ $H -eq $h ] && [ $M -ge $m ]) && [ $d -eq 0 ]; then d=$((d + 1));
-    fi;
+    if ((S >= s)) && ((m == 0)) && ((h == 0)) && ((d == 0)); then m=$((M + 1)); h=$H;
+    elif ((M > m)) || { ((M == m)) && ((S >= s)) } && ((h == 0)) && ((d == 0)); then h=$((H + 1));
+    elif ((M < m)) && ((h == 0)) && ((d == 0)); then h=$H;
+    elif ((H > h)) || { ((H == h)) && ((M >= m)) } && ((d == 0)); then ((d += 1)); fi;
 
-    [ $d -lt 0 ] || [ $((60 * (60 * (24 * d + h) + m) + s)) -lt 0 ] && return 1;
+    ((d < 0)) || ((60 * (60 * (24 * d + h) + m) + s < 0)) && return 1;
 
     t=$(date -d "$(date +%Y-%m-%d) +${d}days +${h}hours +${m}minutes +${s}seconds" '+%Y-%m-%d %H:%M:%S');
     printf "\nAlarm set for %s.\n" "$t";
 
     t=$(($(date -d "$(date +%Y-%m-%d) +${d}days ${h}hours +${m}minutes +${s}seconds" '+%s') - $(date +%s)));
 else;
-    t=$((60 * (60 * (24 * d + h) + m) + s)); [ $t -lt 0 ] && return 1;
+    t=$((60 * (60 * (24 * d + h) + m) + s)); (($t < 0)) && return 1;
 fi;
 
 trap 'rm -f "$tmp"; trap - QUIT; return 2;' QUIT HUP
@@ -174,18 +150,17 @@ trap 'a=$((a * -1));' INT
 
 unset d h m s r; a=1;
 # output remainind time left as HH:MM:SS to stdout and tmpfile
-while [ $t -ge 0 ]; do
-    if [ $a -eq 1 ]; then
-        printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60));
-        printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) > $tmp;
-        t=$((t - 1));
+while ((t >= 0)); do
+    if ((a == 1)); then
+        printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) | tee $tmp;
+        ((t -= 1));
     fi;
     sleep 1;
 done
 
-if [ $? -eq 0 ] && mpc status &>/dev/null | pcre2grep -q playing; then 
+if (($? == 0)) && mpc status &>/dev/null | pcre2grep -q playing; then 
     # mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle; 
-    mpc -q toggle; beep -f 200 -r 3 -l 300 -n -l300 -r3 -f$((200*27/18)); mpc -q toggle; 
+    mpc -q toggle; beep -f 200 -r 3 -l 300 -n -l300 -r3 -f $((200*27/18)); mpc -q toggle; 
 else 
     # mpv --really-quiet $alarm;
     beep -f 200 -r 3 -l 300 -n -l 300 -r 3 -f $((200*27/18));

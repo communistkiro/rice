@@ -1,3 +1,4 @@
 #!/bin/zsh
-cd ~/im/wp;
-printf '%s\n' */*{png,jpg} | shuf -n 1 | xargs -d '\n' feh  $(pcre2grep -o1 'feh --no-fehbg (\S+) ' ~/.fehbg)
+setopt extended_glob;
+# printf '%s\n' ~/im/wp/(*/)#*(.) | shuf -n 1 | xargs -d '\n' feh $(pcre2grep -o1 'feh --no-fehbg (\S+) ' ~/.fehbg);
+feh $(pcre2grep -o1 'feh --no-fehbg (\S+) ' ~/.fehbg) $(printf '%s\n' ~/im/wp/(*/)#*(.) | shuf -n 1) || return 123;

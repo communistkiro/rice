@@ -1,6 +1,6 @@
 #!/bin/zsh
 function whn () {
-while getopts 'h' o; do case $o in (*)
+while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
     whn - script using fzf facilitate when entry input.
@@ -19,9 +19,9 @@ DESCRIPTION
 HEREDOC
 return 1;; esac; done;
 
-[ $# -eq 0 ] && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d    ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-15s", $5; else printf "%15s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
+(($# == 0)) && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d    ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-15s", $5; else printf "%15s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
 
-local a s d;
+local d a s
 
 d=$(date +'%y');
 a=$(printf '%s\n' 20$d-{01..12}-{01..31} | fzy --prompt='date: ' --query=$(date +'%Y-%m-%d')) || return 1;

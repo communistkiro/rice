@@ -2,7 +2,7 @@
 # tag shit downloaded with youtube-dl -o '.../%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s'
 function tagme () {
 local o t z a;
-while getopts 'h' o; do case $o in *) 
+while getopts '' o; do case $o in (*) 
 less -F <<HEREDOC
 NAME
     tagme - tag audio files.
@@ -30,13 +30,13 @@ HEREDOC
 return 1;; esac; done;
 
 t=$(mktemp /tmp/tagme.XXXXXXXX);
-if [ $# -gt 0 ]; then
+if (($# > 0)); then
   for o in $@; do ls -UN1 $o/*.mp3 >> $t; done || return 1;
 else
   ls -UN1 *.mp3 > $t || return 1;
 fi;
 
-[ $(sed -r 's/ \[.*//' $t | sort -u | wc -l) -gt 1 ] && [ "$(printf "2 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists" || a=$(sed -r 's/ \[.*//' $t | sort -u | head -1);
+(($(sed -r 's/ \[.*//' $t | sort -u | wc -l) > 1)) && [ "$(printf "2 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists" || a=$(sed -r 's/ \[.*//' $t | sort -u | head -1);
 
 if which tageditor &>/dev/null; then
   while IFS= read -r z; do

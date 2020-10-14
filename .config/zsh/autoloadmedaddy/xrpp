@@ -1,8 +1,9 @@
 #!/bin/zsh
 # ADDS NEW LINKS (FROM CTEBCM POSTS)
 function xrpp () {
+setopt rematch_pcre;
 local o t1 t2 a;
-while getopts 'h' o; do case $o in h) ;& *) 
+while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
   xrpp - scrape alba and tracks from websites.
@@ -33,11 +34,11 @@ for a in $(lynx -listonly -dump $@); do
   # EMBEDDED BANDCAMP PLAYERS
   [[ $a =~ 'EmbeddedPlayer' ]] && lynx -listonly -dump $a | pcre2grep -o 'http.*/album/[\w-]+' >> $t1;
   # DIRECT BANDCAMP
-  [[ $a =~ 'bandcamp\.com(/album/)|(/track/)' ]] && printf "%s\n" ${${(S)a/*http/http}%%\?*} >> $t1;
+  [[ $a =~ 'bandcamp\.com(/album/)|(/track/)' ]] && printf '%s\n' ${${(S)a/*http/http}%%\?*} >> $t1;
   # DEEZER
-  [[ $a =~ 'deezer' ]] && lynx -listonly -dump $a |  pcre2grep -o 'http.*/album/[\w-]+' >> $t3;
+  [[ $a =~ 'deezer' ]] && lynx -listonly -dump $a | pcre2grep -o 'http.*/album/[\w-]+' >> $t3;
   # SPOTIFY
-  [[ $a =~ 'spotify' ]] && printf "%s\n" $a >> $t4;
+  [[ $a =~ 'spotify' ]] && printf '%s\n' $a >> $t4;
   # SOUNDCLOUD
   # [[ $a =~ 'soundcloud' ]] && echo ${${(S)a/*http/http}%%\?*} >> ~/nm/soundcloud;
 done;

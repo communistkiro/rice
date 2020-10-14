@@ -2,7 +2,7 @@
 # DOWNLOADS FROM LIST OR, GIVEN A NEW LINK, SCRAPES ALBA FROM EMBEDDED PLAYER AND DIRECT LINKS RELEASES TO LIST
 function xrp () {
 local o a t1 t2 t3 w s d f;
-while getopts 'h' o; do case $o in h) ;& *) 
+while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
     xrp - download, tag, and structure alba from list of links.
@@ -39,7 +39,7 @@ BUGS
 HEREDOC
 return 1;;esac; done;
 
-if [ $# -gt 0 ]; then; xrpp $@; fi;
+if (($# > 0)); then; xrpp $@; fi;
 cd ~/nm;
 while IFS= read -r a; do;
     t1=$(mktemp /tmp/xrp1.XXXXXXX); t2=$(mktemp /tmp/xrp2.XXXXXXX); t3=$(mktemp /tmp/xrp3.XXXXXXX);
@@ -55,7 +55,6 @@ while IFS= read -r a; do;
         printf "%s\n" $a >> ~/nm/soon;
         sort -uo ~/nm/soon ~/nm/soon;
     else
-            # --format mp3 \
         youtube-dl \
             --ignore-config \
             --ignore-errors \

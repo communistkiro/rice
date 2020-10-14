@@ -5,5 +5,7 @@ function menu () {
   (m) m=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
   (t) t=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
   esac; done; ((z+=1));
+  (($+m)) || m=$(printf '\033[0m');
+  (($+t)) || t=$(printf '\033[0m');
   for a in $@[$z,-1]; do printf '%s%4s    %s%s\n' $m ${a%% *} $t ${a#* }; done; printf '\033[0m';
 }

@@ -121,7 +121,7 @@ alias love='mpc sendmessage mpdas love'
 alias lr='lsd -A --tree'
 alias lread="feed 'lynx -dump' | less"
 alias man='man -a'
-alias mle='mle -i1 -w1'
+alias mle='mle -i 1 -w 1 -y syn_generic'
 alias mpi='mp3info2'
 alias mpva='mpv --force-window=yes'
 alias mpvn='mpv --no-video'
@@ -153,6 +153,7 @@ alias xc='xclip -selection clipboard'
 # alias unb='bindkey -d'
 # bindkey '\' forward-char
 # bindkey ';' backward-char
+# bindkey '^X\t' complete
 
 
 ####    AUTOLOAD

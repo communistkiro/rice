@@ -5,7 +5,6 @@
 
 set ratios          '1:2:6'
 set timefmt         '2006-01-03 15:04:05 '
-set color256        on
 set dircounts       on
 set hidden          on
 set smartcase       on
@@ -113,18 +112,12 @@ cmd rndrename ${{
 # map <delete> delete
 
 cmd mkdir ${{
-  if [ $# -gt 0 ]; then
-    d="$(printf '%s ' $@)";
-    mkdir -p ${d%?};
-  else
-    mktemp -d tmp.XXXXXXXXXX;
-  fi
+  if (($# > 0)); then mkdir -p ${"$(printf '%s ' $@)"%?};
+  else mktemp -d tmp.XXXXXXXXXX; fi;
 }}
 
 cmd fzf ${{
-  fzf \
-    --algo=v1 \
-    -m \
+  fzf -i -m --reverse \
     --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
     --bind "alt-r:execute(mle {+})" \
     --bind "alt-f:clear-selection" \
@@ -132,30 +125,22 @@ cmd fzf ${{
 }}
 
 cmd 7za ${{
-  set -f
-  [ $# -gt 0 ] && d="$(printf '%s ' $@)" || return 1;
-  [ -e ${d%?} ] && return 1;
-  7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m ${d%?}.7z $fx;
-  unset d;
+  set -f;
+  if (($# > 0)); then 7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m ${"$(printf '%s ' $@)"%?}.7z $fx;
+  else 7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m $(cat /dev/random | tr -cd '[:alnum:]' | head -c 32).7z $fx; fi
 }}
 
-cmd extract ${{
-  set -f
-  aunpack -e $fx
-}}
+cmd extract ${{ set -f; aunpack -e $fx; }}
 
-# cmd rifle ${{
-#   set -f
-#   rifle -l $f
-#   # read -p "Open with: " runner
-#   read runner\?"Open with: "
-#   rifle -p $runner $f
-# }}
+cmd fzycd ${{
+  local s d;
+  # local s="$(ls -Ap | pcre2grep '/$' | fzy -l ${"$(stty size)"% *})";
 
-cmd fzfcd ${{
-  local s="$(ls -Ap | pcre2grep '/$' | fzy -l 50)"
-  # local s="$(fd -uu -i -t d -ed 1 | fzy -l 50)"
-  [ -d $s ] && lf -remote "send $id cd \"$s\"" || break
+  setopt nonomatch;
+  s=(*(/D-)); [[ $s[1] = '*(/D-)' ]] && s[1]=();
+  d="$(printf '%s/\n' '..' $s | fzy -l ${"$(stty size)"% *} -p "$(pwd) ")";
+
+  [[ -d $d ]] && lf -remote "send $id cd \"$d\"" || break;
 }}
 
 cmd Link %{{
@@ -386,9 +371,9 @@ map a           rename
 map A           rndrename
 map gh          cd ~
 map gp          cd /tmp
-map c           push :cd<space>
+map c           push :<space>cd<space>
 # map e           find
-map e           fzfcd
+map e           fzycd
 map E           sublime
 map l           cless
 map L           $$PAGER $fx
@@ -405,12 +390,12 @@ map q           unselect
 map x           read 
 map S           $$SHELL
 map D           delete
-map ,           push :glob-select<space>*
-map .           push :glob-unselect<space>*
+map ,           push :<space>glob-select<space>*
+map .           push :<space>glob-unselect<space>*
 map v           invert
-map n           push :mkdir<space>
-map Z           push :7za<space>
-map X           push :extract<space>$fx<enter>
+map n           push :<space>mkdir<space>
+map Z           push :<space>7za<space>
+map X           push :<space>extract<space>$fx<enter>
 
 # OPTS
 map \~          push :set<space>ratios<space>
