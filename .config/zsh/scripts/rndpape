@@ -1,4 +1,0 @@
-#!/bin/zsh
-setopt extended_glob;
-# printf '%s\n' ~/im/wp/(*/)#*(.) | shuf -n 1 | xargs -d '\n' feh $(pcre2grep -o1 'feh --no-fehbg (\S+) ' ~/.fehbg);
-feh $(pcre2grep -o1 'feh --no-fehbg (\S+) ' ~/.fehbg) $(printf '%s\n' ~/im/wp/(*/)#*(.) | shuf -n 1) || return 123;

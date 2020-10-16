@@ -1,4 +1,4 @@
-export PATH=$PATH:/opt/texlive/2020/bin/x86_64-linux:/root/.config/zsh/scripts:/root/bin
+export PATH=$PATH:/root/.config/zsh/scripts:/root/bin
 # export PS1="%? %d |> "
 export PS1="%B%F{red}%?%f %F{cyan}%d%f %F{green}|>%f%b "
 
@@ -16,7 +16,7 @@ HYPHEN_INSENSITIVE="true"
 # zle -N self-insert url-quote-magic
 
 ## History command configuration
-HISTFILE="$HOME/.zsh_history"
+HISTFILE=/root/.zsh_history
 SAVEHIST=20000
 HISTSIZE=20000 # cushion large than SAVEHIST, if hist_expire_dups_first set
 setopt no_extended_history      # record timestamp of command in HISTFILE
@@ -50,20 +50,32 @@ source /root/.config/omz/plugins/fzf/fzf.plugin.zsh
 
 source /root/.config/zsh/plugins/zsh-colored-man-pages/colored-man-pages.plugin.zsh
 
-# source /root/.config/omz/plugins/timer/timer.plugin.zsh
-# TIMER_FORMAT='[%d]'
-# TIMER_PRECISION=7
-
-source /root/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source /root/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /root/.config/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 
 source /root/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # source /root/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 # source /root/.config/omz/lib/directories.zsh
+
 setopt auto_pushd
 setopt pushd_ignore_dups
 setopt pushdminus
+function d () {
+  if [[ -n $1 ]]; then
+    dirs "$@"
+  else
+    dirs -v | head -10
+  fi
+}
+compdef _dirs d
+
+# source /root/.config/omz/plugins/timer/timer.plugin.zsh
+# TIMER_FORMAT='[%d]'
+# TIMER_PRECISION=7
+
+####    ALII
 alias -g ...='../..'
 alias -g ....='../../..'
 alias -g .....='../../../..'
@@ -77,16 +89,7 @@ alias 6='cd -6'
 alias 7='cd -7'
 alias 8='cd -8'
 alias 9='cd -9'
-function d () {
-  if [[ -n $1 ]]; then
-    dirs "$@"
-  else
-    dirs -v | head -10
-  fi
-}
-compdef _dirs d
 
-####    ALII
 alias 16t='mpv --no-audio-pitch-correction'
 alias 16tons='16t /media/ELEM/Music/Random/Sixteen\ Tons\ -\ Tennessee\ Ernie\ Ford.m4a'
 alias bb='bye'
@@ -134,11 +137,13 @@ alias pk='pkill -KILL -i -x'
 alias pre='pcre2grep -i --color'
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted'
 # alias rm='rm -I'
+# alias rdl='rdrview -B lynx $1'
+# alias rds='rdrview -B surf $1'
 alias rsync='rsync -vah --progress'
 alias sex='sex | cow'
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown'
 alias so='source /root/.zshrc'
-alias tage='tageditor'
+# alias tage='tageditor'
 alias unlove='mpc sendmessage mpdas unlove'
 alias vol='amixer set Master'
 alias xb='xbacklight -set'
@@ -158,4 +163,4 @@ alias xc='xclip -selection clipboard'
 
 ####    AUTOLOAD
 fpath=(/root/.config/zsh/zsh-completions /root/.config/zsh/autoloadmedaddy $fpath)
-autoload $(ls /root/.config/zsh/autoloadmedaddy) zmv zcalc zmathfunc
+autoload $(ls /root/.config/zsh/autoloadmedaddy) zed # zmv zcalc zmathfunc

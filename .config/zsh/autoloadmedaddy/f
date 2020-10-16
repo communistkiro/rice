@@ -1,5 +1,6 @@
 #!/bin/zsh
 function f () {
-  setopt extended_glob;
-  printf '%s\n' ${1:-$(realpath .)}/(*/)#* | fzf -i -m --reverse;
+  # setopt extended_glob;
+  local f=(${1:-$(realpath .)}/(*/)#*); [[ ${f[1]} = $({1:-$(realpath .)}/(*.)#*) ]] && return;
+  printf '%s\n' $f | fzf -i -m --reverse;
 }

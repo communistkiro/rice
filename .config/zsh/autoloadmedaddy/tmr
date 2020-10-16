@@ -3,12 +3,12 @@
 function tmr() {
 # countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 days
 # local alarm=~/.local/CartoonFoghorn.m4a;
-local o tmp;
-integer w b d h m s D H M S r t;
+typeset o tmp;
+typeset -i w b d h m s D H M S t;
 while getopts 'ap' o; do
     case $o in
-        (a) local a;;
-        (p) local p;;
+        (a) typeset a;;
+        (p) typeset p;;
         (*) 
 less -F <<HEREDOC
 NAME
@@ -67,7 +67,7 @@ EXAMPLES
         tmr -p 30 10
 
 EXIT STATUS
-    0
+    0 
         on successfully completed countdown or alarm.
     1
         if all values are zero, and/or corrections yield a value in the past.
@@ -78,37 +78,25 @@ BUGS
 
 
 HEREDOC
-return 1;; esac; shift $((OPTIND-1)); done;
+return 1;; esac; done;
 
 if ((${+p})); then
-    if (($# == 2)); then
-        (($1 < 0)) || (($2 < 0)) && return 1;
-        w=$1;
-        b=$2;
-    else
-        w=45;
-        b=8;
-    fi
-    for a in $(seq 3); do
-        clear; printf '\aStarting %d. pomodoro cycle\nWork!\n' $a;
-        tmr $w; (($? == 2)) && break;
-        clear; printf '\aBreak!\n'; tmr $b; (($? == 2)) && break; 
-    done
+    for o in $(seq 3); do
+        clear; printf '\aStarting %d. pomodoro cycle\nWork!\n' $o;
+        tmr ${2:-45}; ((? == 2)) && break;
+        clear; printf '\aBreak!\n'; tmr ${3:-8}; ((? == 2)) && break; 
+    done;
     return $?;
-fi
+fi;
 
 tmp=/tmp/tmr.tmr.tmr;
 
-if   (($# == 4)); then
-    d=$1; h=$2; m=$3; s=$4;
-elif (($# == 3)); then
-    d=$1; h=$2; m=$3;
-elif (($# == 2)); then
-          h=$1; m=$2;
-elif (($# == 1)); then
-                m=$1;
+if   ((# == ${${a:-4}:+}5)); then d=${${a:-$1}:+2}; h=${${a:-$2}:+3}; m=${${a:-$3}:+4}; s=${${a:-$4}:+5};
+elif ((# == ${${a:-3}:+}4)); then d=${${a:-$1}:+2}; h=${${a:-$2}:+3}; m=${${a:-$3}:+4};
+elif ((# == ${${a:-2}:+}3)); then       h=${${a:-$1}:+2}; m=${${a:-$2}:+3};
+elif ((# == ${${a:-1}:+}2)); then             m=${${a:-$1}:+2};
 else
-    ((${+a})) && printf 'Set alarm for\n' || printf 'Set countdown for '
+    ((${+a})) && printf 'Set alarm for\n' || printf 'Set countdown for\n';
     read 'd?days (rel. not abs.): ';
     read 'h?hours: ';
     read 'm?minutes: ';
@@ -148,22 +136,22 @@ fi;
 trap 'rm -f "$tmp"; trap - QUIT; return 2;' QUIT HUP
 trap 'a=$((a * -1));' INT
 
-unset d h m s r; a=1;
+unset d h m s; a=1;
 # output remainind time left as HH:MM:SS to stdout and tmpfile
 while ((t >= 0)); do
-    if ((a == 1)); then
+    if ((${+a})); then
         printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) | tee $tmp;
         ((t -= 1));
     fi;
     sleep 1;
 done
 
-if (($? == 0)) && mpc status &>/dev/null | pcre2grep -q playing; then 
+if ((? == 0)) && mpc status &>/dev/null | pcre2grep -q playing; then 
     # mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle; 
-    mpc -q toggle; beep -f 200 -r 3 -l 300 -n -l300 -r3 -f $((200*27/18)); mpc -q toggle; 
+    mpc -q toggle; beep -f 200 -r 150 -l 150; mpc -q toggle; 
 else 
     # mpv --really-quiet $alarm;
-    beep -f 200 -r 3 -l 300 -n -l 300 -r 3 -f $((200*27/18));
+    beep -f 200 -r 150 -l 150;
 fi
 
 rm -f $tmp;

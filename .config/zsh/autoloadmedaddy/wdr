@@ -48,108 +48,58 @@ function box () {
 }
 
 function () {
-  if ! ping -c 1 63.42.42.155  &>/dev/null; then read -k1 '?No internet connection!'; return 1; fi;
-  setopt extended_glob; # no_sh_glob ksh_glob;
+  if ! ping -c 1 63.42.42.155  &>/dev/null; then read -k1 '?No internet connection!'; return 1; fi; 
+  typseset r c lon lat loc w a s d; cd $(mktemp -d); w=$(mktemp ./XXXXXXXX);
+  r=${"$(stty size)"% *}; c=${"$(stty size)"#* };
   clear;
   menu -m 4b -t 2 '1 openweathermap' '2 darksky' 'q exit';
   case $(read -sek1) in
-    (1) # OPENWEATHERMAP    https://openweathermap.org/api/
-      local c d lon lat loc weather api_key api_call;
+    (1) # OPENWEATHERMAP    https://openweathermap.org/api/one-call-api
+      typeset k; k=85a4e3c55b73909f42c6a23ec35b7147;
       while true; do
         clear; box -H 1b -B 4 -T 3 -h openweathermap \
-          "${(r.16..)$(<<< lon/lat:)}${lon:--} / ${lat:--}" \
-          "${(r.16..)$(<<< location:)}${loc:-Sofia,Bulgaria}" \
-          "${(r.16..)$(<<< options:)}${${c:+current}:-48h}; ${${d:+descriptions}:-plots}";
-        menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 current / 48h' '4 descriptions / plots' '5 go' 'q quit';
+          "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
+          "${(r.16...)$(<<< location:)}${loc:-Sofia,Bulgaria}";
+        menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 go' 'q quit';
         case $(read -sek1) in
-          (1) read 'lon?lon: '; read 'lat?lat: '; if [[ ! ${lon} =~ '^\d+\.?\d\+$' ]] || [[ ! ${lat} =~ '^\d+\.?\d+$' ]]; then read -sek 'Invalid input!'; unset lon lat; return 1; fi;;
-          (2) read 'loc?location: '; loc=${loc// /%20};;
-          (3) ((${+c})) && unset c || local c;;
-          (4) ((${+d})) && unset d || local d;;
-          (5)
-            if which curl &>/dev/null; then alias fetch='curl -s -f -L --max-redirs 0  -H "User-Agent:"'; elif which wget &>/dev/null; then alias fetch='wget -qO -'; else return 1; fi;
-            api_key=85a4e3c55b73909f42c6a23ec35b7147;
-            api_call=weather;
+          (1) read 'lon?lon: '; read 'lat?lat: '; if [[ ! ${lon} =~ '^(\d+\.)?\d\+$' ]] || [[ ! ${lat} =~ '^(\d+\.)?\d+$' ]]; then read -sk1 '?Invalid input!'; unset lon lat; return 1; fi;;
+          (2) read 'loc?location: '; [[ -n ${loc} ]] && loc=${loc// /%20};;
+          (3) if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $w"; elif which wget &>/dev/null; then alias fetch="wget -q -O $w"; else return 1; fi;
 
-            if ((${+lat})) && ((${+lon})); then
-              if ! weather="$(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric")"; then read -sk1 '?Sum Ting Wong!'; return 22; fi; 
-            elif ((${+loc})); then 
-              if ! weather=$(fetch "api.openweathermap.org/data/2.5/${api_call}?q=${loc:-Sofia,Bulgaria}&appid=${api_key}&units=metric"); then read -sk1 '?Sum Ting Wong!'; return 23; fi; 
-            fi;
+            if [[ -z ${loc} ]]; then $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat:-23.3241}&lon=${lon:-42.6974}&appid=${k}&units=metric&exclude=daily") || return 22; 
+            else $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${k}&units=metric") || return 23; [[ -z $w ]] && return 27; lat=$(jq -r '.coord.lat' $w); lon=$(jq -r '.coord.lon' $w); $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${k}&units=metric&exclude=daily"); fi;
 
-            [[ -z ${wea} ]] && read -sk1 '?Cannot fetch weather data.' && return 69;
-            (($(jq -r '.cod' <<< ${wea} 2>/dev/null) != 200)) && read -sk1 '?Cannot fetch weather data for the given location.' && return 75;
+            [[ -z $w ]] && return 24;
 
-            if ((${+c} > ${+d})); then
-              jq -r . <<< ${wea}; return 0;
-            elif ((${+c} == ${+d})) && (($+c)); then
-              jq -r '.weather[].description' <<< ${wea} | column ; return 0;
-            fi;
+            s=(${(@f)"$(jq -r '.hourly[].dt' $w)"}); for a in {1..$#s}; do s[a]=("$(date -d "1970-01-01 UTC ${s[a]} seconds" +'%Y-%m-%d %H:%M')"); done
+            d=(${(@f)"$(jq -r '.hourly[].weather[].description' $w)"});
+            print -C 2 ${s} ${d} > summary; 
 
-            ((${+lat})) || lat=$(jq -r '.coord.lat' <<< ${wea});
-            ((${+lon})) || lon=$(jq -r '.coord.lon' <<< ${wea});
+            for a in {1..$((r-${"$(wc -l summary)"%% *}))}; do printf '\n' >> summary; done;
 
-            api_call=onecall;
-            weather="$(fetch "api.openweathermap.org/data/2.5/${api_call}?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric")" || return 24;
-
-            if ((${+d})); then
-              d=(${(@f)"$(jq -r '.hourly[].weather[].description' <<< ${wea})"});
-              f=(${(@f)"$(jq -r '.hourly[].dt' <<< ${wea} | awk '{print strftime("%H:%M",$1)}')"});
-              a=(${(@F)$(seq 24)}); s=(${(@F)$(seq 48)}); s[1,24]=(); z=(${a:^s}); unset a s;
-              for s in $z; do; a[++i]=${f[s]}" "${g[s]}" "${d[s]}; done; unset d;
-              printf "%-28s%-28s\n" "Today" "Tomorrow" ${(@)a};
-              return 0;
-            fi;
-
-            mkdir -p /tmp/wdr; cd /tmp/wdr;
-            # 48 HOUR FORECAST
-            jq -r '.hourly[].dt'         <<< ${wea} > dt48h;
-            jq -r '.hourly[].temp'       <<< ${wea} > temp48h;
-            jq -r '.hourly[].feels_like' <<< ${wea} > feels_like48h;
-            jq -r '.hourly[].pressure'   <<< ${wea} > pressure48h;
-            jq -r '.hourly[].humidity'   <<< ${wea} > humidity48h;
-            jq -r '.hourly[].dew_point'  <<< ${wea} > dew_point48h;
-            jq -r '.hourly[].clouds'     <<< ${wea} > clouds48h;
-            jq -r '.hourly[].wind_speed' <<< ${wea} > wind_speed48h;
-            jq -r '.hourly[].wind_deg'   <<< ${wea} > wind_deg48h;
-            jq '.hourly[].rain | walk (if type == "null" then 0 else . end)' <<< ${wea} | sed -r '/\{|\}/d; s/ +"1h": //' > rain48h;
-            jq '.hourly[].snow | walk (if type == "null" then 0 else . end)' <<< ${wea} | sed -r '/\{|\}/d; s/ +"1h": //' > snow48h;
-
-            # 7 DAY FORECAST
-            jq -r '.daily[].temp.min'         <<< ${wea} > min7d;
-            jq -r '.daily[].temp.max'         <<< ${wea} > max7d;
-            jq -r '.daily[].temp.day'         <<< ${wea} > day7d;
-            jq -r '.daily[].temp.night'       <<< ${wea} > night7d;
-            jq -r '.daily[].temp.eve'         <<< ${wea} > eve7d;
-            jq -r '.daily[].temp.morn'        <<< ${wea} > morn7d;
-            jq -r '.daily[].feels_like.day'   <<< ${wea} > flday7d;
-            jq -r '.daily[].feels_like.night' <<< ${wea} > flnight7d;
-            jq -r '.daily[].feels_like.eve'   <<< ${wea} > fleve7d;
-            jq -r '.daily[].feels_like.morn'  <<< ${wea} > flmorn7d;
-            jq -r '.daily[].pressure'         <<< ${wea} > pressure7d;
-            jq -r '.daily[].humidity'         <<< ${wea} > humidity7d;
-            jq -r '.daily[].clouds'           <<< ${wea} > clouds7d;
-            jq -r '.daily[].dew_point'        <<< ${wea} > dew_point7d;
-            jq -r '.daily[].wind_deg'         <<< ${wea} > wind_deg7d;
-            jq -r '.daily[].wind_speed'       <<< ${wea} > wind_speed7d;
-            jq -r '.daily[].rain | walk (if type == "null" then 0 else . end)' <<< ${wea} > rain7d;
-            jq -r '.daily[].snow | walk (if type == "null" then 0 else . end)' <<< ${wea} > snow7d;
-
-            octave-cli --persist ~/.config/zsh/other/wdr.m;
-            # cd ~; rm -r ${tmp};
-            # cd ~; rm -r /tmp/wdr;
-            unalias fetch; break;;
+          # jq -r '.hourly[].dt'         $w | asciigraph -c 'dt' -h $((r/2-2)) -w $((c-14)) > x.dt;
+            jq -r '.hourly[].temp'       $w | asciigraph -c 'temp' -h $((r/2-2)) -w $((c-14)) > x.temp;
+            jq -r '.hourly[].feels_like' $w | asciigraph -c 'feels_like' -h $((r/2-2)) -w $((c-14)) > x.feels_like;
+            jq -r '.hourly[].pressure'   $w | asciigraph -c 'pressure' -h $((r/2-2)) -w $((c-14)) > x.pressure;
+            jq -r '.hourly[].humidity'   $w | asciigraph -c 'humidity' -h $((r/2-2)) -w $((c-14)) > x.humidity;
+            jq -r '.hourly[].dew_point'  $w | asciigraph -c 'dew_point' -h $((r/2-2)) -w $((c-14)) > x.dew_point;
+            jq -r '.hourly[].clouds'     $w | asciigraph -c 'clouds' -h $((r/2-2)) -w $((c-14)) > x.clouds;
+            jq -r '.hourly[].wind_speed' $w | asciigraph -c 'wind_speed' -h $((r/2-2)) -w $((c-14)) > x.wind_speed;
+            jq -r '.hourly[].wind_deg'   $w | asciigraph -c 'wind_deg' -h $((r/2-2)) -w $((c-14)) > x.wind_deg;
+            jq '.hourly[].rain | walk (if type == "null" then 0 else . end)' $w | sed -r '/\{|\}/d; s/ +"1h": //' | asciigraph -c 'rain' -h $((r/2-2)) -w $((c-8)) > x.rain;
+            jq '.hourly[].snow | walk (if type == "null" then 0 else . end)' $w | sed -r '/\{|\}/d; s/ +"1h": //' | asciigraph -c 'snow' -h $((r/2-2)) -w $((c-8)) > x.snow;
+            for a in ./x.*; do (($(sort -u $a | wc -l) == 1)) && (($(sort -u $a) == 0)) && rm -f $a; done;
+            cat summary x.* | less; unalias fetch; a="$(pwd)"; cd ~; rm -rf ${a}; break;;
           (q) return 1;; esac; done;;
     (2) # DARKSKY
-      cd $(mktemp -d); local t=$(mktemp ./XXXXXXXX); local w=$(mktemp ./XXXXXXXX); local lon lat a s r c h d;
-      r=${"$(stty size)"% *}; c=${"$(stty size)"#* };
+      local t=$(mktemp ./XXXXXXXX); local h;
       while true; do
         clear; box -H 1b -B 4 -T 3 -h darksky \
           "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
           "${(r.16...)$(<<< location:)}${loc:-Sofia,Bulgaria}";
         menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 go' 'q quit';
         case $(read -sek1) in
-          (1) read 'lon?lon: '; read 'lat?lat: '; if [[ ! ${lon} =~ '^\d+\.?\d\+$' ]] || [[ ! ${lat} =~ '^\d+\.?\d+$' ]]; then read -sek 'Invalid input!'; unset lon lat; return 1; fi;;
+          (1) read 'lon?lon: '; read 'lat?lat: '; if [[ ! ${lon} =~ '^\d+\.?\d\+$' ]] || [[ ! ${lat} =~ '^\d+\.?\d+$' ]]; then read -sk1 '?Invalid input!'; unset lon lat; return 1; fi;;
           (2) read 'loc?location: '; loc=${loc// /%20};;
           (3) if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $t"; elif which wget &>/dev/null; then alias fetch="wget -q -O $t"; else return 1; fi;
 
@@ -162,19 +112,20 @@ function () {
               printf '%s' ',' >> $w;
               $(fetch https://darksky.net/details/${lon:-42.6974},${lat:-23.3241}/$(date -d '+1day' +%F)/ca24/en) || return 1;
               [[ -z $t ]] && read -sk1 '?No data.' && return 1;
-              pcre2grep -o1 '\[(.+\])' $t >> $w; [[ -z $w ]] && read -sk1 '?fucked up json filter.' && return 1;
+              pcre2grep -o1 '\[(.+\])' $t >> $w;
             else printf '%s' ']' >> $w; fi;
-
-            for a in ${(@f)"$(jq '.[].time' $w)"}; do s+=("$(date -d "1970-01-01 UTC $a seconds" +'%Y-%m-%d %H:%M')"); done;
-            d=(${(@f)"$(jq -r '.[].summary' $w)"});
-            print -C 2 ${s[1+$h,24+$h]} ${d[1+$h,24+$h]} > summary;
+            # range(1+$h;24+1+$h)
+            for a in ${(@f)"$(jq ".[].time" $w)"}; do s+=("$(date -d "1970-01-01 UTC $a seconds" +'%Y-%m-%d %H:%M')"); done;
+            d=(${(@f)"$(jq -r ".[].summary" $w)"});
+            print -C 2 ${s[1+h,24+h]} ${d[1+h,24+h]} > summary;
             for a in {1..$((r-${"$(wc -l summary)"%% *}))}; do printf '\n' >> summary; done;
 
             for a in ${(@f)"$(jq '.[1]' $w | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
               jq -r ".[range(1+$h;24+1+$h)].$a" $w | asciigraph -c $a -h $((r/2-2)) -w $((c-8)) > x.$a;
             done;
 
-            cat summary x.*(.) | less; unalias fetch; break;;
+            for a in ./x.*; do (($(sort -u $a | wc -l) == 1)) && (($(sort -u $a) == 0)) && rm -f $a; done;
+            cat summary x.*(.) | less; unalias fetch; a="$(pwd)"; cd ~; rm -rf $a; clear; break;;
           (q) return 1;;
         esac;
       done;;
