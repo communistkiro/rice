@@ -43,7 +43,7 @@ ps -C xautolock &>/dev/null || xautolock -time 20 -secure -locker 'xbacklight -s
 
 
 # music 
-# ps -C mpd &>/dev/null || { mpd && sleep 30 && mpdas -d; } &
+ps -C mpd &>/dev/null || { mpd; sleep 15; mpdas -d; } &
 # ps -C mpdas &>/dev/null || 
 # if [[ $(pgrep -xc mpdas) -ne 1 ]]; then pkill -KILL -i -x mpdas; mpdas -d; fi;
 

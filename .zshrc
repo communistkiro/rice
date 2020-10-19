@@ -17,8 +17,8 @@ HYPHEN_INSENSITIVE="true"
 
 ## History command configuration
 HISTFILE=/root/.zsh_history
-SAVEHIST=20000
-HISTSIZE=20000 # cushion large than SAVEHIST, if hist_expire_dups_first set
+SAVEHIST=10000
+HISTSIZE=10000 # cushion large than SAVEHIST, if hist_expire_dups_first set
 setopt no_extended_history      # record timestamp of command in HISTFILE
 setopt hist_reduce_blanks
 setopt hist_ignore_dups         # ignore duplicated commands history list
@@ -75,6 +75,7 @@ compdef _dirs d
 # TIMER_FORMAT='[%d]'
 # TIMER_PRECISION=7
 
+
 ####    ALII
 alias -g ...='../..'
 alias -g ....='../../..'
@@ -96,9 +97,7 @@ alias bb='bye'
 alias bl='subl3'
 alias bll='subl3 -n --command toggle_side_bar -a'
 alias bustin='16t /media/ELEM/Music/N/Neil\ Cicierega/Neil\ Cicierega\ \[Mouth\ Moods\ \(2017\)\]/08\ Bustin.mp3'
-alias catdoc='catdoc -m256'
-# alias ccal='calcurse -q'
-# alias clb="col -b"
+alias catdoc='catdoc -m ${"$(stty size)"#* }'
 alias clock='tty-clock -sbc'
 alias cmat='cmatrix -au2'
 alias cow='cowthink -e "^^" -f xxx -T "U"'
@@ -114,7 +113,8 @@ alias fzf='fzf -i -m --reverse --border=horizontal \
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
   --bind "alt-r:execute(mle {+})" \
   --bind "alt-c:clear-selection" \
-  --bind "alt-v:select-all" '
+  --bind "alt-v:select-all" \
+  --bind "ctrl-j:accept"'
 alias gre='grep -P --color -i'
 alias hl='hledger-ui --watch'
 alias l='less -F'
@@ -124,6 +124,7 @@ alias love='mpc sendmessage mpdas love'
 alias lr='lsd -A --tree'
 alias lread="feed 'lynx -dump' | less"
 alias man='man -a'
+# alias man="man -O width=${"$(stty size)"#* }"
 alias mle='mle -i 1 -w 1 -y syn_generic'
 alias mpi='mp3info2'
 alias mpva='mpv --force-window=yes'
@@ -154,13 +155,16 @@ alias xbr='xbps-remove -R'
 alias xbs='xbps-install -Su'
 alias which='which -a'
 alias xc='xclip -selection clipboard'
+alias zcp='zmv -C'
+alias zmv='zmv -M'
+alias zln='zln -L'
+
 
 # alias unb='bindkey -d'
 # bindkey '\' forward-char
-# bindkey ';' backward-char
 # bindkey '^X\t' complete
 
 
 ####    AUTOLOAD
 fpath=(/root/.config/zsh/zsh-completions /root/.config/zsh/autoloadmedaddy $fpath)
-autoload $(ls /root/.config/zsh/autoloadmedaddy) zed # zmv zcalc zmathfunc
+autoload $(ls /root/.config/zsh/autoloadmedaddy) zed zmv # zcalc zmathfunc

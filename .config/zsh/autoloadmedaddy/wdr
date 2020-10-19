@@ -55,7 +55,7 @@ function () {
   menu -m 4b -t 2 '1 openweathermap' '2 darksky' 'q exit';
   case $(read -sek1) in
     (1) # OPENWEATHERMAP    https://openweathermap.org/api/one-call-api
-      typeset k; k=85a4e3c55b73909f42c6a23ec35b7147;
+      typeset k && k=85a4e3c55b73909f42c6a23ec35b7147;
       while true; do
         clear; box -H 1b -B 4 -T 3 -h openweathermap \
           "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
@@ -99,9 +99,17 @@ function () {
           "${(r.16...)$(<<< location:)}${loc:-Sofia,Bulgaria}";
         menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 go' 'q quit';
         case $(read -sek1) in
-          (1) read 'lon?lon: '; read 'lat?lat: '; if [[ ! ${lon} =~ '^\d+\.?\d\+$' ]] || [[ ! ${lat} =~ '^\d+\.?\d+$' ]]; then read -sk1 '?Invalid input!'; unset lon lat; return 1; fi;;
-          (2) read 'loc?location: '; loc=${loc// /%20};;
-          (3) if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $t"; elif which wget &>/dev/null; then alias fetch="wget -q -O $t"; else return 1; fi;
+          (1) read 'lon?lon: '; read 'lat?lat: '; 
+          [[ ! ${lon} =~ '^\d+\.?\d\+$' ]] || [[ ! ${lat} =~ '^\d+\.?\d+$' ]] && read -sk1 '?Invalid input!' && unset lon lat; return 1; fi;;
+          (2) read 'loc?location: ';
+            [[ -n ${loc} ]] && $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=85a4e3c55b73909f42c6a23ec35b7147&units=metric") || return 1;
+            [[ -z $w ]] && return 1 || lat=$(jq -r '.coord.lat' $w) && lon=$(jq -r '.coord.lon' $w);;
+          (3) 
+            if which curl &>/dev/null; then 
+              alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $t"; 
+            elif which wget &>/dev/null; then 
+              alias fetch="wget -q -O $t"; else return 1; 
+            fi;
 
             $(fetch https://darksky.net/details/${lon:-42.6974},${lat:-23.3241}/$(date +%F)/ca24/en) || return 1;
             [[ -z $t ]] && read -sk1 '?No data.' && return 1;
@@ -114,7 +122,7 @@ function () {
               [[ -z $t ]] && read -sk1 '?No data.' && return 1;
               pcre2grep -o1 '\[(.+\])' $t >> $w;
             else printf '%s' ']' >> $w; fi;
-            # range(1+$h;24+1+$h)
+
             for a in ${(@f)"$(jq ".[].time" $w)"}; do s+=("$(date -d "1970-01-01 UTC $a seconds" +'%Y-%m-%d %H:%M')"); done;
             d=(${(@f)"$(jq -r ".[].summary" $w)"});
             print -C 2 ${s[1+h,24+h]} ${d[1+h,24+h]} > summary;
@@ -126,7 +134,7 @@ function () {
 
             for a in ./x.*; do (($(sort -u $a | wc -l) == 1)) && (($(sort -u $a) == 0)) && rm -f $a; done;
             cat summary x.*(.) | less; unalias fetch; a="$(pwd)"; cd ~; rm -rf $a; clear; break;;
-          (q) return 1;;
+          (q) return 0;;
         esac;
       done;;
     (q) return 0;;
