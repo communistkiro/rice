@@ -1,9 +1,8 @@
 #!/bin/zsh
-typeset a b c d e f g l m n o p q t v x z;
-b=$(mktemp); a=$(mktemp); v=$(mktemp);
-trap 'rm -f $a $b $b; trap - QUIT; trap - HUP; return 2;' QUIT HUP
+setopt extended_glob;
+typeset a b c d e f g h l m n o p q t u v w x y z; m=$(mktemp -d /tmp/animu.XXXXXXXX); a=$(mktemp $m/a.XXXXXXXX); b=$(mktemp $m/b.XXXXXXXX); cd $m;
 
-g="~/mov/config.conf";
+g='/root/.config/animu.conf';
 if [[ -f $g ]]; then
   d=$(pcre2grep -o1 '^d (.+)$' $g);
   q=$(pcre2grep -o1 '^q (.+)$' $g);
@@ -14,45 +13,52 @@ while getopts 'd:q:' o; do case $o in
   (q) q=${OPTARG};;
 esac; done;
 
-
+[[ -d $d ]] || mkdir $d;
 t=$@[OPTIND,-1];
 [[ -z $t ]] && read 't?Title: ';
-# read 'e?Episode (leave empty for batch): ';
+read 'e?Episode (leave empty for batch): ';
 
 curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $b "https://api.nibl.co.uk/nibl/bots";
 curl -s -f -L --max-redirs 0 -o $a "https://api.nibl.co.uk/nibl/search?query=${t// /%20}&episodeNumber=${e}";
+if [[ -z $(<$a) ]] || [[ -z $(<$b) ]]; then read -sk1 '?Files empty.'; return; fi;
 
-# if [[ $e ]]; then
-#   z=(${(@f)"$(jq -r '.content[].id' $a)"});
-#   x=(${(@f)"$(jq -r '.content[].name' $a)"});
-#   c=${z:^x};
-
-#   if [[ $q ]]; then
-#     c=${(@f)"$(printf '%6s | %s\n' $c | sed -e 's/^[ \t]*//' | sed '/^[[:space:]]*$/d' | fzf -m --reverse --no-sort --exact --query="$q")")};
-#   else
-#     c=${(@f)"$(printf '%6s | %s\n' $c | fzf -m --reverse --no-sort --exact)"};
-#   fi
-# else
-z=(${(@f)"$(jq -r '.content[].size' $a)"});
-x=(${(@f)"$(jq -r '.content[].name' $a)"});
-c=(${z:^x});
-
-if [[ $q ]]; then
-  c=(${(@f)"$(printf '%6s | %s\n' ${c} | sort -nk1 | fzf -m --reverse --no-sort --exact --query="$q")"}) || return;
-else
-  c=(${(@f)"$(printf '%6s | %s\n' ${c} | sort -nk1 | fzf -m --reverse --no-sort --exact)"}) || return;
-fi
-# fi
+z=(${(@fQ)"$(jq '.content[].size' $a)"});
+x=(${(@fQ)"$(jq '.content[].name' $a)"}); # tr -s '[[:space:]]' | tr '_' ' ' | 
+c=(${(@f)"$(printf '%6s | %s\n' ${z:^x} | sort -unk1 | fzf -m --reverse --no-sort --exact --query="$q")"}) || return;
 
 c=(${c##*| });
-n=$(printf '%s\n' $c | sed 's/_/ /g ; s/\(.*\)- .*/\1/ ; s/[0-9]//g ; s/\[[^]]*\]//g ; s/[0-9]//g ; s/([^)]*)//g ; s/\.[^.]*$// ; s/^ *//g ; s/ *$//' | sort -nf | uniq -ci | sort -nr | head -n 1 | awk '{ print substr($0, index($0,$2)) }' | sed 's/ /%20/g');
+n=$(printf '%s\n' $c | sed 's/_/ /g;s/\(.*\)- .*/\1/;s/[0-9]//g;s/\[[^]]*\]//g;s/[0-9]//g;s/([^)]*)//g;s/\.[^.]*$//;s/^ *//g;s/ *$//' | uniq -ci | sort -nr | head -n 1 | awk '{ print substr($0, index($0,$2)) }' | sed 's/ /%20/g');
+f=${${d%/}:-/root/mov}/$(wget -q -O - "https://kitsu.io/api/edge/anime?filter[text]=${n}&page[limit]=1&page[offset]=0" | jq -r '.data[].attributes.canonicalTitle' | tr -cd '[[:graph:]]');
 
-f="${d}$(wget -q -O - "https://kitsu.io/api/edge/anime?filter[text]=${n}&page[limit]=1&page[offset]=0" | jq -r '.data[].attributes.canonicalTitle')";
-printf '%s\n' "mkdir -p \"$f\"" >> $v;
-printf '%s\n' $c | while IFS= read -r l; do
-  a=${(M)l//(#b)([\[\)\(\]])/\\${match[1]}};
-  m=$(jq '.' $b | pcre2grep -o1 -M -A 1 "\"id\": $(printf '%s' $a | pcre2grep -B 2 $a | head -n 1 | pcre2grep -o1 '(\d+)'),\n\s+\"name\": \"(.*)\",");
-  p=$(jq '.' $a | pcre2grep -o1 -M -B 1 "\"number\": (\d+),\n\s+\"name\": \"${a}\"");
-  printf '%s\n' "xdccget --dont-confirm-offsets -d \"$f\" -q \"irc.rizon.net\" \"#nibl\" \"$m xdcc send #$p\"" >> $v;
+mkdir -p $f; 
+for l in $c; do
+  y=${${(qM)l//(#b)(+$^)/\\${match[1]}}//./\\.};
+  
+  w=($(jq '.' $a | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(Q)y}\",")) || \
+  w=($(jq '.' $a | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${y}\",")); 
+  
+  p=($(jq '.' $a | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${(Q)y}\",")) || \
+  p=($(jq '.' $a | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${y}\","));
+  
+  q=$(mktemp -d ./XXXXXXXX);
+  printf '%s' $l > $q/name;
+  for z in $w; do
+    u=$(jq '.' $b | pcre2grep -o1 -M -A 1 -e "\"id\": $z,\n\s+\"name\": \"(.+)\",");
+    for h in $p; do
+      printf '%s\n' '#!/bin/sh' "xdccget --dont-confirm-offsets -d \"$f\" -q \"irc.rizon.net\" \"#nibl\" \"$u xdcc send #$h\"" > "$q/$h===$u";
+    done;
+  done;
 done;
-sh $v;
+
+trap 'rm -f $v; continue; sleep 1;' INT; printf '\n\n\n';
+
+for w in $m/*(/); do
+  cd $w;
+  for v in *===*(.); do
+    [[ -f "$f/$(<$w/name)" ]] && break;
+    printf '%s\n' "$(<$w/name)" "Downloading package #${v%===*} from ${v#*===}." 'To skip download press ^C.' '';
+    sh $v;
+  done;
+  cd $m; rm -rf $w;
+done;
+cd ~; rm -rf $m;

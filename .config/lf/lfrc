@@ -112,8 +112,7 @@ cmd rndrename ${{
 # map <delete> delete
 
 cmd mkdir ${{
-  if (($# > 0)); then mkdir -p ${"$(printf '%s ' $@)"%?};
-  else mktemp -d tmp.XXXXXXXXXX; fi;
+  ((# > 0)) && mkdir -p ${"$(printf '%s ' $@)"%?} || mktemp -d tmp.XXXXXXXXXX;
 }}
 
 cmd fzf ${{
@@ -351,20 +350,17 @@ map \}          top
 # ACTIONS
 map Q           quit
 map <c-q>       quit
-# map r           rifle $fx
-map @           push :<space>$fx
+map @           push $printf<space>'%s\n'<space>$fx<space>|<space>xargs<space>-d<space>'\n'<space>
 map <esc>       cmd-escape
 map yy          copy
 map ya          copy-add
 map yr          copy-remove
-map yp          push $realpath<space>$fx<space>|<space>xclip<space>-sel<space>clip<enter>
-map yd          push $realpath<space>$fx<space>|<space>xargs<space>--delimiter='\n'<space>dirname<space>|<space>xclip<space>-sel<space>clip<enter>
+map yp          push &realpath<space>${(@f)fx}|tr<space>-s<space>'\n'|xclip<space>-sel<space>clip<enter>
 map dd          cut
 map da          cut-add
 map dr          cut-remove
 map p           paste; reload
 map P           :Link
-map f           fzf
 map n           search-next
 map N           search-prev
 map a           rename
@@ -373,10 +369,11 @@ map gh          cd ~
 map gp          cd /tmp
 map c           push :<space>cd<space>
 # map e           find
+map f           fzf
 map e           fzycd
 map E           sublime
-map l           cless
-map L           $$PAGER $fx
+map L           cless
+map l           $$PAGER $fx
 map <tab>       cmd-complete
 map <c-l>       redraw
 map <c-l>       reload
@@ -389,13 +386,13 @@ map q           unselect
 # map q           clear
 map x           read 
 map S           $$SHELL
-map D           delete
-map ,           push :<space>glob-select<space>*
-map .           push :<space>glob-unselect<space>*
+map D           delete; reload
+map ,           push :glob-select<space>*
+map .           push :glob-unselect<space>*
 map v           invert
-map n           push :<space>mkdir<space>
-map Z           push :<space>7za<space>
-map X           push :<space>extract<space>$fx<enter>
+map n           push :mkdir<space>
+map Z           push :7za<space>
+map X           push :extract<space>$fx<enter>
 
 # OPTS
 map \~          push :set<space>ratios<space>

@@ -1,6 +1,7 @@
 #!/bin/zsh
 function f () {
-  # setopt extended_glob;
-  local f=(${1:-$(realpath .)}/(*/)#*); [[ ${f[1]} = $({1:-$(realpath .)}/(*.)#*) ]] && return;
-  printf '%s\n' $f | fzf -i -m --reverse;
+  setopt nonomatch; local a;
+  a=(${1:-$(realpath .)}/**/*);
+  [[ ${a[1]} = "${1:-$(realpath .)}"'/**/*' ]] && return;
+  fzf -i -m --reverse <<< ${(@F)a};
 }

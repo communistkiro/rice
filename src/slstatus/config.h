@@ -95,7 +95,6 @@ static const struct arg args[] = {
     // { hostname,             "%s",       NULL                                        } ,
     // { ipv6,                 "%s",       interface name (eth0)                       } ,
     // { kernel_release,       "%s",       NULL                                        } ,
-    // { ,                     "%s",       format string (c?n?)                        } ,
     // { load_avg,             "%s",       NULL                                        } ,
     // { num_files,            "%s",       path                                        } ,
     // { ram_free,             "%s",       NULL                                        } ,
