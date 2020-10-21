@@ -1,6 +1,7 @@
 #!/bin/zsh
 setopt extended_glob;
-typeset a b c d e f g h l m n o p q t u v w x y z; m=$(mktemp -d /tmp/animu.XXXXXXXX); a=$(mktemp $m/a.XXXXXXXX); b=$(mktemp $m/b.XXXXXXXX); cd $m;
+typeset a b c d e f g h l m n p q u w x y z;
+m=$(mktemp -d /tmp/animu.XXXXXXXX); a=$(mktemp $m/a.XXXXXXXX); b=$(mktemp $m/b.XXXXXXXX); cd $m;
 
 g='/root/.config/animu.conf';
 if [[ -f $g ]]; then
@@ -8,7 +9,7 @@ if [[ -f $g ]]; then
   q=$(pcre2grep -o1 '^q (.+)$' $g);
 fi;
 
-while getopts 'd:q:' o; do case $o in
+while getopts 'd:q:' g; do case $g in
   (d) d=${OPTARG};;
   (q) q=${OPTARG};;
 esac; done;
@@ -24,7 +25,7 @@ if [[ -z $(<$a) ]] || [[ -z $(<$b) ]]; then read -sk1 '?Files empty.'; return; f
 
 z=(${(@fQ)"$(jq '.content[].size' $a)"});
 x=(${(@fQ)"$(jq '.content[].name' $a)"}); # tr -s '[[:space:]]' | tr '_' ' ' | 
-c=(${(@f)"$(printf '%6s | %s\n' ${z:^x} | sort -unk1 | fzf -m --reverse --no-sort --exact --query="$q")"}) || return;
+c=(${(@f)"$(printf '%6s | %s\n' ${z:^x} | sort -unk1 | fzf --bind "alt-v:select-all" --bind "alt-c:clear-selection" -m --reverse --no-sort --exact --query="$q")"}) || return;
 
 c=(${c##*| });
 n=$(printf '%s\n' $c | sed 's/_/ /g;s/\(.*\)- .*/\1/;s/[0-9]//g;s/\[[^]]*\]//g;s/[0-9]//g;s/([^)]*)//g;s/\.[^.]*$//;s/^ *//g;s/ *$//' | uniq -ci | sort -nr | head -n 1 | awk '{ print substr($0, index($0,$2)) }' | sed 's/ /%20/g');
@@ -35,30 +36,24 @@ for l in $c; do
   y=${${(qM)l//(#b)(+$^)/\\${match[1]}}//./\\.};
   
   w=($(jq '.' $a | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(Q)y}\",")) || \
-  w=($(jq '.' $a | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${y}\",")); 
+  w=($(jq '.' $a | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(g..)y}\",")); 
   
   p=($(jq '.' $a | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${(Q)y}\",")) || \
-  p=($(jq '.' $a | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${y}\","));
-  
-  q=$(mktemp -d ./XXXXXXXX);
-  printf '%s' $l > $q/name;
-  for z in $w; do
-    u=$(jq '.' $b | pcre2grep -o1 -M -A 1 -e "\"id\": $z,\n\s+\"name\": \"(.+)\",");
-    for h in $p; do
-      printf '%s\n' '#!/bin/sh' "xdccget --dont-confirm-offsets -d \"$f\" -q \"irc.rizon.net\" \"#nibl\" \"$u xdcc send #$h\"" > "$q/$h===$u";
+  p=($(jq '.' $a | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${(g..)y}\","));
+
+  for h in {1..$#p}; do
+    for z in {1..$#w}; do
+      [[ -f "$f/$l" ]] && [[ ! -z "$f/$l" ]] && break 2;
+      u=$(jq '.' $b | pcre2grep -o1 -M -A 1 -e "\"id\": ${w[z]},\n\s+\"name\": \"(.+)\",");
+      printf '%b\n' \
+        "\033[;1mw:      \033[;1;7m$z/$#w\033[;0m" \
+        "\033[;34;1mp:      \033[;34;1;7m$h/$#p\033[;0m" \
+        "\033[;36;7;1mfile:   \033[;36;1m${l}\033[;0m" \
+        "\033[;32;7;1mcmd:    \033[;32;1mxdccget --dont-confirm-offsets -d \"$f\" -q \"irc.rizon.net\" \"#nibl\" \"${u} xdcc send #${p[h]}\"\033[;0m" \
+        "\033[;31;1m^To go to next bot press \033[;31;1;7m^C\033[;0m\033[;31;1m." '\033[;0m';
+        trap 'break; trap - INT' INT;
+      until xdccget --dont-confirm-offsets -d "$f" -q "irc.rizon.net" "#nibl" "$u xdcc send #${p[h]}"; do sleep .5; done;
     done;
   done;
-done;
-
-trap 'rm -f $v; continue; sleep 1;' INT; printf '\n\n\n';
-
-for w in $m/*(/); do
-  cd $w;
-  for v in *===*(.); do
-    [[ -f "$f/$(<$w/name)" ]] && break;
-    printf '%s\n' "$(<$w/name)" "Downloading package #${v%===*} from ${v#*===}." 'To skip download press ^C.' '';
-    sh $v;
-  done;
-  cd $m; rm -rf $w;
 done;
 cd ~; rm -rf $m;

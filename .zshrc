@@ -71,9 +71,9 @@ function d () {
 }
 compdef _dirs d
 
-# source /root/.config/omz/plugins/timer/timer.plugin.zsh
-# TIMER_FORMAT='[%d]'
-# TIMER_PRECISION=7
+# source /root/.config/omz/plugins/timer/timer.plugin.zsh;
+# TIMER_FORMAT='[%d]';
+# TIMER_PRECISION=7;
 
 
 ####    ALII
