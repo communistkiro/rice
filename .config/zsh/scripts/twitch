@@ -55,14 +55,16 @@
 #   esac;
 # done;
 # unset s q a e c w;
+local a s;
 a=(
     'ryuquezacotl'
+    'yeomanvidya'
     'gamozo'
     'mrllamasc'
     '3moth'
     'numidium3rd'
     'naysayer88'
 );
-s=$(printf "%s\n" ${(@)a} | dmenu -i) || return;
-mpv -- https://www.twitch.tv/${s}/
-unset a s
+# s=$(fzy <<< ${(F)a}) || return;
+s=$(printf '%s\n' $a | dmenu -i) || return 1;
+mpv -- https://www.twitch.tv/${s}/ & disown; exit

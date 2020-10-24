@@ -1,4 +1,2 @@
 #!/bin/sh
-while true; do
-    tmines -fd22; clear;
-done
+while true; do tmines -fd22; clear; done;

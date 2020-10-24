@@ -2,6 +2,7 @@
 if [ $# -eq 1 ]; then b="$1"; 
 elif ps -C firefox &>/dev/null; then b=firefox; else b=sf; fi;
 
-url=$(cat ~/.sfeed/feeds.txt | dmenu -l 48 -i | pcre2grep -o1 '(http.*$)')
-test -n "$url" && $b "$url"
-unset b url
+url=$(cat ~/.sfeed/feeds.txt | dmenu -l 51 -i | pcre2grep -o1 '(http.*$)')
+[[ -n "$url" ]] && $b "$url";
+unset b url;
+

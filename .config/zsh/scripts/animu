@@ -1,5 +1,5 @@
 #!/bin/zsh
-setopt extended_glob;
+setopt extended_glob; unset f;
 typeset a b c d e f g h l m n p q u w x y z;
 m=$(mktemp -d /tmp/animu.XXXXXXXX); a=$(mktemp $m/a.XXXXXXXX); b=$(mktemp $m/b.XXXXXXXX); cd $m;
 
@@ -9,15 +9,16 @@ if [[ -f $g ]]; then
   q=$(pcre2grep -o1 '^q (.+)$' $g);
 fi;
 
-while getopts 'd:q:' g; do case $g in
+while getopts 'd:q:e:' g; do case $g in
   (d) d=${OPTARG};;
   (q) q=${OPTARG};;
+  (q) e=${OPTARG};;
 esac; done;
 
 [[ -d $d ]] || mkdir $d;
 t=$@[OPTIND,-1];
 [[ -z $t ]] && read 't?Title: ';
-read 'e?Episode (leave empty for batch): ';
+# read 'e?Episode (leave empty for batch): ';
 
 curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $b "https://api.nibl.co.uk/nibl/bots";
 curl -s -f -L --max-redirs 0 -o $a "https://api.nibl.co.uk/nibl/search?query=${t// /%20}&episodeNumber=${e}";

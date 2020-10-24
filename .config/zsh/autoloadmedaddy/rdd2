@@ -1,27 +1,24 @@
 #!/bin/zsh
-# DIR OF ALL MP3S, -> DIR OF ARTIST/ALBA/MP3S
-function rdd2() {
-t1=$(mktemp /tmp/rdd2.XXXXXXXX);
-t2=$(mktemp /tmp/rdd2.XXXXXXXX);
-local z d f;
-ls -UN1 *.mp3 > $t1 || return 1;
+# DIR(S) OF MP3S, -> DIR OF ARTIST/ALBA/MP3S
+function rdd2 () {
+((# == 0)) && printf '%s\n' 'rdd2: Recursively puts all .mp3s contained in current directory into a "Artist/Artist [Album (Date)]" format.' && return 1;
+((# == 1)) && [[ -d $1 ]] && cd $1;
+local a s d q; q=$(mktemp);
+setopt nonomatch;
+a=(**/*.mp3(.));
+[[ $a[1] = '**/*.mp3(.)' ]] && read -sk1 "?No .mp3's found recurrsively in working directory." && return 1;
 
-if [ ! -s $t1 ]; then
-  printf 'No .mp3's found!\n';
-  [ "$(printf '%s\n' '2 No' '1 Yes' | dmenu -i -p "Move all .mp3's recursively into current directory?" -l 2)" = '1 Yes' ] && fd -t f -e mp3 -X mv {} . && ls -UN1 *.mp3 > $t1 || return 1;
-fi;
+for s in $a; do
+  d="$(mp3info2 -D -p '%a [%l (%y)]' $s)";
+  if [[ ! -d $d ]]; then mkdir $d; printf '%s\n' $d >> $q; fi; # mv "$(dirname $(realpath $s))"/*.{jpg,png,jpeg,pdf} $d 2>/dev/null; fi;
+  mv $s $d;
+done;
 
-while IFS= read -r f; do
-  z="$(mp3info2 -D -p '%a [%l (%y)]' $f)";
-  if [ ! -d $z ]; then mkdir $z; printf '%s\n' $z >> $t2; fi;
-  mv $f $z;
-done < $t1;
+for s in ${(f)"$(< $q)"}; do
+  d=${s%% \[*}; [[ -z $d ]] && return 13;
+  if [[ ! -d $d ]]; then mkdir $d; fi;
+  mv $s $d;
+done < $q;
 
-while IFS= read -r d; do
-  z=${d%% \[*};
-  if [ ! -d $z ]; then mkdir $z; fi;
-  mv $d $z;
-done < $t2;
-
-rm $t1 $t2;
+rm $q;
 }

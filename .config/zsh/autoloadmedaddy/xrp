@@ -2,6 +2,7 @@
 # DOWNLOADS FROM LIST OR, GIVEN A NEW LINK, SCRAPES ALBA FROM EMBEDDED PLAYER AND DIRECT LINKS RELEASES TO LIST
 function xrp () {
 local o a t1 t2 t3 w s d f;
+setopt nonomatch;
 while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
@@ -41,7 +42,8 @@ return 1;;esac; done;
 
 if (($# > 0)); then; xrpp $@; fi;
 cd ~/nm;
-while IFS= read -r a; do;
+
+for a in ${(f)"$(< ~/nm/bcnew)"}; do
     t1=$(mktemp /tmp/xrp1.XXXXXXX); t2=$(mktemp /tmp/xrp2.XXXXXXX); t3=$(mktemp /tmp/xrp3.XXXXXXX);
     curl $a > $t1;
     if pcre2grep -q 'redirected' $t1; then
@@ -49,7 +51,7 @@ while IFS= read -r a; do;
         curl $a > $t1;
     fi;
     sed -n '15,/">/p' $t1 > $t2;
-    pcre2grep -o1 'class="tag" href="http.+?/tag/(.+?)"' $t1 |  sed -r 's/(^|-)([a-z])/\U\0/g; s/-/ /g' | awk -vRS='\n' -vORS=';' '1' > /tmp/genre;
+    pcre2grep -o1 'class="tag" href="http.+?/tag/(.+?)\?from=\S+"' $t1 > /tmp/genre;
     # rymgenre "$(sed -rn '1s/(.*) by (.*), rel.*/\2 \1/p' $t2)" >> /tmp/genre;
     if pcre2grep -q 'releases' $t2; then
         printf "%s\n" $a >> ~/nm/soon;
@@ -59,39 +61,37 @@ while IFS= read -r a; do;
             --ignore-config \
             --ignore-errors \
             --retries 64 \
+            --fragment-retries 64 \
             --audio-format mp3 \
             --audio-quality 0 \
-            --fragment-retries 64 \
             --embed-thumbnail \
             --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' $a;
-        if ! w=(${(@f)"$(ls *mp3)"}); then
+        if w=(*.mp3(.)) && [[ $w[1] = '*.mp3(.)' ]]; then
             printf "%s\n" $a >> ~/nm/missing;
             sort -uo ~/nm/missing ~/nm/missing;
         else
-            # if [[ $(sed -rn '/^[1-9]+\.\ /p' $t2 | tail -1 | pcre2grep -o '^\d+') -gt ${#w} ]]; then
-            if [[ $(pcre2grep -o1 '^(\d+)\.' $t2 | tail -1) -gt ${#w} ]]; then
+            if (($(pcre2grep -o1 '^(\d+)\.' $t2 | tail -n 1) > ${#w})); then
                 printf '%s\n' $a >> ~/nm/missing;
                 sort -uo ~/nm/missing ~/nm/missing;
             fi;
-            printf '%s\n' ${(@)w} | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\]).*/\2-\3-\4/' > $t3;
+            printf '%s\n' $w | sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\]).*/\2-\3-\4/' > $t3;
             d=$(sort -u $t3 | wc -l); f=$(wc -l $t3 | pcre2grep -o '^\d+');
-            if [[ $d -ne 1 ]]; then [[ "$(printf '%s\n' '2 No' '1 Yes' "$(basename -a ${(@f)"$(ls ./*.mp3)"})" | dmenu -i -p "$f tracks, $d artists/dates: rename dirs to Various Artists? " -l $f)" = '1 Yes' ]] && f=$(sed -r 's/^.* \[/Various Artists [/' $t3 | sort -u | head -n 1) || unset f;
+            if ((d != 1)); then [[ "$(printf '%s\n' '2 No' '1 Yes' *.mp3(.) | dmenu -i -p "$f tracks, $d artists/dates: rename dirs to Various Artists? " -l $f)" = '1 Yes' ]] && f=$(sed -r 's/^.* \[/Various Artists [/' $t3 | sort -u | head -n 1) || unset f;
             else unset f; fi
 
-            while IFS='\n' read -r s; do
+            for s in ${(f)"$(sort -u $t3)"}; do
                 mkdir -p ${f:-$s};
                 mv ${(@f)w} ${f:-$s};
                 tagme ${f:-$s};
-                rm ${(@f)"$(find "${f:-$s}" -name '*.bak')"};
                 mkdir -p ${f%% \[*} 2&>/dev/null && mv $f ${f%% \[*} && unset f || \
                 mkdir -p ${s%% \[*} && mv $s ${s%% \[*};
                 break;
-            done < $t3 | sort -u;
+            done;
         fi;
-        printf '%s\n' $a >> ~/nm/bcold && sort -uo ~/nm/bcold ~/nm/bcold;
-        printf '\n================================================================\n';
+        printf '%s\n' $a >> ~/nm/bcold && sort -uo ~/nm/bcold ~/nm/bcold; printf '\n================================================================\n';
     fi;
     sed -i '1,1d' ~/nm/bcnew;
     rm -f $t1 $t2 $t3;
-done < ~/nm/bcnew;
+done;
+rm -f ~/nm/**/*.bak;
 }

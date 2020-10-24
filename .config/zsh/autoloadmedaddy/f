@@ -1,7 +1,5 @@
 #!/bin/zsh
-function f () {
-  setopt nonomatch; local a;
-  a=(${1:-$(realpath .)}/**/*);
-  [[ ${a[1]} = "${1:-$(realpath .)}"'/**/*' ]] && return;
-  fzf -i -m --reverse <<< ${(@F)a};
+f() {
+local s=("${(@f)$(fd "${@:2}" | fzf)}") || return;
+print -z -- " $1 ${s[@]:q:q}"
 }

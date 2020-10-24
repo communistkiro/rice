@@ -51,7 +51,7 @@ if which tageditor &>/dev/null; then
         year=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
         recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
         track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-        genre="$(</tmp/genre)" \
+        genre=${(Cj.;.)${(@f)"$(</tmp/genre)"}} \
         albumartist="$a" \
       --files $z;
   done < $t;
@@ -66,7 +66,7 @@ elif which mp3info2 &>/dev/null; then
       -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
       -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      -g "$(</tmp/genre)" \
+      -g ${(Cj.;.)${(f)"$(</tmp/genre)"}} \
       -F TPE2="$a" \
       $z;
   done < $t;

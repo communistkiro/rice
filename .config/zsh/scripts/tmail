@@ -1,8 +1,8 @@
 #!/bin/zsh
-local z x c br;
-x='https://www.1secmail.com/api/v1/';
-z=/tmp/tmpmail; mkdir -p $z; touch $z/emailaddresses;
-br=sf;
+
+TMPMAIL_API_URL='https://www.1secmail.com/api/v1/';
+TMPMAIL_DIR=/tmp/tmpmail; mkdir -p $TMPMAIL_DIR; touch $TMPMAIL_DIR/emailaddresses;
+BROWSER=sf;
 
 function menu () {
   local m t a;
@@ -23,7 +23,7 @@ function menu () {
 
 function box () {
   ((# == 0)) && return 0;
-  local a h B T H ul ur dl dr uh dh lv rv r; integer s; s=1;
+  typeset a h B T H ul ur dl dr uh dh lv rv r; integer s; s=1;
   while getopts 's:h:B:T:H:' a; do case $a in
     (s) # line style
       s=$OPTARG;; 
@@ -66,37 +66,43 @@ function box () {
 }
 
 function fetch () { # List all the received emails in a nicely formatted order
-  curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $a "${x}?action=getMessages&login=${u}&domain=1secmail.${d}";
+  typeset l q m #i f s t;
+  curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $a "${TMPMAIL_API_URL}?action=getMessages&login=${u}@1secmail.${d}&domain=1secmail.${d}" || \
+  curl -s -f -L --max-redirs 0 -o $a "${TMPMAIL_API_URL}?action=getMessages&login=${u}@1secmail.${d}&domain=1secmail.${d}" || \
+  curl -s -L --max-redirs 0 -o $a "${TMPMAIL_API_URL}?action=getMessages&login=${u}@1secmail.${d}&domain=1secmail.${d}" || return 123;
  
   l=$(jq length $a);
   ((l == 0)) && read -k1 '?No (new) mail.' && return;
 
-  n=#;        n+=(seq $l);
-  i=id;       i+=(${(@f)"$(jq -r '.[].id' $a)"});
-  f=from;     f+=(${(@f)"$(jq -r '.[].from' $a)"});
-  s=subject;  s+=(${(@f)"$(jq -r '.[].subject' $a)"});
-  t=time;     t+=(${(@f)"$(jq -r '.[].date' $a)"});
+  i=id;       i+=(${(@f)"$(jq -r '.[].id')"});
+  f=from;     f+=(${(@f)"$(jq -r '.[].from')"});
+  s=subject;  s+=(${(@f)"$(jq -r '.[].subject')"});
+  t=time;     t+=(${(@f)"$(jq -r '.[].date')"});
 }
 
-function viewe () { # View an email by ID
+function view() { # View an email by ID
   typeset b;
-  [[ -f ${z}/${u}${d}${1} ]] || curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${z}/${u}${d}${1} "${x}?action=readMessage&login=${u}&domain=1secmail.${d}&id=${1}";
-  [[ "$(< ${z}/${u}${d}${1})" = "Message not found" ]] && read -k1 'Message not found.' && return;
+  curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $m "${TMPMAIL_API_URL}?action=readMessage&login=${u}&domain=1secmail.${d}&id=${1}" || \
+  curl -s -f -L --max-redirs 0 -o $m "${TMPMAIL_API_URL}?action=readMessage&login=${u}&domain=1secmail.${d}&id=${c[$1]}" || \
+  curl -s -L --max-redirs 0 -o $m "${TMPMAIL_API_URL}?action=readMessage&login=${u}&domain=1secmail.${d}&id=${c[$1]}";
+  [[ "$(<$m)" = "Message not found" ]] && read -k1 'Message not found.' && return;
 
-  b=$(jq -r '.htmlBody' ${z}/${u}${d}${1});
+  b=$(jq -r '.htmlBody' $m);
 
   printf '%b\n' \
     "\033[;30;0m To:\033[;36;1m ${(l.8...)}${u}@1secmail.${d}\033[;0m" \
-    "\033[;32;0m From:\033[;32;1m ${(l.6...)}$(jq -r '.from' ${z}/${u}${d}${1})\033[;0m" \
-    "\033[;34;0m Subject:\033[;34;1 ${(l.5...)}$(jq -r '.subject' ${z}/${u}${d}${1})\033[;0m" \
-    "${b:-$(jq -r '.textBody' ${z}/${u}${d}${1})}" | less;
+    "\033[;32;0m From:\033[;32;1m ${(l.6...)}$(jq -r '.from' $m)\033[;0m" \
+    "\033[;34;0m Subject:\033[;34;1 $(jq -r '.subject' $m)\033[;0m" \
+    "${b:-$(jq -r '.textBody' $m)}" | less;
 
-  printf '%s\n' \
-    "<pre><b>To: </b>${u}@1secmail.${d}" \
-    "<b>From: </b>$(jq -r '.from' ${z}/${u}${d}${1})" \
-    "<b>Subject: </b>$(jq -r '.subject' ${z}/${u}${d}${1})</pre>" \
-    "${b:-<pre>$(jq -r '.textBody' ${z}/${u}${d}${1})</pre>}" > ${z}/${u}${d}${1}.html;
-  # $br ${z}/${u}${d}${1}.html;
+  # if [[ $(read -seq "?Open with ${BROWSER}?") = y ]]; then
+    printf '%s\n' \
+      "<pre><b>To: </b>${u}@1secmail.${d}" \
+      "<b>From: </b>$(jq -r '.from' $m)" \
+      "<b>Subject: </b>$(jq -r '.subject' $m)</pre>" \
+      "${b:-<pre>$(jq -r '.textBody' $m)</pre>}" > $TMPMAIL_DIR/${c[$1]}.html;
+  #   $BROWSER "$TMPMAIL_DIR/${c[$1]}.html";
+  # fi;
 }
 
 function gena () { # (re)generate random 12-character email address
@@ -111,27 +117,27 @@ function gena () { # (re)generate random 12-character email address
 
 function seta () {
   if (($+u)) && (($+d)); then
-    pcre2grep -q "^${u}@1secmail\.${d}$" $z/emailaddresses && \
-    read -k1 '?Already in set email addresses!' || \
-    printf '%s\n' "${u}@1secmail.${d}" >> $z/emailaddresses;
+    ! pcre2grep -q "^${u}@1secmail\.${d}$" $TMPMAIL_DIR/emailaddresses && \
+    printf '%s\n' "${u}@1secmail.${d}" >> $TMPMAIL_DIR/emailaddresses && \
+    typeset -gx z || read -sk1 '?Already in set email addresses!';
   else 
-    read -k1 '?Address unset.';
+    gena && seta;
   fi;
 }
 
 function picka () { # select one of previously set addresses
   typeset s;
-  s=$(fzy -l $r < $z/emailaddresses);
+  s=$(cat $TMPMAIL_DIR/emailaddresses | fzy -l $r);
   u=${s%@*};
   d=${s#*@1secmail.};
+  typeset -gx z;
 }
 
 function () {
-  typeset r a c l i f s t v C;
-  r=${"$(stty size)"% *}; a=$(mktemp /$z/XXXXXXXX);
+  typeset t r a m c; r=${"$(stty size)"% *}; m=$(mktemp /$TMPMAIL_DIR/XXXXXXXX); a=$(mktemp /$TMPMAIL_DIR/XXXXXXXX);
   while true; do
     clear;
-    box -H i5 -B 4b -T 2 -h "${u}@1secmail.${d}" ${(f)"$(for v in {1..$((l+1))}; do printf '%s&&%s&&%s&&%s&&%s\n' ${n:-\#} ${t[v]:-time} ${i[v]:-id} ${f[v]:-from} ${s[v]:-subject}; done | column -t -s '&&')"};
+    box -H i5 -B 4b -T 2 -h "${u}@1secmail.${d}${(r.2...l.2...)}${${z:+set}:-not set}" ${(@f)"$(print -C 5 $(seq ${l:-0}) $t $i $f $s)"};
     menu -t 6b -m 2b \
       'g (re)generate address' \
       's save current' \
@@ -142,18 +148,17 @@ function () {
       'C custom address' \
       '# view email #_' \
       'q quit';
-    read -sk1 'c?'
-    case $c in
+    case $(read -sek1 'c?: ') in
       (g) gena;;
       (s) seta;;
       (r) fetch;;
-      (R) fetch; viewe $i[1+1];;
+      (R) fetch; view 1;;
       (y) (($+u)) && (($+d)) && printf '%s' ${u}@1secmail.${d} | xclip -se c;;
       (c) picka; fetch;;
-      (C) read 'C?Custom address [a-z0-9]+@1secmail\.(com|net|org): '; [[ $C =~ '[a-z0-9]+@1secmail\.(com|net|org)' ]] && u=${C%@*} && d=${C#*.};;
+      (C) read 'u?: '; "[a-z0-9]+@1secmail\.(com|net|org)";;
       (0) c=10;&
-      ([1-9]) viewe $i[c+1];;
-      (q) break;;
+      ([1-9]) ((c > l)) && read -k1 '?Bad index!' && return || view $c;;
+      (q) exit 0;;
     esac;
   done;
 }

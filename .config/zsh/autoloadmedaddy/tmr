@@ -1,158 +1,156 @@
 #!/bin/zsh
-
 function tmr() {
 # countdown timer + alarm, rework of Joe Standring <git@joestandring.com> scripts; support times of up to 4.1667 days
 # local alarm=~/.local/CartoonFoghorn.m4a;
 typeset o tmp;
 typeset -i w b d h m s D H M S t;
 while getopts 'ap' o; do
-    case $o in
-        (a) typeset a;;
-        (p) typeset p;;
-        (*) 
+  case $o in
+    (a) typeset a;;
+    (p) typeset p;;
+    (*) 
 less -F <<HEREDOC
 NAME
-    tmr - a countdown/alarm script    
+  tmr - a countdown/alarm script    
 
 SYNOPSIS
-    tmr [-a] ...
-        [-p] [minutes minutes]
-        [days hours minutes seconds]
-        [days hours minutes]
-        [hours minutes]
-        [minutes]
+  tmr [-a] ...
+    [-p] [minutes minutes]
+    [days hours minutes seconds]
+    [days hours minutes]
+    [hours minutes]
+    [minutes]
 
 DESCRIPTION
-    Start a countdown, set up an alarm, or start a pomodoro session from the given time 
-    paramters, and play an audio file on completion. Days are always relative to today's, 
-    i.e., 1 is tomorrow, or +24h. For coundowns. negatives values are parsed as corrections, 
-    for alarms, because the day is relative, a future alarm is always set unless all values 
-    are zero (default, if given empty string). All values are integers. Months don't come  
-    into play in tmr. Default cycle count, work-, and break-section durations can be editted 
-    in the script. Given no arguments, it prompt for the days, hours, minutes, seconds for 
-    the alarm or countdown separately.
+  Start a countdown, set up an alarm, or start a pomodoro session from the given time 
+  paramters, and play an audio file on completion. Days are always relative to today's, 
+  i.e., 1 is tomorrow, or +24h. For coundowns. negatives values are parsed as corrections, 
+  for alarms, because the day is relative, a future alarm is always set unless all values 
+  are zero (default, if given empty string). All values are integers. Months don't come  
+  into play in tmr. Default cycle count, work-, and break-section durations can be editted 
+  in the script. Given no arguments, it prompt for the days, hours, minutes, seconds for 
+  the alarm or countdown separately.
 
 CONTROLS
-    SIGINT (^c) to pause; SIGQUIT (^\) to quit.
-    
+  SIGINT (^c) to pause; SIGQUIT (^\) to quit.
+  
 EXAMPLES
-    An alarm for 00:55:57 on the 8. days after today
-        tmr -a 7 26 -61 -183
+  An alarm for 00:55:57 on the 8. days after today
+    tmr -a 7 26 -61 -183
 
-    An alarm for midnight
-        tmr -a 1 0 0;
+  An alarm for midnight
+    tmr -a 1 0 0;
 
-    An alarm for 22:57:59 tonight, or tomorrow, depending on current time
-        tmr -a 1 -1 -1 -1
+  An alarm for 22:57:59 tonight, or tomorrow, depending on current time
+    tmr -a 1 -1 -1 -1
 
-    An alarm for 00:06:34
-        tmr -a 7 -26
+  An alarm for 00:06:34
+    tmr -a 7 -26
 
-    An alarm for the next time the minutes are 26
-        tmr -a 26
+  An alarm for the next time the minutes are 26
+    tmr -a 26
 
-    A 59-minute, 59-second countdown
-        tmr 1 0 -1
+  A 59-minute, 59-second countdown
+    tmr 1 0 -1
 
-    A 45-minute countdown
-        tmr 45
+  A 45-minute countdown
+    tmr 45
 
-    Negative final value, just returns; preprend negative first arguments w/ --
-        tmr -- -1 
+  Negative final value, just returns; preprend negative first arguments w/ --
+    tmr -- -1 
 
-    A 3-cycle pomodoro sesh with 45-minute work-, and 8-minute break-sections
-        tmr -p
+  A 3-cycle pomodoro sesh with 45-minute work-, and 8-minute break-sections
+    tmr -p
 
-    A 3-cycle pomodoro sesh with 30-minute work-, and 10-minute break-sections
-        tmr -p 30 10
+  A 3-cycle pomodoro sesh with 30-minute work-, and 10-minute break-sections
+    tmr -p 30 10
 
 EXIT STATUS
-    0 
-        on successfully completed countdown or alarm.
-    1
-        if all values are zero, and/or corrections yield a value in the past.
-    2
-        on quitting.
+  0 
+    on successfully completed countdown or alarm.
+  1
+    if all values are zero, and/or corrections yield a value in the past.
+  2
+    on quitting.
 BUGS
-    Please report any aberrant behavior or bugs to vlg@tutamail.com
+  Please report any aberrant behavior or bugs to vlg@tutamail.com
 
 
 HEREDOC
 return 1;; esac; done;
 
 if ((${+p})); then
-    for o in $(seq 3); do
-        clear; printf '\aStarting %d. pomodoro cycle\nWork!\n' $o;
-        tmr ${2:-45}; ((? == 2)) && break;
-        clear; printf '\aBreak!\n'; tmr ${3:-8}; ((? == 2)) && break; 
-    done;
-    return $?;
+  for o in $(seq 3); do
+    clear; printf '\aStarting %d. pomodoro cycle\nWork!\n' $o;
+    tmr ${2:-45}; ((? == 2)) && break;
+    clear; printf '\aBreak!\n'; tmr ${3:-8}; ((? == 2)) && break; 
+  done;
+  return $?;
 fi;
 
 tmp=/tmp/tmr.tmr.tmr;
 
-if   ((# == ${${a:-4}:+}5)); then d=${${a:-$1}:+2}; h=${${a:-$2}:+3}; m=${${a:-$3}:+4}; s=${${a:-$4}:+5};
-elif ((# == ${${a:-3}:+}4)); then d=${${a:-$1}:+2}; h=${${a:-$2}:+3}; m=${${a:-$3}:+4};
-elif ((# == ${${a:-2}:+}3)); then       h=${${a:-$1}:+2}; m=${${a:-$2}:+3};
-elif ((# == ${${a:-1}:+}2)); then             m=${${a:-$1}:+2};
+if   ((# - OPTIND == 3)); then d=$@[OPTIND]; h=$@[OPTIND + 1]; m=$@[OPTIND + 2]; s=$@[OPTIND + 3];
+elif ((# - OPTIND == 2)); then d=$@[OPTIND]; h=$@[OPTIND + 1]; m=$@[OPTIND + 2];
+elif ((# - OPTIND == 1)); then               h=$@[OPTIND];     m=$@[OPTIND + 1];
+elif ((# - OPTIND == 0)); then                                 m=$@[OPTIND];
 else
-    ((${+a})) && printf 'Set alarm for\n' || printf 'Set countdown for\n';
-    read 'd?days (rel. not abs.): ';
-    read 'h?hours: ';
-    read 'm?minutes: ';
-    read 's?seconds: ';
+  ((${+a})) && printf 'Set alarm for\n' || printf 'Set countdown for\n';
+  read 'd?days (rel. not abs.): ';
+  read 'h?hours: ';
+  read 'm?minutes: ';
+  read 's?seconds: ';
 fi
 
-[[ $d = '' ]] && d=0;
-[[ $h = '' ]] && h=0;
-[[ $m = '' ]] && m=0;
-[[ $s = '' ]] && s=0;
+[[ -z $d ]] && d=0;
+[[ -z $h ]] && h=0;
+[[ -z $m ]] && m=0;
+[[ -z $s ]] && s=0;
 ((d == 0)) && ((h == 0)) && ((m == 0)) && ((s == 0)) && return 1;
 
 if ((${+a})); then
-    m=$((m + s / 60)); s=$((s % 60));
-    h=$((h + m / 60)); m=$((m % 60));
-    d=$((d + h / 24)); h=$((h % 24)); 
-    
-    S=$(date +%S);
-    M=$(date +%M);
-    H=$(date +%H);
+  m=$((m + s / 60)); s=$((s % 60));
+  h=$((h + m / 60)); m=$((m % 60));
+  d=$((d + h / 24)); h=$((h % 24)); 
+  
+  S=$(date +%S);
+  M=$(date +%M);
+  H=$(date +%H);
 
-    if ((S >= s)) && ((m == 0)) && ((h == 0)) && ((d == 0)); then m=$((M + 1)); h=$H;
-    elif ((M > m)) || { ((M == m)) && ((S >= s)) } && ((h == 0)) && ((d == 0)); then h=$((H + 1));
-    elif ((M < m)) && ((h == 0)) && ((d == 0)); then h=$H;
-    elif ((H > h)) || { ((H == h)) && ((M >= m)) } && ((d == 0)); then ((d += 1)); fi;
+  if  ((S >= s)) && ((m == 0)) && ((h == 0)) && ((d == 0)); then m=$((M + 1)); h=$H;
+  elif ((M > m)) || { ((M == m)) && ((S >= s)) } && ((h == 0)) && ((d == 0)); then h=$((H + 1));
+  elif ((M < m)) && ((h == 0)) && ((d == 0)); then h=$H;
+  elif ((H > h)) || { ((H == h)) && ((M >= m)) } && ((d == 0)); then ((d += 1)); fi;
 
-    ((d < 0)) || ((60 * (60 * (24 * d + h) + m) + s < 0)) && return 1;
+  ((d < 0)) || ((60 * (60 * (24 * d + h) + m) + s < 0)) && return 1;
 
-    t=$(date -d "$(date +%Y-%m-%d) +${d}days +${h}hours +${m}minutes +${s}seconds" '+%Y-%m-%d %H:%M:%S');
-    printf "\nAlarm set for %s.\n" "$t";
+  printf "\nAlarm set for %s.\n" "$(date -d "$(date +%F) +$d days +$h hours +$m minutes +$s seconds" '+%F %T')";
 
-    t=$(($(date -d "$(date +%Y-%m-%d) +${d}days ${h}hours +${m}minutes +${s}seconds" '+%s') - $(date +%s)));
+  t=$(($(date -d "$(date +%F) +$d days +$h hours +$m minutes +$s seconds" '+%s') - $(date +%s)));
 else;
-    t=$((60 * (60 * (24 * d + h) + m) + s)); (($t < 0)) && return 1;
+  t=$((60 * (60 * (24 * d + h) + m) + s)); ((t < 0)) && return 1;
 fi;
 
-trap 'rm -f "$tmp"; trap - QUIT; return 2;' QUIT HUP
-trap 'a=$((a * -1));' INT
+trap 'rm -f "$tmp"; trap - QUIT; return 2;' QUIT;
+trap 'a=$((a * -1));' INT;
 
 unset d h m s; a=1;
 # output remainind time left as HH:MM:SS to stdout and tmpfile
 while ((t >= 0)); do
-    if ((${+a})); then
-        printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) | tee $tmp;
-        ((t -= 1));
-    fi;
-    sleep 1;
+  if ((${+a})); then
+    printf "%02d:%02d:%02d\n" $((t/3600)) $((t%3600/60)) $((t%60)) | tee $tmp;
+    ((t -= 1));
+  fi;
+  sleep 1;
 done
 
 if ((? == 0)) && mpc status &>/dev/null | pcre2grep -q playing; then 
-    # mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle; 
-    mpc -q toggle; beep -f 200 -r 150 -l 150; mpc -q toggle; 
+  # mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle; 
+  mpc -q toggle; beep -f 200 -r 2; mpc -q toggle; 
 else 
-    # mpv --really-quiet $alarm;
-    beep -f 200 -r 150 -l 150;
-fi
+  # mpv --really-quiet $alarm;
+  beep -f 200 -r 2;
+fi;
 
 rm -f $tmp;
 }

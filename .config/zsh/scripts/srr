@@ -1,11 +1,13 @@
-#!/bin/sh
-if ps -C firefox; then
-    b='/sbin/firefox';
-elif ps -C surf; then
-    b="~/.config/zsh/scripts/sf"
-else
-    b='/sbin/lynx';
-fi
-q=$(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i) || return 1;
-surfraw ${q%% *} -browser="$b" ${q#* }
-unset b q
+#!/bin/zsh
+((# == 0)) && return 1;
+local b q;
+#if ps -C firefox &>/dev/null; then
+#  b=firefox;
+#elif ps -C surf &>/dev/null; then
+#  b=sf;
+#else
+  b='lynx';
+#fi
+q=$(surfraw -elvi | tail -n +2 | cut -s -f1 | fzy -l ${"$(stty size)"% *}) || return 1;
+surfraw ${q%% *} -browser=$b "$@";
+
