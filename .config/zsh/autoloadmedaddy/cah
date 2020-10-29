@@ -1,20 +1,31 @@
 #!/bin/zsh
-# using https://github.com/crhallberg/json-against-humanity, rules https://www.cardsagainsthumanity.com
+# using https://github.com/crhallberg/json-against-humanity
 function cah () {
-cd ~/games/json-against-humanity;
-# local a s q w; # for some reason the 10 white cards don't show up with local vars
-q=$(jq '.cards.white[].text' compact.md.json|wc -l);
-w=$(jq '.cards.black[].text' compact.md.json|wc -l);
+typeset w b s d p q z e;
+d=~/games/json-against-humanity/cah-all-compact.json;
+
+w=$(jq '.white[]' $d | wc -l);
+b=$(jq '.black[].text' $d | wc -l);
+
+# p=($(seq -w 0 $(jq '.packs[].name' $d | wc -l)));
+# p[-1]=();
+# q=(${(f)"$(jq -r ".packs[${(j.,.)q}].name" $d)"});
+
+# if a=${(M)"$(printf '%s %s\n' ${p:^q} | fzf --reverse --no-info --border=horizontal --header='Pick packs to remove: ' --bind 'alt-c:clear-selection' --bind 'alt-v:select-all')"#([0-9](#c3))}; then
+#   for e in $a; do
+#     z=(${(f)"$(jq -r ".packs[$e].white")"});
+#     w=${w:|z};
+#     z=(${(f)"$(jq -r ".packs[$e].black")"});
+#     b=${b:|z};
+# fi;
+
+# while true; do
+#   print -a -C 4 ${(l.((${"$(stty size)"#* }/4-1))...)p};
+#   p-1
+# done
 
 while true; do
-  clear;
-  for s in {1..10}; do
-    a[s]=$((RANDOM % q));
-  done
-  # jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzf --reverse --border=horizontal --height=15 --prompt="$(jq ".cards.black[$((RANDOM % w))].text" compact.md.json)" || break;
-  jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzf --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".cards.black[$((RANDOM % w))].text" compact.md.json)" || break;
-  # jq ".cards.white[${(j:,:)a}].text" compact.md.json | fzy --prompt="$(jq -r ".cards.black[$((RANDOM % w))].text" compact.md.json)"" " || break;
-done
-cd ~; 
-unset q w a s;
+  for s in {1..10}; do a[s]=$((RANDOM % w)); done; clear;
+  jq ".white[${(j.,.)a}]" $d | fzf --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[$((RANDOM % b))].text" $d)" || break;
+done; 
 }

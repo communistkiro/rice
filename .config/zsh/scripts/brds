@@ -1,0 +1,97 @@
+#!/bin/zsh
+typeset a b r c d n t; 
+d=/tmp/brds; mkdir -p $d;
+r=${"$(stty size)"% *};
+c=${"$(stty size)"#* };
+alias fetch="curl -sfLH 'User-Agent:'";
+[[ -f $d/boards ]] || fetch -o $d/boards https://a.4cdn.org/boards.json;
+
+function menu () {
+  typeset m t a;
+  while getopts 'm:t:' a; do case $a in
+  (m) 
+    m="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
+    [[ $OPTARG =~ i ]] && m="${m};7";
+    [[ $OPTARG =~ b ]] && m="${m};1";
+    m="${m}m";;
+  (t)
+    t="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
+    [[ $OPTARG =~ i ]] && t="${t};7";
+    [[ $OPTARG =~ b ]] && t="${t};1";
+    t="${t}m";;
+  esac; done;
+  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033[;0m}" "${a%% *}" "${t:-\033[;0m}" "${a#* }" '\033[;0m'; done;
+}
+
+function selb () {
+  typeset a s;
+  a=(${(f)"$(jq -r '.boards[].board' $d/boards)"});
+  s=(${(f)"$(jq -r '.boards[].title' $d/boards)"});
+  b=$(printf '/%s/\t\t%s\n' ${a:^s} | fzy -l 32 | awk -F / '{print $2}'); [[ -z $b ]] && return;
+}
+
+function selt () {
+  read "t?#: ";
+  [[ -z $t ]] || ((t > n)) || ((t < 1)) && return 1;
+  typeset t1 t2 t3 t4;
+  fetch https://a.4cdn.org/$b/thread/$c1[t].json > $d/$b-$c1[t];
+  t1=(${(f)"$(jq -r '.posts[].no' $d/$b-$c1[t])"});
+  t2=(${(f)"$(jq -r '.posts[].now' $d/$b-$c1[t])"});
+  t3=(${(f)"$(jq -r '.posts[].name' $d/$b-$c1[t])"});
+  t4=(${(f)"$(jq -r '.posts[].com' $d/$b-$c1[t])"});
+  t5=(${(f)"$(jq -r '.posts[].tim' $d/$b-$c1[t])"});
+  t6=(${(f)"$(jq -r '.posts[].ext' $d/$b-$c1[t])"});
+  rm -f  $d/$b-$c1[t]-p;
+
+  for a in {1..$#t1}; do [[ $t6[a] =~ '^\.(png|jpe?g)$' ]] && [[ ! -f $d/$t5[a]$t6[a] ]] && { curl -sfo $d/$t5[a]$t6[a] https://i.4cdn.org/$b/$t5[a]$t6[a]; } &; done;
+  until (($(jobs | wc -l) == 0)); do sleep .1; done;
+
+  [[ -f $d/$t5[1]$t6[1] ]] && catimg -H $r $d/$t5[1]$t6[1] >> $d/$b-$c1[t]-p;
+  printf '%b%s%b%s\t%b%s\t%b№%s%b\n%s\n\n\n' '\033[;35;1m' ${"$(jq -r '.posts[0].sub' $b-$c1[t])":-''} '\033[;1m' $t3[1] '\033[;32m' $t2[1] '\033[;33m' $t1[1] '\033[;0m' $t4[1] >> $d/$b-$c1[t]-p;
+  for a in {2..$#t1}; do
+    [[ -f $d/$t5[a]$t6[a] ]] && catimg -H $r $d/$t5[a]$t6[a] >> $d/$b-$c1[t]-p;
+    printf '%b%s\t%b%s\t%b№%s%b\n%s\n\n\n' '\033[;1m' $t3[a] '\033[;32m' $t2[a] '\033[;33m' $t1[a] '\033[;0m' $t4[a] >> $d/$b-$c1[t]-p;
+  done;
+  sed -r "s/&#039;/'/g; s/<br>/\n/g; s/&gt;/>/g; s/<a href=\"#p[0-9]+\" class=\"quotelink\">//g; s/<\/a>//g; s/<span class=\"quote\">//g; s/<\/span>//g; s/&quot;/\"/g;" $d/$b-$c1[t]-p | less;
+}
+
+function refresh () {
+  fetch https://a.4cdn.org/${b}/catalog.json > $d/$b;
+}
+
+function viewcat () {
+  typeset c2 c3 c4 c5 c6 c7 c8 c9; clear;
+  c1=(${(f)"$(jq -r '.[].threads[].no' $d/$b)"});
+  c2=(${(f)"$(jq -r '.[].threads[].now' $d/$b)"});
+  c3=(${(f)"$(jq -r '.[].threads[].name' $d/$b)"});
+  c4=(${(f)"$(jq -r '.[].threads[].sub' $d/$b)"});
+  c5=(${(f)"$(jq -r '.[].threads[].com' $d/$b)"});
+  c6=(${(f)"$(jq -r '.[].threads[].replies' $d/$b)"});
+  c7=(${(f)"$(jq -r '.[].threads[].images' $d/$b)"});
+  c8=(${(f)"$(jq -r '.[].threads[].tim' $d/$b)"});
+  c9=(${(f)"$(jq -r '.[].threads[].ext' $d/$b)"});
+  n=$#c1;
+  rm -f $d/$b-cat;
+  for a in {1..$n}; do [[ $c9[a] =~ '^\.(png|jpe?g)$' ]] && [[ ! -f $d/$c8[a]$c9[a] ]] && { curl -sfo $d/$c8[a]$c9[a] https://i.4cdn.org/$b/$c8[a]$c9[a]; } &; done;
+  until (($(jobs | wc -l) == 0)); do sleep .1; done;
+  for a in {${(l.$(wc -m <<< $n) - 1..0.)$(<<< 1)}..$n}; do
+    [[ $c9[a] =~ 'png|jpe?g' ]] && catimg -H $r $d/$c8[a]$c9[a] >> $d/$b-cat;
+    printf '%b#%s\t%b%s\t%b%s\t%b%s\t%b№%s\t%b%s/%s\n%s\n\n\n' '\033[;34;1m' $a '\033[35;1m' ${c4[a]:-''} '\033[;1m' $c3[a] '\033[;32m' $c2[a] '\033[;33m' $c1[a] '\033[;0m' $c6[a] $c7[a] $c5[a] >> $d/$b-cat;
+  done;
+  sed "s/&#039;/'/g; s/<br>/\n/g; s/&gt;/>/g; s/<a href=\"#p[0-9]+\" class=\"quotelink\">//g; s/<\/a>//g;  s/<span class=\"quote\">//g; s/<\/span>//g; s/&quot;/\"/g;" $d/$b-cat | less;
+}
+
+function () {
+  until [[ ! -z $b ]]; do selb; done; refresh;
+  while true; do clear;
+    menu -m 5b -t 5 "/$b/ current board" "№$c1[t] current thread";
+    menu -m 2b -t 2 'r refresh' 'c view catalog' 'b select board' 't select thread' 'Q quit';
+    case $(read -sek1) in
+      (r) refresh;;
+      (c) viewcat;;
+      (t) selt;;
+      (b) selb;;
+      (Q) break;;
+    esac;
+  done;
+}
