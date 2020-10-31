@@ -1,10 +1,10 @@
 #!/bin/zsh
-typeset a b r c d n t; 
-d=/tmp/brds; mkdir -p $d;
+typeset b r c d n t; 
+d=/tmp/brds; mkdir -p ${d}; cd ${d};
 r=${"$(stty size)"% *};
 c=${"$(stty size)"#* };
-alias fetch="curl -sfLH 'User-Agent:'";
-[[ -f $d/boards ]] || fetch -o $d/boards https://a.4cdn.org/boards.json;
+alias fetch="curl -sfLH User-Agent:";
+[[ ! -f ${d}/boards.json ]] && fetch -o ${d}/boards.json https://a.4cdn.org/boards.json;
 
 function menu () {
   typeset m t a;
@@ -20,78 +20,104 @@ function menu () {
     [[ $OPTARG =~ b ]] && t="${t};1";
     t="${t}m";;
   esac; done;
-  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033[;0m}" "${a%% *}" "${t:-\033[;0m}" "${a#* }" '\033[;0m'; done;
+  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' ${m:-\033[;0m} "${a%% *}" ${t:-\033[;0m} "${a#* }" '\033[;0m'; done;
 }
 
 function selb () {
   typeset a s;
-  a=(${(f)"$(jq -r '.boards[].board' $d/boards)"});
-  s=(${(f)"$(jq -r '.boards[].title' $d/boards)"});
-  b=$(printf '/%s/\t\t%s\n' ${a:^s} | fzy -l 32 | awk -F / '{print $2}'); [[ -z $b ]] && return;
+  a=(${(fr.5..../.)"$(jq -r '.boards[].board' ${d}/boards.json)"});
+  s=(${(f)"$(jq -r '.boards[].title' ${d}/boards.json)"});
+  b=$(printf '/%-10s%s\n' ${a:^s} | fzy -l $r | awk -F / '{print $2}');
 }
 
 function selt () {
-  read "t?#: ";
-  [[ -z $t ]] || ((t > n)) || ((t < 1)) && return 1;
-  typeset t1 t2 t3 t4;
-  fetch https://a.4cdn.org/$b/thread/$c1[t].json > $d/$b-$c1[t];
-  t1=(${(f)"$(jq -r '.posts[].no' $d/$b-$c1[t])"});
-  t2=(${(f)"$(jq -r '.posts[].now' $d/$b-$c1[t])"});
-  t3=(${(f)"$(jq -r '.posts[].name' $d/$b-$c1[t])"});
-  t4=(${(f)"$(jq -r '.posts[].com' $d/$b-$c1[t])"});
-  t5=(${(f)"$(jq -r '.posts[].tim' $d/$b-$c1[t])"});
-  t6=(${(f)"$(jq -r '.posts[].ext' $d/$b-$c1[t])"});
-  rm -f  $d/$b-$c1[t]-p;
+  [[ -z $n ]] && return;
+  typeset t1 t2 t3 t4 t5 t6; integer q w e; e=0;
+  until ((e > 0)) && ((e <= n)); do clear; read 'e?Input thread #: '; done;
+  fetch https://a.4cdn.org/${b}/thread/${c1[e]}.json > ${d}/${b}-${c1[e]}.json || { read -sk1 '?Thread pruned or network issue.' && return 1; };
 
-  for a in {1..$#t1}; do [[ $t6[a] =~ '^\.(png|jpe?g)$' ]] && [[ ! -f $d/$t5[a]$t6[a] ]] && { curl -sfo $d/$t5[a]$t6[a] https://i.4cdn.org/$b/$t5[a]$t6[a]; } &; done;
-  until (($(jobs | wc -l) == 0)); do sleep .1; done;
+  t1=(${(f)"$(jq -r '.posts[].no'   ${d}/${b}-$c1[e].json)"});
+  t2=(${(f)"$(jq -r '.posts[].now'  ${d}/${b}-$c1[e].json)"});
+  t3=(${(f)"$(jq -r '.posts[].name' ${d}/${b}-$c1[e].json)"});
+  t4=(${(f)"$(jq -r '.posts[].com'  ${d}/${b}-$c1[e].json)"});
+  t5=(${(f)"$(jq -r '.posts[].tim'  ${d}/${b}-$c1[e].json)"});
+  t6=(${(f)"$(jq -r '.posts[].ext'  ${d}/${b}-$c1[e].json)"});
+  [[ -f ${d}/${b}-$c1[e] ]] && q=$(tail -n 1 ${d}/${b}-$c1[e]) && sed -i '$,${d}' ${d}/${b}-${c1[e]};
 
-  [[ -f $d/$t5[1]$t6[1] ]] && catimg -H $r $d/$t5[1]$t6[1] >> $d/$b-$c1[t]-p;
-  printf '%b%s%b%s\t%b%s\t%b№%s%b\n%s\n\n\n' '\033[;35;1m' ${"$(jq -r '.posts[0].sub' $b-$c1[t])":-''} '\033[;1m' $t3[1] '\033[;32m' $t2[1] '\033[;33m' $t1[1] '\033[;0m' $t4[1] >> $d/$b-$c1[t]-p;
-  for a in {2..$#t1}; do
-    [[ -f $d/$t5[a]$t6[a] ]] && catimg -H $r $d/$t5[a]$t6[a] >> $d/$b-$c1[t]-p;
-    printf '%b%s\t%b%s\t%b№%s%b\n%s\n\n\n' '\033[;1m' $t3[a] '\033[;32m' $t2[a] '\033[;33m' $t1[a] '\033[;0m' $t4[a] >> $d/$b-$c1[t]-p;
+  for w in {${q:-1}..$#t1}; do 
+    [[ $t6[w] =~ '^\.(png|jpe?g)$' ]] && [[ ! -f ${d}/${t5[w]}${t6[w]}.json ]] && ( curl -sfo ${d}/${t5[w]}${t6[w]}.json https://i.4cdn.org/${b}/${t5[w]}${t6[w]}.json; ) &; 
   done;
-  sed -r "s/&#039;/'/g; s/<br>/\n/g; s/&gt;/>/g; s/<a href=\"#p[0-9]+\" class=\"quotelink\">//g; s/<\/a>//g; s/<span class=\"quote\">//g; s/<\/span>//g; s/&quot;/\"/g;" $d/$b-$c1[t]-p | less;
+  until (($(jobs -l | wc -l) == 0)); do sleep .1; done;
+
+  if [[ ! -f ${d}/${b}-${c1[e]} ]]; then 
+    # [[ -f ${d}/$t5[1]$t6[1] ]] && q=$(file ${d}/$t5[1]$t6[1] | pcre2grep -o1 -o2 -o3 ',(\d+) ?(x) ?(\d+),?') && ((${q%x*}.0 / ${q#*x} >= 16.0 / 9)) && catimg -H $((r/2)) ${d}/$t5[1]$t6[1] >> ${d}/${b}-$c1[e] || catimg -w $c ${d}/$t5[1]$t6[1] >> ${d}/${b}-$c1[e];
+    [[ -f ${d}/${t5[1]}${t6[1]} ]] && chafa --size=${c}x${r} ${d}/${t5[1]}${t6[1]} >> ${d}/${b}-${c1[e]};
+    printf '%b%s%b%-14s%b%-24s%b№%-12s%b\n%s\n\n\n' '\033[;35;1m' ${"$(jq -r '.posts[0].sub' ${b}-$c1[e])":-''} '\033[;1m' ${t3[1]} '\033[;32m' ${t2[1]} '\033[;33m' ${t1[1}] '\033[;0m' ${t4[1]} >> ${d}/${b}-${c1[e]};
+    (($#t1 > 1)) && for w in {2..$#t1}; do
+      [[ -f ${d}/${t5[w]}${t6[w]} ]] && chafa --size=${c}x${r} ${d}/${t5[w]}${t6[w]} >> ${d}/${b}-${c1[e]};
+      printf '%b%-14s%b%-24s%b№%-12s%b\n%s\n\n\n' '\033[;1m' ${t3[w]} '\033[;32m' ${t2[w]} '\033[;33m' ${t1[w]} '\033[;0m' ${t4[w]} >> ${d}/${b}-${c1[e]};
+    done;
+  elif ((q < $#t1)); then
+    for w in {$((q + 1))..$#t1}; do
+      # [[ -f ${d}/$t5[w]$t6[w] ]] && q=$(file ${d}/$t5[w]$t6[w] | pcre2grep -o1 -o2 -o3 ',(\d+) ?(x) ?(\d+),?') && ((${q%x*}.0 / ${q#*x} >= 16.0 / 9)) && catimg -H $((r/2)) ${d}/$t5[w]$t6[w] >> ${d}/${b}-$c1[e] || catimg -w $c ${d}/$t5[w]$t6[w] >> ${d}/${b}-$c1[e];
+      [[ -f ${d}/${t5[w]}${t6[w]} ]] && chafa --size=${c}x${r} ${d}/${t5[w]}${t6[w]} >> ${d}/${b}-${c1[e]};
+      printf '%b%-14s%b%-24s%b№%-12s%b\n%s\n\n\n' '\033[;1m' ${t3[w]} '\033[;32m' ${t2[w]} '\033[;33m' ${t1[w]} '\033[;0m' ${t4[w]} >> ${d}/${b}-${c1[e]};
+    done;
+  fi;
+  
+  sed -i -r -- 's/<a href=\\"#p[0-9]+\\" class=\\"quotelink\\">//g; s/<span class=\\"quote\\">//g; s/<\\\/a>//g; s/<\\\/span>//g; '"s/&quot;/\"/g; s/&#039;/'/g; s/&gt;/>/g; s/<br>/\n/g" ${d}/${b}-${c1[e]};
+  less ${d}/${b}-${c1[e]};
+  printf '%s\n' $#t1 >> ${d}/${b}-${c1[e]};
 }
 
 function refresh () {
-  fetch https://a.4cdn.org/${b}/catalog.json > $d/$b;
+  fetch https://a.4cdn.org/${b}/catalog.json > ${d}/${b}.json || read -sk1 "?$?: Curling issue.";
 }
 
 function viewcat () {
-  typeset c2 c3 c4 c5 c6 c7 c8 c9; clear;
-  c1=(${(f)"$(jq -r '.[].threads[].no' $d/$b)"});
-  c2=(${(f)"$(jq -r '.[].threads[].now' $d/$b)"});
-  c3=(${(f)"$(jq -r '.[].threads[].name' $d/$b)"});
-  c4=(${(f)"$(jq -r '.[].threads[].sub' $d/$b)"});
-  c5=(${(f)"$(jq -r '.[].threads[].com' $d/$b)"});
-  c6=(${(f)"$(jq -r '.[].threads[].replies' $d/$b)"});
-  c7=(${(f)"$(jq -r '.[].threads[].images' $d/$b)"});
-  c8=(${(f)"$(jq -r '.[].threads[].tim' $d/$b)"});
-  c9=(${(f)"$(jq -r '.[].threads[].ext' $d/$b)"});
+  [[ -f ${d}/${b}-cat ]] && [[ $(read -seq '?Refresh catalog?') == n ]] && c1=(${(f)"$(jq -r '.[].threads[].no'      ${d}/${b}.json)"}) && n=$#c1 && less ${d}/${b}-cat && return 0;
+  refresh;
+  typeset c2 c3 c4 c5 c6 c7 c8 c9 a s; rm -f ${d}/${b}-cat;
+  c1=(${(f)"$(jq -r '.[].threads[].no'      ${d}/${b}.json)"});
+  c2=(${(f)"$(jq -r '.[].threads[].now'     ${d}/${b}.json)"});
+  c3=(${(f)"$(jq -r '.[].threads[].name'    ${d}/${b}.json)"});
+  c4=(${(f)"$(jq -r '.[].threads[].sub'     ${d}/${b}.json)"});
+  c5=(${(f)"$(jq -r '.[].threads[].com'     ${d}/${b}.json)"});
+  c6=(${(f)"$(jq -r '.[].threads[].replies' ${d}/${b}.json)"});
+  c7=(${(f)"$(jq -r '.[].threads[].images'  ${d}/${b}.json)"});
+  c8=(${(f)"$(jq -r '.[].threads[].tim'     ${d}/${b}.json)"});
+  c9=(${(f)"$(jq -r '.[].threads[].ext'     ${d}/${b}.json)"});
   n=$#c1;
-  rm -f $d/$b-cat;
-  for a in {1..$n}; do [[ $c9[a] =~ '^\.(png|jpe?g)$' ]] && [[ ! -f $d/$c8[a]$c9[a] ]] && { curl -sfo $d/$c8[a]$c9[a] https://i.4cdn.org/$b/$c8[a]$c9[a]; } &; done;
-  until (($(jobs | wc -l) == 0)); do sleep .1; done;
-  for a in {${(l.$(wc -m <<< $n) - 1..0.)$(<<< 1)}..$n}; do
-    [[ $c9[a] =~ 'png|jpe?g' ]] && catimg -H $r $d/$c8[a]$c9[a] >> $d/$b-cat;
-    printf '%b#%s\t%b%s\t%b%s\t%b%s\t%b№%s\t%b%s/%s\n%s\n\n\n' '\033[;34;1m' $a '\033[35;1m' ${c4[a]:-''} '\033[;1m' $c3[a] '\033[;32m' $c2[a] '\033[;33m' $c1[a] '\033[;0m' $c6[a] $c7[a] $c5[a] >> $d/$b-cat;
+  for a in {1..$n}; do [[ $c9[a] =~ '^\.(png|jpe?g)$' ]] && [[ ! -f ${d}/$c8[a]$c9[a] ]] && { curl -sfo ${d}/$c8[a]$c9[a] https://i.4cdn.org/${b}/$c8[a]$c9[a]; } &; done;
+  until (($(jobs -l | wc -l) == 0)); do sleep .1; done;
+  for a in {1..$n}; do
+    [[ $c9[a] =~ 'png|jpe?g' ]] && chafa --size=${c}x${r} ${d}/$c8[a]$c9[a] >> ${d}/${b}-cat;
+    # [[ $c9[a] =~ 'png|jpe?g' ]] && s=$(file ${d}/$c8[a]$c9[a] | pcre2grep -o1 -o2 -o3 ',(\d+) ?(x) ?(\d+),?') && ((${s%x*}.0 / ${s#*x} >= 16.0 / 9)) && catimg -H $((r/2)) ${d}/$c8[a]$c9[a] >> ${d}/${b}-cat || catimg -w $c ${d}/$c8[a]$c9[a] >> ${d}/${b}-cat;
+    printf '%b#%03d    %b%s    %b%-12s%b%-24s%b№%-12s%b%03d/%03d\n%s\n\n\n' '\033[;34;1m' $a '\033[35;1m' ${c4[a]:-''} '\033[;1m' ${c3[a]} '\033[;32m' ${c2[a]} '\033[;33m' ${c1[a]} '\033[;0m' ${c6[a]} ${c7[a]} ${c5[a]} >> ${d}/${b}-cat;
   done;
-  sed "s/&#039;/'/g; s/<br>/\n/g; s/&gt;/>/g; s/<a href=\"#p[0-9]+\" class=\"quotelink\">//g; s/<\/a>//g;  s/<span class=\"quote\">//g; s/<\/span>//g; s/&quot;/\"/g;" $d/$b-cat | less;
+  sed -i -r -- '
+    s/<a href=\\"#p[0-9]+\\" class=\\"quotelink\\">//g; 
+    s/<span class=\\"quote\\">//g; 
+    s/<\\\/a>//g; 
+    s/<\\\/span>//g; '"
+    s/&quot;/\"/g; 
+    s/&#039;/'/g; 
+    s/&gt;/>/g; 
+    s/<br>/\n/g" ${d}/${b}-cat;
+  less ${d}/${b}-cat;
 }
 
 function () {
-  until [[ ! -z $b ]]; do selb; done; refresh;
+  until [[ ! -z ${b} ]]; do selb; done; # refresh;
   while true; do clear;
-    menu -m 5b -t 5 "/$b/ current board" "№$c1[t] current thread";
-    menu -m 2b -t 2 'r refresh' 'c view catalog' 'b select board' 't select thread' 'Q quit';
+    menu -m 5b -t 5 "/${b}/ current board" "№$c1[e] current thread";
+    menu -m 2b -t 2 'r refresh' 'c view catalog' 'b select board' 't select thread' 'q quit';
     case $(read -sek1) in
       (r) refresh;;
       (c) viewcat;;
       (t) selt;;
       (b) selb;;
-      (Q) break;;
+      (q) cd ~; exit 0;;
     esac;
   done;
 }

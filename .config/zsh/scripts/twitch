@@ -1,70 +1,25 @@
 #!/bin/zsh
-# # browse a cache of twitch categories, pick out some, do the same for a language, then choose a live stream to start; use an mpv script to change quality mid-stream
-
-# while getopts 'r' s; do
-#   case ${s} in
-#   'r') q=1;;
-#   *) return 1;;
-#   esac
-# done
-
-# i='sdxznup5ivtjhmj6cbugq917w5otyc';
-# r='0efl2jp19z7hyxonizx869ogmq62ji';
-# # get token
-# t="Authentication: Bearer $(echo $(curl -sX POST "https://id.twitch.tv/oauth2/token?client_id=${i}&client_secret=${r}&grant_type=client_credentials") | jq -r '.access_token')";
-
-# if ((${+q})); then;
-#   rm -f ~/.cache/tg{n,i}
-#   echo 'rebuilding cache';
-#   for a in {1..25}; do
-#     curl -sH "${t}" -X GET "https://api.twitch.tv/helix/games/top?first=100${e}" > /tmp/t;
-#     e="&after=$(jq -r '.pagination.cursor' /tmp/t)"; 
-#     jq -r '.data[].name' /tmp/t >> ~/.cache/tgn || return;
-#     jq -r '.data[].id' /tmp/t >> ~/.cache/tgi;
-#   done;
-#   unset e a; clear;
-# fi;
-
-
-# while [[ '' != ${s-a} ]]; do;
-#   s=$(printf "%s\n" "$(<~/.cache/tgn)" | dmenu -i -p 'select category(s)');
-#   # [[ -n ${s} ]] && c='&game_id='"$(perl -sne '$. == ${s} && print && exit' -- -s=$(perl -sne '/^${s}$/ && print $.' -- -s=${s} ~/.cache/tgn) ~/.cache/tgi)"${c};
-#   [[ -n ${s} ]] && c='&game_id='"$(sed -n "$(sed -nr "/^${s}$/=" ~/.cache/tgn)p" ~/.cache/tgi)"${c};
-# done;
-# [[ -n ${c} ]] && unset s || return;
-
-
-# l='&language=en&';
-# # while [[ '' != ${s-a} ]]; do;
-# #   s=$(printf "aa\nab\nae\naf\nak\nam\nan\nar\nas\nav\nay\naz\nba\nbe\nbg\nbh\nbi\nbm\nbn\nbo\nbr\nbs\nca\nce\nch\nco\ncr\ncs\ncu\ncv\ncy\nda\nde\ndv\ndz\nee\nel\nen\neo\nes\net\neu\nfa\nff\nfi\nfj\nfo\nfr\nfy\nga\ngd\ngl\ngn\ngu\ngv\nha\nhe\nhi\nho\nhr\nht\nhu\nhy\nhz\nia\nid\nie\nig\nii\nik\nio\nis\nit\niu\nja\njv\nka\nkg\nki\nkj\nkk\nkl\nkm\nkn\nko\nkr\nks\nku\nkv\nkw\nky\nla\nlb\nlg\nli\nln\nlo\nlt\nlu\nlv\nmg\nmh\nmi\nmk\nml\nmn\nmr\nms\nmt\nmy\nna\nnb\nnd\nne\nng\nnl\nnn\nno\nnr\nnv\nny\noc\noj\nom\nor\nos\npa\npi\npl\nps\npt\nqu\nrm\nrn\nro\nru\nrw\nsa\nsc\nsd\nse\nsg\nsi\nsk\nsl\nsm\nsn\nso\nsq\nsr\nss\nst\nsu\nsv\nsw\nta\nte\ntg\nth\nti\ntk\ntl\ntn\nto\ntr\nts\ntt\ntw\nty\nug\nuk\nur\nuz\nve\nvi\nvo\nwa\nwo\nxh\nyi\nyo\nza\nzh\nzu" | dmenu -i);
-# #   [[ -n ${s} ]] && l="&language=${s}${l}";
-# # done;
-# [[ -n ${l} ]] || unset l; unset s;
-
-
-# while [[ '' != ${s-a} ]]; do;
-#   curl -sH ${i} -X GET "https://api.twitch.tv/helix/streams?first=100${c}${e}${l}" > /tmp/t;
-#   q=(${(f)"$(jq -r '.data[].user_name' /tmp/t)"});
-#   w=(${(f)"$(jq -r '.data[].title' /tmp/t)"});
-#   s=$(printf "%-20s%s\n" ${q:^w} "$([ ${#q} -ge 100 ] && echo next100)" "" "$([ ${#q} -ge 100 ] && echo previous100)" "" | dmenu -i -l $([ ${#q} -gt 16 ] && echo 16 || echo ${#q}) -p 'select streamer');
-#   case ${s%% *} in
-#     "next100"     ) e="&after=$(jq -r '.pagination.cursor' /tmp/t)";;
-#     "previous100" ) e="&before=$(jq -r '.pagination.cursor' /tmp/t)";;
-#     ''            ) break;;
-#     *             ) mpv -- https://www.twitch.tv/"${s%% *}";;
-#   esac;
-# done;
-# unset s q a e c w;
-local a s;
+local a s d f;
 a=(
-    'ryuquezacotl'
-    'yeomanvidya'
-    'gamozo'
-    'mrllamasc'
-    '3moth'
-    'numidium3rd'
-    'naysayer88'
+    ryuquezacotl
+    yeomanvidya
+    gamozo
+    mrllamasc
+    3moth
+    numidium3rd
+    naysayer88
 );
-# s=$(fzy <<< ${(F)a}) || return;
-s=$(printf '%s\n' $a | dmenu -i) || return 1;
-mpv -- https://www.twitch.tv/${s}/ & disown; exit
+d=(
+    360p
+    480p
+    720p
+    720p60
+    1080p60
+    best
+    worst
+)
+s=$(dmenu -i <<< ${(F)a}) || return 1;
+f=$(dmenu -i <<< ${(F)d}) || return 1;
+
+# mpv -- https://www.twitch.tv/${s}/ & disown; exit;
+streamlink -p mpv --title '{title} -- {author} -- {url}' --retry-open 8 https://www.twitch.tv/$s $f & disown; exit;
