@@ -6,6 +6,7 @@ my config for the most part;
 - shell funcs and scripts, located in .config/zsh/{autoloadmedaddy,scripts,other}:
   - `xrp` - downloads and tags alba from bandcamp, and structures it `ARTIST/ARTIST [ALBUM (DATE)]/TRACKS`; these can then be easily be `rsync`ed to dirs by letter
   - `xrpp` - scrape embedded bandcamp from a website, specifically works with canthisevenbecalledmusic.com/; keeps track of already downloaded alba, to-be-released alba, and missing tracks in released ones;
+  - `bandcampdisco` - given bandcamp artists/tracks as args, appends new alba to your bcnew file
   - `tagme` - edits metadata of audiofiles named using the format `ARTIST [ALBUM #TRACK (RELEASEDATE)] TITLE`;
   - `rdd1`/`rdd2` - bring structure to a dirs of .mp3's;
   - `pape` - choose a desktop background image along with options recursively with `dmenu`, `feh`;

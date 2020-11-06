@@ -82,7 +82,7 @@ for a in ${(f)"$(< ~/nm/bcnew)"}; do
             for s in ${(f)"$(sort -u $t3)"}; do
                 mkdir -p ${f:-$s};
                 mv ${(@f)w} ${f:-$s};
-                tagme ${f:-$s}; rm ${f:-$s}**/*.bak
+                tagme ${f:-$s}; # rm ${f:-$s}**/*.bak
                 mkdir -p ${f%% \[*} 2&>/dev/null && mv $f ${f%% \[*} && unset f || \
                 mkdir -p ${s%% \[*} && mv $s ${s%% \[*};
                 break;

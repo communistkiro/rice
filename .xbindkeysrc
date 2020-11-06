@@ -113,5 +113,5 @@
 
 # play link in clipboards
 #    Super_L + w
-"u=$(xclip -o -sel c) || return 2; [ -n $u ] && mpv $u"
+"u=$(xclip -o -se c) || u=$(xclip -o -se p) || return; mpv $u"
     Mod4 + w

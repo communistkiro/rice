@@ -58,6 +58,7 @@ function box () {
   s=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > $s)) && s=${(c)#a}; done;
   if ((${+h})) && (($#h > $s)); then s=$#h; ((s+=2)); fi; ((s+=2)); 
 
+  r='\033[;0m';
   ((${+h})) && printf '%b\n' "$B$ul${(pr.(((s-$#h)/2))..$uh.)uh}$r$H$h$r$B${(pr.(((s-$#h)/2+$#h+s-($#h+s)/2*2))..$uh.)uh}$ur" || printf '%b\n' "$B$ul${(pr.((s-1))..$uh.)uh}$ur";
 
   for a in $@[OPTIND,-1]; do printf '%b\n' "$lv $r$T${(r.((s-2)).. .)a} $r$B$rv"; done;
@@ -127,14 +128,14 @@ function seta () {
 
 function picka () { # select one of previously set addresses
   typeset s;
-  s=$(cat $TMPMAIL_DIR/emailaddresses | fzy -l $r);
+  s=$(cat $TMPMAIL_DIR/emailaddresses | fzy -l $LINES);
   u=${s%@*};
   d=${s#*@1secmail.};
   typeset -gx z;
 }
 
 function () {
-  typeset t r a m c; r=${"$(stty size)"% *}; m=$(mktemp /$TMPMAIL_DIR/XXXXXXXX); a=$(mktemp /$TMPMAIL_DIR/XXXXXXXX);
+  typeset t a m c; m=$(mktemp /$TMPMAIL_DIR/XXXXXXXX); a=$(mktemp /$TMPMAIL_DIR/XXXXXXXX);
   while true; do
     clear;
     box -H i5 -B 4b -T 2 -h "${u}@1secmail.${d}${(r.2...l.2...)}${${z:+set}:-not set}" ${(@f)"$(print -C 5 $(seq ${l:-0}) $t $i $f $s)"};

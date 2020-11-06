@@ -1,7 +1,7 @@
 #!/bin/zsh
 # using https://github.com/crhallberg/json-against-humanity
 function cah () {
-typeset w b s d p q z e;
+typeset d w b s;
 d=~/games/json-against-humanity/cah-all-compact.json;
 
 w=$(jq '.white[]' $d | wc -l);
@@ -20,7 +20,7 @@ b=$(jq '.black[].text' $d | wc -l);
 # fi;
 
 # while true; do
-#   print -a -C 4 ${(l.((${"$(stty size)"#* }/4-1))...)p};
+#   print -a -C 4 ${(l.((COLUMNS / 4 - 1))...)p};
 #   p-1
 # done
 

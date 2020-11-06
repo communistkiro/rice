@@ -1,6 +1,5 @@
-#!/bin/zsh
-((# == 0)) && return 1;
-local b q;
+#!/bin/sh
+[ $# -eq 0 ] && return 1;
 #if ps -C firefox &>/dev/null; then
 #  b=firefox;
 #elif ps -C surf &>/dev/null; then
@@ -8,6 +7,6 @@ local b q;
 #else
   b='lynx';
 #fi
-q=$(surfraw -elvi | tail -n +2 | cut -s -f1 | fzy -l ${"$(stty size)"% *}) || return 1;
+q=$(surfraw -elvi | tail -n +2 | cut -s -f1 | fzy -l $LINES) || return 1;
 surfraw ${q%% *} -browser=$b "$@";
 

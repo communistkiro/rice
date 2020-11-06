@@ -1,6 +1,6 @@
 #!/bin/zsh
 cz() {
-local o s l d;
+local o s d;
 while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
@@ -27,14 +27,13 @@ return 1;; esac; done;
 # alias cmd="find . -maxdepth 1 -mindepth 1 -type d"
 # alias cmd="fd -uu -t d -d 1 ."
 
-l=${"$(stty size)"% *};
 clear;
 setopt nonomatch;
 while true; do
   # s="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $s ] && cd $s;
   # s="$(cmd | slmenu -t -i -l $l )" || break;
   # s="$(cmd | fzf -i +m --reverse --border=horizontal)" || break;
-  # s="$(cmd | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
+  # s="$(cmd | fzy -l $LINES -p "$(printf '%s\t' "$(pwd) ")")" || break;
   
   d=(*(/D-)); [[ $d[1] = '*(/D-)' ]] && d[1]=();
   # s="$(printf '%s/\n' '..' ${d} | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;

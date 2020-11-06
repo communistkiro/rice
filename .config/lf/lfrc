@@ -19,7 +19,7 @@ set wrapscan        on
 set wrapscroll      off
 set number          on
 set relativenumber  on
-set globsearch      on
+# set globsearch      on
 set tabstop         4
 # set shell           sh
 set shell           zsh
@@ -42,6 +42,27 @@ set scrolloff 1
 
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to use either file extensions and/or mime types here. Below uses an editor for text files and a file opener for the rest.
+
+# make sure trash folder exists
+# %mkdir -p /tmp/.trash
+
+# move current file or selected files to trash folder
+# (also see 'man mv' for backup/overwrite options)
+# cmd trash %set -f; mv $fx /tmp
+
+# define a custom 'delete' command
+# cmd delete ${{
+#     set -f
+#     printf "$fx\n"
+#     printf "delete?[y/n]"
+#     read ans
+#     [ $ans = "y" ] && rm -rf $fx
+# }}
+
+# use '<delete>' key for either 'trash' or 'delete' command
+# map <delete> trash
+# map <delete> delete
+
 cmd open ${{
   set -f;
   local a;
@@ -59,6 +80,7 @@ cmd open ${{
       (*.epub) epub2txt -n $a | less;;
       (*.htm|*.html|*.xhtml) firefox --new-tab $a &>/dev/null & disown;;
       (*.info) info $a;;
+      (*.torrent|*.magnet) qbittorrent $a &>/dev/null &;;
       (*.exe) wine $a &>/dev/null & disown;;
     esac;
   done;
@@ -86,34 +108,37 @@ cmd rndrename ${{
         s=$(cat /dev/random | tr -cd '[:alnum:]' | head -c 32);
         [ ! -f $s.$d ] && break;
       done;
-      mv $a ./$s.$d;
+      mv $a $s.$d;
     fi
   done
 }}
 
-# make sure trash folder exists
-# %mkdir -p /tmp/.trash
-
-# move current file or selected files to trash folder
-# (also see 'man mv' for backup/overwrite options)
-# cmd trash %set -f; mv $fx /tmp
-
-# define a custom 'delete' command
-# cmd delete ${{
-#     set -f
-#     printf "$fx\n"
-#     printf "delete?[y/n]"
-#     read ans
-#     [ $ans = "y" ] && rm -rf $fx
+# cmd glob ${{
+#   set -f; local a s d;
+#   a=$(ls -1 . | fzf --no-multi --reverse --print-query --preview "ls . | pcre2grep --ignore-case "'{q}') || Q;
+#   s=(${(f)"$(ls -1 . | pcre2grep --ignore-case "$a" | xargs -d '\n' realpath)"});
+#   (($#s > 0)) && if ((# == 0))); then
+#     d=($s $fx); fx=${(u)d};
+#   else
+#     fx=${fx:|s};
+#   fi
+# }}
+# cmd globb ${{
+#   set -f; local a s d;
+#   # mode=save;
+#   a=$(ls -1 . | fzf --no-multi --reverse --print-query --preview "ls . | pcre2grep --ignore-case "'{q}' | head -n 1);
+#   [[ -z $a ]] && return;
+#   s=${(f)"$(ls -1 . | pcre2grep --ignore-case "$a" | xargs -d '\n' realpath)"};
+#   (($#s > 0)) && if ((# == 0)); then
+#     # d=($fx $s); fx=${(u)d};
+#     # lf -remote "save\n${fx}\n${s}";
+#     fx="$fx\n$s";
+#   else
+#     # fx=${fx:|s};
+#   fi;
 # }}
 
-# use '<delete>' key for either 'trash' or 'delete' command
-# map <delete> trash
-# map <delete> delete
-
-cmd mkdir ${{
-  ((# > 0)) && mkdir -p ${"$(printf '%s ' $@)"%?} || mktemp -d tmp.XXXXXXXXXX;
-}}
+cmd mkdir ${{((# > 0)) && mkdir -p ${"$(printf '%s ' $@)"%?} || mktemp -d .XXXXXXXXXX;}}
 
 cmd fzf ${{
   fzf -i -m --reverse \
@@ -133,8 +158,6 @@ cmd extract ${{ set -f; aunpack -e $fx; }}
 
 cmd fzycd ${{
   local s d;
-  # local s="$(ls -Ap | pcre2grep '/$' | fzy -l ${"$(stty size)"% *})";
-
   setopt nonomatch;
   s=(*(/D-)); [[ $s[1] = '*(/D-)' ]] && s[1]=();
   d="$(printf '%s/\n' '..' $s | fzy -l ${"$(stty size)"% *} -p "$(pwd) ")";
@@ -369,7 +392,7 @@ map gh          cd ~
 map gp          cd /tmp
 map c           push :<space>cd<space>
 # map e           find
-map f           fzf
+# map f           fzf
 map e           fzycd
 map E           sublime
 map L           cless
@@ -389,6 +412,8 @@ map S           $$SHELL
 map D           delete; reload
 map ,           push :glob-select<space>*
 map .           push :glob-unselect<space>*
+# map ,           globb
+# map .           globb 1
 map v           invert
 map n           push :mkdir<space>
 map Z           push :7za<space>

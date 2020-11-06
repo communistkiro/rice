@@ -22,4 +22,4 @@ s=$(dmenu -i <<< ${(F)a}) || return 1;
 f=$(dmenu -i <<< ${(F)d}) || return 1;
 
 # mpv -- https://www.twitch.tv/${s}/ & disown; exit;
-streamlink -p mpv --title '{title} -- {author} -- {url}' --retry-open 8 https://www.twitch.tv/$s $f & disown; exit;
+streamlink -p mpv --title '{title} -- {url}' --retry-open 8 https://www.twitch.tv/$s $f & disown; exit;

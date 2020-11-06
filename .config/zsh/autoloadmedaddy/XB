@@ -1,0 +1,2 @@
+#!/bin/sh
+XB () {xpkg -aV | pcre2grep -v 32bit | fzf -i -m --reverse --preview 'xq {1}' --preview-window=right:33%:wrap | xargs -ro xi}

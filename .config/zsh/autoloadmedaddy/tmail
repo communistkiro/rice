@@ -55,6 +55,7 @@ function box () {
   lv=(┃ │ ║ ⡇); lv=${lv[$s]};
   rv=(┃ │ ║ ⢸); rv=${rv[$s]};
 
+  r='\033[;0m';
   s=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > $s)) && s=${(c)#a}; done;
   if ((${+h})) && (($#h > $s)); then s=$#h; ((s+=2)); fi; ((s+=2)); 
 
@@ -121,14 +122,14 @@ function seta () {
 
 function picka () { # select one of previously set addresses
   typeset s;
-  s=$(fzy -l $r < $z/emailaddresses);
+  s=$(fzy -l $LINES < $z/emailaddresses);
   u=${s%@*};
   d=${s#*@1secmail.};
 }
 
 function () {
-  typeset r a c l i f s t v C;
-  r=${"$(stty size)"% *}; a=$(mktemp /$z/XXXXXXXX);
+  typeset a c l i f s t v C;
+  a=$(mktemp /$z/XXXXXXXX);
   while true; do
     clear;
     box -H i5 -B 4b -T 2 -h "${u}@1secmail.${d}" ${(f)"$(for v in {1..$((l+1))}; do printf '%s&&%s&&%s&&%s&&%s\n' ${n:-\#} ${t[v]:-time} ${i[v]:-id} ${f[v]:-from} ${s[v]:-subject}; done | column -t -s '&&')"};

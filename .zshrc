@@ -11,16 +11,14 @@ setopt extended_glob ksh_glob no_sh_glob re_match_pcre;
 HYPHEN_INSENSITIVE="true";
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-# autoload -Uz bracketed-paste-magic
-# autoload -Uz url-quote-magic
-# zle -N bracketed-paste bracketed-paste-magic
-# zle -N self-insert url-quote-magic
+autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-url-magic
+# autoload -Uz url-quote-magic; zle -N self-insert url-quote-magic
 
 ## History command configuration
 HISTFILE=/root/.zsh_history;
-SAVEHIST=10000;
-HISTSIZE=10000; # cushion large than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl* |rm *|youtube-dl*|yt*|wc *|l1 *|ls *|lr *|mv *|xb *|vol *|sf *|ff *|zed *|mle *|fd *|rg *|touch *|xrp*|menu *|box *|beep *|git clone *|find *|xbr *|oc*|pip*|function *|whn *|when *|bandcampdisc*|rdrview *|readcli *|animu *)';
+SAVEHIST=5000;
+HISTSIZE=5000; # cushion large than SAVEHIST, if hist_expire_dups_first set
+HISTORY_IGNORE='(bl*|rm *|youtube-dl*|yt*|wc *|echo *|l*|cp *|mv *|xb*|vol *|sf *|ff *|f *|zed *|mle *|fd *|rg *|touch *|x*|menu *|box *|beep *|git clone *|find *|oc*|pip*|function *|whn *|bandcamp*|rdrview *|readcli *|animu *|mpv*|./*|man *|tmr *|wine *|realpath *|feh *|z(mv|cp|ln) *)';
 setopt no_extended_history;      # record timestamp of command in HISTFILE
 setopt hist_reduce_blanks;
 setopt hist_ignore_dups;         # ignore duplicated commands history list
@@ -101,8 +99,6 @@ alias du='du -h';
 alias fd='fd -uu -i';
 alias feeds='export SFEED_PLUMBER=sf; sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
-# alias fltrdr='fltrdr --config "/root/src/fltrdr/config/default"';
-# alias fread='feed flinks';
 alias fzf='fzf -i -m --reverse --border=horizontal \
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
   --bind "alt-r:execute(mle {+})" \
@@ -111,13 +107,11 @@ alias fzf='fzf -i -m --reverse --border=horizontal \
   --bind "ctrl-j:accept"';
 alias gre='grep -P --color -i';
 alias hl='hledger-ui --watch';
-alias l='less -F';
-alias L='less';
+alias l='less';
 alias l1='lsd -A1';
 alias ll='lsd -A';
 alias love='mpc sendmessage mpdas love';
 alias lr='lsd -A --tree';
-alias lread="feed 'lynx -dump' | less";
 alias man='man -a';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
@@ -135,7 +129,7 @@ alias rdl='rdrview -B "lynx -dump -nolist" $1';
 alias rds='rdrview -B surf $1';
 alias rsync='rsync -vah --progress';
 alias sex='sex | cow';
-alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
+# alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
 alias so='source /root/.zshrc';
 alias sx='/root/src/sx/sx ~/.xinitrc';
 alias timer="source /root/.config/omz/plugins/timer/timer.plugin.zsh; TIMER_FORMAT='[%d]'; TIMER_PRECISION=7";
@@ -148,7 +142,8 @@ alias xbql='xbps-query -l';
 alias xbqm='xbps-query -m';
 alias xbr='xbps-remove -R';
 alias xbs='xbps-install -Su';
-alias ytd='youtube-dlc -f best';
+# alias ytd='youtube-dlc -f best --ignore-errors';
+alias ytd='youtube-dl -f best --ignore-errors';
 alias xc='xclip -r -se c';
 alias zcp='zmv -C';
 alias zmv='zmv -M';

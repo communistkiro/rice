@@ -2,25 +2,25 @@
 
 function menu () {
   local m t a z;
-  while getopts 'm:t:' a; do case $a in
+  while getopts 'm:t:' a; do case ${a} in
   (m) m=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
   (t) t=$(printf "\033[3$(pcre2grep -o1 '([0-7])' <<< ${OPTARG} || <<< 7)$(pcre2grep -qio1 'b' <<< ${OPTARG} && <<< ';1')m"); ((z+=2));;
   esac; done; ((z+=1));
   (($+m)) || m=$(printf '\033[0m');
   (($+t)) || t=$(printf '\033[0m');
-  for a in $@[$z,-1]; do printf '%s%4s    %s%s\n' $m ${a%% *} $t ${a#* }; done; printf '\033[0m';
+  for a in ${@[z,-1]}; do printf '%s%4s    %s%s\n' $m ${a%% *} $t ${a#* }; done; printf '\033[0m';
 }
 
 function box () {
-  (($# == 0)) && return 0;
+  ((# == 0)) && return 0;
   local a h B T H ul ur dl dr uh dh lv rv z r; integer s=1;
-  while getopts 'l:h:B:T:H:' a; do case $a in
+  while getopts 'l:h:B:T:H:' a; do case ${a} in
     (l) ((5 > OPTARG > 0)) && s=${OPTARG} && ((z+=2));; # line style
     (h) h=${OPTARG}; ((z+=2));; # header
     (B) B=${OPTARG}; ((z+=2));; # box color
     (T) T=${OPTARG}; ((z+=2));; # text color
     (H) H=${OPTARG}; ((z+=2));; # header color
-  esac; done; unset a; ((z+=1));
+  esac; done; ((z+=1));
 
   B='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $B || <<< 7)$(pcre2grep -qio1 'b' <<< $B && <<< ';1')m";
   T='\033[3'"$(pcre2grep -o1 '([0-7])' <<< $T || <<< 7)$(pcre2grep -qio1 'b' <<< $T && <<< ';1')m";
@@ -36,27 +36,26 @@ function box () {
   lv=(┃ │ ║ ⡇); lv=${lv[$s]};
   rv=(┃ │ ║ ⢸); rv=${rv[$s]};
 
-  s=0; for a in $@[$z,-1]; do [[ ${(c)#a} -gt $s ]] && s=${(c)#a}; done; 
-  if ((${+h})) && [[ $#h -gt $s ]]; then s=$#h; ((s+=2)); fi; ((s+=2)); 
+  s=0; for a in ${@[z,-1]}; do ((${(c)#a} > s)) && s=${(c)#a}; done; 
+  if (($+h)) && (($#h > s)); then s=$#h; ((s+=2)); fi; ((s+=2)); 
 
-
+  r='\033[;0m';
   ((${+h})) && printf "$B$ul${(pr.(((s-$#h)/2))..$uh.)uh}$r$H$h$r$B${(pr.(((s-$#h)/2+$#h+s-($#h+s)/2*2))..$uh.)uh}$ur\n" || printf "$B$ul${(pr.((s-1))..$uh.)uh}$ur\n";
 
-  for a in $@[$z,-1]; do printf "$lv $r$T${(r.((s-2)).. .)a} $r$B$rv\n"; done;
+  for a in ${@[z,-1]}; do printf "$lv $r$T${(r.((s-2)).. .)a} $r$B$rv\n"; done;
 
   printf "$dl${(pr.$s..$dh.)dh}$dr$r\n";
 }
 
 function () {
   if ! ping -c 1 63.42.42.155 &>/dev/null; then read -k1 '?No internet connection.'; return 1; fi; 
-  typeset r c lon lat loc a s d w z; z=$(mktemp -d); w=$(mktemp $z/XXXXXXXX); cd $z;
-  r=${"$(stty size)"% *}; c=${"$(stty size)"#* };
+  typeset lon lat loc a s d w z; z=$(mktemp -d); w=$(mktemp ${z}/XXXXXXXX); cd ${z};
   clear;
   menu -m 4b -t 2 '1 openweathermap' '2 darksky' 'q exit';
   case $(read -sek1) in
     (1) # OPENWEATHERMAP    https://openweathermap.org/api/one-call-api
       typeset k && k=85a4e3c55b73909f42c6a23ec35b7147;
-      if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $w"; elif which wget &>/dev/null; then alias fetch="wget -q -O $w"; else return 1; fi;
+      if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${w}"; elif which wget &>/dev/null; then alias fetch="wget -q -O ${w}"; else return 1; fi;
       while true; do
         clear; box -H 1b -B 4 -T 3 -h openweathermap \
           "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
@@ -65,69 +64,69 @@ function () {
         case $(read -sek1) in
           (1) read 'lon?lon: '; read 'lat?lat: '; if [[ ! ${lon} =~ '^(\d+\.)?\d\+$' ]] || [[ ! ${lat} =~ '^(\d+\.)?\d+$' ]]; then read -sk1 '?Invalid input!'; unset lon lat; return 1; fi;;
           (2) read 'loc?location: ';;
-          (3) 
-            if [[ -z ${loc} ]]; then $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat:-23.3241}&lon=${lon:-42.6974}&appid=${k}&units=metric&exclude=daily") || return 22; 
-            else $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${k}&units=metric") || return 23; lat=$(jq -r '.coord.lat' $w); lon=$(jq -r '.coord.lon' $w); $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${k}&units=metric&exclude=daily"); fi;
-            [[ -z $w ]] && return 24;
+          (3)
+            if [[ -z ${loc} ]]; then $(fetch "api.openweathermap.org/data/2.5/onecall?lon=${lon:-23.3241}&lat=${lat:-42.6974}&appid=${k}&units=metric&exclude=daily") || return 22;
+            else $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${k}&units=metric") || return 23; lat=$(jq -r '.coord.lat' ${w}); lon=$(jq -r '.coord.lon' ${w}); $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${k}&units=metric&exclude=daily"); fi;
+            [[ -z ${w} ]] && return 24;
 
-            s=(${(@f)"$(jq -r '.hourly[].dt' $w)"}); for a in {1..$#s}; do s[a]=("$(date -d "1970-01-01 UTC ${s[a]} seconds" +'%Y-%m-%d %H:%M')"); done
-            d=(${(@f)"$(jq -r '.hourly[].weather[].description' $w)"});
+            s=(${(@f)"$(jq -r '.hourly[].dt' ${w})"}); for a in {1..$#s}; do s[a]=("$(date -d "1970-01-01 UTC ${s[a]} seconds" +'%Y-%m-%d %H:%M')"); done
+            d=(${(@f)"$(jq -r '.hourly[].weather[].description' ${w})"});
             print -C 2 ${s} ${d} > summary; 
 
             for a in {1..$((r-${"$(wc -l summary)"%% *}-1))}; do printf '\n' >> summary; done;
 
-          # jq -r '.hourly[].dt'         $w | asciigraph -c 'dt' -h $((r/2-2)) -w $((c-14)) > x.dt;
-            jq -r '.hourly[].temp'       $w | asciigraph -c 'temp'        -h $((r/2-2)) -w $((c-14)) > x.temp;
-            jq -r '.hourly[].feels_like' $w | asciigraph -c 'feels_like'  -h $((r/2-2)) -w $((c-14)) > x.feels_like;
-            jq -r '.hourly[].pressure'   $w | asciigraph -c 'pressure'    -h $((r/2-2)) -w $((c-14)) > x.pressure;
-            jq -r '.hourly[].humidity'   $w | asciigraph -c 'humidity'    -h $((r/2-2)) -w $((c-14)) > x.humidity;
-            jq -r '.hourly[].dew_point'  $w | asciigraph -c 'dew_point'   -h $((r/2-2)) -w $((c-14)) > x.dew_point;
-            jq -r '.hourly[].clouds'     $w | asciigraph -c 'clouds'      -h $((r/2-2)) -w $((c-14)) > x.clouds;
-            jq -r '.hourly[].wind_speed' $w | asciigraph -c 'wind_speed'  -h $((r/2-2)) -w $((c-14)) > x.wind_speed;
-            jq -r '.hourly[].wind_deg'   $w | asciigraph -c 'wind_deg'    -h $((r/2-2)) -w $((c-14)) > x.wind_deg;
-            jq '.hourly[].rain | walk (if type == "null" then 0 else . end)' $w | sed -r '/\{|\}/d; s/ +"1h": //' | asciigraph -c 'rain' -h $((r/2-2)) -w $((c-8)) > x.rain;
-            jq '.hourly[].snow | walk (if type == "null" then 0 else . end)' $w | sed -r '/\{|\}/d; s/ +"1h": //' | asciigraph -c 'snow' -h $((r/2-2)) -w $((c-8)) > x.snow;
-            
-            for a in $z/x.*; do (($(wc -l $a | pcre2grep -o1 '^(\d+)') < 4)) && rm -f $a; done;
-            cat summary x.* | less; unalias fetch; cd ~; rm -rf $z; break;;
+          # jq -r '.hourly[].dt'         ${w} | asciigraph -c 'dt' -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.dt;
+            jq -r '.hourly[].temp'       ${w} | asciigraph -c 'temp'        -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.temp;
+            jq -r '.hourly[].feels_like' ${w} | asciigraph -c 'feels_like'  -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.feels_like;
+            jq -r '.hourly[].pressure'   ${w} | asciigraph -c 'pressure'    -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.pressure;
+            jq -r '.hourly[].humidity'   ${w} | asciigraph -c 'humidity'    -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.humidity;
+            jq -r '.hourly[].dew_point'  ${w} | asciigraph -c 'dew_point'   -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.dew_point;
+            jq -r '.hourly[].clouds'     ${w} | asciigraph -c 'clouds'      -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.clouds;
+            jq -r '.hourly[].wind_speed' ${w} | asciigraph -c 'wind_speed'  -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.wind_speed;
+            jq -r '.hourly[].wind_deg'   ${w} | asciigraph -c 'wind_deg'    -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.wind_deg;
+            jq '.hourly[].rain | walk (if type == "null" then 0 else . end)' ${w} | sed -r '/\{|\}/d; s/ +"1h": //' | asciigraph -c 'rain' -h $((LINES / 2 - 2)) -w $((COLUMNS - 8)) > x.rain;
+            jq '.hourly[].snow | walk (if type == "null" then 0 else . end)' ${w} | sed -r '/\{|\}/d; s/ +"1h": //' | asciigraph -c 'snow' -h $((LINES / 2 - 2)) -w $((COLUMNS - 8)) > x.snow;
+
+            for a in ${z}/x.*; do (($(wc -l ${a} | pcre2grep -o1 '^(\d+)') < 4)) && rm -f ${a}; done;
+            cat summary x.* | less; unalias fetch; cd ~; rm -rf ${z}; break;;
           (q) return 1;; esac; done;;
     (2) # DARKSKY
-      typeset t h; t=$(mktemp $z/XXXXXXXX); h=$(date +%H);
-      if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $t"; elif which wget &>/dev/null; then alias fetch="wget -q -O $t"; else return 1; fi;
+      typeset t h; t=$(mktemp ${z}/XXXXXXXX); h=$(date +%H);
+      if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${t}"; elif which wget &>/dev/null; then alias fetch="wget -q -O ${t}"; else return 1; fi;
       while true; do
         clear; box -H 1b -B 4 -T 3 -h darksky \
           "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
           "${(r.16...)$(<<< location:)}${loc:-Sofia,Bulgaria}";
         menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 go' 'q quit';
         case $(read -sek1) in
-          (1) read 'lon?lon: '; read 'lat?lat: '; 
+          (1) read 'lon?lon: '; read 'lat?lat: ';
             [[ ! ${lon} =~ '^\d+\.?\d\+$' ]] || [[ ! ${lat} =~ '^\d+\.?\d+$' ]] && read -sk1 '?Invalid input!' && unset lon lat;;
           (2) read 'loc?location: ';
             [[ -z ${loc} ]] && $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=85a4e3c55b73909f42c6a23ec35b7147&units=metric") || return 1;
-            [[ -z $w ]] && return 1 || lat=$(jq -r '.coord.lat' $w) && lon=$(jq -r '.coord.lon' $w);;
-          (3) 
-            $(fetch https://darksky.net/details/${lon:-42.6974},${lat:-23.3241}/$(date +%F)/ca24/en) || return 1;
-            [[ -z $t ]] && read -sk1 '?No data.' && return 1;
-            pcre2grep -o1 '(\[.+)\]' $t >> $w; [[ -z $w ]] && return 1;
+            [[ -z ${w} ]] && return 1 || lat=$(jq -r '.coord.lat' ${w}) && lon=$(jq -r '.coord.lon' ${w});;
+          (3)
+            $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date +%F)/ca24/en) || return 1;
+            [[ -z ${t} ]] && read -sk1 '?No data.' && return 1;
+            pcre2grep -o1 '(\[.+)\]' ${t} >> ${w}; [[ -z ${w} ]] && return 1;
 
             if [[ $h != 00 ]]; then
-              printf '%s' ',' >> $w;
-              $(fetch https://darksky.net/details/${lon:-42.6974},${lat:-23.3241}/$(date -d '+1day' +%F)/ca24/en) || return 1;
-              [[ -z $t ]] && read -sk1 '?No data.' && return 1;
-              pcre2grep -o1 '\[(.+\])' $t >> $w;
-            else printf '%s' ']' >> $w; fi;
+              printf '%s' ',' >> ${w};
+              $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date -d '+1day' +%F)/ca24/en) || return 1;
+              [[ -z ${t} ]] && read -sk1 '?No data.' && return 1;
+              pcre2grep -o1 '\[(.+\])' ${t} >> ${w};
+            else printf '%s' ']' >> ${w}; fi;
 
-            for a in ${(@f)"$(jq ".[].time" $w)"}; do s+=("$(date -d "1970-01-01 UTC $a seconds" +'%Y-%m-%d %H:%M')"); done;
-            d=(${(@f)"$(jq -r ".[].summary" $w)"});
-            print -C 2 ${s[1+h,24+h]} ${d[1+h,24+h]} > summary;
-            for a in {1..$((r-${"$(wc -l summary)"%% *}-1))}; do printf '\n' >> summary; done;
+            for a in ${(@f)"$(jq ".[].time" ${w})"}; do s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d %H:%M')"); done;
+            d=(${(@f)"$(jq -r ".[].summary" ${w})"});
+            print -C 2 ${s[1 + h, 24 + h]} ${d[1 + h, 24 + h]} > summary;
+            for a in {1..$((r - ${"$(wc -l summary)"%% *} - 1))}; do printf '\n' >> summary; done;
 
-            for a in ${(@f)"$(jq '.[1]' $w | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
-              jq -r ".[range(1+$h;24+1+$h)].$a" $w | asciigraph -c $a -h $((r/2-2)) -w $((c-8)) > $z/x.$a;
+            for a in ${(@f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
+              jq -r ".[range(1+$h;24+1+$h)].${a}" ${w} | asciigraph -c ${a} -h $((LINES / 2 - 2)) -w $((COLUMNS - 8)) > ${z}/x.${a};
             done;
 
-            for a in $z/x.*; do (($(wc -l $a | pcre2grep -o1 '^(\d+)') < 4)) && rm -f $a; done;
-            cat summary x.*(.) | less; unalias fetch; cd ~; rm -rf $z; clear; break;;
+            for a in ${z}/x.*; do (($(wc -l ${a} | pcre2grep -o1 '^(\d+)') < 4)) && rm -f ${a}; done;
+            cat summary x.*(.) | less; unalias fetch; cd ~; rm -rf ${z}; clear; break;;
           (q) return 0;;
         esac;
       done;;

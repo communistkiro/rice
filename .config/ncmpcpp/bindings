@@ -149,9 +149,6 @@ def_key "H"
 def_key "F"
  dummy
 
-def_key "C"
- dummy
-
 def_key "alt-l"
  dummy
 
@@ -543,7 +540,7 @@ def_key "@"
 def_key "#"
  jump_to_browser
 
-def_key "f12"
+def_key "C"
  toggle_playing_song_centering
 
 def_key "Q"

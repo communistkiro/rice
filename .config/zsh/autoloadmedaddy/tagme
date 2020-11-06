@@ -38,24 +38,25 @@ fi;
 
 (($(sed -r 's/ \[.*//' $t | sort -u | wc -l) > 1)) && [ "$(printf "2 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists" || a=$(sed -r 's/ \[.*//' $t | sort -u | head -1);
 
-if which tageditor &>/dev/null; then
-  while IFS= read -r z; do
-    tageditor set \
-      --id3v2-version=4 \
-      --force-rewrite \
-      --encoding=utf8 \
-      --values \
-        title=${${z##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3} \
-        artist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
-        album=${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
-        year=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
-        recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
-        track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-        genre=${(Cj.;.)${(@f)"$(</tmp/genre)"}} \
-        albumartist="$a" \
-      --files $z;
-  done < $t;
-elif which mp3info2 &>/dev/null; then
+# if which tageditor &>/dev/null; then
+#   while IFS= read -r z; do
+#     tageditor set \
+#       --id3v2-version=4 \
+#       --force-rewrite \
+#       --encoding=utf8 \
+#       --values \
+#         title=${${z##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3} \
+#         artist=${${${z##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/} \
+#         album=${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
+#         year=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
+#         recorddate=${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
+#         track=${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
+#         genre=${(Cj.;.)${(f)"$(</tmp/genre)"}//-/ } \
+#         albumartist="$a" \
+#       --files $z;
+#   done < $t;
+#   for o in $@; do rm -f $o/**/*.bak; done;
+# elif which mp3info2 &>/dev/null; then
   while IFS= read -r z; do
     mp3info2 \
       -C id3v2_fix_encoding_on_write=1 \
@@ -66,10 +67,10 @@ elif which mp3info2 &>/dev/null; then
       -l ${${z/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*} \
       -y ${(M)z/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
       -n ${(M)z/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
-      -g ${(Cj.;.)${(f)"$(</tmp/genre)"}} \
+      -g ${(Cj.;.)${(f)"$(</tmp/genre)"}//-/ } \
       -F TPE2="$a" \
       $z;
   done < $t;
-else; return 69; fi;
+# else; return 69; fi;
 rm $t;
 }
