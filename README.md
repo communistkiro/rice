@@ -13,7 +13,6 @@ my config for the most part;
   - `mpp` - insert tracks with chosen intersecting metadata using `mpc`, `dmenu`;
   - `wdr` - small weather script using `jq`, `curl/wget`, and `octave`/`asciigraph` for graphing;
   - `uhosts` - updates /etc/hosts file given specific links; mine uses last link's heading lines as the mandatory/default lines;
-  ~~- `backup` -  `rsync` files and folders according to tagging glyph used in `ranger`~~ doesn't work anymore?
   - `cz` - small terminal navigation script with `dmenu`
   - `dmnt` - mount and umount disks and drives with `findmnt`, `lsblk`, and `dmenu`;
   - `pomo` - tomoto timer integrated into a `dzen2` bar over `herbstluft`'s normal top bar;

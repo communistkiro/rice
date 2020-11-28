@@ -1,3 +1,0 @@
-#!/bin/sh
-[ $# -ne 1 ] && return 1;
-~/src/speedread/speedread -x $((LINES / 2 - 4)) -y $((COLUMNS / 2)) $1;

@@ -1,0 +1,17 @@
+#!/bin/zsh
+function () {
+typeset c o d;
+while getopts 'c:' o; do
+  case ${(M)o#?} in
+    (b) c=brown;;
+    (p) c=pink;;
+    (w) c=white;;
+    (B) c=blue;;
+    (*) return 1;;
+  esac;
+done;
+
+((# - OPTIND == 0)) && pcre2grep -q '(\d+:)*\d+(\.\d+)?' <<< ${@[OPTIND]} && d=${@[OPTIND]} || d=45:00;
+
+sox -t sw -r 24k -c 2 /dev/zero -t alsa synth ${c:-brown}noise vol -9 dB band -n 800 1200 fade q 5 $d 10
+}

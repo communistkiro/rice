@@ -18,7 +18,7 @@ autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-u
 HISTFILE=/root/.zsh_history;
 SAVEHIST=5000;
 HISTSIZE=5000; # cushion large than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|youtube-dl*|yt*|wc *|echo *|l*|cp *|mv *|xb*|vol *|sf *|ff *|f *|zed *|mle *|fd *|rg *|touch *|x*|menu *|box *|beep *|git clone *|find *|oc*|pip*|function *|whn *|bandcamp*|rdrview *|readcli *|animu *|mpv*|./*|man *|tmr *|wine *|realpath *|feh *|z(mv|cp|ln) *)';
+HISTORY_IGNORE='(bl*|rm *|cat *|y*|wc *|echo *|l*|cp *|mv *|vol *|sf *|ff *|f *|zed *|mle *|fd *|rg *|touch *|x*|beep *|oc*|pip*|whn *|bandcamp*|rd*|readcli *|animu *|mpv*|./*|man *|tmr *|wine *|realpath *|feh *|z(mv|cp|ln) *)';
 setopt no_extended_history;      # record timestamp of command in HISTFILE
 setopt hist_reduce_blanks;
 setopt hist_ignore_dups;         # ignore duplicated commands history list

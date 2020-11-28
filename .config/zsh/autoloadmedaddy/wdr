@@ -71,9 +71,9 @@ function () {
 
             s=(${(@f)"$(jq -r '.hourly[].dt' ${w})"}); for a in {1..$#s}; do s[a]=("$(date -d "1970-01-01 UTC ${s[a]} seconds" +'%Y-%m-%d %H:%M')"); done
             d=(${(@f)"$(jq -r '.hourly[].weather[].description' ${w})"});
-            print -C 2 ${s} ${d} > summary; 
+            print -C 2 ${s} ${d} | tr -s '\n' > summary; 
 
-            for a in {1..$((r-${"$(wc -l summary)"%% *}-1))}; do printf '\n' >> summary; done;
+            for a in {1..$((LINES - $(wc -l < summary) - 1))}; do printf '\n' >> summary; done;
 
           # jq -r '.hourly[].dt'         ${w} | asciigraph -c 'dt' -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.dt;
             jq -r '.hourly[].temp'       ${w} | asciigraph -c 'temp'        -h $((LINES / 2 - 2)) -w $((COLUMNS - 14)) > x.temp;
@@ -119,7 +119,7 @@ function () {
             for a in ${(@f)"$(jq ".[].time" ${w})"}; do s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d %H:%M')"); done;
             d=(${(@f)"$(jq -r ".[].summary" ${w})"});
             print -C 2 ${s[1 + h, 24 + h]} ${d[1 + h, 24 + h]} > summary;
-            for a in {1..$((r - ${"$(wc -l summary)"%% *} - 1))}; do printf '\n' >> summary; done;
+            for a in {1..$((LINES - $(wc -l < summary) - 1))}; do printf '\n' >> summary; done;
 
             for a in ${(@f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
               jq -r ".[range(1+$h;24+1+$h)].${a}" ${w} | asciigraph -c ${a} -h $((LINES / 2 - 2)) -w $((COLUMNS - 8)) > ${z}/x.${a};
