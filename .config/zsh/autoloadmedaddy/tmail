@@ -1,8 +1,6 @@
 #!/bin/zsh
-local z x c br;
-x='https://www.1secmail.com/api/v1/';
-z=/tmp/tmpmail; mkdir -p $z; touch $z/emailaddresses;
-br=sf;
+typeset dir api c;
+api='https://www.1secmail.com/api/v1/'; dir=/tmp/tmpmail; mkdir -p $dir; touch $dir/emailaddresses;
 
 function menu () {
   local m t a;
@@ -66,95 +64,105 @@ function box () {
   printf '%b\n' "$dl${(pr.$s..$dh.)dh}$dr$r";
 }
 
-function fetch () { # List all the received emails in a nicely formatted order
-  curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $a "${x}?action=getMessages&login=${u}&domain=1secmail.${d}";
+function fetchEmail () { # List all the received emails in a nicely formatted order
+  curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $a "${api}?action=getMessages&login=${userName}&domain=${domainName}";
  
-  l=$(jq length $a);
-  ((l == 0)) && read -k1 '?No (new) mail.' && return;
+  emailLength=$(jq length $a);
+  ((emailLength == 0)) && read -k1 '?No (new) mail.' && return 1;
 
-  n=#;        n+=(seq $l);
-  i=id;       i+=(${(@f)"$(jq -r '.[].id' $a)"});
-  f=from;     f+=(${(@f)"$(jq -r '.[].from' $a)"});
-  s=subject;  s+=(${(@f)"$(jq -r '.[].subject' $a)"});
-  t=time;     t+=(${(@f)"$(jq -r '.[].date' $a)"});
+  emailNumber=#;          emailNumber+=($(seq -w $emailLength));
+  emailId=ID;             emailId+=(${(f)"$(jq -r '.[].id' $a)"});
+  emailFrom=From;         emailFrom+=(${(f)"$(jq -r '.[].from' $a)"});
+  emailSubject=Subject;   emailSubject+=(${(f)"$(jq -r '.[].subject' $a)"});
+  emailTime=Time;         emailTime+=(${(f)"$(jq -r '.[].date' $a)"});
 }
 
-function viewe () { # View an email by ID
+function viewEmail () { # View an email by ID
   typeset b;
-  [[ -f ${z}/${u}${d}${1} ]] || curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${z}/${u}${d}${1} "${x}?action=readMessage&login=${u}&domain=1secmail.${d}&id=${1}";
-  [[ "$(< ${z}/${u}${d}${1})" = "Message not found" ]] && read -k1 'Message not found.' && return;
+  [[ -f ${dir}/${userName}${domainName}${1} ]] || curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${dir}/${userName}${domainName}${1} "${api}?action=readMessage&login=${userName}&domain=${domainName}&id=${1}";
+  [[ $(< ${dir}/${userName}${domainName}${1}) = "Message not found" ]] && read -k1 '?Message not found.' && return;
 
-  b=$(jq -r '.htmlBody' ${z}/${u}${d}${1});
+  # b=$(jq -r '.htmlBody' ${dir}/${userName}${domainName}${1});
 
-  printf '%b\n' \
-    "\033[;30;0m To:\033[;36;1m ${(l.8...)}${u}@1secmail.${d}\033[;0m" \
-    "\033[;32;0m From:\033[;32;1m ${(l.6...)}$(jq -r '.from' ${z}/${u}${d}${1})\033[;0m" \
-    "\033[;34;0m Subject:\033[;34;1 ${(l.5...)}$(jq -r '.subject' ${z}/${u}${d}${1})\033[;0m" \
-    "${b:-$(jq -r '.textBody' ${z}/${u}${d}${1})}" | less;
+  # printf '%b\n' \
+  #   "\033[;30;0m To:\033[;36;1m ${(l.8...)}${userName}@1secmail.${domainName}\033[;0m" \
+  #   "\033[;32;0m From:\033[;32;1m ${(l.6...)}$(jq -r '.from' ${dir}/${userName}${domainName}${1})\033[;0m" \
+  #   "\033[;34;0m Subject:\033[;34;1 ${(l.5...)}$(jq -r '.subject' ${dir}/${userName}${domainName}${1})\033[;0m" \
+  #   "${b:-$(jq -r '.textBody' ${dir}/${userName}${domainName}${1})}" | less;
 
-  printf '%s\n' \
-    "<pre><b>To: </b>${u}@1secmail.${d}" \
-    "<b>From: </b>$(jq -r '.from' ${z}/${u}${d}${1})" \
-    "<b>Subject: </b>$(jq -r '.subject' ${z}/${u}${d}${1})</pre>" \
-    "${b:-<pre>$(jq -r '.textBody' ${z}/${u}${d}${1})</pre>}" > ${z}/${u}${d}${1}.html;
-  # $br ${z}/${u}${d}${1}.html;
+  [[ -f ${dir}/${userName}${domainName}${1}.html ]] || {
+    printf '%s\n' \
+      "<pre><b>To: </b>${userName}@1secmail.${domainName}" \
+      "<b>From: </b>$(jq -r '.from' ${dir}/${userName}${domainName}${1})" \
+      "<b>Subject: </b>$(jq -r '.subject' ${dir}/${userName}${domainName}${1})</pre>" \
+      "${$(jq -r '.htmlBody' ${dir}/${userName}${domainName}${1}):-<pre>$(jq -r '.textBody' ${dir}/${userName}${domainName}${1})</pre>}" > ${dir}/${userName}${domainName}${1}.html;
+  };
+  rdrview -B 'elinks -dump' ${dir}/${userName}${domainName}${1}.html | less;
 }
 
-function gena () { # (re)generate random 12-character email address
-  typeset ds;
-  ds=('com' 'net' 'org');
-  d=${ds[(RANDOM % 3 + 1)]};
-  u=$(cat /dev/random | tr -cd '[:alnum:]' | head -c 12 | tr '[:upper:]' '[:lower:]');
-  unset z;
-  # wwjmp.com 1secmail.{com,net,org}
-  # ${u}@1secmail.${d};
+function generateAddress () { # generate random email address
+  typeset domains;
+  domains=(1secmail.com 1secmail.net 1secmail.org wwjmp.com);
+  domainName=${domains[(RANDOM % 4 + 1)]};
+  userName=$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 64 | tr '[:upper:]' '[:lower:]');
 }
 
-function seta () {
-  if (($+u)) && (($+d)); then
-    pcre2grep -q "^${u}@1secmail\.${d}$" $z/emailaddresses && \
-    read -k1 '?Already in set email addresses!' || \
-    printf '%s\n' "${u}@1secmail.${d}" >> $z/emailaddresses;
+function customAddress () {
+  typeset customName domains;
+  domains=(1secmail.com 1secmail.net 1secmail.org wwjmp.com);
+  read 'customName?Custom address [a-z0-9]: ';
+  domainName=$(fzy <<< ${(F)domains}) || return;
+  [[ $customName =~ '[a-z0-9]+' ]] && u=${customName} || domainName='';
+}
+
+function setAddress () { # saves current address for later use
+  if [[ ! -z $userName ]] && [ ! -z $domainName ]]; then
+    pcre2grep -q "^${userName}@${domainName}$" $dir/emailaddresses && \
+    read -k1 '?Already in set email addresses.' || \
+    printf '%s\n' "${userName}@${domainName}" >> $dir/emailaddresses;
   else 
-    read -k1 '?Address unset.';
+    read -k1 '?No email address.';
   fi;
 }
 
-function picka () { # select one of previously set addresses
+function pickAddress () { # select one of previously set addresses
+  (($(wc -l < $dir/emailaddresses) == 0)) && return;
   typeset s;
-  s=$(fzy -l $LINES < $z/emailaddresses);
-  u=${s%@*};
-  d=${s#*@1secmail.};
+  s=$(fzy -l $LINES < $dir/emailaddresses) || return;
+  userName=${s%@*};
+  domainName=${s#*@};
 }
 
 function () {
-  typeset a c l i f s t v C;
-  a=$(mktemp /$z/XXXXXXXX);
+  typeset a c s emailLength emailNumber emailId emailFrom emailSubject emailTime userName domainName;
+  a=$(mktemp $dir/XXXXXXXX);
   while true; do
     clear;
-    box -H i5 -B 4b -T 2 -h "${u}@1secmail.${d}" ${(f)"$(for v in {1..$((l+1))}; do printf '%s&&%s&&%s&&%s&&%s\n' ${n:-\#} ${t[v]:-time} ${i[v]:-id} ${f[v]:-from} ${s[v]:-subject}; done | column -t -s '&&')"};
+    box -H i5 -B 4b -T 2 -h "${userName}@${domainName}" ${(f)"$(for s in {1..$((emailLength+1))}; do printf '%s&&%s&&%s&&%s&&%s\n' ${emailNumber[s]:-\#} ${emailTime[s]:-Time} ${emailId[s]:-ID} ${emailFrom[s]:-From} ${emailSubject[s]:-Subject}; done | column -t -s '&&')"};
     menu -t 6b -m 2b \
       'g (re)generate address' \
       's save current' \
       'r refresh inbox' \
-      'R view most recent' \
+      'R fetch and view most recent' \
       'y copy address to clipboard' \
       'c pick from previously set' \
       'C custom address' \
       '# view email #_' \
       'q quit';
-    read -sk1 'c?'
+    read -sk1 'c?Select action: ';
     case $c in
-      (g) gena;;
-      (s) seta;;
-      (r) fetch;;
-      (R) fetch; viewe $i[1+1];;
-      (y) (($+u)) && (($+d)) && printf '%s' ${u}@1secmail.${d} | xclip -se c;;
-      (c) picka; fetch;;
-      (C) read 'C?Custom address [a-z0-9]+@1secmail\.(com|net|org): '; [[ $C =~ '[a-z0-9]+@1secmail\.(com|net|org)' ]] && u=${C%@*} && d=${C#*.};;
-      (0) c=10;&
-      ([1-9]) viewe $i[c+1];;
-      (q) break;;
+      (g) generateAddress;;
+      (s) setAddress;;
+      (r) fetchEmail;;
+      (R) fetchEmail && viewEmail $emailId[1+1];;
+      (y) printf '%s' ${userName}@${domainName} | xclip -selection clipboard;;
+      (c) pickAddress; fetchEmail;;
+      (C) customAddress;;
+      (0) ((c += 10));&
+      ([0-9]) ((c > ${emailLength:-0})) && read -k1 '?Invalid email number.' || viewEmail $emailId[c+1];;
+      # ([1-9]) viewEmail $emailId[c+1];;
+      # (0) viewEmail $emailId[c+11];;
+      (q) rm $a; break;;
     esac;
   done;
 }

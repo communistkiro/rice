@@ -14,9 +14,10 @@ case "$1" in
   (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l -- "$1";;
   (*.mp3) mp3info2 "$1";;
   (*.doc) catdoc -m94 -- "$1";;
-  (*.docx) docx2txt -- "$1" -;;
+  (*.docx) docx2txt "$1" -;;
   (*.epub) epub2txt -n -- "$1";;
   (*.info) info -- "$1";;
+  (*.pdf) pdftotext -f 1 -l 4 "$1" -;;
   (*.json) jq -r '.' "$1";;
   (*) head -n 100 "$1";;
 esac;

@@ -6,7 +6,6 @@ while getopts 'c:' o; do
     (b) c=brown;;
     (p) c=pink;;
     (w) c=white;;
-    (B) c=blue;;
     (*) return 1;;
   esac;
 done;

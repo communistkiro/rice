@@ -68,19 +68,19 @@ cmd open ${{
   local a;
   for a in $fx; do
     case $a in
-      (*.jpg|*.png|*.gif|*.tiff|*.jpeg|*.GIF|*.TIFF|*.PNG|*.BMP|*.JPEG|*.JPG) feh --scale-down --quiet $a 2>/dev/null &;;
+      (*.jpg|*.png|*.gif|*.tiff|*.jpeg|*.GIF|*.TIFF|*.PNG|*.BMP|*.JPEG|*.JPG) feh --scale-down --quiet $a 2>/dev/null & disown;;
       (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
-      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
-      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null &;;
+      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv) mpv --force-window=yes --no-input-terminal --really-quiet $a & disown;;
+      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null & disown;;
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;
       (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null & disown;;
       (*.docx) docx2txt $a - | less;;
-      (*.doc) catdoc -m94 $a | less;;
+      (*.doc) catdoc -m80 $a | less;;
       (*.epub) epub2txt -n $a | less;;
       (*.htm|*.html|*.xhtml) firefox --new-tab $a &>/dev/null & disown;;
       (*.info) info $a;;
-      (*.torrent|*.magnet) qbittorrent $a &>/dev/null &;;
+      (*.torrent|*.magnet) qbittorrent $a &>/dev/null & disown;;
       (*.exe) wine $a &>/dev/null & disown;;
     esac;
   done;

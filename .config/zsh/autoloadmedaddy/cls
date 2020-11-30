@@ -1,5 +1,0 @@
-#!/bin/sh
-cls () {
-[ $# -eq 0 ] && return 1
-chroma -s monokai -- "$@" | less
-}

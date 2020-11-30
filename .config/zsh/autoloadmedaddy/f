@@ -1,5 +1,5 @@
 #!/bin/zsh
 f() {
-local s=("${(@f)$(fd "${@:2}" | fzf)}") || return;
-print -z -- " $1 ${s[@]:q:q}"
+  local s=("${(@f)$(fd "${@:2}" | fzf)}") || return;
+  print -z -- " $1 ${s[@]:q:q}"
 }
