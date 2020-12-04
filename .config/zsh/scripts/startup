@@ -43,8 +43,11 @@ ps -C crond &>/dev/null || crond &
 # click-clack
 ps -C buckle &>/dev/null || buckle -s 0 -f 0b -g 100 &
 
+# time
+ps -C ntpd &>/dev/null || ntpd -s &
+
 # Snowstorm
-# pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown
+# pc -C xsnow &>/dev/null || xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown
 
 # Set last set background
 /root/.fehbg &

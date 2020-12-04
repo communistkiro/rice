@@ -1,2 +1,2 @@
 #!/bin/zsh
-(($# == 1)) && ping "$1" | pcre2grep --line-buffered -o1 'time=(\w+)' | ttyplot -t "pinging $1" -u ms -2
+((# == 1)) && ping "$1" | pcre2grep --line-buffered -o1 'time=(\w+)' | ttyplot -t "pinging $1" -u ms -2

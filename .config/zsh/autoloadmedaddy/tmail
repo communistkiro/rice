@@ -1,4 +1,6 @@
 #!/bin/zsh
+# temporary mail
+# deps: pcre2grep, zsh, fzy
 typeset dir api c;
 api='https://www.1secmail.com/api/v1/'; dir=/tmp/tmpmail; mkdir -p $dir; touch $dir/emailaddresses;
 
