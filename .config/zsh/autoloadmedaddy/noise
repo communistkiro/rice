@@ -1,5 +1,6 @@
 #!/bin/zsh
 function () {
+# https://raw.githubusercontent.com/tedmiston/zero-noise/master/noise.sh
 typeset c o d;
 while getopts 'c:' o; do
   case ${(M)o#?} in
@@ -10,7 +11,7 @@ while getopts 'c:' o; do
   esac;
 done;
 
-((# - OPTIND == 0)) && pcre2grep -q '(\d+:)*\d+(\.\d+)?' <<< ${@[OPTIND]} && d=${@[OPTIND]} || d=45:00;
+((# - OPTIND == 0)) && pcre2grep -q '^(?:\d+:){0,2}\d+(?:\.\d+)?$' <<< ${@[OPTIND]} && d=${@[OPTIND]} || d=90:00;
 
-sox -t sw -r 24k -c 2 /dev/zero -t alsa synth ${c:-brown}noise vol -9 dB band -n 800 1200 fade q 5 $d 10
+sox -t sw -r 24k -c 2 /dev/zero -t alsa synth ${c:-brown}noise vol -9 dB band -n 800 1200 fade q 5 $d 15
 }

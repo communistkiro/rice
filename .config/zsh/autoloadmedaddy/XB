@@ -1,2 +1,2 @@
 #!/bin/sh
-XB () {xpkg -aV | pcre2grep -v 32bit | fzf -i -m --reverse --preview 'xq {1}' --preview-window=right:33%:wrap | xargs -ro xi}
+XB () {xpkg -aV | pcre2grep -v 32bit | fzf -i -m --reverse --tiebreak=begin,end,index --preview 'xq {1}' --preview-window=right:33%:wrap | awk '{print $1}' | xargs -ro xi}

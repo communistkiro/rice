@@ -168,3 +168,5 @@ function () {
     esac;
   done;
 }
+
+# box -H i5 -B 4b -T 2 -h "${userName}@${domainName}" ${(f)"$(pr --omit-header --columns=5 <<< ${(F)emailNumber[s]:-\#} <<< ${(F)emailTime[s]:-Time} <<< ${(F)emailId[s]:-ID} <<< ${(F)emailFrom[s]:-From} <<< ${(F)emailSubject[s]:-Subject}"} \ # equal width columns..

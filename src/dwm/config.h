@@ -38,7 +38,7 @@ static const Rule rules[] = {
     { "Gimp",               NULL,               NULL,       1 << 2,       1,           -1 },
     { "qpdfview",           NULL,               NULL,       1 << 2,       0,           -1 },
     { "qBittorrent",        "qbittorrent",      NULL,       1 << 8,       0,           -1 },
-    { "Xmessage",           "xmessage",         NULL,       0,            1,           -1 },
+    // { "Xmessage",           "xmessage",         NULL,       0,            1,           -1 },
 };
 
 /* layout(s) */

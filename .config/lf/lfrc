@@ -75,9 +75,9 @@ cmd open ${{
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;
       (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null & disown;;
-      (*.docx) docx2txt $a - | less;;
-      (*.doc) catdoc -m80 $a | less;;
-      (*.epub) epub2txt -n $a | less;;
+      (*.docx) docx2txt $a - | fmt | less;;
+      (*.doc) catdoc $a | fmt | less;;
+      (*.epub) epub2txt -n $a | fmt | less;;
       (*.htm|*.html|*.xhtml) firefox --new-tab $a &>/dev/null & disown;;
       (*.info) info $a;;
       (*.torrent|*.magnet) qbittorrent $a &>/dev/null & disown;;
@@ -378,7 +378,7 @@ map <esc>       cmd-escape
 map yy          copy
 map ya          copy-add
 map yr          copy-remove
-map yp          push &realpath<space>${(@f)fx}|tr<space>-s<space>'\n'|xclip<space>-sel<space>clip<enter>
+map yp          push &realpath<space>${(f)fx}|tr<space>-s<space>'\n'|xclip<space>-selection<space>clipboard<space>-rmlastnl<enter>
 map dd          cut
 map da          cut-add
 map dr          cut-remove

@@ -34,6 +34,4 @@ p='HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzi
 
 a="$(pgrep -anx mpv)";
 subliminal --opensubtitles $u $p download -l en -hi -d "$(echo $a | grep -Po '/.*/')" "${a##*/}";
-pkill mpv; mpv "$(echo $a | grep -Po '/.*/')${a##*/}";
-
-rescan-external-files
+pkill -x mpv; mpv "$(echo $a | grep -Po '/.*/')${a##*/}";

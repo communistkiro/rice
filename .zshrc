@@ -94,11 +94,13 @@ alias clock='tty-clock -sbc';
 alias cmat='cmatrix -au2';
 alias cow='cowthink -e "^^" -f xxx -T "U"';
 alias cp='cp -vR';
-# alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate" ;
+# alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate";
 alias du='du -h';
+function f () {print -z -- " ${1-} ${(@)"${(f)$(fd -uu -i "${@:2}" | fzf -i -m --reverse --tiebreak=begin,end,index)}":q:q}"};
 alias fd='fd -uu -i';
 alias feeds='export SFEED_PLUMBER=sf; sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
+alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.45 --setf int_f0_target_mean=90 -pw';
 alias fzf='fzf -i -m --reverse --border=horizontal \
   --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
   --bind "alt-r:execute(mle {+})" \
@@ -106,7 +108,7 @@ alias fzf='fzf -i -m --reverse --border=horizontal \
   --bind "alt-v:select-all" \
   --bind "ctrl-j:accept"';
 alias gre='grep -P --color -i';
-alias hl='hledger-ui --watch';
+alias hl='hledger-ui';
 alias l='less';
 alias l1='lsd -A1';
 alias ll='lsd -A';
@@ -125,7 +127,7 @@ alias oce='octave-cli --quiet --no-history --eval';
 alias pk='pkill -KILL -i -x';
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
-alias rdl='rdrview -B "elinks -dump" $1';
+alias rdl='rdrview -B "elinks -dump -no-references -no-numbering" $1';
 alias rsync='rsync -vah --progress';
 alias sex='sex | cow';
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
@@ -137,8 +139,8 @@ alias vol='amixer set Master';
 alias which='which -a';
 alias xb='xbacklight -set';
 alias xbq='xbps-query --regex -Rs';
-alias xbql='xbps-query -l';
-alias xbqm='xbps-query -m';
+# alias xbql='xbps-query -l';
+# alias xbqm='xbps-query -m';
 alias xbr='xbps-remove -R';
 alias xbs='xbps-install -Su';
 # alias ytd='youtube-dlc -f best --ignore-errors';

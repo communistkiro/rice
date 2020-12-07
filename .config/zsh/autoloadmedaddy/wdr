@@ -62,12 +62,12 @@ function () {
           "${(r.16...)$(<<< location:)}${loc:-Sofia,Bulgaria}";
         menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 go' 'q quit';
         case $(read -sek1) in
-          (1) read 'lon?lon: '; read 'lat?lat: '; if [[ ! ${lon} =~ '^(\d+\.)?\d\+$' ]] || [[ ! ${lat} =~ '^(\d+\.)?\d+$' ]]; then read -sk1 '?Invalid input!'; unset lon lat; return 1; fi;;
+          (1) read 'lon?lon: '; read 'lat?lat: '; if ! { ((lat >= 0)) && ((lat <= 180)) && ((lon >= 0)) && ((lon <= 90)) }; then read -sk1 '?Invalid input! Valid: 0<=lon<=90; 0<=lat<=180'; unset lon lat; fi;;
           (2) read 'loc?location: ';;
           (3)
             if [[ -z ${loc} ]]; then $(fetch "api.openweathermap.org/data/2.5/onecall?lon=${lon:-23.3241}&lat=${lat:-42.6974}&appid=${k}&units=metric&exclude=daily") || return 22;
             else $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${k}&units=metric") || return 23; lat=$(jq -r '.coord.lat' ${w}); lon=$(jq -r '.coord.lon' ${w}); $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${k}&units=metric&exclude=daily"); fi;
-            [[ -z ${w} ]] && return 24;
+            [[ -z $(< ${w}) ]] && return 24;
 
             s=(${(@f)"$(jq -r '.hourly[].dt' ${w})"}); for a in {1..$#s}; do s[a]=("$(date -d "1970-01-01 UTC ${s[a]} seconds" +'%Y-%m-%d %H:%M')"); done
             d=(${(@f)"$(jq -r '.hourly[].weather[].description' ${w})"});
@@ -100,28 +100,28 @@ function () {
         menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 go' 'q quit';
         case $(read -sek1) in
           (1) read 'lon?lon: '; read 'lat?lat: ';
-            [[ ! ${lon} =~ '^\d+\.?\d\+$' ]] || [[ ! ${lat} =~ '^\d+\.?\d+$' ]] && read -sk1 '?Invalid input!' && unset lon lat;;
+            if ! { ((lat >= 0)) && ((lat <= 180)) && ((lon >= 0)) && ((lon <= 90)) }; then read -sk1 '?Invalid input! Valid: 0<=lon<=90; 0<=lat<=180'; unset lon lat; fi;;
           (2) read 'loc?location: ';
-            [[ -z ${loc} ]] && $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=85a4e3c55b73909f42c6a23ec35b7147&units=metric") || return 1;
-            [[ -z ${w} ]] && return 1 || lat=$(jq -r '.coord.lat' ${w}) && lon=$(jq -r '.coord.lon' ${w});;
+            [[ -z ${loc} ]] || $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=85a4e3c55b73909f42c6a23ec35b7147&units=metric") || read -sk1 'curl fail.';
+            [[ -z $(< ${w}) ]] || lat=$(jq -r '.coord.lat' ${w}) && lon=$(jq -r '.coord.lon' ${w}) || read -sk1 'lon/lat fail';;
           (3)
             $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date +%F)/ca24/en) || return 1;
-            [[ -z ${t} ]] && read -sk1 '?No data.' && return 1;
-            pcre2grep -o1 '(\[.+)\]' ${t} >> ${w}; [[ -z ${w} ]] && return 1;
+            [[ -z $(< ${t}) ]] && read -sk1 '?No data.' && return 1;
+            pcre2grep -o1 '(\[.+)\]' ${t} >> ${w}; [[ -z $(< ${w}) ]] && return 1;
 
             if [[ $h != 00 ]]; then
               printf '%s' ',' >> ${w};
               $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date -d '+1day' +%F)/ca24/en) || return 1;
-              [[ -z ${t} ]] && read -sk1 '?No data.' && return 1;
+              [[ -z $(< ${t}) ]] && read -sk1 '?No data.' && return 1;
               pcre2grep -o1 '\[(.+\])' ${t} >> ${w};
             else printf '%s' ']' >> ${w}; fi;
 
-            for a in ${(@f)"$(jq ".[].time" ${w})"}; do s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d %H:%M')"); done;
-            d=(${(@f)"$(jq -r ".[].summary" ${w})"});
+            for a in ${(f)"$(jq ".[].time" ${w})"}; do s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d %H:%M')"); done;
+            d=(${(f)"$(jq -r ".[].summary" ${w})"});
             print -C 2 ${s[1 + h, 24 + h]} ${d[1 + h, 24 + h]} > summary;
             for a in {1..$((LINES - $(wc -l < summary) - 1))}; do printf '\n' >> summary; done;
 
-            for a in ${(@f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
+            for a in ${(f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
               jq -r ".[range(1+$h;24+1+$h)].${a}" ${w} | asciigraph -c ${a} -h $((LINES / 2 - 2)) -w $((COLUMNS - 8)) > ${z}/x.${a};
             done;
 

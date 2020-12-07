@@ -134,7 +134,7 @@ fi;
 
 trap 'rm -f "$tmp"; trap - QUIT; return 0;' QUIT;
 # trap 't=0; rm -f $tmp; trap - QUIT; exit 0;' QUIT;
-trap 'read -sk1;' INT;
+trap 'read -sk1 "?Press anything to unpause";' INT;
 
 for ((0; t >= 0; t-= 1)); do
   printf '%02d:%02d:%02d\n' $((t / 3600)) $((t % 3600 / 60)) $((t % 60)) | tee $tmp;

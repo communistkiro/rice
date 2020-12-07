@@ -1,0 +1,4 @@
+#!/bin/sh
+function bigman () {
+    dmenu_path | fzf -i -m --reverse --preview 'man {1}' --preview-window=right:75%:wrap
+}

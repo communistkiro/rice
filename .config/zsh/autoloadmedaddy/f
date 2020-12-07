@@ -1,5 +1,0 @@
-#!/bin/zsh
-fucntion f() {
-  local s=("${(@f)$(fd "${@:2}" | fzf -i -m --tiebreak=begin,length,index)}") || return;
-  print -z -- " $1 ${s[@]:q:q}"
-}

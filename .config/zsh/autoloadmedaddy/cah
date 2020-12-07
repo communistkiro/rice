@@ -1,31 +1,27 @@
 #!/bin/zsh
-# using https://github.com/crhallberg/json-against-humanity
+# a terminal solo cards against humanity experience using https://github.com/crhallberg/json-against-humanity
 function cah () {
-typeset d w b s;
-d=~/games/json-against-humanity/cah-all-compact.json;
+typeset file white black packname packnum nwhite nblack choice card query # hand;
+file=~/games/json-against-humanity/cah-all-compact.json;
 
-w=$(jq '.white[]' $d | wc -l);
-b=$(jq '.black[].text' $d | wc -l);
+white=$(jq '.white[]' $file | wc -l);
+black=$(jq '.black[].text' $file | wc -l);
 
-# p=($(seq -w 0 $(jq '.packs[].name' $d | wc -l)));
-# p[-1]=();
-# q=(${(f)"$(jq -r ".packs[${(j.,.)q}].name" $d)"});
+packname=(${(f)"$(jq -r ".packs[${(j.,.)packname}].name" $file)"});
+packnum=($(seq -w 0 $(jq '.packs[].name' $file | wc -l)));
+packnum[-1]=();
 
-# if a=${(M)"$(printf '%s %s\n' ${p:^q} | fzf --reverse --no-info --border=horizontal --header='Pick packs to remove: ' --bind 'alt-c:clear-selection' --bind 'alt-v:select-all')"#([0-9](#c3))}; then
-#   for e in $a; do
-#     z=(${(f)"$(jq -r ".packs[$e].white")"});
-#     w=${w:|z};
-#     z=(${(f)"$(jq -r ".packs[$e].black")"});
-#     b=${b:|z};
-# fi;
-
-# while true; do
-#   print -a -C 4 ${(l.((COLUMNS / 4 - 1))...)p};
-#   p-1
-# done
+for choice in ${(f)"$(printf '%s %s\n' ${packnum:^packname} | fzf -i -m --tiebreak=begin,end,index --reverse --no-info --border=horizontal --header='Packs to remove: ' --bind 'alt-c:clear-selection' --bind 'alt-v:select-all')"}; do
+  nwhite+=(${(f)"$(jq -r ".packs[${choice%% *}].white[]" $file)"});
+  nblack+=(${(f)"$(jq -r ".packs[${choice%% *}].black[]" $file)"});
+done;
 
 while true; do
-  for s in {1..10}; do a[s]=$((RANDOM % w)); done; clear;
-  jq ".white[${(j.,.)a}]" $d | fzf --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[$((RANDOM % b))].text" $d)" || break;
-done; 
+  for card in {1..10}; do until [[ -n ${hand[card]:|nwhite} ]]; do hand[card]=$((RANDOM % white)); done; done;
+  until [[ -n ${query:|nblack} ]]; do query=$((RANDOM % black)); done;
+  clear;
+  jq ".white[${(j.,.)hand}]" $file | fzf -i -m --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[$query].text" $file)" || break;
+  hand[1,-1]=();
+  query=;
+done;
 }

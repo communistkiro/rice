@@ -1,0 +1,2 @@
+#!/bin/zsh
+printf '%s' ${(Cj.;.f)$(curl -sfLH User-Agent: "$1" | pcre2grep -o1 'class="tag" href="http.+?/tag/(.+?)\?from=\S+"')} | xclip -selection clipboard

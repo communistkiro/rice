@@ -26,6 +26,7 @@ return 1;; esac; done;
 # alias cmd="ls -ap | pcre2grep '/$' | tail -n +2";
 # alias cmd="find . -maxdepth 1 -mindepth 1 -type d"
 # alias cmd="fd -uu -t d -d 1 ."
+# alias cmd='ls -apd *(/D-)';
 
 clear;
 setopt nonomatch;

@@ -4,6 +4,6 @@ pkill -x dhcpcd;
 rm -rf /run/wpa_supplicant/wlp3s0;
 wpa_supplicant -B -i wlp3s0 -c /etc/wpa_supplicant/wpa_supplicant-wlp3s0.conf;
 dhcpcd -b;
-{ sleep 8; iw dev wlp3s0 info | pcre2grep -q ssid || dhcpcd enp25s0; } &
+sleep 8; if ! iw dev wlp3s0 info | pcre2grep -q ssid; then rm -rf /run/wpa_supplicant/wlp3s0; pkill -x wpa_supplicant; dhcpcd enp25s0; fi;
 # list wifis
 # iwlist wlp3s0 scan | sed -ne 's#^[[:space:]]*\(Quality=\|Encryption key:\|ESSID:\)#\1#p' -e 's#^[[:space:]]*\(Mode:.*\)$#\1\n#p'

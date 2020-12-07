@@ -113,7 +113,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
  * instead of 
  * "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))", \
  * do this
- * echo '/etc/crontab 00 16 * * 0 surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks >> ~/.config/surfraw/cache' >> /etc/crontab
+ * echo '/etc/crontab 00 16 * * 0 surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks | cut -d\  -f1 >> ~/.config/surfraw/cache' >> /etc/crontab
  * and just cat the file into dmenu - it's several times fasters
  */
 #define SR_SEARCH {\
