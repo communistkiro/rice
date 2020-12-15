@@ -23,8 +23,7 @@ static Parameter defconfig[ParameterLast] = {
     [AccessWebcam]        =       { { .i = 0 },     },
     [Certificate]         =       { { .i = 1 },     },
     [CaretBrowsing]       =       { { .i = 0 },     },
-    // [CookiePolicies]      =       { { .v = "a@A" }, },
-    [CookiePolicies]      =       { { .v = "a@" },  },
+    [CookiePolicies]      =       { { .v = "a@" }, },
     [DefaultCharset]      =       { { .v = "UTF-8"  }, },
     [DiskCache]           =       { { .i = 1 },     },
     [DNSPrefetch]         =       { { .i = 0 },     },
@@ -113,20 +112,20 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
  * instead of 
  * "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))", \
  * do this
- * echo '/etc/crontab 00 16 * * 0 surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks | cut -d\  -f1 >> ~/.config/surfraw/cache' >> /etc/crontab
+ * echo '/etc/crontab 00 * * * * surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks | cut -d\  -f1 >> ~/.config/surfraw/cache' >> /etc/crontab
  * and just cat the file into dmenu - it's several times fasters
  */
 #define SR_SEARCH {\
     .v = (char *[]){ "/bin/sh", "-c", \
-    "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(cat ~/.config/surfraw/cache | dmenu -i))", \
+    "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(cat ~/.config/surfraw/cache | dmenu))", \
     winid, NULL }\
 }
 
 /* sneed's feed and seed, 
  * formally chuck's */
-#define FEED {\
-    .v = (char *[]){ "/bin/sh", "-c", "~/.config/zsh/scripts/feed $0", "sf", NULL}\
-}
+// #define FEED {\
+//     .v = (char *[]){ "/bin/sh", "-c", "~/.config/zsh/scripts/feed $0", "sf", NULL}\
+// }
 
 /* styles */
 /*
@@ -169,7 +168,7 @@ static Key keys[] = {
     { MODKEY,                  GDK_KEY_g,                  spawn,              SETPROP("_SURF_URI", "_SURF_GO", PROMPT_GO) },
     { MODKEY,                  GDK_KEY_f,                  spawn,              SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
     { MODKEY,                  GDK_KEY_q,                  spawn,              SR_SEARCH },
-    { MODKEY,                  GDK_KEY_w,                  spawn,              FEED },
+    // { MODKEY,                  GDK_KEY_w,                  spawn,              FEED },
 
     { 0,                       GDK_KEY_Escape,             stop,               { 0 } },
 

@@ -37,7 +37,7 @@ else
 fi;
 (($(wc -l < $t) == 0)) && return 1;
 
-# (($(sed -r 's/ \[.*//' $t | sort -u | wc -l) > 1)) && [ "$(printf "2 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists" || a=$(sed -r 's/ \[.*//' $t | sort -u | head -1);
+(($(sed -r 's/ \[.*//' $t | sort -u | wc -l) > 1)) && [ "$(printf "2 No\\n1 Yes" | dmenu -i -p "Rename album artist to Various Artists?" -l 2)" = "1 Yes" ] && a="Various Artists" || a=$(sed -r 's/ \[.*//' $t | sort -u | head -1);
 
 # if which tageditor &>/dev/null; then
   while IFS= read -r z; do

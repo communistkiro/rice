@@ -1,5 +1,6 @@
--o ~/mov/%(title)s.%(ext)s
--f "best[height<=720]"
+-o ~/mov/%(upload_date)s-%(title)s.%(ext)s
+-f (bestvideo+bestaudio/best)
+#-f "best[height<=720]"
 --retries 64
 --fragment-retries 64
 --age-limit 99

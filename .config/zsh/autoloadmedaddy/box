@@ -1,12 +1,12 @@
 #!/bin/zsh
 function box () {
 ((# == 0)) && return 0;
-local a h B T H ul ur dl dr uh dh lv rv r; integer s; s=1;
+local a d h B T H tl tr bl br th bh lv rv r w; integer s; s=1;
 while getopts 's:h:B:T:H:' a; do case $a in
   (s) # line style
-    s=$OPTARG;; 
+    ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
   (h) # header
-    h=$OPTARG;; 
+    h=$OPTARG;;
   (B) # box color
     B="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
     [[ $OPTARG =~ i ]] && B="${B};7";
@@ -41,26 +41,37 @@ DESCRIPTION
 
 EXAMPLES
     box -h header 'This is a sentence on the first row' 'This is a second row'
+
     a=Zz; box -s 3 -T 3b -B b2 -H 5i -h 'looooooooooooooooong snooze' ${(pr.16..$a.l.8...)a} "padding works, too"
 
 HEREDOC
-;; esac; done;
+return 1;; esac; done;
 
-ul=(┏ ┌ ╔ ⡏); ul=${ul[$s]};
-dl=(┗ └ ╚ ⣇); dl=${dl[$s]};
-ur=(┓ ┐ ╗ ⢹); ur=${ur[$s]};
-dr=(┛ ┘ ╝ ⣸); dr=${dr[$s]};
-uh=(━ ─ ═ ⠉); uh=${uh[$s]};
-dh=(━ ─ ═ ⣀); dh=${dh[$s]};
-lv=(┃ │ ║ ⡇); lv=${lv[$s]};
-rv=(┃ │ ║ ⢸); rv=${rv[$s]};
+tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]}; # top left
+bl=(┗ └ ╚ ⣇); bl=${bl[$s]}; # bottom left
+tr=(┓ ┐ ╗ ⢹); tr=${tr[$s]}; # top right
+br=(┛ ┘ ╝ ⣸); br=${br[$s]}; # bottom right
+th=(━ ─ ═ ⠉); th=${th[$s]}; # top horizontal
+bh=(━ ─ ═ ⣀); bh=${bh[$s]}; # bottom horizontal
+lv=(┃ │ ║ ⡇); lv=${lv[$s]}; # left vertical
+rv=(┃ │ ║ ⢸); rv=${rv[$s]}; # right vertical
+r='\033[;0m';
+# box inside width
+w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
+((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
 
-s=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > $s)) && s=${(c)#a}; done;
-if ((${+h})) && (($#h > $s)); then s=$#h; ((s+=2)); fi; ((s+=2)); 
-
-((${+h})) && printf '%b\n' "$B$ul${(pr.(((s-$#h)/2))..$uh.)uh}$r$H$h$r$B${(pr.(((s-$#h)/2+$#h+s-($#h+s)/2*2))..$uh.)uh}$ur" || printf '%b\n' "$B$ul${(pr.((s-1))..$uh.)uh}$ur";
-
-for a in $@[OPTIND,-1]; do printf '%b\n' "$lv $r$T${(r.((s-2)).. .)a} $r$B$rv"; done;
-
-printf '%b\n' "$dl${(pr.$s..$dh.)dh}$dr$r";
+if ((w + 2 > COLUMNS)); then
+  # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
+  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
+  for a in $@[OPTIND,-1]; do 
+    for d in ${(f)"$(fmt -w $COLUMNS <<< $a)"}; do
+      printf '%s %b%s%b %s\n' $lv $r$T ${(r.COLUMNS-4.. .)d} $r$B $rv; 
+    done;
+  done;
+  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
+else;
+  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
+  for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
+  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
+fi;
 }

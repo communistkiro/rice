@@ -29,9 +29,10 @@ a=(
   'https://github.com/oneoffdallas/dohservers/raw/master/list.txt'                                       # 24
   'https://github.com/oneoffdallas/dohservers/raw/master/iplist.txt'                                     # 25
   'https://someonewhocares.org/hosts/'                                                                   # 26
+  'https://gitlab.com/The_Quantum_Alpha/the-quantum-ad-list/-/raw/master/For%20hosts%20file/The_Quantum_Ad-List.txt'
 );
 
-for s in {01..${#a}}; do wget -O $s $a[s]; done;
+for s in {01..$#a}; do wget -O $s $a[s]; done;
 # for s in {01..${#a}}; do curl -sfLo $a[s] $s || return 123; done;
 
 # https://unix.stackexchange.com/questions/29724/how-to-properly-collect-an-array-of-lines-in-zsh

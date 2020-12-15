@@ -39,15 +39,13 @@ mpd_crossfade_time                             = "0"
 ## }
 ##
 
-visualizer_fifo_path                           = "/tmp/mpd.fifo"
-
 ##
 ## Note: Below parameter is needed for ncmpcpp to determine which output
 ## provides data for visualizer and thus allow syncing between visualization and
 ## sound as currently there are some problems with it.
 ##
 
-visualizer_output_name                         = "Visualizer feed"
+# visualizer_output_name                         = "Visualizer feed"
 
 ##
 ## If you set format to 44100:16:2, make it 'yes'.
@@ -60,8 +58,6 @@ visualizer_in_stereo                           = "yes"
 ## experience synchronization problems, set it to lower value.  Keep in mind
 ## that sane values start with >=10.
 ##
-
-visualizer_sync_interval                       = "30"
 
 ##
 ## Note: To enable spectrum frequency visualization you need to compile ncmpcpp
@@ -338,8 +334,6 @@ header_text_scrolling                          = "yes"
 cyclic_scrolling                               = "no"
 
 lines_scrolled                                 = "2"
-
-lyrics_fetchers                                = "lyricwiki, azlyrics, genius, sing365, lyricsmania, metrolyrics, justsomelyrics, jahlyrics, plyrics, tekstowo, internet"
 
 follow_now_playing_lyrics                      = "no"
 

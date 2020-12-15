@@ -17,8 +17,10 @@ autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-u
 ## History command configuration
 HISTFILE=/root/.zsh_history;
 SAVEHIST=5000;
-HISTSIZE=5000; # cushion large than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|y*|wc *|echo *|l*|cp *|mv *|vol *|sf *|ff *|f *|zed *|mle *|fd *|rg *|touch *|x*|beep *|oc*|pip*|whn *|bandcamp*|rd*|readcli *|animu *|mpv*|./*|man *|tmr *|wine *|realpath *|feh *|z(mv|cp|ln) *)';
+HISTSIZE=5000; # cushion larger than SAVEHIST, if hist_expire_dups_first set
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|l*|cp *|mv *|f *|zed *|mle *|fd *|rg *|touch *|x*|beep *|oc*|bandcamp*|rd*|mpv*|./*|man *|tmr *|wine *|realpath *|feh *|z(mv|cp|ln) *)';
+ zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
+
 setopt no_extended_history;      # record timestamp of command in HISTFILE
 setopt hist_reduce_blanks;
 setopt hist_ignore_dups;         # ignore duplicated commands history list
@@ -29,9 +31,7 @@ setopt hist_verify;              # show command with history expansion to user b
 setopt share_history;            # share command history data
 
 setopt No_Beep;                  # no beep
-
 setopt auto_cd;                  # don't try to execute directories, change into them
-
 setopt interactivecomments;      # all after # ignored
 
 
@@ -98,7 +98,7 @@ alias cp='cp -vR';
 alias du='du -h';
 function f () {print -z -- " ${1-} ${(@)"${(f)$(fd -uu -i "${@:2}" | fzf -i -m --reverse --tiebreak=begin,end,index)}":q:q}"};
 alias fd='fd -uu -i';
-alias feeds='export SFEED_PLUMBER=sf; sfeed_curses /root/.sfeed/feeds/*';
+alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
 alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.45 --setf int_f0_target_mean=90 -pw';
 alias fzf='fzf -i -m --reverse --border=horizontal \
@@ -117,7 +117,7 @@ alias lr='lsd -A --tree';
 alias man='man -a';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
-alias mpva='mpv --force-window=yes';
+alias mpva='mpv --force-window=yes --idle';
 alias mpvn='mpv --no-video';
 alias mpvp='mpv --vo=tct --profile=sw-fast --ytdl-format="best[height<=480]"';
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=36" &>/dev/null & disown';
@@ -130,6 +130,7 @@ alias rg='rg --color always --heading --line-number --smart-case --engine auto -
 alias rdl='rdrview -B "elinks -dump -no-references -no-numbering" $1';
 alias rsync='rsync -vah --progress';
 alias sex='sex | cow';
+alias sls='sls -u v -p'
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
 alias so='source /root/.zshrc';
 alias sx='/root/src/sx/sx ~/.xinitrc';
@@ -139,13 +140,11 @@ alias vol='amixer set Master';
 alias which='which -a';
 alias xb='xbacklight -set';
 alias xbq='xbps-query --regex -Rs';
-# alias xbql='xbps-query -l';
-# alias xbqm='xbps-query -m';
 alias xbr='xbps-remove -R';
 alias xbs='xbps-install -Su';
 # alias ytd='youtube-dlc -f best --ignore-errors';
 alias ytd='youtube-dl -f best --ignore-errors';
-alias xc='xclip -r -se c';
+alias xc='xclip -r -selection clipboard';
 alias zcp='zmv -C';
 alias zmv='zmv -M';
 alias zln='zln -L';
@@ -153,4 +152,4 @@ alias zln='zln -L';
 
 ####    AUTOLOAD
 fpath=($fpath /root/.config/zsh/zsh-completions /root/.config/zsh/autoloadmedaddy)
-autoload $(ls /root/.config/zsh/autoloadmedaddy) zed zmv # zcalc zmathfunc
+autoload -U $(ls /root/.config/zsh/autoloadmedaddy) zed zmv # zcalc zmathfunc

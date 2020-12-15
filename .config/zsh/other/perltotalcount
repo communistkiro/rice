@@ -1,0 +1,2 @@
+#!/bin/sh
+perl -lne'BEGIN {$p = quotemeta shift} ++$c while /$p/g; eof and print $c' PATTERN FILE_IF_NOT_STDIN
