@@ -96,30 +96,30 @@ unsigned int tabspaces = 4;
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
   /* 8 normal colors */
-  "#170E12",  /*black*/
-  "#CC5D5D",  /*red*/
-  "#00FF50",  /*green*/
-  "#FFFF88",  /*yellow*/
-  "#2088BB",  /*blue*/
-  "#D663AA",  /*magenta*/
-  "#44CC88",  /*cyan*/
-  "#82F5FF",  /*white*/
+  "#170e12",  /*black*/
+  "#cc5d5d",  /*red*/
+  "#00ff50",  /*green*/
+  "#ffff88",  /*yellow*/
+  "#2088bb",  /*blue*/
+  "#d663aa",  /*magenta*/
+  "#44cc88",  /*cyan*/
+  "#82f5ff",  /*white*/
 
   /* 8 bold   colors */
-  "#5B6A44",  /*black*/
-  "#DD3311",  /*red*/
-  "#AAFF11",  /*green*/
-  "#FF9E47",  /*yellow*/
-  "#6FA6DE",  /*blue*/
-  "#8E5EC8",  /*magenta*/
-  "#33FFFF",  /*cyan*/
-  "#FFD4D4",  /*white*/
+  "#668844",  /*black*/
+  "#dd3311",  /*red*/
+  "#aaff11",  /*green*/
+  "#ff9e47",  /*yellow*/
+  "#6fa6de",  /*blue*/
+  "#8e5ec8",  /*magenta*/
+  "#33ffff",  /*cyan*/
+  "#ffd4d4",  /*white*/
 
   [255] = 0,
 
   /* more colors can be added after 255 to use with DefaultXX */
   "#bbaaaa",
-  "#CCCCCC",
+  "#cccccc",
 };
 
 

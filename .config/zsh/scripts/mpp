@@ -17,27 +17,27 @@ q[1]=''; q[2]='';
 while true; do
     c=$(printf "%s\n" "${a[@]}" | dmenu -i -l ${#a});
     case ${c} in
-        ${a[1]} )
+        (${a[1]})
             q[++i]=${a[1]};
             q[++i]=$( (mpc list ${a[1]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|,] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[1]}" -l 8);;
-        ${a[2]} )
+        (${a[2]})
             q[++i]=${a[2]};
             q[++i]=$( (mpc list ${a[2]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[2]}" -l 8);;
-        ${a[3]} )
+        (${a[3]})
             q[++i]=${a[3]};
             q[++i]=$( (mpc list ${a[3]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[3]}" -l 8);;
-        ${a[4]} )
+        (${a[4]})
             q[++i]=${a[4]};
             q[++i]=$( (mpc list ${a[4]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|/\] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[4]}" -l 8);;
-        ${a[5]} )
+        (${a[5]})
             q[++i]=${a[5]};
             q[++i]=$( (mpc list ${a[5]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?; ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[5]}" -l 8);;
-        ${a[6]} )
+        (${a[6]})
             q[++i]=${a[6]};
             q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -i -p "${a[6]}" -l 8);;
-        ${a[7]} )
+        (${a[7]})
             mpc search ${q} | mpc insert;&
-        *       ) break ;;
+        (*) break ;;
     esac
 done
 unset a i q w c;

@@ -18,7 +18,7 @@ autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-u
 HISTFILE=/root/.zsh_history;
 SAVEHIST=5000;
 HISTSIZE=5000; # cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|l*|cp *|mv *|f *|zed *|mle *|fd *|rg *|touch *|x*|beep *|oc*|bandcamp*|rd*|mpv*|./*|man *|tmr *|wine *|realpath *|feh *|z(mv|cp|ln) *)';
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|l*|cp *|mv *|f *|zed *|mle *|fd *|rg *|touch *|x*|beep *|oc*|bandcamp*|rd*|mpv*|./*|man *|tmr *|run-help *|realpath *|feh *|z(mv|cp|ln) *)';
  zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -58,6 +58,8 @@ source /root/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh;
 # source /root/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh;
 
 # source /root/.config/omz/lib/directories.zsh;
+
+source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
 
 setopt auto_pushd;
 setopt pushd_ignore_dups;
@@ -107,7 +109,7 @@ alias fzf='fzf -i -m --reverse --border=horizontal \
   --bind "alt-c:clear-selection" \
   --bind "alt-v:select-all" \
   --bind "ctrl-j:accept"';
-alias gre='grep -P --color -i';
+# alias gre='grep -P --color -i';
 alias hl='hledger-ui';
 alias l='less';
 alias l1='lsd -A1';

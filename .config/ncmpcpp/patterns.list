@@ -1,14 +1,7 @@
-%a [%b #%n (%y)] %t
 %a - %t
-%c [%b #%n (%y)] %a - %t
+%a [%b #%n (%y)] %t
 %A [%b #%n (%y)] %t
-%t
-%c [%b #%n (%y)] %t - %a
-%c [%b #%n (%y)] %a- %t
-%c [%b #%n (%y)] %5 - %a
-%c [%a - %b #%n (%y)] %t
 %n %t
-%n. %t
 %n - %t
-%a - %b - %n %t
-%a - %l - %n %t
+%n. %t
+%t

@@ -42,6 +42,5 @@ while true; do
 
   [[ -d $s ]] && cd $s;
 done
-# unalias cmd;
 clear; 
 }

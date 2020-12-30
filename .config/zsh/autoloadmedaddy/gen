@@ -1,34 +1,23 @@
-#!/bin/sh
-gen () {
-local s='';
-local e='';
-local a o l c
-while getopts 'hcsel:' o; do
-  case ${o} in
-    c) c=1;;
-    s) unset s;;
-    e) unset e;;
-    l) l=${OPTARG};;
-    *)
-less -F <<HEREDOC
-NAME
-    gen - password genertor using keepassxc-cli
+#!/bin/zsh
+function gen () {
+((# > 0)) && return 1;
+typeset l u n s e x q a n1 n2 o1 o2; integer length; q="
+";
 
-SYNOPSIS
-    gen [-c] [-s] [-e] [-l length]
+read -r 'length?Length [64]> ' && ((length == 0)) && length=64;
+l=$([[ $(read -eq "?${q}No lowercase?  ") = n ]] && <<< --lower);
+u=$([[ $(read -eq "?${q}No uppercase?  ") = n ]] && <<< --upper);
+n=$([[ $(read -eq "?${q}No numbers?    ") = n ]] && <<< --numeric);
+s=$([[ $(read -eq "?${q}No special?    ") = n ]] && <<< --special);
+e=$([[ $(read -eq "?${q}No extended?   ") = n ]] && <<< --extended);
+read -r "x?${q}Exclude>    ";
+x=${x:+--exclude ${(j.,.)${(s..)x}}};
 
-DESCRIPTION
-    Generate a pass of length <length> or 64, possibly using special characters (-s), or 
-    extended ASCII (-e), with all alphanumeric characters being enabled by default. To 
-    silently copy generated passed, use -c.
-
-BUGS
-    Please report any aberrant behavior or bugs to vlg@tutamail.com
-
-
-HEREDOC
-return 1;; esac; done;
-
-a=$(keepassxc-cli generate -Uln ${s=-s} ${e=-e} -L${l:-64});
-if [ -z $c ]; then printf "%s" $a; else printf "%s" $a | xclip -sel c; fi;
+o2=0;
+for a in {1..48}; do
+  n1="$(keepassxc-cli generate --length $length $l $u $n $s $e --every-group)";
+  n2="$(keepassxc-cli estimate "$n1" | awk '{print $4}')";
+  ((n2 > o2)) && { o2="$n2"; o1="$1"; };
+done;
+printf '%s\n' "$n1";
 }

@@ -43,7 +43,7 @@ function box () {
   rv=(┃ │ ║ ⢸); rv=${rv[$s]};
 
   s=0; for a in ${@[z,-1]}; do ((${(c)#a} > s)) && s=${(c)#a}; done; 
-  if (($+h)) && (($#h > s)); then s=$#h; ((s+=2)); fi; ((s+=2)); 
+  (($+h)) && (($#h > s)) && s=$#h && ((s+=2)); ((s+=2)); 
 
   r='\033[;0m';
   ((${+h})) && printf "$B$ul${(pr.(((s-$#h)/2))..$uh.)uh}$r$H$h$r$B${(pr.(((s-$#h)/2+$#h+s-($#h+s)/2*2))..$uh.)uh}$ur\n" || printf "$B$ul${(pr.((s-1))..$uh.)uh}$ur\n";
@@ -54,14 +54,18 @@ function box () {
 }
 
 function () {
-  if ! ping -c 1 63.42.42.155 &>/dev/null; then read -k1 '?No internet connection.'; return 1; fi; 
+  ! ping -c 1 63.42.42.155 &>/dev/null && read -k1 '?No internet connection.' && return 1;
   typeset lon lat loc a s d w z; z=$(mktemp -d); w=$(mktemp ${z}/XXXXXXXX); cd ${z};
   clear;
   menu -m 4b -t 2 '1 openweathermap' '2 darksky' 'q exit';
   case $(read -sek1) in
     (1) # OPENWEATHERMAP    https://openweathermap.org/api/one-call-api
       typeset k && k=85a4e3c55b73909f42c6a23ec35b7147;
-      if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${w}"; elif which wget &>/dev/null; then alias fetch="wget -q -O ${w}"; else return 1; fi;
+      { which curl &>/dev/null && \
+        alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${w}"; 
+      } || { which wget &>/dev/null && \
+        alias fetch="wget -q -O ${w}";
+      } || return 1;
       while true; do
         clear; box -H 1b -B 4 -T 3 -h openweathermap \
           "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
@@ -71,8 +75,13 @@ function () {
           (1) read 'lon?lon: '; read 'lat?lat: '; if ! { ((lat >= 0)) && ((lat <= 180)) && ((lon >= 0)) && ((lon <= 90)) }; then read -sk1 '?Invalid input! Valid: 0<=lon<=90; 0<=lat<=180'; unset lon lat; fi;;
           (2) read 'loc?location: ';;
           (3)
-            if [[ -z ${loc} ]]; then $(fetch "api.openweathermap.org/data/2.5/onecall?lon=${lon:-23.3241}&lat=${lat:-42.6974}&appid=${k}&units=metric&exclude=daily") || return 22;
-            else $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${k}&units=metric") || return 23; lat=$(jq -r '.coord.lat' ${w}); lon=$(jq -r '.coord.lon' ${w}); $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${k}&units=metric&exclude=daily"); fi;
+            { [[ -z ${loc} ]] && \
+              $(fetch "api.openweathermap.org/data/2.5/onecall?lon=${lon:-23.3241}&lat=${lat:-42.6974}&appid=${k}&units=metric&exclude=daily") || return 22;
+            } || {
+              $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${k}&units=metric") || return 23; 
+              lat=$(jq -r '.coord.lat' ${w}); lon=$(jq -r '.coord.lon' ${w});
+              $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${k}&units=metric&exclude=daily");
+            };
             [[ -z $(< ${w}) ]] && return 24;
 
             s=(${(@f)"$(jq -r '.hourly[].dt' ${w})"}); for a in {1..$#s}; do s[a]=("$(date -d "1970-01-01 UTC ${s[a]} seconds" +'%Y-%m-%d %H:%M')"); done
@@ -98,7 +107,11 @@ function () {
           (q) return 1;; esac; done;;
     (2) # DARKSKY
       typeset t h; t=$(mktemp ${z}/XXXXXXXX); h=$(date +%H);
-      if which curl &>/dev/null; then alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${t}"; elif which wget &>/dev/null; then alias fetch="wget -q -O ${t}"; else return 1; fi;
+      { which curl &>/dev/null && \
+        alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${t}"
+      } || { which wget &>/dev/null && \
+        alias fetch="wget -q -O ${t}"
+      } || return 1;
       while true; do
         clear; box -H 1b -B 4 -T 3 -h darksky \
           "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
@@ -106,7 +119,7 @@ function () {
         menu -m 4b -t 2 '1 longitude / latitude' '2 location' '3 go' 'q quit';
         case $(read -sek1) in
           (1) read 'lon?lon: '; read 'lat?lat: ';
-            if ! { ((lat >= 0)) && ((lat <= 180)) && ((lon >= 0)) && ((lon <= 90)) }; then read -sk1 '?Invalid input! Valid: 0<=lon<=90; 0<=lat<=180'; unset lon lat; fi;;
+            ! { ((lat >= 0)) && ((lat <= 180)) && ((lon >= 0)) && ((lon <= 90)) } && read -sk1 '?Invalid input! Valid: 0<=lon<=90; 0<=lat<=180' && unset lon lat;;
           (2) read 'loc?location: ';
             [[ -z ${loc} ]] || $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=85a4e3c55b73909f42c6a23ec35b7147&units=metric") || read -sk1 'curl fail.';
             [[ -z $(< ${w}) ]] || lat=$(jq -r '.coord.lat' ${w}) && lon=$(jq -r '.coord.lon' ${w}) || read -sk1 'lon/lat fail';;
@@ -115,12 +128,12 @@ function () {
             [[ -z $(< ${t}) ]] && read -sk1 '?No data.' && return 1;
             pcre2grep -o1 '(\[.+)\]' ${t} >> ${w}; [[ -z $(< ${w}) ]] && return 1;
 
-            if [[ $h != 00 ]]; then
+            [[ $h != 00 ]] && {
               printf '%s' ',' >> ${w};
               $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date -d '+1day' +%F)/ca24/en) || return 1;
               [[ -z $(< ${t}) ]] && read -sk1 '?No data.' && return 1;
               pcre2grep -o1 '\[(.+\])' ${t} >> ${w};
-            else printf '%s' ']' >> ${w}; fi;
+            } || printf '%s' ']' >> ${w};
 
             for a in ${(f)"$(jq ".[].time" ${w})"}; do s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d %H:%M')"); done;
             d=(${(f)"$(jq -r ".[].summary" ${w})"});

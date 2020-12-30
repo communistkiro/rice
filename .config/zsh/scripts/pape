@@ -11,15 +11,25 @@ c=~/im/wp; # starting direcotry
 cd $c;
 s=$(pcre2grep -o1 "feh --no-fehbg (.+?) '.+'" ~/.fehbg);
 setopt nonomatch
+
 while true; do
-  # [[ -d $c ]] && f=($(ls -ap $c | pcre2grep -v '/')) && d=($(ls -ap $c | pcre2grep '/' | pcre2grep -v '^\./')); 
-  [[ -d $c ]] && { f=(*(.D-)); d=(*(/D-)); [[ $d[1] = '*(/D-)' ]] && d[1]=(); [[ $f[1] = '*(.D-)' ]] && f[1]=(); };
+  [[ -d $c ]] && { 
+    d=(*(/D-));
+    [[ $d[1] = '*(/D-)' ]] && d[1]=(); 
+    f=(*(.D-)); 
+    [[ $f[1] = '*(.D-)' ]] && f[1]=(); 
+  };
   c=$(printf '%s\n' .. $d $f rand opts | dmenu -i -p "$(pwd) ") || break; 
-  [[ -d $c ]] && cd $c && c=.;
-  [[ -f $c ]] && { feh $s $c || break };
-  if [[ $c = 'opts' ]]; then s=$(dmenu -i -p 'options ' <<< ${(F)a}) && feh $s "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";
-  elif [[ $c = 'rand' ]]; then feh $s ${f[RANDOM % $#f + 1]} || break;
-  fi;
+
+  [[ -d $c ]] && { 
+    cd $c && c=.;
+  } || { [[ -f $c ]] && \
+    { feh $s $c || break; };
+  } || { [[ $c = 'opts' ]] && \
+    { s=$(dmenu -i -p 'options ' <<< ${(F)a}) && feh $s "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)"; };
+  } || { [[ $c = 'rand' ]] && \
+    { feh $s ${f[RANDOM % $#f + 1]} || break; };
+  };
 done;
 unset c a f s d;
 setopt nomatch;

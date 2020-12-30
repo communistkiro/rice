@@ -16,7 +16,7 @@ mpd_host                                       = "127.0.0.1"
 
 mpd_port                                       = "6600"
 
-mpd_connection_timeout                         = "5"
+mpd_connection_timeout                         = "8"
 
 ## Needed for tag editor and file operations to work.
 # mpd_music_dir                                  = "/media/ELEM/Music"
@@ -31,12 +31,12 @@ mpd_crossfade_time                             = "0"
 ## visualization or 44100:16:2 for stereo visualization. Example configuration
 ## (it has to be put into mpd.conf):
 ##
-## audio_output {
-##        type            "fifo"
-##        name            "Visualizer feed"
-##        path            "/tmp/mpd.fifo"
-##        format          "44100:16:2"
-## }
+audio_output {
+       type            "fifo"
+       name            "Visualizer feed"
+       path            "/tmp/mpd.fifo"
+       format          "44100:16:2"
+}
 ##
 
 ##
@@ -44,8 +44,7 @@ mpd_crossfade_time                             = "0"
 ## provides data for visualizer and thus allow syncing between visualization and
 ## sound as currently there are some problems with it.
 ##
-
-# visualizer_output_name                         = "Visualizer feed"
+visualizer_output_name                         = "Visualizer feed"
 
 ##
 ## If you set format to 44100:16:2, make it 'yes'.
@@ -70,7 +69,7 @@ visualizer_type                                = "spectrum"
 
 visualizer_look                                = "●█"
 
-#visualizer_color = "blue, cyan, green, yellow, magenta, red"
+#visualizer_color = "blue, cyan, green, yellow, red, magenta"
 
 ## Alternative subset of 256 colors for terminals that support it.
 ##

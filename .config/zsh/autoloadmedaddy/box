@@ -60,7 +60,7 @@ r='\033[;0m';
 w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
 ((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
 
-if ((w + 2 > COLUMNS)); then
+((w + 2 > COLUMNS)) && {
   # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
   ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
   for a in $@[OPTIND,-1]; do 
@@ -69,9 +69,9 @@ if ((w + 2 > COLUMNS)); then
     done;
   done;
   printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
-else;
+} || {
   ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
   for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
   printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
-fi;
+};
 }

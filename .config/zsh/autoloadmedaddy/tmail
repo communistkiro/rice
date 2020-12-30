@@ -60,7 +60,7 @@ function box () {
   w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
   ((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
 
-  if ((w + 2 > COLUMNS)); then
+  ((w + 2 > COLUMNS)) && {
     ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
     for a in $@[OPTIND,-1]; do 
       for d in ${(f)"$(fmt -w $COLUMNS <<< $a)"}; do
@@ -68,11 +68,11 @@ function box () {
       done;
     done;
     printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
-  else;
+  } || {
     ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
     for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
     printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
-  fi;
+  }
 }
 
 function fetchEmail () { # List all the received emails in a nicely formatted order
@@ -120,7 +120,7 @@ function generateAddress () { # generate random email address
 
 function customAddress () {
   typeset customName;
-  [[ $customName =~ [a-z0-9]+ ]] && userName=${customName} || read -k1 '?Invalid username.' && return 1;
+  [[ $customName =~ [a-z0-9]+ ]] && userName=${customName} || { read -k1 '?Invalid username.' && return 1; };
   read 'customName?Custom address [a-z0-9]: ';
   printf 'Domain name: ' ' [*]  1secmail.com' ' [2]  1secmail.net' ' [3]  1secmail.org' ' [4]  wwjmp.com' '';
   case $(read -sek1 '?') in
@@ -132,13 +132,13 @@ function customAddress () {
 }
 
 function setAddress () { # saves current address for later use
-  if [[ ! -z $userName ]] && [ ! -z $domainName ]]; then
+  [[ ! -z $userName ]] && [ ! -z $domainName ]] && {
     pcre2grep -q "^${userName}@${domainName}$" $dir/emailaddresses && \
     read -k1 '?Already in set email addresses.' || \
     printf '%s\n' "${userName}@${domainName}" >> $dir/emailaddresses;
-  else 
+  } || {
     read -k1 '?No email address.';
-  fi;
+  };
 }
 
 function pickAddress () { # select one of previously set addresses
