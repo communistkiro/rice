@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# typeset a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"});
+# [[ -z $a ]] && return;
+# echo '' | fzf --phony --reverse --border=horizontal --preview="surfraw $a - p {q} | perl -pe 's/^\s*Link:.*\n// && print'" --preview-window=99%:down:sharp
+
+# if rdrview present; handles output better
+typeset a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"});
+[[ -z $a ]] && return;
+fzf --phony --reverse --border=horizontal --preview="surfraw $a -p '{q}' | xargs -d '\n' rdrview -B 'elinks -dump -no-numbering -no-references'" --preview-window=99%:down:sharp --header="${(C)a}" <<< ''

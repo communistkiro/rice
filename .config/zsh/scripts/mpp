@@ -37,7 +37,7 @@ while true; do
             q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -i -p "${a[6]}" -l 8);;
         (${a[7]})
             mpc search ${q} | mpc insert;&
-        (*) break ;;
+        (*) break;;
     esac
 done
 unset a i q w c;

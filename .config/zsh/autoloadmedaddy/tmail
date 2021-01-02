@@ -101,13 +101,13 @@ function viewEmail () { # View an email by ID
   #   "\033[;34;0m Subject:\033[;34;1 ${(l.5...)}$(jq -r '.subject' ${dir}/${userName}${domainName}${1})\033[;0m" \
   #   "${b:-$(jq -r '.textBody' ${dir}/${userName}${domainName}${1})}" | less;
 
-  [[ -f ${dir}/${userName}${domainName}${1}.html ]] || {
+  if ! [[ -f ${dir}/${userName}${domainName}${1}.html ]]; then
     printf '%s\n' \
       "<pre><b>To: </b>${userName}@1secmail.${domainName}" \
       "<b>From: </b>$(jq -r '.from' ${dir}/${userName}${domainName}${1})" \
       "<b>Subject: </b>$(jq -r '.subject' ${dir}/${userName}${domainName}${1})</pre>" \
       "${$(jq -r '.htmlBody' ${dir}/${userName}${domainName}${1}):-<pre>$(jq -r '.textBody' ${dir}/${userName}${domainName}${1})</pre>}" > ${dir}/${userName}${domainName}${1}.html;
-  };
+  fi;
   rdrview -B 'elinks -dump' ${dir}/${userName}${domainName}${1}.html | less;
 }
 
@@ -132,13 +132,15 @@ function customAddress () {
 }
 
 function setAddress () { # saves current address for later use
-  [[ ! -z $userName ]] && [ ! -z $domainName ]] && {
-    pcre2grep -q "^${userName}@${domainName}$" $dir/emailaddresses && \
-    read -k1 '?Already in set email addresses.' || \
-    printf '%s\n' "${userName}@${domainName}" >> $dir/emailaddresses;
-  } || {
+  if [[ ! -z $userName ]] && [[ ! -z $domainName ]]; then;
+    if pcre2grep -q "^${userName}@${domainName}$" $dir/emailaddresses; then;
+      read -k1 '?Already in set email addresses.';
+    else;
+      printf '%s\n' "${userName}@${domainName}" >> $dir/emailaddresses;
+    fi;
+  else;
     read -k1 '?No email address.';
-  };
+  fi;
 }
 
 function pickAddress () { # select one of previously set addresses

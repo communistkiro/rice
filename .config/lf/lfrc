@@ -51,13 +51,12 @@ set scrolloff 1
 # cmd trash %set -f; mv $fx /tmp
 
 # define a custom 'delete' command
-# cmd delete ${{
-#     set -f
-#     printf "$fx\n"
-#     printf "delete?[y/n]"
-#     read ans
-#     [ $ans = "y" ] && rm -rf $fx
-# }}
+cmd delete ${{
+    set -f;
+    printf "$fx\n\ndelete? [y/n]";
+    [[ $(read -seq ) = y ]] && rm -rf $fx;
+    clear;
+}}
 
 # use '<delete>' key for either 'trash' or 'delete' command
 # map <delete> trash
@@ -68,21 +67,22 @@ cmd open ${{
   local a;
   for a in $fx; do
     case $a in
-      (*.jpg|*.png|*.gif|*.tiff|*.jpeg|*.GIF|*.TIFF|*.PNG|*.BMP|*.JPEG|*.JPG) feh --scale-down --quiet $a 2>/dev/null & disown;;
+      (*.jpg|*.png|*.gif|*.tiff|*.jpeg|*.GIF|*.TIFF|*.PNG|*.BMP|*.JPEG|*.JPG) feh --scale-down --quiet $a 2>/dev/null &;;
       (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
-      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv) mpv --force-window=yes --no-input-terminal --really-quiet $a & disown;;
-      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null & disown;;
+      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
+      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null &;;
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;
-      (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null & disown;;
+      (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null &;;
       (*.docx) docx2txt $a - | fmt | less;;
       (*.doc) catdoc $a | fmt | less;;
-      (*.epub) epub2txt -n $a | fmt | less;;
-      (*.htm|*.html|*.xhtml) firefox --new-tab $a &>/dev/null & disown;;
+      (*.epub) epub2txt -n -a $a | fmt -w $COLUMN | less;;
+      (*.htm|*.html|*.xhtml) firefox --new-tab $a &>/dev/null &;;
       (*.info) info $a;;
-      (*.torrent|*.magnet) qbittorrent $a &>/dev/null & disown;;
-      (*.exe) wine $a &>/dev/null & disown;;
+      (*.torrent|*.magnet) qbittorrent $a &>/dev/null &;;
+      (*.exe) wine $a &>/dev/null &;;
     esac;
+    disown &>/dev/null;
   done;
 }}
 
@@ -113,40 +113,15 @@ cmd rndrename ${{
   done
 }}
 
-# cmd glob ${{
-#   set -f; local a s d;
-#   a=$(ls -1 . | fzf --no-multi --reverse --print-query --preview "ls . | pcre2grep --ignore-case "'{q}') || Q;
-#   s=(${(f)"$(ls -1 . | pcre2grep --ignore-case "$a" | xargs -d '\n' realpath)"});
-#   (($#s > 0)) && if ((# == 0))); then
-#     d=($s $fx); fx=${(u)d};
-#   else
-#     fx=${fx:|s};
-#   fi
-# }}
-# cmd globb ${{
-#   set -f; local a s d;
-#   # mode=save;
-#   a=$(ls -1 . | fzf --no-multi --reverse --print-query --preview "ls . | pcre2grep --ignore-case "'{q}' | head -n 1);
-#   [[ -z $a ]] && return;
-#   s=${(f)"$(ls -1 . | pcre2grep --ignore-case "$a" | xargs -d '\n' realpath)"};
-#   (($#s > 0)) && if ((# == 0)); then
-#     # d=($fx $s); fx=${(u)d};
-#     # lf -remote "save\n${fx}\n${s}";
-#     fx="$fx\n$s";
-#   else
-#     # fx=${fx:|s};
-#   fi;
-# }}
-
 cmd mkdir ${{((# > 0)) && mkdir -p ${"$(printf '%s ' $@)"%?} || mktemp -d .XXXXXXXXXX;}}
 
-cmd fzf ${{
-  fzf -i -m --reverse \
-    --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
-    --bind "alt-r:execute(mle {+})" \
-    --bind "alt-f:clear-selection" \
-    --bind "alt-v:select-all";
-}}
+# cmd fzf ${{
+#   fzf -i -m --reverse \
+#     --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
+#     --bind "alt-r:execute(mle {+})" \
+#     --bind "alt-f:clear-selection" \
+#     --bind "alt-v:select-all";
+# }}
 
 cmd 7za ${{
   set -f;

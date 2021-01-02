@@ -118,11 +118,10 @@ if ((${+a})); then
   M=$(date +%M);
   H=$(date +%H);
 
-  if  ((S >= s && m == 0 && h == 0 && d == 0)); then m=$((M + 1)); h=$H;
+  if   ((S >= s && m == 0 && h == 0 && d == 0));            then m=$((M + 1)); h=$H;
   elif ((M > m || (M == m && S >= s) && h == 0 && d == 0)); then h=$((H + 1));
-  elif ((M > m || (M == m && S >= s) && h == 0 && d == 0)); then h=$((H + 1));
-  elif ((M < m && h == 0 && d == 0)); then h=$H;
-  elif ((H > h || (H == h && M >= m) && d == 0)); then ((d += 1)); fi;
+  elif ((M < m && h == 0 && d == 0));                       then h=$H;
+  elif ((H > h || (H == h && M >= m) && d == 0));           then ((d += 1)); fi;
 
   ((d < 0 || 60 * (60 * (24 * d + h) + m) + s < 0)) && return 1;
 
@@ -134,8 +133,8 @@ else;
 fi;
 
 trap 'rm -f "$tmp"; trap - QUIT; return 0;' QUIT;
-# trap 't=0; rm -f $tmp; trap - QUIT; exit 0;' QUIT;
-trap 'read -sk1 "?Press anything to unpause";' INT;
+# trap 'read -sk1 "?Press anything to unpause";' INT;
+trap '((t *= -1));' INT;
 
 for ((0; t >= 0; t-= 1)); do
   printf '%02d:%02d:%02d\n' $((t / 3600)) $((t % 3600 / 60)) $((t % 60)) | tee $tmp;
@@ -147,7 +146,7 @@ done
 #   mpc -q toggle; beep -f 200 -l 100 -d 100 -r 2; mpc -q toggle;
 # else
 #   mpv --really-quiet $alarm;
-  beep -f 200 -l 100 -d 100 -r 2;
+  beep -f 200 -l 100 -d 100 -r 2; 
 # fi;
 
 rm -f $tmp;

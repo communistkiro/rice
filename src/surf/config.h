@@ -134,8 +134,8 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
  */
 static SiteSpecific styles[] = {
     /* regexp               file in $styledir */
-    { "file:///root/.config/startpage/ss1.htm", "non.css" },
-    { ".*",                 "default.css" },
+    { "file:///root/.config/startpage/ss1.htm", "non.css"       },
+    { ".*",                                      "default.css"  },
 };
 
  
@@ -143,9 +143,9 @@ static SiteSpecific styles[] = {
 static SiteSpecific scripts[] = {
    /* regexp               file in $scriptdir */
    // { ".*",                 "default.js" },
-    { "boards\\.4chan.*", "4chan-X.user.js" },
-    { "(www\\.)?reddit.com/.*", "oldreddit.js" },
-    // { "://news\\.ycombinator.*", "hn-filter.js" },
+    { "https://.*4chan(nel)?\\.org.*",      "4chan-X.user.js"   },
+    { "https://.*lainchan\\.org.*,          "4chan-X.user.js"   },
+    { "(www\\.)?reddit.com/.*",             "oldreddit.js"      },
 };
 
 /* certificates */
