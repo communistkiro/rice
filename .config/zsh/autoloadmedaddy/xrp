@@ -58,7 +58,7 @@ for link in ${(f)"$(< ~/nm/bcnew)"}; do
         printf "%s\n" $link >> ~/nm/soon;
         sort -uo ~/nm/soon ~/nm/soon;
     else
-        youtube-dlc \
+        youtube-dl \
             --ignore-config \
             --ignore-errors \
             --retries 64 \

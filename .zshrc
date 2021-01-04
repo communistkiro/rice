@@ -6,6 +6,7 @@ precmd () { printf '%b' "\e]0;${PWD}\a"; }
 
 ####    OPTS
 setopt extended_glob ksh_glob no_sh_glob re_match_pcre;
+setopt null_glob                  # If a pattern for filename generation has no matches, delete the pattern from the argument list instead of reporting an error. Overrides NOMATCH.
 
 # CASE_SENSITIVE="true";
 HYPHEN_INSENSITIVE="true";
@@ -33,8 +34,6 @@ setopt share_history;            # share command history data
 setopt No_Beep;                  # no beep
 setopt auto_cd;                  # don't try to execute directories, change into them
 setopt interactivecomments;      # all after # ignored
-
-# setopt null_glob                  # If a pattern for filename generation has no matches, delete the pattern from the argument list instead of reporting an error. Overrides NOMATCH.
 
 ####    PLUGINS
 autoload -U compaudit compinit;
@@ -121,6 +120,7 @@ alias ncm='ncmpcpp 2>/dev/null';
 alias oc='octave-cli --quiet';
 alias oce='octave-cli --quiet --no-history --eval';
 alias pk='pkill -KILL -i -x';
+alias p='printf "%s\n"';
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
 alias rdl='rdrview -B "elinks -dump -no-references -no-numbering" $1';

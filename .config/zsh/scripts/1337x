@@ -1,0 +1,35 @@
+#!/bin/zsh
+typeset query url t; integer pages c q r s l;
+typeset -a titles seeds leeches sizes urls;
+typeset -aU hashes;
+t=$(mktemp);
+baseurl='https://1337x.to';
+((# == 0)) && read -r 'query?> ' || query="$@";
+[[ ${query} =~ '^\s*$' ]] && return 1 || query=${query// /+};
+
+curl -sfLH User-Agent: ${baseurl}/search/${query}/1/ > ${t};
+(($(pup -f ${t} -n 'a[href^=/torrent/]') == 0)) && read -sk1 '?No Result found.' && exit 0;
+
+pages=${${$(pup -f ${t} '.last a attr{href}')%/}##*/};
+((pages == 0)) && pages=1;
+for q in {1..${pages}}; do
+  titles+=(${(f)"$(pup -f ${t} 'a[href^=/torrent/] text{}')"});
+  seeds+=(${(f)"$(pup -f ${t} 'td.seeds text{}')"});
+  leeches+=(${(f)"$(pup -f ${t} 'td.leeches text{}')"});
+  sizes+=(${(f)"$(pup -f ${t} 'td.size json{}' | jq -r '.[].text')"});
+  urls+=(${(f)"$(pup -f ${t} 'td a[href^=/torrent/] attr{href}')"});
+  curl -sfLH User-Agent: ${baseurl}/search/${query}/$((q + 1))/ > ${t};
+done;
+
+r=${(c)#${#titles}};
+s=${(c)#${${(nO)seeds}[1]}};
+l=${(c)#${${(nO)leeches}[1]}};
+
+while true; do
+  c=$(for q in {1..${#titles}}; do
+    printf "%.${r}d____%b%s____%b%9s____%b%.${s}d%b/%b%.${l}d\n" $q '\033[1m' ${titles[q]} '\033[34;1m' ${sizes[q]} '\033[32;1m' ${seeds[q]} '\033[0m' '\033[31;1m' ${leeches[q]};
+  done | column -t -s '____' | fzy -l $LINES | cut -f 1 -d ' ');
+  ((c > 0)) && ((c < ${#titles} +1)) && hashes+=($(curl -sfLH User-Agent: ${baseurl}${urls[c]} | pup '.infohash-box span text{}')) || break;
+done;
+if ((${#hashes} > 0)); then qbittorrent ${hashes} &>/dev/null & disown; fi;
+rm -f ${t};

@@ -27,8 +27,7 @@ BUGS
 HEREDOC
 return 1;;esac; done;
 
-t1=$(mktemp /tmp/xrpp1.XXXXXXX); t2=$(mktemp /tmp/xrpp2.XXXXXXX);
-t3=$(mktemp /tmp/xrpp3.XXXXXXX); t4=$(mktemp /tmp/xrpp4.XXXXXXX);
+t1=$(mktemp /tmp/xrpp1.XXXXXXX); t2=$(mktemp /tmp/xrpp2.XXXXXXX); t3=$(mktemp /tmp/xrpp3.XXXXXXX); t4=$(mktemp /tmp/xrpp4.XXXXXXX);
 
 for a in $(lynx -listonly -dump $@); do
   # EMBEDDED BANDCAMP PLAYERS
