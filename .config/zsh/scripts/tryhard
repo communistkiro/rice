@@ -73,16 +73,22 @@ function menu () {
 }
 
 function select-cap () {
+  ((${+cap})) && [[ $(read -seq 'Select another cap file? ') != y ]] && return 0;
   typeset caps;
   caps=(*.cap(.om)) &>/dev/null;
   if ((${#caps} == 0)); then;
    read -sk1 "?${n}No .cap files found. "; return 1;  
   elif ((${#caps} > 1)); then;
     cap="$(fzy -l $LINES -p 'select cap file> ' <<< ${(F)caps})";
-    [[ -z ${cap} ]] && read -sk1 "?${n}${cap}: File does not exist. " && return 1;
-    [[ ! -f ${cap} ]] && read -sk1 "?${n}${cap}: File does not exist. " && unset cap && return 1;
+    if [[ -z ${cap} ]]; then
+      read -sk1 "?${n}${cap}: File does not exist. " && return 1;
+    elif [[ ! -f ${cap} ]]; then
+      read -sk1 "?${n}${cap}: File does not exist. " && unset cap && return 1;
+    else;
+      return 0;
+    fi;
   else;
-    cap=${caps[1]}; 
+    cap=${caps[1]} && return 0;
   fi;
 }
 
@@ -139,6 +145,7 @@ function select-network () {
   security=${d[7]};
   power=${d[19]};
   clients=(${(f)"$(pcre2grep -io1 "^([a-f0-9:]{17}), .+, ${bssid}," ${dump}.csv)"});
+  return 0;
 }
 
 function select-interface () {
@@ -158,7 +165,7 @@ function aircrack-pmk-attack () {
   select-network || return 1;
   if ! ((${+cap})); then select-cap || return 1; fi;
   local a c s sp p w wl q;
-  wl=(${wordlistDir}/**/*(.)) &>/dev/null;
+  wl=(${wordlistDir}/**/*(.D-)) &>/dev/null;
   ((${#wl} == 0)) && read -sk1 "?${n}${wordlistDir}: Nothing found. " && return 1;
   wl=(${(f)"$(fzf -i -m --reverse --prompt 'select 1-2 wordlists> ' <<< ${(F)wl})"});
   for w in ${wl}; do
@@ -219,14 +226,13 @@ function aircrack-dict-attack () {
     [[ -f "$(fzy -l $LINES <<< ${(F)sesh})" ]] && aircrack-ng -R ${sesh};
     return;
   fi;
-  select-network || return 1; 
-  select-cap || return 1;
+  select-network && select-cap || return 1;
   wl=(${wordlistDir}/**/*(.)) &>/dev/null;
   ((${#wl} == 0)) && read -sk1 "?${n}${wordlistDir}: Nothing found. " && return 1;
   wl=(${(f)"$(fzf -i -m --reverse --prompt 'select wordlists> ' <<< ${(F)wl})"});
 
   { sleep 30; while ps -C aircrack-ng &>/dev/null; do sleep 300; cp ${essid}.sesh ${essid}.sesh.bak &>/dev/null; done; } &;
-  aircrack-ng -N ${essid}.sesh -l ${essid}.key -w ${(j.,.)wl} -b ${bssid} ${cap};
+  aircrack-ng -N ${essid}.sesh -l ${essid}.key -w ${(j.,.)wl} -b ${bssid} ${cap} && return 0;
 }
 
 function state () {
@@ -386,7 +392,7 @@ function hashcat-attack () {
           (5) a=7;;
         esac;;
       (2) 
-        w=(${(f)"$(printf '%s\n' ${wordlistDir}/**/*(.D-))"});
+        w=(${wordlistDir}/**/*(.D-));
         while ((${#w} > 2)); do 
           clear; printf '%s\n' ${w} ''; 
           wl[$(read -e '?select wordlist entry # to remove> ')]=(); 

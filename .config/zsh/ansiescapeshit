@@ -62,7 +62,7 @@ Some ANSI control sequences (not an exhaustive list)
 ║ CSI n K     ║ EL    ║ Erase in Line                ║ Erases part of the line. If n is 0 (or missing), clear from cursor to the end of the line. If n is 1, clear from cursor to beginning of the line. If n is 2, clear entire line. Cursor position does not change.
 ║ CSI n S     ║ SU    ║ Scroll Up                    ║ Scroll whole page up by n (default 1) lines. New lines are added at the bottom. (not ANSI.SYS)
 ║ CSI n T     ║ SD    ║ Scroll Down                  ║ Scroll whole page down by n (default 1) lines. New lines are added at the top. (not ANSI.SYS)
-║ CSI n ; m f ║ HVP   ║ Horizontal Vertical Position ║ Same as CUP, but counts as a format effector function (like CR or LF) rather than an editor function (like CUD or CNL). This can lead to different handling in certain terminal modes.[5]:Annex A
+║ CSI n ; m f ║ HVP   ║ Horizontal Vertical Position ║ Same as CUP, but counts as a format effector function (like CR or LF) rather than an editor function (like CUD or CNL). This can lead to different handling in certain terminal modes.
 ║ CSI n m     ║ SGR   ║ Select Graphic Rendition     ║ Sets the appearance of the following characters, see SGR parameters below.
 ║ CSI 5i      ║ AUX   ║ Port On                      ║ Enable aux serial port usually for local serial printer
 ║ CSI 4i      ║ AUX   ║ Port Off                     ║ Disable aux serial port usually for local serial printer
@@ -74,13 +74,13 @@ Some popular private sequences
 ╔══════════════╦════════════════════════════════════════════════════════════════════════════════════════════════════════
 ║ Code         ║  Effect
 ╠══════════════╬════════════════════════════════════════════════════════════════════════════════════════════════════════
-║ CSI s        ║ SCP/SCOSC: Save Current Cursor Position. Saves the cursor position/state in SCO console mode.[31] In vertical split screen mode, instead used to set (as CSI n ; n s) or reset left and right margins.[32]
-║ CSI u        ║ RCP/SCORC: Restore Saved Cursor Position. Restores the cursor position/state in SCO console mode.[33]
+║ CSI s        ║ SCP/SCOSC: Save Current Cursor Position. Saves the cursor position/state in SCO console mode. In vertical split screen mode, instead used to set (as CSI n ; n s) or reset left and right margins.
+║ CSI u        ║ RCP/SCORC: Restore Saved Cursor Position. Restores the cursor position/state in SCO console mode.
 ║ CSI ? 25 h   ║ DECTCEM Shows the cursor, from the VT320.
 ║ CSI ? 25 l   ║ DECTCEM Hides the cursor.
 ║ CSI ? 1049 h ║ Enable alternative screen buffer
 ║ CSI ? 1049 l ║ Disable alternative screen buffer
-║ CSI ? 2004 h ║ Turn on bracketed paste mode. Text pasted into the terminal will be surrounded by ESC [200~ and ESC [201~, and characters in it should not be treated as commands (for example in Vim).[34] From Unix terminal emulators.
+║ CSI ? 2004 h ║ Turn on bracketed paste mode. Text pasted into the terminal will be surrounded by ESC [200~ and ESC [201~, and characters in it should not be treated as commands (for example in Vim). From Unix terminal emulators.
 ║ CSI ? 2004 l ║ Turn off bracketed paste mode. 
 ╚══════════════╩════════════════════════════════════════════════════════════════════════════════════════════════════════
 

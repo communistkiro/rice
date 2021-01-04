@@ -1,7 +1,8 @@
 #!/bin/zsh
-typeset query url t; integer pages c q r s l;
-typeset -a titles seeds leeches sizes urls;
-typeset -aU hashes;
+typeset query baseurl t;
+integer pages c q r s l x;
+typeset -a title seed leech size url;
+typeset -aU hash;
 t=$(mktemp);
 baseurl='https://1337x.to';
 ((# == 0)) && read -r 'query?> ' || query="$@";
@@ -11,25 +12,31 @@ curl -sfLH User-Agent: ${baseurl}/search/${query}/1/ > ${t};
 (($(pup -f ${t} -n 'a[href^=/torrent/]') == 0)) && read -sk1 '?No Result found.' && exit 0;
 
 pages=${${$(pup -f ${t} '.last a attr{href}')%/}##*/};
-((pages == 0)) && pages=1;
+if ((pages == 0)); then
+   pages=1;
+elif ((pages > 5)) && [[ $(read -seq '?More than 5 pages. Show only first n pages?') = y ]]; then
+  read -r "q?Input number of pages to show [1--${pages}]> ";
+  ((q < pages + 1)) && ((q > 1)) && pages=${q} || pages=6;
+fi;
 for q in {1..${pages}}; do
-  titles+=(${(f)"$(pup -f ${t} 'a[href^=/torrent/] text{}')"});
-  seeds+=(${(f)"$(pup -f ${t} 'td.seeds text{}')"});
-  leeches+=(${(f)"$(pup -f ${t} 'td.leeches text{}')"});
-  sizes+=(${(f)"$(pup -f ${t} 'td.size json{}' | jq -r '.[].text')"});
-  urls+=(${(f)"$(pup -f ${t} 'td a[href^=/torrent/] attr{href}')"});
+  title+=(${(f)"$(pup -f ${t} 'a[href^=/torrent/] text{}')"});
+  seed+=(${(f)"$(pup -f ${t} 'td.seeds text{}')"});
+  leech+=(${(f)"$(pup -f ${t} 'td.leeches text{}')"});
+  size+=(${(f)"$(pup -f ${t} 'td.size json{}' | jq -r '.[].text')"});
+  url+=(${(f)"$(pup -f ${t} 'td a[href^=/torrent/] attr{href}')"});
   curl -sfLH User-Agent: ${baseurl}/search/${query}/$((q + 1))/ > ${t};
 done;
 
-r=${(c)#${#titles}};
-s=${(c)#${${(nO)seeds}[1]}};
-l=${(c)#${${(nO)leeches}[1]}};
+r=${(c)#${#title}};
+s=${(c)#${${(nO)seed}[1]}};
+l=${(c)#${${(nO)leech}[1]}};
+x=$((COLUMNS - r - l - s - 9 - 1 - 6));
 
 while true; do
-  c=$(for q in {1..${#titles}}; do
-    printf "%.${r}d____%b%s____%b%9s____%b%.${s}d%b/%b%.${l}d\n" $q '\033[1m' ${titles[q]} '\033[34;1m' ${sizes[q]} '\033[32;1m' ${seeds[q]} '\033[0m' '\033[31;1m' ${leeches[q]};
-  done | column -t -s '____' | fzy -l $LINES | cut -f 1 -d ' ');
-  ((c > 0)) && ((c < ${#titles} +1)) && hashes+=($(curl -sfLH User-Agent: ${baseurl}${urls[c]} | pup '.infohash-box span text{}')) || break;
+  c=$(for q in {1..${#title}}; do
+    printf "%.${r}d  %b%-${x}.${x}s  %b%9.9s  %b%.${s}d%b/%b%.${l}d\n" $q '\033[1m' ${title[q]} '\033[34;1m' ${size[q]} '\033[32;1m' ${seed[q]} '\033[0m' '\033[31;1m' ${leech[q]};
+  done | fzy -l $LINES | cut -f 1 -d ' ');
+  ((c > 0)) && ((c < ${#title} +1)) && hash+=($(curl -sfLH User-Agent: ${baseurl}${url[c]} | pup '.infohash-box span text{}')) || break;
 done;
-if ((${#hashes} > 0)); then qbittorrent ${hashes} &>/dev/null & disown; fi;
+if ((${#hash} > 0)); then qbittorrent ${hash} &>/dev/null & disown; fi;
 rm -f ${t};
