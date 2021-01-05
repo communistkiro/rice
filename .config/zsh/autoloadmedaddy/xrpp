@@ -2,7 +2,7 @@
 # ADDS NEW LINKS (FROM CTEBCM POSTS)
 function xrpp () {
 setopt rematch_pcre;
-local o t1 t2 a;
+local o t1 t2 t3 t4 a;
 while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
@@ -27,8 +27,7 @@ BUGS
 HEREDOC
 return 1;;esac; done;
 
-t1=$(mktemp /tmp/xrpp1.XXXXXXX); t2=$(mktemp /tmp/xrpp2.XXXXXXX); t3=$(mktemp /tmp/xrpp3.XXXXXXX); t4=$(mktemp /tmp/xrpp4.XXXXXXX);
-
+t1=$(mktemp /tmp/xrpp.XXXXXXXX); t2=$(mktemp /tmp/xrpp.XXXXXXXX); t3=$(mktemp /tmp/xrpp.XXXXXXXX); t4=$(mktemp /tmp/xrpp.XXXXXXXX);
 for a in $(lynx -listonly -dump $@); do
   # EMBEDDED BANDCAMP PLAYERS
   [[ $a =~ 'EmbeddedPlayer' ]] && lynx -listonly -dump $a | pcre2grep -o 'http.*/album/[\w-]+' >> $t1;
@@ -41,27 +40,27 @@ for a in $(lynx -listonly -dump $@); do
   # SOUNDCLOUD
   # [[ $a =~ 'soundcloud' ]] && echo ${${(S)a/*http/http}%%\?*} >> ~/nm/soundcloud;
 done;
-  # REMOVE ALREADY TO-BE-DL'D AND ALREADY DL'D URLS
-  # BANDCAMP
-  sort -u $t1 | sed '/spotify/d' > $t2;
-  pcre2grep '/spotify/' $t1  >> $t4;
-  diff ~/nm/bcnew $t2 | sed -rn 's/^> +//p' > $t1;
-  diff ~/nm/bcold $t1 | sed -rn 's/^> +//p' > $t2;
-  diff ~/nm/soon $t2  | sed -rn 's/^> +//p' > $t1;
-  cat ~/nm/bcnew >> $t1;
-  sort -u $t1 > ~/nm/bcnew;
-  # DEEZER
-  sort -u $t3 > $t2;
-  diff ~/nm/dznew $t2 | sed -rn 's/^> +//p' > $t1;
-  diff ~/nm/dzold $t1 | sed -rn 's/^> +//p' > $t2;
-  cat ~/nm/dznew >> $t2;
-  sort -u $t2 > ~/nm/dznew;
-  # SPOTIFY
-  sort -u $t4 > $t2;
-  diff ~/nm/spnew $t2 | sed -rn 's/^> +//p' > $t1;
-  diff ~/nm/spold $t1 | sed -rn 's/^> +//p' > $t2;
-  cat ~/nm/spnew >> $t2;
-  sort -u $t2 > ~/nm/spnew;
-  
-  rm $t1 $t2 $t3 $t4
+# REMOVE ALREADY TO-BE-DL'D AND ALREADY DL'D URLS
+# BANDCAMP
+sort -u $t1 | sed '/spotify/d' > $t2;
+pcre2grep '/spotify/' $t1  >> $t4;
+diff ~/nm/bcnew $t2 | sed -rn 's/^> +//p' > $t1;
+diff ~/nm/bcold $t1 | sed -rn 's/^> +//p' > $t2;
+diff ~/nm/soon $t2  | sed -rn 's/^> +//p' > $t1;
+cat ~/nm/bcnew >> $t1;
+sort -u $t1 > ~/nm/bcnew;
+# DEEZER
+sort -u $t3 > $t2;
+diff ~/nm/dznew $t2 | sed -rn 's/^> +//p' > $t1;
+diff ~/nm/dzold $t1 | sed -rn 's/^> +//p' > $t2;
+cat ~/nm/dznew >> $t2;
+sort -u $t2 > ~/nm/dznew;
+# SPOTIFY
+sort -u $t4 > $t2;
+diff ~/nm/spnew $t2 | sed -rn 's/^> +//p' > $t1;
+diff ~/nm/spold $t1 | sed -rn 's/^> +//p' > $t2;
+cat ~/nm/spnew >> $t2;
+sort -u $t2 > ~/nm/spnew;
+
+rm $t1 $t2 $t3 $t4; return 0;
 }

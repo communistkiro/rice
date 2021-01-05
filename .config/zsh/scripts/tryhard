@@ -1,6 +1,5 @@
 #!/bin/zsh
-
-setopt no_case_match extended_glob;
+[[ ! -t 0 ]] && return 1;
 function box () {
   ((# == 0)) && return 0;
   local a d h B T H tl tr bl br th bh lv rv r w; integer s; s=1;
@@ -96,7 +95,7 @@ function switch-mode () {
   local a d;
   if [[ ! ${interface} =~ '^\S+mon\d*$' ]]; then;
     if interface=$(airmon-ng start ${interface} | perl -ne 's/^\s*\(\w+ monitor mode vif enabled for \[\w+\]'${interface}' on \[\w+\](\w+)\)$/$1/ && print'); then;
-      mode=monitor;
+      mode=monitor; return 0;
     else;
       d=(${(f)"$(iw dev | pcre2grep -Mi -o1 -o2 'interface (\S+)[\s\S]+?type monitor')"});
       for a in ${d}; do
@@ -106,7 +105,7 @@ function switch-mode () {
     fi;
   else;
     if interface=$(airmon-ng stop ${interface} | perl -ne 's/^\s*\(\w+ station mode vif enabled on \[\w+\](\w+)\)$/$1/ && print'); then;
-      mode=managed;
+      mode=managed; return 0;
     else;
       return 1;
     fi;
@@ -155,9 +154,9 @@ function select-interface () {
     read -sk1 '?No wireless devices found. ' && return 2; 
   elif (($#d > 1)); then;
     local s=$(printf '%s\n' $d | fzy -l $LINES -p 'select interface> '); 
-    interface=${s% *}; mode=${s#* };
+    interface=${s% *}; mode=${s#* }; return 0;
   else;
-    interface=${d% *}; mode=${d#* }; 
+    interface=${d% *}; mode=${d#* };  return 0;
   fi;
 }
 
@@ -180,7 +179,7 @@ function aircrack-pmk-attack () {
       for s in ${sp}; do
         while true; do
           if (($(jobs | wc -l) < 8)); then;
-            ( airolib-ng ${s}-DB --import passwd ${s}; rm ${s}; airolib-ng ${s}-DB --import essid ${essid}; airolib-ng ${s}-DB --batch; exit; ) &;
+            { airolib-ng ${s}-DB --import passwd ${s}; rm ${s}; airolib-ng ${s}-DB --import essid ${essid}; airolib-ng ${s}-DB --batch; } &;
             break;
           else;
             sleep 60;
@@ -222,29 +221,36 @@ function capture-packets () {
 function aircrack-dict-attack () {
   local wl sesh;
   sesh=(${t}/*.sesh(.bak)#(.om)) &>/dev/null;
-  if ((${#sesh} > 0)) && [[ $(read -seq "?${n}Resume dictionary attack? ") = y ]]; then;
-    [[ -f "$(fzy -l $LINES <<< ${(F)sesh})" ]] && aircrack-ng -R ${sesh};
-    return;
+  if ((${#sesh} > 0)) && [[ $(read -seq "?${n}Resume dictionary attack? ") = y ]]; then
+    sesh=$(fzy -l $LINES <<< ${(F)sesh});
+    [[ -f ${sesh} ]] || return 1;
+    [[ ${sesh} =~ '\.bak$' ]] && [[ ! -f ${sesh%.bak} ]] && cp ${sesh} ${sesh%.bak} && sesh=${sesh%.bak};
+    trap "cp ${sesh} ${sesh}.bak &>/dev/null; return 2" INT;
+    { sleep 10; while ps -C aircrack-ng &>/dev/null; do cp ${sesh} ${sesh}.bak &>/dev/null; sleep 300; done; } &;
+    aircrack-ng -R ${sesh};
+    return 0;
   fi;
+
   select-network && select-cap || return 1;
   wl=(${wordlistDir}/**/*(.)) &>/dev/null;
   ((${#wl} == 0)) && read -sk1 "?${n}${wordlistDir}: Nothing found. " && return 1;
   wl=(${(f)"$(fzf -i -m --reverse --prompt 'select wordlists> ' <<< ${(F)wl})"});
 
-  { sleep 30; while ps -C aircrack-ng &>/dev/null; do sleep 300; cp ${essid}.sesh ${essid}.sesh.bak &>/dev/null; done; } &;
+  trap "cp ${essid}.sesh ${essid}.sesh.bak &>/dev/null; return 2" INT;
+  { sleep 10; while ps -C aircrack-ng &>/dev/null; do sleep 300; cp ${essid}.sesh ${essid}.sesh.bak &>/dev/null; done; } &;
   aircrack-ng -N ${essid}.sesh -l ${essid}.key -w ${(j.,.)wl} -b ${bssid} ${cap} && return 0;
 }
 
 function state () {
   box -s 1 -H 5b -B 4 -T 3b -h ${1:-TRYHARD} \
-  "${(r.17.. .)$(<<< interface:)}${(r.25.. .)interface:--}" \
-  "${(r.17.. .)$(<<< mode:)}${(r.25.. .)mode:--}" \
-  "${(r.17.. .)$(<<< ESSID:)}${(r.25.. .)essid:--}" \
-  "${(r.17.. .)$(<<< BSSID:)}${(r.25.. .)bssid:--}" \
-  "${(r.17.. .)$(<<< security:)}${(r.25.. .)security:--}" \
-  "${(@l.25..client:          .r.9.. .)clients:--               }" \
-  "${(r.17.. .)$(<<< channel:)}${(r.25.. .)channel:--}" \
-  "${(r.17.. .)$(<<< power:)}${(r.25.. .)power:--}";
+    "${(r.17.. .)$(<<< interface:)}${(r.25.. .)interface:--}" \
+    "${(r.17.. .)$(<<< mode:)}${(r.25.. .)mode:--}" \
+    "${(r.17.. .)$(<<< ESSID:)}${(r.25.. .)essid:--}" \
+    "${(r.17.. .)$(<<< BSSID:)}${(r.25.. .)bssid:--}" \
+    "${(r.17.. .)$(<<< security:)}${(r.25.. .)security:--}" \
+    "${(@l.25..client:          .r.9.. .)clients:--               }" \
+    "${(r.17.. .)$(<<< channel:)}${(r.25.. .)channel:--}" \
+    "${(r.17.. .)$(<<< power:)}${(r.25.. .)power:--}";
 }
 
 function mdk4-attack () {
@@ -470,20 +476,20 @@ function wep-wash-attack () {
 }
 
 function quit () {
-  cd ~; trap - QUIT; [[ ${mode} != managed ]] && switch-mode;
+  cd ~; [[ ${mode} != managed ]] && switch-mode;
   (( $(jobs | wc -l) != 0 )) && kill -9 $(jobs -p | awk '{printf $3}');
-  # rmdir /mnt/* &>/dev/null;
-  unset essid bssid mode channel power interface security cap caps;
-  # setopt nomatch;
+  unset essid bssid mode channel power interface security cap;
 }
 
 function () {
-  setopt null_glob;
+typeset n="
+";
+  emulate -LR zsh;
+  setopt no_case_match null_glob extended_glob;
+  typeset wordlistDir t;
   wordlistDir=~/dcs/wordlists;
   # t=$(mktemp -d /mnt/tryhard.XXXX); cd $t;
   t=/mnt/tryhard; mkdir -p ${t}; cd ${t};
-  n="
-  ";
   airmon-ng check kill;
   select-interface || return 1;
   trap 'quit; clear;' QUIT;
@@ -513,8 +519,8 @@ function () {
       (7) hashcat-attack;;
       (8) wep-wash-attack;;
       (9) chopchop-attack;;
-      (m) switch-mode;;
-      (n) select-network;;
+      (m) switch-mode || return 1;;
+      (n) select-network || return 1;;
       (i) select-interface || return 1;;
       (q) break;;
     esac;

@@ -1,7 +1,9 @@
 #!/bin/zsh
 # a terminal solo cards against humanity experience using https://github.com/crhallberg/json-against-humanity
 function cah () {
-typeset file white black packname packnum nwhite nblack choice card query # hand;
+typeset file choice
+typeset -i white black card query;
+typeset -a packname packnum nwhite nblack;
 file=~/games/json-against-humanity/cah-all-compact.json;
 
 white=$(jq '.white[]' $file | wc -l);

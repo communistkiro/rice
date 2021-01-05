@@ -5,8 +5,7 @@ preexec () { printf '%b' "\e]0;$2\a"; }
 precmd () { printf '%b' "\e]0;${PWD}\a"; }
 
 ####    OPTS
-setopt extended_glob ksh_glob no_sh_glob re_match_pcre;
-setopt null_glob                  # If a pattern for filename generation has no matches, delete the pattern from the argument list instead of reporting an error. Overrides NOMATCH.
+setopt extended_glob ksh_glob no_sh_glob re_match_pcre null_glob pipefail;
 
 # CASE_SENSITIVE="true";
 HYPHEN_INSENSITIVE="true";
@@ -19,7 +18,7 @@ autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-u
 HISTFILE=/root/.zsh_history;
 SAVEHIST=5000;
 HISTSIZE=5000; # cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|l*|cp *|mv *|zed *|mle *|fd *|rg *|touch *|x*|oc*|bandcamp*|rd*|mpv*|./*|man *|tmr *|realpath *|feh *)';
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|oc*|bandcampdisco|mpv*|./*|man *|tmr *|realpath *|run-help *)';
  zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -120,7 +119,7 @@ alias ncm='ncmpcpp 2>/dev/null';
 alias oc='octave-cli --quiet';
 alias oce='octave-cli --quiet --no-history --eval';
 alias pk='pkill -KILL -i -x';
-alias p='printf "%s\n"';
+alias p="printf '%s\n'";
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
 alias rdl='rdrview -B "elinks -dump -no-references -no-numbering" $1';

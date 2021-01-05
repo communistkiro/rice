@@ -1,5 +1,6 @@
 #!/bin/zsh
-setopt extended_glob; unset f;
+[[ ! -t 0 ]] && return 1;
+emulate -LR zsh;
 typeset a b c d e f g h l m n p q u w x y z;
 m=$(mktemp -d /tmp/animu.XXXXXXXX); a=$(mktemp $m/a.XXXXXXXX); b=$(mktemp $m/b.XXXXXXXX); cd $m;
 
@@ -29,7 +30,7 @@ x=(${(@fQ)"$(jq '.content[].name' $a)"}); # tr -s '[[:space:]]' | tr '_' ' ' |
 c=(${(@f)"$(printf '%6s | %s\n' ${z:^x} | sort -unk1 | fzf --bind "alt-v:select-all" --bind "alt-c:clear-selection" -m --reverse --no-sort --exact --query="$q")"}) || return;
 
 c=(${c##*| });
-n=$(printf '%s\n' $c | sed 's/_/ /g;s/\(.*\)- .*/\1/;s/[0-9]//g;s/\[[^]]*\]//g;s/[0-9]//g;s/([^)]*)//g;s/\.[^.]*$//;s/^ *//g;s/ *$//' | uniq -ci | sort -nr | head -n 1 | awk '{ print substr($0, index($0,$2)) }' | sed 's/ /%20/g');
+n=$(sed 's/_/ /g;s/\(.*\)- .*/\1/;s/[0-9]//g;s/\[[^]]*\]//g;s/[0-9]//g;s/([^)]*)//g;s/\.[^.]*$//;s/^ *//g;s/ *$//' <<< ${(F)c} | uniq -ci | sort -nr | head -n 1 | awk '{print substr($0, index($0,$2))}' | sed 's/ /%20/g');
 f=${${d%/}:-/root/mov}/$(wget -q -O - "https://kitsu.io/api/edge/anime?filter[text]=${n}&page[limit]=1&page[offset]=0" | jq -r '.data[].attributes.canonicalTitle' | tr -cd '[[:graph:]]');
 
 mkdir -p $f; 
@@ -57,4 +58,4 @@ for l in $c; do
     done;
   done;
 done;
-cd ~; rm -rf $m;
+cd ~; rm -rf $m; return 0;

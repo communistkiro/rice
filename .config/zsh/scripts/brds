@@ -1,4 +1,5 @@
 #!/bin/zsh
+[[ ! -t 0 ]] && return 1;
 typeset b d n t; 
 d=/tmp/brds; mkdir -p ${d}; cd ${d};
 alias fetch="curl -sfLH User-Agent:";

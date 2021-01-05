@@ -1,5 +1,6 @@
 #!/bin/zsh
 function tmr() {
+emulate -LR zsh;
 # local alarm=~/.local/CartoonFoghorn.m4a;
 typeset o tmp;
 typeset -i w b d h m s D H M S t;
@@ -133,13 +134,12 @@ else;
 fi;
 
 trap 'rm -f "$tmp"; trap - QUIT; return 0;' QUIT;
-# trap 'read -sk1 "?Press anything to unpause";' INT;
-trap '((t *= -1));' INT;
+trap 'clear; printf "PAUSED\n"; read --rsk1 "?Press anything to unpause";' INT;
 
-for ((0; t >= 0; t-= 1)); do
+for ((0; t >= 0; t-= 1)); do;
   printf '%02d:%02d:%02d\n' $((t / 3600)) $((t % 3600 / 60)) $((t % 60)) | tee $tmp;
   sleep 1;
-done
+done;
 
 # ((? == 0)) && if mpc status &>/dev/null | pcre2grep -q playing; then
 #   mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle;

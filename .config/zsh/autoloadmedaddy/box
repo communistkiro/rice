@@ -8,36 +8,36 @@ while getopts 's:h:B:T:H:' a; do case $a in
   (h) # header
     h=$OPTARG;;
   (B) # box color
-    B="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-    [[ $OPTARG =~ i ]] && B="${B};7";
-    [[ $OPTARG =~ b ]] && B="${B};1";
+    [[ $OPTARG =~ '[0-7]' ]] && B='\033[3'${MATCH} || B='\033[37';
+    [[ $OPTARG =~ 'i|I' ]]   && B="${B};7";
+    [[ $OPTARG =~ 'b|B' ]]   && B="${B};1";
     B="${B}m";;
   (T) # text color
-    T="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-    [[ $OPTARG =~ i ]] && T="${T};7";
-    [[ $OPTARG =~ b ]] && T="${T};1";
+    [[ $OPTARG =~ '[0-7]' ]] && T='\033[3'${MATCH} || T='\033[37';
+    [[ $OPTARG =~ 'i|I' ]]   && T="${T};7";
+    [[ $OPTARG =~ 'b|B' ]]   && T="${T};1";
     T="${T}m";;
   (H) # header color
-    H="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-    [[ $OPTARG =~ i ]] && H="${H};7";
-    [[ $OPTARG =~ b ]] && H="${H};1";
+    [[ $OPTARG =~ '[0-7]' ]] && H='\033[3'${MATCH} || H='\033[37';
+    [[ $OPTARG =~ 'i|I' ]]   && H="${H};7";
+    [[ $OPTARG =~ 'b|B' ]]   && H="${H};1";
     H="${H}m";;
 (*) less -F << HEREDOC # help wanted.
 NAME
-    box - enclose strings in box
+  box - enclose strings in box
 
 SYNOPSIS
-    box [-s 1--4] [-BTH [0-7]ib] [-h header] [string(s)]
+  box [-s 1--4] [-B [0-7][i|I][b|B]] [-T [0-7][i|I][b|B]] [-H [0-7][i|I][b|B]] [-h header <string>] [string(s)]
 
 DESCRIPTION
-    box is a zsh script that encloses one or more strings, extending to 4 above the lengthiest 
-    string, header included. The box's style is given by '-s', and may be thick, thin, double, 
-    or dotted; may have a title; and may color the box's line, text, and header in different 
-    colors according to ANSI C escape codes. The color is a 1--3-character sequence of a number 
-    0--7,'b' for bold color, and 'i' to switch fore- and background colors. The number 
-    corresponding to the colors black, red, green, yellow, blue, magenta, cyan, and white. 
-    Defaults to thick lines and white for box, text, and header. Don't use = for options 
-    accepting arguments.
+  box is a zsh script that encloses one or more strings, extending to 4 above the lengthiest 
+  string, header included. The box's style is given by '-s', and may be thick, thin, double, 
+  or dotted; may have a title; and may color the box's line, text, and header in different 
+  colors according to ANSI C escape codes. The color is a 1--3-character sequence of a number 
+  0--7, 'b|B' for bold color, and 'i|I' to switch fore- and background colors. The number 
+  corresponding to the colors black, red, green, yellow, blue, magenta, cyan, and white. 
+  Defaults to thick lines and white for box, text, and header. Don't use = for options 
+  accepting arguments.
 
 EXAMPLES
     box -h header 'This is a sentence on the first row' 'This is a second row'

@@ -2,7 +2,7 @@
 function rymgenre() {
 local a s d t;
 
-if [ $# -gt 0 ]; then 
+if ((# > 0)); then 
   a="$@";
 else
   a="$(mpc status -f '%artist% %album%' | head -1)";

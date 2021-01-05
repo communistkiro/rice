@@ -1,5 +1,7 @@
 #!/bin/zsh
-
+[[ ! -t 0 ]] && return 1;
+emulate -LR zsh;
+setopt pipefail;
 typeset query baseurl t;
 integer pages q c r R x;
 typeset -a title url size format bitrate posted;
@@ -16,12 +18,12 @@ curl -sfLH User-Agent: ${baseurl}/page/1/'?s='${query} > ${t};
 pages=${${$(pup -f ${t} '.wp-pagenavi a:last-child attr{href}')%/*}#/page/}; ((pages==0)) && exit 0
 
 for q in {1..${pages}}; do
-  title+=(${(f)"$(pup -f ${t} 'h2 a[href^=/audio-books/] text{}')"});
-  url+=(${(f)"$(pup -f ${t} 'h2 a[href^=/audio-books/] attr{href}')"});
-  size+=(${(f)"$(pup -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'File Size: (\d+(?:\.\d+)? [KMGT]i?B)sP?')"});
-  format+=(${(f)"$(pup -f ${t} 'p[style=text-align:center;] span:nth-child(2) text{}')"});
-  bitrate+=(${(f)"$(pup -f ${t} 'p[style=text-align:center;] span:nth-child(3) text{}')"});
-  posted+=(${(f)"$(pup -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'Posted: (.+?)Format')"});
+  title+=(${(f)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] text{}')"});
+  url+=(${(f)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] attr{href}')"});
+  size+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'File Size: (\d+(?:\.\d+)? [KMGT]i?B)sP?')"});
+  format+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(2) text{}')"});
+  bitrate+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(3) text{}')"});
+  posted+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'Posted: (.+?)Format')"});
   curl -sfLH User-Agent: ${baseurl}/page/$((q+1))/'?'s=${query} > ${t};
 done;
 R=${#title};
@@ -34,4 +36,4 @@ while true; do
   ((c > 0)) && ((c < R +1)) && hash+=($(curl -sfLH User-Agent: ${baseurl}${url[c]} | pcre2grep -Mo1 'Info Hash:</td>\n<td>(.+?)</td>')) || break;
 done;
 if ((${#hash} > 0)); then qbittorrent ${hash} &>/dev/null & disown; fi;
-rm ${t};
+rm ${t}; return 0;

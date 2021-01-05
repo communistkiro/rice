@@ -1,4 +1,5 @@
 #!/bin/zsh
+[[ ! -t 0 ]] && return 1;
 typeset query baseurl t;
 integer pages c q r s l x;
 typeset -a title seed leech size url;
@@ -19,11 +20,11 @@ elif ((pages > 5)) && [[ $(read -seq '?More than 5 pages. Show only first n page
   ((q < pages + 1)) && ((q > 1)) && pages=${q} || pages=6;
 fi;
 for q in {1..${pages}}; do
-  title+=(${(f)"$(pup -f ${t} 'a[href^=/torrent/] text{}')"});
-  seed+=(${(f)"$(pup -f ${t} 'td.seeds text{}')"});
-  leech+=(${(f)"$(pup -f ${t} 'td.leeches text{}')"});
-  size+=(${(f)"$(pup -f ${t} 'td.size json{}' | jq -r '.[].text')"});
-  url+=(${(f)"$(pup -f ${t} 'td a[href^=/torrent/] attr{href}')"});
+  title+=(${(f)"$(pup -p -f ${t} 'a[href^=/torrent/] text{}')"});
+  seed+=(${(f)"$(pup -p -f ${t} 'td.seeds text{}')"});
+  leech+=(${(f)"$(pup -p -f ${t} 'td.leeches text{}')"});
+  size+=(${(f)"$(pup -p -f ${t} 'td.size json{}' | jq -r '.[].text')"});
+  url+=(${(f)"$(pup -p -f ${t} 'td a[href^=/torrent/] attr{href}')"});
   curl -sfLH User-Agent: ${baseurl}/search/${query}/$((q + 1))/ > ${t};
 done;
 
@@ -39,4 +40,4 @@ while true; do
   ((c > 0)) && ((c < ${#title} +1)) && hash+=($(curl -sfLH User-Agent: ${baseurl}${url[c]} | pup '.infohash-box span text{}')) || break;
 done;
 if ((${#hash} > 0)); then qbittorrent ${hash} &>/dev/null & disown; fi;
-rm -f ${t};
+rm -f ${t}; return 0;

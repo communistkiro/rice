@@ -3,15 +3,15 @@ function menu () {
   typeset m t a;
   while getopts 'm:t:' a; do case $a in
   (m) 
-    m="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-    [[ $OPTARG =~ i ]] && m="${m};7";
-    [[ $OPTARG =~ b ]] && m="${m};1";
+    [[ $OPTARG =~ '[0-7]' ]] && m='\033[0;3'${MATCH} || m='\033[0;37';
+    [[ $OPTARG =~ 'i|I' ]]   && m="${m};7";
+    [[ $OPTARG =~ 'b|B' ]]   && m="${m};1";
     m="${m}m";;
   (t)
-    t="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-    [[ $OPTARG =~ i ]] && t="${t};7";
-    [[ $OPTARG =~ b ]] && t="${t};1";
+    [[ $OPTARG =~ '[0-7]' ]] && t='\033[0;3'${MATCH} || t='\033[0;37';
+    [[ $OPTARG =~ 'i|I' ]]   && t="${t};7";
+    [[ $OPTARG =~ 'b|B' ]]   && t="${t};1";
     t="${t}m";;
   esac; done;
-  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033];0m}" "${a%% *}" "${t:-\033[;0m}" "${a#* }" '\033[;0m'; done;
+  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033]0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
 }

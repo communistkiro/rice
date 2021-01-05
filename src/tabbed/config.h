@@ -1,7 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-// static const char font[]        = "Monoid Nerd Font Bold:pixelsize=16:antialias=true:autohint=true";
 static const char font[]        = "Fira Code Medium:pixelsize=16:antialias=true:autohint=true";
 
 static const char* normbgcolor  = "#301E28";
