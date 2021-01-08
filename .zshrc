@@ -1,6 +1,7 @@
 export PATH=$PATH:/root/.config/zsh/scripts:/root/bin;
-# export PS1="%? %d |> "
-export PS1="%B%F{red}%?%f %F{cyan}%d%f %F{green}|>%f%b ";
+# export PS1="%B%F{red}%?%f %F{cyan}%d%f %F{green}|>%f%b ";
+export PS1="%B%F{red}%?%f %F{blue}%d%f%b
+";
 preexec () { printf '%b' "\e]0;$2\a"; }
 precmd () { printf '%b' "\e]0;${PWD}\a"; }
 
@@ -18,8 +19,8 @@ autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-u
 HISTFILE=/root/.zsh_history;
 SAVEHIST=5000;
 HISTSIZE=5000; # cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|oc*|bandcampdisco|mpv*|./*|man *|tmr *|realpath *|run-help *)';
- zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|oc*|bc*|mpv*|./*|man *|tmr *|realpath *|run-help *|which *)';
+zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1; } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
 setopt hist_reduce_blanks;
@@ -33,6 +34,7 @@ setopt share_history;            # share command history data
 setopt No_Beep;                  # no beep
 setopt auto_cd;                  # don't try to execute directories, change into them
 setopt interactivecomments;      # all after # ignored
+
 
 ####    PLUGINS
 autoload -U compaudit compinit;
@@ -63,6 +65,10 @@ setopt pushd_ignore_dups;
 setopt pushdminus;
 function d () {if [[ -n $1 ]]; then dirs "$@"; else dirs -v | head -n 10; fi}
 compdef _dirs d;
+
+
+###     KEYBINDS
+
 
 
 ####    ALII
@@ -112,19 +118,20 @@ alias man='man -a';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
 alias mpva='mpv --force-window=yes --idle';
-alias mpvn='mpv --no-video';
 alias mpvp='mpv --vo=tct --profile=sw-fast --ytdl-format="best[height<=480]"';
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=36" &>/dev/null & disown';
 alias ncm='ncmpcpp 2>/dev/null';
 alias oc='octave-cli --quiet';
 alias oce='octave-cli --quiet --no-history --eval';
 alias pk='pkill -KILL -i -x';
+alias pkk='pkill -i -x';
 alias p="printf '%s\n'";
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
 alias rdl='rdrview -B "elinks -dump -no-references -no-numbering" $1';
+alias rm='rm -v';
 alias rsync='rsync -vah --progress';
-alias sex='sex | cow';
+# alias sex='sex | cow';
 alias sls='sls -u v -p'
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
 alias so='source /root/.zshrc';
@@ -133,12 +140,11 @@ alias timer="source /root/.config/omz/plugins/timer/timer.plugin.zsh; TIMER_FORM
 alias unlove='mpc sendmessage mpdas unlove';
 alias vol='amixer set Master';
 alias which='which -a';
+alias ytd='youtube-dl -f best --ignore-errors';
 alias xb='xbacklight -set';
-alias xbq='xbps-query --regex -Rs';
+alias xbq='xbps-query -Rs';
 alias xbr='xbps-remove -R';
 alias xbs='xbps-install -Su';
-# alias ytd='youtube-dlc -f best --ignore-errors';
-alias ytd='youtube-dl -f best --ignore-errors';
 alias xc='xclip -r -selection clipboard';
 alias x='aunpack';
 alias zcp='zmv -C';
@@ -148,4 +154,4 @@ alias zln='zln -L';
 
 ####    AUTOLOAD
 fpath=($fpath /root/.config/zsh/zsh-completions /root/.config/zsh/autoloadmedaddy)
-autoload -U $(ls /root/.config/zsh/autoloadmedaddy) zed zmv # zcalc zmathfunc
+autoload -U $(ls /root/.config/zsh/autoloadmedaddy) zed zmv

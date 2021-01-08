@@ -55,7 +55,7 @@ th=(━ ─ ═ ⠉); th=${th[$s]}; # top horizontal
 bh=(━ ─ ═ ⣀); bh=${bh[$s]}; # bottom horizontal
 lv=(┃ │ ║ ⡇); lv=${lv[$s]}; # left vertical
 rv=(┃ │ ║ ⢸); rv=${rv[$s]}; # right vertical
-r='\033[;0m';
+r='\033[0m';
 # box inside width
 w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
 ((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));

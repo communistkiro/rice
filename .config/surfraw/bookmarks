@@ -8,3 +8,4 @@ rym             https://rateyourmusic.com/search?searchtype=a&searchterm=%s
 rymr            https://rateyourmusic.com/search?searchtype=l&searchterm=%s
 sh              https://sci-hub.tw/%s
 s               https://www.startpage.com/sp/search?q=%s
+d               https://lite.duckduckgo.com/lite/?q=%s

@@ -1,23 +1,24 @@
 #!/bin/zsh
 # wallpaper setter script for X
+function () { 
+emulate -LR zsh;
+setopt null_glob;
+
 a=(
-  '--bg-center'
-  '--bg-fill'
-  '--bg-max'
-  '--bg-scale'
-  '--bg-tile'
+  --bg-center
+  --bg-fill
+  --bg-max
+  --bg-scale
+  --bg-tile
 );
 c=~/im/wp; # starting direcotry
 cd $c;
 s=$(pcre2grep -o1 "feh --no-fehbg (.+?) '.+'" ~/.fehbg);
-setopt nonomatch
 
 while true; do
   if [[ -d $c ]]; then;
     d=(*(/D-));
-    [[ $d[1] = '*(/D-)' ]] && d[1]=(); 
-    f=(*(.D-)); 
-    [[ $f[1] = '*(.D-)' ]] && f[1]=(); 
+    f=(*(.D-));
   fi;
   c=$(printf '%s\n' .. $d $f rand opts | dmenu -i -p "$(pwd) ") || break; 
 
@@ -25,11 +26,10 @@ while true; do
     cd $c && c=.;
   elif [[ -f $c ]]; then;
     feh $s $c || break;
-  elif [[ $c = 'opts' ]]; then;
+  elif [[ $c == opts ]]; then;
     s=$(dmenu -i -p 'options ' <<< ${(F)a}) && feh $s "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";
-  elif [[ $c = 'rand' ]]; then;
+  elif [[ $c == rand ]]; then;
     feh $s ${f[RANDOM % $#f + 1]} || break;
   fi;
 done;
-unset c a f s d;
-setopt nomatch;
+}

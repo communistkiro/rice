@@ -2,7 +2,10 @@
 # temporary mail
 # deps: pcre2grep, zsh, fzy, rdrview
 typeset dir api c;
-api='https://www.1secmail.com/api/v1/'; dir=/tmp/tmpmail; mkdir -p $dir; touch $dir/emailaddresses;
+api=https://www.1secmail.com/api/v1/;
+dir=/tmp/tmpmail; 
+[[ -d ${dir} ]] || mkdir $dir;
+touch ${dir}/emailaddresses;
 
 function menu () {
   typeset m t a;
@@ -21,7 +24,6 @@ function menu () {
   for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033]0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
 }
 
-#!/bin/zsh
 function box () {
 ((# == 0)) && return 0;
 local a d h B T H tl tr bl br th bh lv rv r w; integer s; s=1;

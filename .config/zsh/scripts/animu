@@ -1,61 +1,94 @@
 #!/bin/zsh
+# dependencies: zsh, xdccget, pcregrep/pcre2grep
 [[ ! -t 0 ]] && return 1;
 emulate -LR zsh;
-typeset a b c d e f g h l m n p q u w x y z;
-m=$(mktemp -d /tmp/animu.XXXXXXXX); a=$(mktemp $m/a.XXXXXXXX); b=$(mktemp $m/b.XXXXXXXX); cd $m;
+setopt ksh_glob pipefail;
+typeset tmp bots dest conf querydir qual query bot sth file n; n='
+'; typeset -a size name choice package botid;
+typeset -i ep p i pp PP ii II;
+tmp=$(mktemp  /tmp/a.XXXXXXXX);
+bots=$(mktemp /tmp/b.XXXXXXXX); 
+conf='/root/.config/animu.conf';
+trap 'break 1;' INT;
+trap 'rm -f ${tmp} ${bots}; exit 1;' QUIT;
+cd /tmp;
 
-g='/root/.config/animu.conf';
-if [[ -f $g ]]; then
-  d=$(pcre2grep -o1 '^d (.+)$' $g);
-  q=$(pcre2grep -o1 '^q (.+)$' $g);
+if [[ -f ${conf} ]]; then;
+  dest=$(pcre2grep -i -o1 '^d\s+(\S.+)$' ${conf}) || dest=;
+  qual=$(pcre2grep -i -o1 '^q\s+(\S.+)$' ${conf}) || q=;
 fi;
 
 while getopts 'd:q:e:' g; do case $g in
-  (d) d=${OPTARG};;
-  (q) q=${OPTARG};;
-  (q) e=${OPTARG};;
+  (d) dest=${OPTARG};;
+  (q) qual=${OPTARG};;
+  (e) ep=${OPTARG};;
 esac; done;
 
-[[ -d $d ]] || mkdir $d;
-t=$@[OPTIND,-1];
-[[ -z $t ]] && read 't?Title: ';
-# read 'e?Episode (leave empty for batch): ';
+if [[ -n ${dest} ]] && [[ -d "$(dirname "$(realpath ${dest})")" ]] && [[ ! -d {dest} ]]; then;
+  [[ -d ${dest} ]] || mkdir ${dest};
+else;
+  while [[ ! -d "$(dirname "$(realpath ${dest})")" ]]; do;
+    read -r "dest?${n}Input a download directory (max 1 child can be created): ";
+  done;
+fi;
+dest=${dest//+(\/)//};
 
-curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $b "https://api.nibl.co.uk/nibl/bots";
-curl -s -f -L --max-redirs 0 -o $a "https://api.nibl.co.uk/nibl/search?query=${t// /%20}&episodeNumber=${e}";
-if [[ -z $(<$a) ]] || [[ -z $(<$b) ]]; then read -sk1 '?Files empty.'; return; fi;
+query="$@[OPTIND,-1]";
+[[ -z ${query} ]] || [[ ${query} =~ '^\s+$' ]] && read -r "query?${n}Query: ";
+# read -r "ep?${n}Episode (leave empty for batch): ";
 
-z=(${(@fQ)"$(jq '.content[].size' $a)"});
-x=(${(@fQ)"$(jq '.content[].name' $a)"}); # tr -s '[[:space:]]' | tr '_' ' ' | 
-c=(${(@f)"$(printf '%6s | %s\n' ${z:^x} | sort -unk1 | fzf --bind "alt-v:select-all" --bind "alt-c:clear-selection" -m --reverse --no-sort --exact --query="$q")"}) || return;
+curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${bots} "https://api.nibl.co.uk/nibl/bots";
+curl -s -f -L --max-redirs 0 -o ${tmp} "https://api.nibl.co.uk/nibl/search?query=${query// /%20}&episodeNumber=${ep}";
+if [[ -z $(<${tmp}) ]] || [[ -z $(<${bots}) ]]; then read -sk1 '?Files empty.'; return; fi;
 
-c=(${c##*| });
-n=$(sed 's/_/ /g;s/\(.*\)- .*/\1/;s/[0-9]//g;s/\[[^]]*\]//g;s/[0-9]//g;s/([^)]*)//g;s/\.[^.]*$//;s/^ *//g;s/ *$//' <<< ${(F)c} | uniq -ci | sort -nr | head -n 1 | awk '{print substr($0, index($0,$2))}' | sed 's/ /%20/g');
-f=${${d%/}:-/root/mov}/$(wget -q -O - "https://kitsu.io/api/edge/anime?filter[text]=${n}&page[limit]=1&page[offset]=0" | jq -r '.data[].attributes.canonicalTitle' | tr -cd '[[:graph:]]');
+size=(${(fQ)"$(jq '.content[].size' ${tmp})"});
+name=(${(fQ)"$(jq '.content[].name' ${tmp})"}); # tr -s '[[:space:]]' | tr '_' ' ' | 
+choice=(${(f)"$(printf '%6s | %s\n' ${size:^name} | sort -uhk1 | fzf --bind "alt-v:select-all" --bind "alt-c:clear-selection" -m --reverse --no-sort --exact --query="${qual}")"}) || return;
 
-mkdir -p $f; 
-for l in $c; do
-  y=${${(qM)l//(#b)(+$^)/\\${match[1]}}//./\\.};
+choice=(${choice##*| });
+sth=$(sed 's/_/ /g; s/\(.*\)- .*/\1/; s/[0-9]//g; s/\[[^]]*\]//g; s/[0-9]//g; s/([^)]*)//g; s/\.[^.]*$//; s/^ *//g; s/ *$//' <<< ${(F)choice} | uniq -ci | sort -nr | head -n 1 | awk '{print substr($0, index($0,$2))}' | sed 's/ /%20/g');
+querydir=${dest}/$(wget -q -O - "https://kitsu.io/api/edge/anime?filter[text]=${sth}&page[limit]=1&page[offset]=0" | jq -r '.data[].attributes.canonicalTitle' | tr -cd '[[:graph:]]');
+
+[[ -d ${querydir} ]] || mkdir ${querydir};
+
+for file in ${choice}; do
+  sth=${${(qM)file//(#b)(+$^)/\\${match[1]}}//./\\.};
   
-  w=($(jq '.' $a | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(Q)y}\",")) || \
-  w=($(jq '.' $a | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(g..)y}\",")); 
+  botid=($(jq '.' ${tmp} | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(Q)sth}\","));
+  ((${#botid} == 0)) && 
+  botid=($(jq '.' ${tmp} | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(g..)sth}\",")); 
+  ((${#botid} == 0)) && continue;
   
-  p=($(jq '.' $a | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${(Q)y}\",")) || \
-  p=($(jq '.' $a | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${(g..)y}\","));
+  package=($(jq '.' ${tmp} | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${(Q)sth}\","));
+  ((${#package} == 0)) && 
+  package=($(jq '.' ${tmp} | pcre2grep -o1 -M -B 1 -e "\"number\": (\d+),\n\s+\"name\": \"${(g..)sth}\","));
+  ((${#package} == 0)) && continue;
 
-  for h in {1..$#p}; do
-    for z in {1..$#w}; do
-      [[ -f "$f/$l" ]] && [[ ! -z "$f/$l" ]] && break 2;
-      u=$(jq '.' $b | pcre2grep -o1 -M -A 1 -e "\"id\": ${w[z]},\n\s+\"name\": \"(.+)\",");
-      printf '%b\n' \
-        "\033[;1mw:      \033[;1;7m$z/$#w\033[;0m" \
-        "\033[;34;1mp:      \033[;34;1;7m$h/$#p\033[;0m" \
-        "\033[;36;7;1mfile:   \033[;36;1m${l}\033[;0m" \
-        "\033[;32;7;1mcmd:    \033[;32;1mxdccget --dont-confirm-offsets -d \"$f\" -q \"irc.rizon.net\" \"#nibl\" \"${u} xdcc send #${p[h]}\"\033[;0m" \
-        "\033[;31;1m^To go to next bot press \033[;31;1;7m^C\033[;0m\033[;31;1m." '\033[;0m';
-        trap 'break; trap - INT' INT;
-      until xdccget --dont-confirm-offsets -d "$f" -q "irc.rizon.net" "#nibl" "$u xdcc send #${p[h]}"; do sleep .5; done;
+  pp=${#package};
+  ii=${#botid};
+  PP=${(c)#${#package}};
+  II=${(c)#${#botid}};
+
+  for p in {1..${pp}}; do
+    for i in {1..${ii}}; do
+      [[ -f "${querydir}/${file}" ]] && [[ ! -z "${querydir}/${file}" ]] && break 2;
+      bot=$(jq '.' ${bots} | pcre2grep -o1 -M -A 1 -e "\"id\": ${botid[i]},\n\s+\"name\": \"(.+)\",");
+      printf '%b%-16.16s%b%s\n' \
+        '\033[0;35m'    botid: \
+        '\033[1m'       ${(l.II..0.)i}/${ii} \
+        '\033[0;36m'    package: \
+        '\033[1m'       ${(l.PP..0.)p}/${pp} \
+        '\033[0;33m'    file: \
+        '\033[1m'       "${file}" \
+        '\033[0;32m'    cmd: \
+        '\033[1m'       "xdccget --dont-confirm-offsets -d \"${querydir}\" -q \"irc.rizon.net\" \"#nibl\" \"${bot} xdcc send #${package[p]}\"" \
+        '\033[0;31m'    'next bot:' \
+        '\033[1m'       '^C' \
+        '\033[0;31m'    'quit:' \
+        '\033[1m'       '^\';
+      printf '\n\n%b' '\033[34;1m';
+      until xdccget --dont-confirm-offsets -d "${querydir}" -q "irc.rizon.net" "#nibl" "${bot} xdcc send #${package[p]}"; do sleep .025; done;
     done;
   done;
 done;
-cd ~; rm -rf $m; return 0;
+cd ~; rm -f ${tmp} ${bots}; return 0;

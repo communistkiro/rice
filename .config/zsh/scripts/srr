@@ -1,11 +1,15 @@
 #!/bin/zsh
+emulate -LR zsh;
+setopt null_glob
 [[ ! -t 0 ]] && return 1;
+typeset a;
 
 # typeset a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"});
 # [[ -z $a ]] && return;
-# echo '' | fzf --phony --reverse --border=horizontal --preview="surfraw $a - p {q} | perl -pe 's/^\s*Link:.*\n// && print'" --preview-window=99%:down:sharp
+# fzf --phony --reverse --border=horizontal --preview="surfraw $a - p {q} | perl -pe 's/^\s*Link:.*\n// && print'" --preview-window=99%:down:sharp <<< '';
 
 # if rdrview present; handles output better
-typeset a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"});
+a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"});
 [[ -z $a ]] && return;
-fzf --phony --reverse --border=horizontal --preview="surfraw $a -p '{q}' | xargs -d '\n' rdrview -B 'elinks -dump -no-numbering -no-references'" --preview-window=99%:down:sharp --header="${(C)a}" <<< ''
+fzf --phony --reverse --border=horizontal --preview="surfraw $a -p '{q}' | xargs -d '\n' rdrview -B 'elinks -dump -no-numbering -no-references'" --preview-window=99%:down:sharp --header="${(C)a}" <<< '';
+rm -rf /tmp/*(/L80) ~/.elinks/cookie* &>/dev/null;

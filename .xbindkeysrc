@@ -108,7 +108,7 @@
    Print
 
 # printscreen cropped
-# "scrot --silent --select --line style=dash,width=2,color='red' --quality=85 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
+# "scrot --silent --select --line style=dash,width=2,color='red' --quality=75 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
 #    Mod4 + Print
 
 # play link in clipboards

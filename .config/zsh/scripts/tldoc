@@ -1,8 +1,8 @@
-#!/bin/sh
-if [ $# -gt 0 ]; then
-  for a in $@; do
-    fd -e pdf $a /opt/texlive/2020/texmf-dist/doc -X ff {} 
-  done
-else
-  ff /opt/texlive/2020/doc.html
-fi
+#!/bin/zsh
+typeset s;
+typeset -a a;
+a=(${(f)"$(printf '%s\n' /opt/texlive/2020/texmf-dist/doc/**/*pdf(.-D) | fzf -i -m --reverse )"});
+for s in $a; do;
+[[ ! -f $s ]] && continue;
+qpdfview --unique --quiet $s &;
+done;

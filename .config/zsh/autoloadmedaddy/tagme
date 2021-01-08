@@ -2,7 +2,7 @@
 # tag shit downloaded with youtube-dl -o '.../%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s'
 function tagme () {
 setopt ksh_glob extended_glob null_glob;
-typeset file dir o a;
+typeset file dir o a n;
 typeset -a files;
 while getopts '' o; do case $o in (*) 
 less -F <<HEREDOC
@@ -45,6 +45,7 @@ for dir in $@; do;
   fi;
 
   for file in $files; do;
+    [[ ${file} =~ ' #NA \(\d{8}\)\] ' ]] && n=1 || n=;
   # if which tageditor &>/dev/null; then
     tageditor set \
       --id3v2-version=4 \
@@ -54,9 +55,9 @@ for dir in $@; do;
         title="${${file##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3}" \
         artist="${${${file##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/}" \
         album="${${file/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*}" \
-        year="${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}}" \
-        recorddate="${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}}" \
-        track=${(M)file/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}} \
+        year=${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
+        recorddate=${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
+        track=${n:-${(M)file/* \#(#b)+([0-9]) \([0-9](#c8)\)\] */${match[1]}}} \
         genre="$(</tmp/genre)" \
         albumartist="$a" \
       --files $file;

