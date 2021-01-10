@@ -1,58 +1,63 @@
 #!/bin/zsh
-[[ ! -t 0 ]] && return 1;
-typeset query baseurl t n cat; n="
-"; integer pages c q r s l x; 
-typeset -a cats title seed leech size url category date;
-typeset -aU hash;
+[[ -t 0 ]] || return 1;
+# { which zsh && which pup && which curl} &>/dev/null || return 2;
+ping -c 1 github.com &>/dev/null || return 3;
+emulate -LR zsh;
+typeset query baseurl cat t n; n='
+'; typeset -i pages c q r s l x; 
+typeset -a cats title seed leech size url category date hash;
 cats=(Anime Apps Documentaries Games Movies Music Other TV XXX);
 t=$(mktemp);
 baseurl='https://1337x.to';
-((# == 0)) && read -r "query?${n}> " || query="$@";
-[[ ${query} =~ '^\s*$' ]] && return 1 || query=${query// /+};
+# ((# == 0)) && read -r "query?${n}> " || query="$@";
+query="${${@}:-$(read -er "?${n}> ")}";
+[[ ! ${query} =~ '^\s*$' ]] || return 4;
 
 cat=${$(fzy -p 'Select category or search all: ' -l ${#cats} <<< ${(F)cats}):*cats};
-[[ -z ${cat} ]] && query=/search/${query}/ || query=/category-search/${query}/${cat}/;
+[[ -z ${cat} ]] && query=/search/${query// /+}/ || query=/category-search/${query// /+}/${cat}/;
 
 curl -sfLH User-Agent: ${baseurl}${query}1/ > ${t};
-(($(pup -f ${t} -n 'a[href^=/torrent/]') == 0)) && read -sk1 "?${n}No Result found." && exit 0;
+((${$(pup -f ${t} -n 'a[href^=/torrent/]'):-0} != 0)) || { read -sk1 "?${query}:    No results. "; exit 0 };
 
 pages=${${$(pup -f ${t} '.last a attr{href}')%/}##*/};
-if ((pages == 0)); then;
+if ((pages == 0)) {
    pages=1;
-elif ((pages > 4)); then;
+} elif ((pages > 4)) {
   read -r "q?${n}More than 4 pages. Input number of pages to display [1--${pages}]> ";
   ((q < pages + 1)) && ((q > 1)) && pages=${q} || pages=5;
-fi;
+};
 
-for q in {1..${pages}}; do;
-  title+=(${(f)"$(pup -p -f ${t} 'a[href^=/torrent/] text{}')"});
+for q ( {1..${pages}} ) {
+  title+=(${(fqq)"$(pup -p -f ${t} 'a[href^=/torrent/] text{}')"});
   seed+=(${(f)"$(pup -p -f ${t} 'td.seeds text{}')"});
   leech+=(${(f)"$(pup -p -f ${t} 'td.leeches text{}')"});
-  size+=(${(f)"$(pup -p -f ${t} 'td.size json{}' | jq -r '.[].text')"});
-  url+=(${(f)"$(pup -p -f ${t} 'td a[href^=/torrent/] attr{href}')"});
-  category+=(${(f)"$(pup -p -f ${t} 'td.name .icon i attr{class}')"});
-  date+=(${(f)"$(pup -p -f ${t} 'td.coll-date text{}')"});
-  ((pages - q > 0)) && curl -sfLH User-Agent: ${baseurl}${query}$((q + 1))/ > ${t};
-done;
+  size+=(${(fqq)"$(pup -p -f ${t} 'td.size json{}' | jq -r '.[].text')"});
+  url+=(${(fqq)"$(pup -p -f ${t} 'td a[href^=/torrent/] attr{href}')"});
+  category+=(${(fqq)"$(pup -p -f ${t} 'td.name .icon i attr{class}' | cut -d - -f 2-)"});
+  date+=(${(fqq)"$(pup -p -f ${t} 'td.coll-date text{}')"});
+  curl -sfLH User-Agent: ${baseurl}${query}$((q + 1))/ > ${t};
+};
 
 r=${(c)#${#title}};
 s=${(c)#${${(nO)seed}[1]}};
 l=${(c)#${${(nO)leech}[1]}};
-x=$((COLUMNS - r - 2 - 1 - 8 - 2 - 9 - 2 - s - 1 - l - 2 - 14));
+x=$((COLUMNS - r - 2 - 1 - 9 - 2 - 9 - 2 - s - 1 - l - 2 - 14));
 
-while true; do;
-  c=$(for q in {1..${#title}}; do;
-    printf "%.${r}d  %b%-${x}.${x}s %b%-8.8s  %b%-9.9s  %b%.${s}d%b/%b%.${l}d  %b%14.14s\n" \
+while { true } {
+  c=$(for q ( {1..${#title}} ) {
+    printf "%.${r}d  %b%-${x}.${x}s %b%-9.9s  %b%9.9s  %b%.${s}d%b/%b%.${l}d  %b%14.14s\n" \
       $q \
-      '\033[1m'    "${title[q]:--}" \
-      '\033[34;1m' "${size[q]:--}" \
-      '\033[33;1m' "${${category[q]#flaticon-}:--}" \
-      '\033[32;1m' "${seed[q]:--}" \
+      '\033[1m'    ${(Q)title[q]:--} \
+      '\033[33;1m' ${(Q)category[q]:--} \
+      '\033[34;1m' ${(Q)size[q]:--} \
+      '\033[32;1m' ${seed[q]} \
       '\033[37;1m' \
-      '\033[31;1m' "${leech[q]:--}" \
-      '\033[36;1m' "${date[q]:--}";
-  done | fzy -l $LINES | cut -f 1 -d ' ');
-  ((c > 0)) && ((c < ${#title} +1)) && hash+=($(curl -sfLH User-Agent: ${baseurl}${url[c]} | pup '.infohash-box span text{}')) || break;
-done;
-if ((${#hash} > 0)); then qbittorrent ${hash} &>/dev/null & disown; fi;
+      '\033[31;1m' ${leech[q]} \
+      '\033[36;1m' ${(Q)date[q]:--};
+  } | fzy -l $LINES | cut -f 1 -d ' ');
+
+  ((c > 0 && c < ${#title} +1)) && { hash+=($(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} | pup '.infohash-box span text{}')) } || { break };
+};
+
+((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
 rm -f ${t}; return 0;

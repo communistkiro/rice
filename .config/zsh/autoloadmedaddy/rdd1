@@ -1,25 +1,24 @@
 #!/bin/zsh
 function rdd1() {
-setopt null_glob;
-((# == 0)) && printf '%s\n' 'rdd1: Turns a directory of alba into directories of artists filled with directories of alba in "Artist/Artist [Album (Date)]" format.' && return 1;
-((# == 1)) && [[ -d $1 ]] && cd $1;
-local f d s z x;
-f=(*(/)); ((${#f} == 0)) && return 1;
+  ((# == 0)) && printf '%s\n' 'rdd1: Turns a directory of alba into directories of artists filled with directories of alba in "Artist/Artist [Album (Date)]" format.' && return 1;
+  ((# == 1)) && [[ -d $1 ]] && cd $1;
+  typeset f d s z x;
+  f=(*(/DN)); ((${#f} == 0)) && return 1;
 
-for d in $f; do
-  [[ $d =~ '^.+? \[+*? \([\d-]+\)\]$' ]] && continue;
-  s=($d/**/*.mp3); ((${#s} == 0)) && continue;
-  x="$(mp3info2 -D -p '%a [%l (%y)]' $s[1])";
-  [[ -z $x ]] && return 11 || mkdir $x;
-  for z in $s; do mv $z $x; done;
-  mv $d/**/*.{jpg,png,jpeg,pdf} $x 2>/dev/null;
-  rmdir $d;
-done;
+  for d ( $f ) {
+    [[ $d =~ '^.+? \[+*? \([\d-]+\)\]$' ]] && continue;
+    s=($d/**/*.mp3); ((${#s} == 0)) && continue;
+    x="$(mp3info2 -D -p '%a [%l (%y)]' $s[1])";
+    [[ -z $x ]] && return 11 || mkdir $x;
+    for z ( $s ) { mv $z $x };
+    mv $d/**/*.{jpg,png,jpeg,pdf}(.DN) $x 2>/dev/null;
+    rmdir $d;
+  };
 
-f=(*(/)); ((${#f} == 0)) && return 1;
-for d in $f; do
-  s=${d%% \[*}; [[ -z $s ]] && return 13;
-  mkdir -p $s; 
-  mv $d $s; 
-done;
+  f=(*(/DN)); ((${#f} != 0)) || return 1;
+  for d ( $f ) {
+    s=${d%% \[*}; [[ -n $s ]] || return 13;
+    [[ -d $s ]] || mkdir $s;
+    mv $d $s;
+  };
 }

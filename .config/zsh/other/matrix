@@ -1,0 +1,8 @@
+while true; do printf '%b' "\033[$((RANDOM%2));32m\033[$((RANDOM%LINES+1));$((RANDOM%COLUMNS+1))H$((RANDOM%2))\033[$((RANDOM%2));32m\033[$((RANDOM%LINES+1));$((RANDOM%COLUMNS+1))H$((RANDOM%2))\033[$((RANDOM%2));32m\033[$((RANDOM%LINES+1));$((RANDOM%COLUMNS+1))H$((RANDOM%2))\033[$((RANDOM%2));32m\033[$((RANDOM%LINES+1));$((RANDOM%COLUMNS+1))H$((RANDOM%2))\033[T"; sleep 0.01 ; done
+
+while true; do printf '%b' "\033[0K\033[$((RANDOM%LINES+1));$((RANDOM%COLUMNS+1))H$((RANDOM%2))"; sleep 0.001 ; done
+
+while true; do echo -ne "\033[$((RANDOM%LINES+1));$((RANDOM%COLUMNS+1))H\033[$((RANDOM%2));3$((RANDOM%8))m$((RANDOM%10))"; sleep 0.001 ; done
+
+echo -e "\e[32m"; while :; do for i in {1..64}; do r="$((RANDOM % 2))"; if ((RANDOM % 5 == 1)); then if ((RANDOM % 4 == 1)); then v+="\e[1m $r "; else v+="\e[2m $r "; fi; else v+=' '; fi; done; echo -e "$v"; v=''; done;
+tr -c '[:digit:]' ' ' < /dev/urandom

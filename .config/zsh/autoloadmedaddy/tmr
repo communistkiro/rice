@@ -1,5 +1,5 @@
 #!/bin/zsh
-function tmr() {
+function tmr () {
 emulate -LR zsh;
 # local alarm=~/.local/CartoonFoghorn.m4a;
 typeset o tmp;
@@ -79,38 +79,37 @@ BUGS
 HEREDOC
 return 1;; esac; done;
 
-if (($+p)); then
-  # read -sq '?lol'
-  for o in {1..3}; do
+if (($+p)) {
+  for o ( {1..3} ) {
     printf '%s\n%b\n' "Starting ${o}. pomodoro cycle." '\aWork!';
-    tmr ${@[OPTIND]:-45}; ((? == 2)) && break;
+    tmr ${@[OPTIND]:-45};    ((? != 2)) || break;
     printf '%b\n' '\aBreak!';
-    tmr ${@[OPTIND + 1]:-8}; ((? == 2)) && break;
-  done;
+    tmr ${@[OPTIND + 1]:-8}; ((? != 2)) || break;
+  };
   return $?;
-fi;
+};
 
 tmp=/tmp/tmr.tmr.tmr;
 
-if   ((# - OPTIND == 3)); then d=${@[OPTIND]}; h=${@[OPTIND + 1]}; m=${@[OPTIND + 2]}; s=${@[OPTIND + 3]};
-elif ((# - OPTIND == 2)); then d=${@[OPTIND]}; h=${@[OPTIND + 1]}; m=${@[OPTIND + 2]};
-elif ((# - OPTIND == 1)); then                 h=${@[OPTIND]};     m=${@[OPTIND + 1]};
-elif ((# - OPTIND == 0)); then                                     m=${@[OPTIND]};
-else
+if     ((# - OPTIND == 3)) {
+  d=${@[OPTIND]}; h=${@[OPTIND + 1]}; m=${@[OPTIND + 2]}; s=${@[OPTIND + 3]};
+} elif ((# - OPTIND == 2)) {
+  d=${@[OPTIND]}; h=${@[OPTIND + 1]}; m=${@[OPTIND + 2]};
+} elif ((# - OPTIND == 1)) {
+                  h=${@[OPTIND]};     m=${@[OPTIND + 1]};
+} elif ((# - OPTIND == 0)) {
+                                      m=${@[OPTIND]};
+} else {
   (($+a)) && printf '%s\n' 'Set alarm for' || printf '%s\n' 'Set countdown for';
-  read 'd?days: ';
-  read 'h?hours: ';
-  read 'm?minutes: ';
-  read 's?seconds: ';
-fi;
+  read 'd?days    : ';
+  read 'h?hours   : ';
+  read 'm?minutes : ';
+  read 's?seconds : ';
+};
 
-[[ -z $d ]] && d=0;
-[[ -z $h ]] && h=0;
-[[ -z $m ]] && m=0;
-[[ -z $s ]] && s=0;
-((d == 0)) && ((h == 0)) && ((m == 0)) && ((s == 0)) && return 1;
+((d == 0 && h == 0 && m == 0 && s == 0)) && return 1;
 
-if ((${+a})); then
+if (($+a)) {
   m=$((m + s / 60)); s=$((s % 60));
   h=$((h + m / 60)); m=$((m % 60));
   d=$((d + h / 24)); h=$((h % 24));
@@ -119,34 +118,39 @@ if ((${+a})); then
   M=$(date +%M);
   H=$(date +%H);
 
-  if   ((S >= s && m == 0 && h == 0 && d == 0));            then m=$((M + 1)); h=$H;
-  elif ((M > m || (M == m && S >= s) && h == 0 && d == 0)); then h=$((H + 1));
-  elif ((M < m && h == 0 && d == 0));                       then h=$H;
-  elif ((H > h || (H == h && M >= m) && d == 0));           then ((d += 1)); fi;
+  if     ((S >= s && m == 0 && h == 0 && d == 0)) {
+    m=$((M + 1)); h=$H;
+  } elif ((M > m || (M == m && S >= s) && h == 0 && d == 0)) {
+    h=$((H + 1));
+  } elif ((M < m && h == 0 && d == 0)) {
+    h=$H;
+  } elif ((H > h || (H == h && M >= m) && d == 0)) {
+    ((d += 1));
+  } elif ((d < 0 || 60 * (60 * (24 * d + h) + m) + s < 0)) {
+    return 1;
+  }
 
-  ((d < 0 || 60 * (60 * (24 * d + h) + m) + s < 0)) && return 1;
-
-  printf "\nAlarm set for %s.\n" "$(date -d "$(date +%F) +$d days +$h hours +$m minutes +$s seconds" '+%F %T')";
-
+  printf "Alarm set for %s.\n\n" "$(date -d "$(date +%F) +$d days +$h hours +$m minutes +$s seconds" '+%F %T')";
   t=$(($(date -d "$(date +%F) +$d days +$h hours +$m minutes +$s seconds" '+%s') - $(date +%s)));
-else;
-  t=$((60 * (60 * (24 * d + h) + m) + s)); ((t < 0)) && return 1;
-fi;
+} else {
+  t=$((60 * (60 * (24 * d + h) + m) + s));
+  ((t > 0)) || return 1;
+};
 
-trap 'rm -f "$tmp"; trap - QUIT; return 0;' QUIT;
-trap 'clear; printf "PAUSED\n"; read --rsk1 "?Press anything to unpause";' INT;
+trap 'rm -f "$tmp"; trap - QUIT; return 0' QUIT;
+trap 'clear; printf "PAUSED\n"; read -rsk1 "?Press anything to unpause"' INT;
 
-for ((0; t >= 0; t-= 1)); do;
-  printf '%02d:%02d:%02d\n' $((t / 3600)) $((t % 3600 / 60)) $((t % 60)) | tee $tmp;
+for ((0; t >= 0; t-= 1)) {
+  printf '%.2d:%.2d:%.2d\n' $((t / 3600)) $((t % 3600 / 60)) $((t % 60)) | tee $tmp;
   sleep 1;
-done;
+};
 
 # ((? == 0)) && if mpc status &>/dev/null | pcre2grep -q playing; then
 #   mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle;
 #   mpc -q toggle; beep -f 200 -l 100 -d 100 -r 2; mpc -q toggle;
 # else
 #   mpv --really-quiet $alarm;
-  beep -f 200 -l 100 -d 100 -r 2; 
+  beep -f 200 -l 50 -d 50 -r 2; 
 # fi;
 
 rm -f $tmp;

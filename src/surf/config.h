@@ -133,19 +133,19 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
  * the list.
  */
 static SiteSpecific styles[] = {
-    /* regexp               file in $styledir */
-    { "file:///root/.config/startpage/ss1.htm", "non.css"       },
-    { ".*",                                      "default.css"  },
+    /* regexp                                   file in $styledir  */
+    { "file:///root/.config/startpage/ss1.htm", "non.css"           },
+    { ".*",                                     "default.css"       },
 };
 
- 
+
 /* scripts */
 static SiteSpecific scripts[] = {
-   /* regexp               file in $scriptdir */
-   // { ".*",                 "default.js" },
-    { "https://.*4chan(nel)?\\.org.*",      "4chan-X.user.js"   },
-    { "https://.*lainchan\\.org.*,          "4chan-X.user.js"   },
-    { "(www\\.)?reddit.com/.*",             "oldreddit.js"      },
+    /* regexp                               file in $scriptdir */
+    /* { ".*",                              "default.js"     },*/
+    { "http(s)?://.*?4chan(nel)?\\.org.*",  "4chan-X.user.js"   },
+    { "http(s)?://.*?lainchan\\.org.*",     "4chan-X.user.js"   },
+    { "http(s)?://.*?reddit\\.com.*",       "oldreddit.js"      },
 };
 
 /* certificates */
@@ -172,8 +172,7 @@ static Key keys[] = {
 
     { 0,                       GDK_KEY_Escape,             stop,               { 0 } },
 
-    { GDK_CONTROL_MASK,        GDK_KEY_r,                  reload,             { .i = 0 } },
-    { GDK_CONTROL_MASK|MODKEY, GDK_KEY_r,                  reload,             { .i = 1 } },
+    { GDK_CONTROL_MASK,        GDK_KEY_r,                  reload,             { .i = +1 } },
 
     // navigate history
     { GDK_MOD4_MASK,           GDK_KEY_backslash,          navigate,           { .i = +1 } },
@@ -199,10 +198,10 @@ static Key keys[] = {
 
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_a,                  togglecookiepolicy, { 0 } },
     { 0,                       GDK_KEY_F11,                togglefullscreen,   { 0 } },
-    { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_o,                  toggleinspector,    { 0 } },
+    // { 0,                       GDK_KEY_F12,                toggleinspector,    { 0 } },
     // { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_y,                  showcert,           { 0 } },
 
-    // { GDK_MOD4_MASK,                   c,                  toggle,             { .i = CaretBrowsing } },
+    // { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_F10,                toggle,             { .i = CaretBrowsing } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_f,                  toggle,             { .i = FrameFlattening } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_s,                  toggle,             { .i = JavaScript } },
     { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_i,                  toggle,             { .i = LoadImages } },
@@ -217,7 +216,7 @@ static Key keys[] = {
 /* VIDEOPLAY(URI) */
 #define VIDEOPLAY(u) {\
     .v = (const char *[]){ "/bin/sh", "-c", \
-         "mpv --really-quiet \"$0\"", u, NULL \
+        "mpv --really-quiet \"$0\"", u, NULL \
     } \
 }
 

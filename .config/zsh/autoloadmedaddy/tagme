@@ -27,58 +27,59 @@ BUGS
 HEREDOC
 return 1;; esac; done;
 
-((# == 0)) && return 1;
-for dir in $@; do;
-  [[ ! -d ${dir} ]] && continue;
-  files=(${dir}/*.mp3(.D));
-  ((${#files} == 0)) && continue;
+  ((# == 0)) && return 1;
+  for dir ( $@ ) {
+    [[ ! -d ${dir} ]] && continue;
+    files=(${dir}/*.mp3(.D));
+    ((${#files} == 0)) && continue;
 
-  if [[ ${${"$(dirname "$(realpath ${dir})")"%/*}##*/} == 'Various Artists' ]] || (($(sed -r 's/ \[.*//' <<< ${(F)files} | sort -u | wc -l) > 1)) && [[ "$(printf '%s\n' '2 No' '1 Yes' $files | dmenu -i -p "Rename album artist to Various Artists? " -l $((${#files} + 2)))" == '1 Yes' ]] || [[ "$(sed -r 's/ \[.*//' <<< ${files[1]} )" =~ '^[vV](\.|arious)?.?[aA](\.|rtists)?$' ]]; then;
-    a='Various Artists';
-  else;
-    o=(${(f)"$(sed -r 's/ \[.*//' <<< ${(F)files} | sort -u)"});
-    if ((${#o} > 1)); then;
-      a="$(dmenu -i -p "Select album artist: " -l ${#o} <<< ${(F)o})";
-    else;
-      a="$(sort -u <<< ${(F)o})";
-    fi;
-  fi;
+    if [[ ${${"$(dirname "$(realpath ${dir})")"%/*}##*/} == 'Various Artists' ]] || (($(sed -r 's/ \[.*//' <<< ${(F)files} | sort -u | wc -l) > 1)) && [[ "$(printf '%s\n' '2 No' '1 Yes' $files | dmenu -i -p "Rename album artist to Various Artists? " -l $((${#files} + 2)))" == '1 Yes' ]] || [[ "$(sed -r 's/ \[.*//' <<< ${files[1]} )" =~ '^[vV](\.|arious)?.?[aA](\.|rtists)?$' ]] {
+      a='Various Artists';
+    } else {
+      o=(${(f)"$(sed -r 's/ \[.*//' <<< ${(F)files} | sort -u)"});
+      if ((${#o} > 1)) {
+        a="$(dmenu -i -p "Select album artist: " -l ${#o} <<< ${(F)o})";
+      } else {
+        a="$(sort -u <<< ${(F)o})";
+      };
+    };
 
-  for file in $files; do;
-    [[ ${file} =~ ' #NA \(\d{8}\)\] ' ]] && n=1 || n=;
-  # if which tageditor &>/dev/null; then
-    tageditor set \
-      --id3v2-version=4 \
-      --force-rewrite \
-      --encoding=utf8 \
-      --values \
-        title="${${file##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3}" \
-        artist="${${${file##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/}" \
-        album="${${file/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*}" \
-        year=${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
-        recorddate=${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
-        track=${n:-${(M)file/* \#(#b)+([0-9]) \([0-9](#c8)\)\] */${match[1]}}} \
-        genre="$(</tmp/genre)" \
-        albumartist="$a" \
-      --files $file;
-  done;
-  rm -f ${dir}/**/*.bak;
-  # elif which mp3info2 &>/dev/null; then
-  #   mp3info2 \
-  #     -C id3v2_fix_encoding_on_write=1 \
-  #     -u2R \
-  #     -C write_v24=1 \
-  #     -t "${${file##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3}" \
-  #     -a "${${${file##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/}" \
-  #     -l "${${file/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*}" \
-  #     -y "${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}}" \
-  #     -n "${(M)file/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}}" \
-  #     -g "${(Cj.;.)${(f)"$(</tmp/genre)"}//-/ }" \
-  #     -F TPE2="$a" \
-  #     $file;
-  # done;
-  # else;
-  #   return 69;
-  # fi;
-done;
+    if { which tageditor &>/dev/null } {
+      for file ( $files ) {
+        [[ ${file} =~ ' #NA \(\d{8}\)\] ' ]] && n=1 || n=;
+        tageditor set \
+          --id3v2-version=4 \
+          --force-rewrite \
+          --encoding=utf8 \
+          --values \
+            title="${${file##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3}" \
+            artist="${${${file##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/}" \
+            album="${${file/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*}" \
+            year=${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
+            recorddate=${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}} \
+            track=${n:-${(M)file/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}}} \
+            genre="$(</tmp/genre)" \
+            albumartist="$a" \
+          --files $file;
+      };
+      rm -f ${dir}/**/*.bak;
+    } elif { which mp3info2 &>/dev/null } {
+      for file ( $files ) {
+        mp3info2 \
+          -C id3v2_fix_encoding_on_write=1 \
+          -u2R \
+          -C write_v24=1 \
+          -t "${${file##* \#[0-9](#c1,) \([0-9](#c8)\)\] }%.mp3}" \
+          -a "${${${file##*/}% \[*?(\[*\]) \#[0-9](#c1,) \([0-9](#c8)\)\]*}#*/}" \
+          -l "${${file/*([*])* \[/}/ \#[0-9](#c1,) \([0-9](#c8)\)\]*}" \
+          -y "${(M)file/* \((#b)([0-9](#c4))(#b)([0-9](#c2))(#b)([0-9](#c2))\)\] */${match[1]}-${match[2]}-${match[3]}}" \
+          -n "${(M)file/* \#(#b)([0-9](#c1,)) \([0-9](#c8)\)\] */${match[1]}}" \
+          -g "${(Cj.;.)${(f)"$(</tmp/genre)"}//-/ }" \
+          -F TPE2="$a" \
+          $file;
+      };
+    } else {
+      return 69
+    };
+  };
 }

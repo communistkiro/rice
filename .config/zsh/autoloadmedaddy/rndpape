@@ -1,7 +1,9 @@
 #!/bin/zsh
 function rndpape () {
-setopt extended_glob;
-local a=(${(@f)"$(printf '%s\n' ~/im/wp/**/*(.))"});
-local s=$#a;
-while true; do feh $(pcre2grep -o1 'feh --no-fehbg (\S+) ' ~/.fehbg) ${a[((RANDOM % s + 1))]}; [[ $(read -seq) = y ]] && break; done;
+  setopt extended_glob;
+  typeset -a a;
+  typeset -i s;
+  a=(${(@f)"$(printf '%s\n' ~/im/wp/**/*(.D))"});
+  s=$#a;
+  while { true } { feh $(pcre2grep -o1 'feh --no-fehbg (\S+) ' ~/.fehbg) ${a[((RANDOM % s + 1))]}; [[ $(read -seq) = y ]] && break };
 }

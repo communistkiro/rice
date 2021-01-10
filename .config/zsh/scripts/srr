@@ -1,15 +1,12 @@
 #!/bin/zsh
 emulate -LR zsh;
-setopt null_glob
+# { which zsh && which rdrview && which elinks && which fzf } &>/dev/null || return 2;
 [[ ! -t 0 ]] && return 1;
-typeset a;
+typeset elvi cmd;
+cmd='elinks -dump -no-numbering'"${1:+ -no-references}"; # any arg to srr to display href vals
 
-# typeset a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"});
-# [[ -z $a ]] && return;
-# fzf --phony --reverse --border=horizontal --preview="surfraw $a - p {q} | perl -pe 's/^\s*Link:.*\n// && print'" --preview-window=99%:down:sharp <<< '';
-
-# if rdrview present; handles output better
-a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"});
-[[ -z $a ]] && return;
-fzf --phony --reverse --border=horizontal --preview="surfraw $a -p '{q}' | xargs -d '\n' rdrview -B 'elinks -dump -no-numbering -no-references'" --preview-window=99%:down:sharp --header="${(C)a}" <<< '';
-rm -rf /tmp/*(/L80) ~/.elinks/cookie* &>/dev/null;
+# a=$(fzf -i +m --reverse --border=horizontal <<< ${(F)"$(surfraw -elvi | tail -n +2 | cut -s -f 1)"}) || return 0;
+elvi=$(fzf -i +m --reverse --border=horizontal < ~/.config/surfraw/cache) || return 0;
+[[ -z ${elvi} ]] && return;
+fzf --phony --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="surfraw ${elvi} -p '{q}' | xargs -d '\n' rdrview -B \"${cmd}\"" --preview-window=99%:down:sharp --header="${(C)elvi}" <<< '';
+rm -rf /tmp/*(/L80N) ~/.elinks/cookie*(N) &>/dev/null;

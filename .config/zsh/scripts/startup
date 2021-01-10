@@ -4,18 +4,18 @@
 # only explicit beeps
 xset b off &
 
-# mic mute 
+# mic mute
 amixer sset Capture nocap &
 
 # backlight
 xbacklight -set 15 &
 
 # ... delay repeatrate
-xset r rate 275 85 &
+xset r rate 320 100 &
 
 # /usr/share/X11/xkb/rules for `-option ""'
-# setxkbmap -layout "us,bg,de" -variant ",phonetic,deadgraveacute" -geometry "pc" -option "grp:win_space_toggle" -option caps:super &
-setxkbmap -layout "us,bg" -variant ",phonetic" -geometry "pc" -option "grp:win_space_toggle" -option caps:super &
+# setxkbmap -layout "us,bg,de" -variant ",phonetic,deadgraveacute" -geometry "pc" -option "grp:win_space_toggle" &
+setxkbmap -layout "us,bg" -variant ",phonetic" -geometry "pc" -option "grp:win_space_toggle" &
 
 # Map the menu button to right super
 xmodmap -e 'keycode 135 = Super_R' &
@@ -24,7 +24,6 @@ xmodmap -e 'keycode 135 = Super_R' &
 ps -C xbindkeys &>/dev/null || xbindkeys &
 
 # Map the caps lock key to super with single press treated as escape
-# setxkbmap -option caps:super
 ps -C xcape || xcape -e 'Super_L=Escape' &
 
 # fuck trackpad
@@ -33,24 +32,19 @@ ps -C syndaemon &>/dev/null || syndaemon -d -i 131072 &
 # Screen lock
 # ps -C xautolock &>/dev/null || xautolock -time 20 -secure -locker 'xbacklight -set 0; slock; xbacklight -set 15' &
 
-# music 
-ps -C mpd &>/dev/null || { mpd; mpdas -d; } & 
-{ sleep 2 && ps -C mpdas &>/dev/null || mpdas -d &; } &
-
-# cron
-ps -C crond &>/dev/null || crond &
-
 # click-clack
 # ps -C buckle &>/dev/null || buckle -s 0 -f 0b -g 100 &
-
-# time
-ps -C chronyd &>/dev/null || chronyd &
 
 # Snowstorm
 # pc -C xsnow &>/dev/null || xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown
 
 # Set last set background
 /root/.fehbg &
+
+# tarpit
+# pc -C endlessh &>/dev/null || endlessh -d 65536 -l 64 -p 22 &
+
+ps -C scrond &>/dev/null || scrond &
 
 # ~/src/dwmsss/dwmsss &
 slstatus &

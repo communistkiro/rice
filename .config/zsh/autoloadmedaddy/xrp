@@ -1,13 +1,14 @@
 #!/bin/zsh
 # DOWNLOADS FROM LIST OR, GIVEN A NEW LINK, SCRAPES ALBA FROM EMBEDDED PLAYER AND DIRECT LINKS RELEASES TO LIST
 function xrp () {
-emulate -LR zsh;
-setopt null_glob;
-typeset o link t1 t2 t3 album vaalbum artists;
-typeset -a files;
-trap 'break 4; exit 2;' INT HUP;
+  ping -c 1 github.com &>/dev/null || return 2;
+  emulate -LR zsh;
+  setopt null_glob;
+  typeset o link t1 t2 t3 album vaalbum artists;
+  typeset -a files;
+  trap 'break 4; exit 2;' INT HUP;
 
-while getopts '' o; do case $o in (*)
+  while getopts '' o; do case $o in (*)
 less -F <<HEREDOC
 NAME
   xrp - download, tag, and structure alba from list of links.
@@ -34,77 +35,78 @@ EXAMPLES
   xrp https://canthisevenbecalledmusic.com/monthly-recommendations-january-2020
     Scrape the webpage, then do everything as per description with possibly newly acquired 
     links.
-        
+
 BUGS
   Please report any aberrant behavior or bugs to vlg@tutamail.com
 
 HEREDOC
-return 1;;esac; done;
+  return 1;;esac; done;
 
-((# > 0)) && xrpp $@;
-cd ~/nm;
+  ((# > 0)) && xrpp $@;
+  cd ~/nm;
 
-for link in ${(f)"$(<~/nm/bcnew)"}; do;
-  printf '\n%b\n%s\n%b\n' '\033[;31m================================================================\033[;32m' ${link} '\033[;31m================================================================\033[;0m';
-  t1=$(mktemp /tmp/xrp1.XXXXXXX); t2=$(mktemp /tmp/xrp2.XXXXXXX); t3=$(mktemp /tmp/xrp3.XXXXXXX);
-  curl ${link} > $t1;
-  if pcre2grep -q 'redirected' $t1; then;
-    a=$(pcre2grep -o '"http.*?"' $t1 | tr -d '"');
+  for link ( ${(f)"$(<~/nm/bcnew)"} ) {
+    printf '\n%b\n%s\n%b\n' '\033[;31m================================================================\033[;32m' ${link} '\033[;31m================================================================\033[;0m';
+    t1=$(mktemp /tmp/xrp1.XXXXXXX); t2=$(mktemp /tmp/xrp2.XXXXXXX); t3=$(mktemp /tmp/xrp3.XXXXXXX);
     curl ${link} > $t1;
-  fi;
-  sed -n '15,/">/p' $t1 > $t2;
-  bcgenre ${link} > /tmp/genre;
-  # pcre2grep -o1 'class="tag" href="http.+?/tag/(.+?)\?from=\S+"' $t1 > /tmp/genre;
-  # rymgenre "$(sed -rn '1s/(.*) by (.*), rel.*/\2 \1/p' $t2)" >> /tmp/genre;
-  if pcre2grep -q '\breleases\b' $t2; then;
-    printf '%s\n' ${link} >> ~/nm/soon;
-    sort -uo ~/nm/soon ~/nm/soon;
-  else;
-    youtube-dl \
-      --ignore-config \
-      --ignore-errors \
-      --retries 64 \
-      --fragment-retries 64 \
-      --format mp3-320/mp3-v0/mp3-128 \
-      --embed-thumbnail \
-      --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' ${link};
-    files=(*.mp3(.D));
-    if ((${#files} == 0)); then;
-      printf '%s\n' ${link} >> ~/nm/missing;
-      sort -uo ~/nm/missing ~/nm/missing;
-    else;
-      if ((${$(pcre2grep -o1 '^(\d+)\.' $t2 | tail -n 1):-1} > ${#files})); then;
+    if { pcre2grep -q 'redirected' $t1 } {
+      a=$(pcre2grep -o '"http.*?"' $t1 | tr -d '"');
+      curl ${link} > $t1;
+    };
+    sed -n '15,/">/p' $t1 > $t2;
+    bcgenre ${link} > /tmp/genre;
+    # pcre2grep -o1 'class="tag" href="http.+?/tag/(.+?)\?from=\S+"' $t1 > /tmp/genre;
+    # rymgenre "$(sed -rn '1s/(.*) by (.*), rel.*/\2 \1/p' $t2)" >> /tmp/genre;
+    if { pcre2grep -q '\breleases\b' $t2 } {
+      printf '%s\n' ${link} >> ~/nm/soon;
+      sort -uo ~/nm/soon ~/nm/soon;
+    } else {
+      ping -c 1 bandcamp.com &>/dev/null || return 2;
+      youtube-dl \
+        --ignore-config \
+        --ignore-errors \
+        --retries 64 \
+        --fragment-retries 64 \
+        --format mp3-320/mp3-v0/mp3-128 \
+        --embed-thumbnail \
+        --output '~/nm/%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s' ${link};
+      files=(*.mp3(.D));
+      if ((${#files} == 0)) {
         printf '%s\n' ${link} >> ~/nm/missing;
         sort -uo ~/nm/missing ~/nm/missing;
-      fi;
-      sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\]).*/\2-\3-\4/' <<< ${(F)files} > $t3;
-      artists=$(sed -r 's/ \[.*//' $t3 | sort -u | wc -l);
-      if ((artists != 1)); then;
-        if [[ "$(printf '%s\n' '2 No' '1 Yes' $files | dmenu -i -p "${#files} tracks, $artists artists: rename dir to Various Artists? " -l $((${#files} + 2)))" = '1 Yes' ]]; then
-          vaalbum="$(sed -r 's/^.* \[/Various Artists [/' $t3 | sort -u | head -n 1)";
-        else;
+      } else {
+        if ((${$(pcre2grep -o1 '^(\d+)\.' $t2 | tail -n 1):-1} > ${#files})) {
+          printf '%s\n' ${link} >> ~/nm/missing;
+          sort -uo ~/nm/missing ~/nm/missing;
+        };
+        sed -r 's/( #[0-9NA]+)( \([0-9]{4})([0-9]{2})([0-9]{2}\)\]).*/\2-\3-\4/' <<< ${(F)files} > $t3;
+        artists=$(sed -r 's/ \[.*//' $t3 | sort -u | wc -l);
+        if ((artists != 1)) {
+          if [[ "$(printf '%s\n' '2 No' '1 Yes' $files | dmenu -i -p "${#files} tracks, $artists artists: rename dir to Various Artists? " -l $((${#files} + 2)))" = '1 Yes' ]] {
+            vaalbum="$(sed -r 's/^.* \[/Various Artists [/' $t3 | sort -u | head -n 1)";
+          } else {
+            vaalbum=;
+          };
+        } else {
           vaalbum=;
-        fi;
-      else;
-        vaalbum=;
-      fi;
-      for album in ${(f)"$(sort -u $t3)"}; do;
-        # mkdir -p ${vaalbum:-$album};
-        [[ -d ${vaalbum:-$album} ]] || mkdir ${vaalbum:-$album};
-        mv ${files} ${vaalbum:-$album};
-        tagme ${vaalbum:-$album};
-        ((? != 0)) && return 99;
-        artist="${${vaalbum:-${album}}%% \[*}";
-        # mkdir -p ${artist} 2&>/dev/null;
-        [[ -d ${artist} ]] || mkdir ${artist};
-        [[ -d ${artist} ]] && mv ${vaalbum:-$album} ${artist};
-        [[ -n ${vaalbum} ]] && vaalbum=;
-        break;
-      done;
-    fi;
-    printf '%s\n' ${link} >> ~/nm/bcold && sort -uo ~/nm/bcold ~/nm/bcold;
-  fi;
-  sed -i '1,1d' ~/nm/bcnew;
-  rm -f $t1 $t2 $t3;
-done;
+        }
+        for album ( ${(f)"$(sort -u $t3)"} ) {
+          # mkdir -p ${vaalbum:-$album};
+          [[ -d ${vaalbum:-$album} ]] || mkdir ${vaalbum:-$album};
+          mv ${files} ${vaalbum:-$album};
+          tagme ${vaalbum:-$album};
+          ((? != 0)) && return 99;
+          artist="${${vaalbum:-${album}}%% \[*}";
+          # mkdir -p ${artist} 2&>/dev/null;
+          [[ -d ${artist} ]] || mkdir ${artist};
+          [[ -d ${artist} ]] && mv ${vaalbum:-$album} ${artist};
+          [[ -n ${vaalbum} ]] && vaalbum=;
+          break;
+        };
+      };
+      printf '%s\n' ${link} >> ~/nm/bcold && sort -uo ~/nm/bcold ~/nm/bcold;
+    };
+    sed -i '1,1d' ~/nm/bcnew;
+    rm -f $t1 $t2 $t3;
+  };
 }

@@ -1,0 +1,2 @@
+rename "'" "_" **/*; 
+unset a e; e=$(printf '%s\n' *(:e) | uniq -c | sort -rk1 | head -n 1 | pcre2grep -o1 '^\s*\d+\s+(\S+)$'); a=(*.${e}(.DN:a)); ((${#a}>1)) && ffmpeg -f concat -safe 0 -i <(printf "file '%s'\n" $a) -c copy all.${e} && rm $a && beep -f 200 -l 50 && bb;

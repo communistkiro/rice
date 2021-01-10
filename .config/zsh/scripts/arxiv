@@ -1,9 +1,10 @@
 #!/bin/zsh
-# dependencies: rdrview, pcre2grep, zsh, curl
 [[ ! -t 0 ]] && return 1;
+# { which zsh && which rdrview && which curl && which pcre2grep } &>/dev/null || return 2;
+
 function menu () {
   typeset m t a;
-  while getopts 'm:t:' a; do case $a in
+  while { getopts 'm:t:' a } { case $a {
   (m)
     [[ $OPTARG =~ '[0-7]' ]] && m='\033[3'${MATCH} || m='\033[37';
     [[ $OPTARG =~ i ]] && m="${m};7";
@@ -14,219 +15,211 @@ function menu () {
     [[ $OPTARG =~ i ]] && t="${t};7";
     [[ $OPTARG =~ b ]] && t="${t};1";
     t="${t}m";;
-  esac; done;
-  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033];0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
+  }; };
+  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033];0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m' };
 }
 
 function () {
-emulate -LR zsh;
-setopt pipefail;
-n="
-";
-menu -t 4 -m 2b \
-  'Search_where: ' \
-  '1 arXiv' \
-  '2 medRxiv & bioRxiv' \
-  '* exit';
-case $(read -sek1 "?${n}> ") in
-(1)
-  typeset api tmp query operator term field sizes to from year;
-  typeset -i termnum results;
-  typeset -a operators fields classification classifications title author pdf abstract submitted;
-  tmp=$(mktemp);
-  api='https://arxiv.org/search/advanced?advanced=1';
-  termnum=0;
-  operators=(AND OR ANDNOT);
-  fields=(all title abstract author comments);
-  classifications=(
-  '&classification-astro-ph=y               Astrophysics'
-  '&classification-computer_science=y       Computer Science'
-  '&classification-cond-mat=y               Condensed Matter'
-  '&classification-economics=y              Economics'
-  '&classification-eess=y                   Electrical Engineering and Systems Science'
-  '&classification-gr-qc=y                  General Relativity'
-  '&classification-hep-ex=y                 High Energy Physics - Experiment'
-  '&classification-hep-lat=y                High Energy Physics - Lattice'
-  '&classification-hep-ph=y                 High Energy Physics - Phenomenology'
-  '&classification-hep-th=y                 High Energy Physics - Theory'
-  '&classification-math-ph=y                Mathematical Physics'
-  '&classification-mathematics=y            Mathematics'
-  '&classification-nlin=y                   Nonlinear Sciences'
-  '&classification-nucl-ex=y                Nuclear Experiment'
-  '&classification-nucl-th=y                Nuclear Theory'
-  '&classification-physics=y                Physics'
-  '&classification-physics_archives=all     Physics all'
-  '&classification-q_biology=y              Quantitative Biology'
-  '&classification-q_finance=y              Quantitative Finance'
-  '&classification-quant-ph=y               Quantum Physics'
-  '&classification-statistics=y             Statistic'
-  );
-  # sizes=(25 50 100 200);
+  emulate -LR zsh;
+  setopt pipefail ksh_glob; n='
+'; menu -t 4 -m 2b \
+    'Search_where: ' \
+    '1 arXiv' \
+    '2 medRxiv & bioRxiv' \
+    '* exit';
+  case $(read -sek1 "?${n}> ") {
+    (1)
+      typeset api tmp query operator term field sizes to from year;
+      typeset -i termnum results;
+      typeset -a operators fields classification classifications title author pdf abstract submitted;
+      tmp=$(mktemp);
+      api='https://arxiv.org/search/advanced?advanced=1';
+      termnum=0;
+      operators=(AND OR ANDNOT);
+      fields=(all title abstract author comments);
+      classifications=(
+        '&classification-astro-ph=y               Astrophysics'
+        '&classification-computer_science=y       Computer Science'
+        '&classification-cond-mat=y               Condensed Matter'
+        '&classification-economics=y              Economics'
+        '&classification-eess=y                   Electrical Engineering and Systems Science'
+        '&classification-gr-qc=y                  General Relativity'
+        '&classification-hep-ex=y                 High Energy Physics - Experiment'
+        '&classification-hep-lat=y                High Energy Physics - Lattice'
+        '&classification-hep-ph=y                 High Energy Physics - Phenomenology'
+        '&classification-hep-th=y                 High Energy Physics - Theory'
+        '&classification-math-ph=y                Mathematical Physics'
+        '&classification-mathematics=y            Mathematics'
+        '&classification-nlin=y                   Nonlinear Sciences'
+        '&classification-nucl-ex=y                Nuclear Experiment'
+        '&classification-nucl-th=y                Nuclear Theory'
+        '&classification-physics=y                Physics'
+        '&classification-physics_archives=all     Physics all'
+        '&classification-q_biology=y              Quantitative Biology'
+        '&classification-q_finance=y              Quantitative Finance'
+        '&classification-quant-ph=y               Quantum Physics'
+        '&classification-statistics=y             Statistic'
+      );
 
-  until ((?)); do
-    operator=$(fzf -i +m --reverse --prompt 'Operator: ' <<< ${(F)operators}); [[ -z $operator ]] && break;
-    read -r 'term?Term: '; [[ -z $term ]] && break;
-    field=$(fzf -i +m --reverse --prompt 'Field: ' <<< ${(F)fields} ); # [[ -z field ]] && break;
-    query+='&terms-'${termnum}'-operator='${operator}'&terms-'${termnum}'-term='${term// /%20}'&terms-'${termnum}'-field='${field:-all};
-    ((++termnum));
-  done;
-  ((termnum == 0)) && exit 0;
+      until ((?)) {
+        operator=$(fzf -i +m --reverse --prompt 'Operator: ' <<< ${(F)operators}); [[ -z $operator ]] && break;
+        read -r 'term?Term: '; [[ -z $term ]] && break;
+        field=$(fzf -i +m --reverse --prompt 'Field: ' <<< ${(F)fields} ); # [[ -z field ]] && break;
+        query+='&terms-'${termnum}'-operator='${operator}'&terms-'${termnum}'-term='${term// /%20}'&terms-'${termnum}'-field='${field:-all};
+        ((++termnum));
+      };
+      ((termnum == 0)) && exit 0;
 
-  classification=($(fzf -i -m --reverse --tiebreak=end,begin,index --bind 'alt-c:clear-selection' --bind 'alt-v:select-all' <<< ${(F)classifications} | cut -d ' ' -f1));
+      classification=($(fzf -i -m --reverse --tiebreak=end,begin,index --bind 'alt-c:clear-selection' --bind 'alt-v:select-all' <<< ${(F)classifications} | cut -d ' ' -f 1));
 
-  # (($#classification == 0)) && query+=$(printf '%s' $(cut -d\  -f1 <<< ${(F)classification:-${(F)classifications}}))
-  # (($#classification == 0)) && query+=$(printf '%s' $(cut -d\  -f1 <<< ${(F)classifications})) || 
-  (($#classification > 0)) && query+=$(printf '%s' $(cut -d\  -f1 <<< ${(F)classifications}));
+      (($#classification > 0)) && query+=$(printf '%s' $(cut -d ' ' -f 1 <<< ${(F)classifications}));
 
-  menu -t 4 -m 2b \
-    'Include_cross-listed_papers?' \
-    '* Yes' \
-    '2 No';
-  case $(read -sek1 "?${n}> ") in
-    (2) query+='&classification-include_cross_list=exclude';;
-    (*) query+='&classification-include_cross_list=include';;
-  esac;
+      menu -t 4 -m 2b \
+        'Include_cross-listed_papers?' \
+        '* Yes' \
+        '2 No';
+      case $(read -sek1 "?${n}> ") {
+        (2) query+='&classification-include_cross_list=exclude';;
+        (*) query+='&classification-include_cross_list=include';;
+      };
 
-  menu -t 4 -m 2b \
-    'Date: ' \
-    '* All dates' \
-    '2 Past 12 months' \
-    '3 Specific year' \
-    '4 Date range';
-  case $(read -sek1 "?${n}> ") in
-    (2) query+='&date-filter_by=past_12&date-year=&date-from_date=&date-to_date=';;
-    (3) 
-      read -rk4 "year?${n}Publication year [YYYY]: "; pcre2grep -q '^\d{4}$' <<< $year || year='';
-      query+='&date-filter_by=specific_year&date-year='${year}'&date-from_date=&date-to_date=';;
-    (4) 
-      read -r "from?${n}From date (YYYY[[-MM]-DD]): "; pcre2grep -q '^\d{4}(?:-\d{1,2}(?:-\d{1,2})?)?$' <<< $from || from='';
-      read -r "to?${n}To date   (YYYY[[-MM]-DD]): "; pcre2grep -q '^\d{4}(?:-\d{1,2}(?:-\d{1,2})?)?$' <<< $to || to='';
-      query+='&date-year=&date-filter_by=date_range&date-from_date='${from}'&date-to_date='${to}'&date-year=';;
-    (*) query+='&date-filter_by=all_dates&date-year=&date-from_date=&date-to_date=';;
-  esac;
+      menu -t 4 -m 2b \
+        'Date: ' \
+        '* All dates' \
+        '2 Past 12 months' \
+        '3 Specific year' \
+        '4 Date range';
+      case $(read -sek1 "?${n}> ") {
+        (2) query+='&date-filter_by=past_12&date-year=&date-from_date=&date-to_date=';;
+        (3) 
+          read -rk4 "year?${n}Publication year [YYYY]: "; pcre2grep -q '^\d{4}$' <<< $year || year='';
+          query+='&date-filter_by=specific_year&date-year='${year}'&date-from_date=&date-to_date=';;
+        (4) 
+          read -r "from?${n}From date (YYYY[[-MM]-DD]): "; pcre2grep -q '^\d{4}(?:-\d{1,2}(?:-\d{1,2})?)?$' <<< $from || from='';
+          read -r "to?${n}To date   (YYYY[[-MM]-DD]): "; pcre2grep -q '^\d{4}(?:-\d{1,2}(?:-\d{1,2})?)?$' <<< $to || to='';
+          query+='&date-year=&date-filter_by=date_range&date-from_date='${from}'&date-to_date='${to}'&date-year=';;
+        (*) query+='&date-filter_by=all_dates&date-year=&date-from_date=&date-to_date=';;
+      };
 
-  query+='&size=200'; # query+='&size='${$(fzf -i +m --reverse --prompt 'Results: ' <<< ${(F)sizes}):-200};
+      # sizes=(25 50 100 200);
+      query+='&size=200'; # query+='&size='${$(fzf -i +m --reverse --prompt 'Results: ' <<< ${(F)sizes}):-200};
 
-  query+='&abstracts=show'; # [[ $(read -seq '?Show abstract? ') == y ]] && query+='&abstracts=show' || query+='&abstracts=hide'; printf '\n';
+      query+='&abstracts=show'; # [[ $(read -seq '?Show abstract? ') == y ]] && query+='&abstracts=show' || query+='&abstracts=hide'; printf '\n';
 
-  query+='&date-date_type=submitted_date';
-  # &date-date_type=submitted_date_first
-  # &date-date_type=announcement_date
+      query+='&date-date_type=submitted_date';
+      # &date-date_type=submitted_date_first
+      # &date-date_type=announcement_date
 
-  query+='&order=-announced_date_first';
+      query+='&order=-announced_date_first';
 
-  # PAGES
+      curl -sfL -o $tmp ${api}${query};
 
-  curl -sfL -o $tmp ${api}${query};
+      results=$(pup -n -f $tmp '.authors');
+      ((results == 0)) && printf '%s\n' 'No results for your query:' ${(F)${(s:&:)query}} && exit 0;
+      title=(${${(f)"$(pup -p -f $tmp '.title text{}'| perl -pe 'BEGIN{undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"}##+( )}); title[1]=();
+      author=(${(fs.Authors:.)"$(pup -p -f $tmp '.authors json{}' | jq -r '.[].children[].text')"});
+      pdf=(${(f)"$(pup -p -f $tmp 'a[href^=https://arxiv.org/pdf]  attr{href}')"});
+      abstract=(${(f)"$(pup -p -f $tmp '.abstract-full json{}' | jq '.[].text')"});
+      submitted=(${(f)"$(pup -f $tmp 'p.is-size-7 text{}' | perl -ne 's/^\s*(\d{1,2} \w+, \d{4});/$1/m && print')"});
+      announced=(${(f)"$(pup -f $tmp 'p.is-size-7 text{}' | perl -ne 's/^\s*((?:\d{1,2})?\w+ \d{4})\.$/$1/m && print')"});
 
-  results=$(pup -n -f $tmp '.authors');
-  ((results == 0)) && printf '%s\n' 'No results for your query:' ${(F)${(s:&:)query}} && exit 0;
-  title=(${(f)"$(pup -p -f $tmp '.title json{}' | jq -r ".[range(1;1+$results)].text")"});
-  author=(${(fs.Authors:.)"$(pup -p -f $tmp '.authors json{}' | jq -r '.[].children[].text')"});
-  pdf=(${(f)"$(pup -p -f $tmp 'a[href^=https://arxiv.org/pdf]  attr{href}')"});
-  abstract=(${(f)"$(pup -p -f $tmp '.abstract-full json{}' | jq '.[].text')"});
-  submitted=(${(f)"$(pup -f $tmp 'p.is-size-7 text{}' | perl -ne 's/^\s*(\d{1,2} \w+, \d{4});/$1/m && print')"});
-  announced=(${(f)"$(pup -f $tmp 'p.is-size-7 text{}' | perl -ne 's/^\s*((?:\d{1,2})?\w+ \d{4})\.$/$1/m && print')"});
+      printf '%s\n\n' "$(pup -p -f $tmp 'h1 json{}'|jq -r '.[].text')";
+      for a ( {1..$results} ) {
+        printf '%b%s\n%b%s\n%b%s.pdf\n%b%s\n%bSubmitted: %18.18s\t\t%bAnnounced: %18.18s%b\n\n\n' \
+          '\033[33;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
+          '\033[34m'   "$(fmt -w $COLUMNS <<< ${(j., .)${(f)author[a]:--}})" \
+          '\033[32m'    ${pdf[a]:--} \
+          '\033[0;37m' "$(fmt -w $COLUMNS <<< ${abstract[a]:--})" \
+          '\033[35;1m'  ${submitted[a]:--} \
+          '\033[0;35m'  ${announced[a]:--} '\033[0m';
+      } | less -r;
 
-  printf '%s\n\n' "$(pup -p -f $tmp 'h1 json{}'|jq -r '.[].text')";
-  for a in {1..$results}; do
-    printf '%b%s\n%b%s\n%b%s.pdf\n%b%s\n%bSubmitted: %18.18s\t%bAnnounced: %18.18s%b\n\n\n' \
-      '\033[33;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
-      '\033[34m'   "$(fmt -w $COLUMNS <<< ${(j., .)${(f)author[a]:--}})" \
-      '\033[32m'    ${pdf[a]:--} \
-      '\033[0;37m' "$(fmt -w $COLUMNS <<< ${abstract[a]:--})" \
-      '\033[35;1m'  ${submitted[a]:--} \
-      '\033[0;35m'  ${announced[a]:--} '\033[0m';
-  done | less -r;
+      rm $tmp; return 0;;
+    (2)
+      typeset query term subjectareas to from tmp;
+      typeset -i results;
+      typeset -a subjectareas title pdf author
+      query=https://www.biorxiv.org/search/;
+      tmp=$(mktemp);
 
-  rm $tmp; return 0;
-;;
-(2)
-  typeset query term subjectareas to from tmp;  
-  typeset -i results;
-  typeset -a subjectareas title pdf author
-  query='https://www.biorxiv.org/search/';
-  tmp=$(mktemp);
+      read -r 'term?Search terms & keywords: '; [[ ${term} =~ '^\s*$' ]] && break;
+      query+=${term// /%252B};
 
-  read -r 'term?Search terms & keywords: '; [[ -z $term ]] && break;
-  query+=${term// /%252B};
+      menu -t 4 -m 2b \
+        'Include_articles_from: ' \
+        '1 bioRxiv' \
+        '2 medRxiv' \
+        '3 bioRxiv & medRxiv';
+      case $(read -sek1 "?${n}> ") {
+        (1) query+='%20jcode%3Abiorxiv'; subjectareas=('Animal Behavior and Cognition' 'Biochemistry' 'Bioengineering' 'Bioinformatics' 'Biophysics' 'Cancer Biology' 'Cell Biology' 'Clinical Trials' 'Developmental Biology' 'Ecology' 'Epidemiology' 'Evolutionary Biology' 'Genetics' 'Genomics' 'Immunology' 'Microbiology' 'Molecular Biology' 'Neuroscience' 'Paleontology' 'Pathology' 'Pharmacology and Toxicology' 'Physiology' 'Plant Biology' 'Scientific Communication and Education' 'Synthetic Biology' 'Systems Biology' 'Zoology');;
+        (2) query+='%20jcode%3Amedrxiv'; subjectareas=('Addiction Medicine' 'Allergy and Immunology' 'Anesthesia' 'Cardiovascular Medicine' 'Dentistry and Oral Medicine' 'Dermatology' 'Emergency Medicine' 'Endocrinology' 'Epidemiology' 'Forensic Medicine' 'Gastroenterology' 'Genetic and Genomic Medicine' 'Geriatric Medicine' 'Health Economics' 'Health Informatics' 'Health Policy' 'Health Systems and Quality Improvement' 'Hematology' 'HIV/AIDS' 'Infectious Diseases' 'Intensive Care and Critical Care Medicine' 'Medical Education' 'Medical Ethics' 'Nephrology' 'Neurology' 'Nursing' 'Nutrition' 'Obstetrics and Gynecology' 'Occupational and Environmental Health' 'Oncology' 'Ophthalmology' 'Orthopedics' 'Otolaryngology' 'Pain Medicine' 'Palliative Medicine' 'Pathology' 'Pediatrics' 'Pharmacology and Therapeutics' 'Primary Care Research' 'Psychiatry and Clinical Psychology' 'Public and Global Health' 'Radiology and Imaging' 'Rehabilitation Medicine and Physical Therapy' 'Respiratory Medicine' 'Rheumatology' 'Sexual and Reproductive Health' 'Sports Medicine' 'Surgery' 'Toxicology' 'Transplantation' 'Urology');;
+        (*) query+='%20jcode%3Amedrxiv%7C%7Cbiorxiv'; subjectareas=('Addiction Medicine' 'Allergy and Immunology' 'Anesthesia' 'Animal Behavior and Cognition' 'Biochemistry' 'Bioengineering' 'Bioinformatics' 'Biophysics' 'Cancer Biology' 'Cardiovascular Medicine' 'Cell Biology' 'Clinical Trials' 'Dentistry and Oral Medicine' 'Dermatology' 'Developmental Biology' 'Ecology' 'Emergency Medicine' 'Endocrinology' 'Epidemiology' 'Evolutionary Biology' 'Forensic Medicine' 'Gastroenterology' 'Genetic and Genomic Medicine' 'Genetics' 'Genomics' 'Geriatric Medicine' 'Health Economics' 'Health Informatics' 'Health Policy' 'Health Systems and Quality Improvement' 'Hematology' 'HIV/AIDS' 'Immunology' 'Infectious Diseases' 'Intensive Care and Critical Care Medicine' 'Medical Education' 'Medical Ethics' 'Microbiology' 'Molecular Biology' 'Nephrology' 'Neurology' 'Neuroscience' 'Nursing' 'Nutrition' 'Obstetrics and Gynecology' 'Occupational and Environmental Health' 'Oncology' 'Ophthalmology' 'Orthopedics' 'Otolaryngology' 'Pain Medicine' 'Paleontology' 'Palliative Medicine' 'Pathology' 'Pathology' 'Pediatrics' 'Pharmacology and Therapeutics' 'Pharmacology and Toxicology' 'Physiology' 'Plant Biology' 'Primary Care Research' 'Psychiatry and Clinical Psychology' 'Public and Global Health' 'Radiology and Imaging' 'Rehabilitation Medicine and Physical Therapy' 'Respiratory Medicine' 'Rheumatology' 'Scientific Communication and Education' 'Sexual and Reproductive Health' 'Sports Medicine' 'Surgery' 'Synthetic Biology' 'Systems Biology' 'Toxicology' 'Transplantation' 'Urology' 'Zoology');;
+      };
 
-  menu -t 4 -m 2b \
-    'Include_articles_from: ' \
-    '1 bioRxiv' \
-    '2 medRxiv' \
-    '3 bioRxiv & medRxiv';
-  case $(read -sek1 '?') in 
-    (1) query+='%20jcode%3Abiorxiv'; subjectareas=('Animal Behavior and Cognition' 'Biochemistry' 'Bioengineering' 'Bioinformatics' 'Biophysics' 'Cancer Biology' 'Cell Biology' 'Clinical Trials' 'Developmental Biology' 'Ecology' 'Epidemiology' 'Evolutionary Biology' 'Genetics' 'Genomics' 'Immunology' 'Microbiology' 'Molecular Biology' 'Neuroscience' 'Paleontology' 'Pathology' 'Pharmacology and Toxicology' 'Physiology' 'Plant Biology' 'Scientific Communication and Education' 'Synthetic Biology' 'Systems Biology' 'Zoology');;
-    (2) query+='%20jcode%3Amedrxiv'; subjectareas=('Addiction Medicine' 'Allergy and Immunology' 'Anesthesia' 'Cardiovascular Medicine' 'Dentistry and Oral Medicine' 'Dermatology' 'Emergency Medicine' 'Endocrinology' 'Epidemiology' 'Forensic Medicine' 'Gastroenterology' 'Genetic and Genomic Medicine' 'Geriatric Medicine' 'Health Economics' 'Health Informatics' 'Health Policy' 'Health Systems and Quality Improvement' 'Hematology' 'HIV/AIDS' 'Infectious Diseases' 'Intensive Care and Critical Care Medicine' 'Medical Education' 'Medical Ethics' 'Nephrology' 'Neurology' 'Nursing' 'Nutrition' 'Obstetrics and Gynecology' 'Occupational and Environmental Health' 'Oncology' 'Ophthalmology' 'Orthopedics' 'Otolaryngology' 'Pain Medicine' 'Palliative Medicine' 'Pathology' 'Pediatrics' 'Pharmacology and Therapeutics' 'Primary Care Research' 'Psychiatry and Clinical Psychology' 'Public and Global Health' 'Radiology and Imaging' 'Rehabilitation Medicine and Physical Therapy' 'Respiratory Medicine' 'Rheumatology' 'Sexual and Reproductive Health' 'Sports Medicine' 'Surgery' 'Toxicology' 'Transplantation' 'Urology');;
-    (*) query+='%20jcode%3Amedrxiv%7C%7Cbiorxiv'; subjectareas=('Addiction Medicine' 'Allergy and Immunology' 'Anesthesia' 'Animal Behavior and Cognition' 'Biochemistry' 'Bioengineering' 'Bioinformatics' 'Biophysics' 'Cancer Biology' 'Cardiovascular Medicine' 'Cell Biology' 'Clinical Trials' 'Dentistry and Oral Medicine' 'Dermatology' 'Developmental Biology' 'Ecology' 'Emergency Medicine' 'Endocrinology' 'Epidemiology' 'Evolutionary Biology' 'Forensic Medicine' 'Gastroenterology' 'Genetic and Genomic Medicine' 'Genetics' 'Genomics' 'Geriatric Medicine' 'Health Economics' 'Health Informatics' 'Health Policy' 'Health Systems and Quality Improvement' 'Hematology' 'HIV/AIDS' 'Immunology' 'Infectious Diseases' 'Intensive Care and Critical Care Medicine' 'Medical Education' 'Medical Ethics' 'Microbiology' 'Molecular Biology' 'Nephrology' 'Neurology' 'Neuroscience' 'Nursing' 'Nutrition' 'Obstetrics and Gynecology' 'Occupational and Environmental Health' 'Oncology' 'Ophthalmology' 'Orthopedics' 'Otolaryngology' 'Pain Medicine' 'Paleontology' 'Palliative Medicine' 'Pathology' 'Pathology' 'Pediatrics' 'Pharmacology and Therapeutics' 'Pharmacology and Toxicology' 'Physiology' 'Plant Biology' 'Primary Care Research' 'Psychiatry and Clinical Psychology' 'Public and Global Health' 'Radiology and Imaging' 'Rehabilitation Medicine and Physical Therapy' 'Respiratory Medicine' 'Rheumatology' 'Scientific Communication and Education' 'Sexual and Reproductive Health' 'Sports Medicine' 'Surgery' 'Synthetic Biology' 'Systems Biology' 'Toxicology' 'Transplantation' 'Urology' 'Zoology');;
-  esac;
+      subjectarea=($(fzf -i -m --reverse --prompt='Exclude articles outside subject area(s): ' --bind 'alt-c:clear-selection' --bind 'alt-v:select-all' <<< ${(F)subjectareas} | cut -d ' ' -f 1));
+      if (($#subjectarea > 1)) {
+        query+='%20subject_collection_code%3A'${subjectarea[1]// /%20};
+        query+=$(printf '%%2C%s' ${subjectareas[2,-1]// /%20});
+      } elif (($#subjectarea == 1)) {
+        query+='%20subject_collection_code%3A'${subjectareas// /%20};
+      };
 
-  subjectarea=($(fzf -i -m --reverse --prompt='Exclude articles outside subject area(s): ' --bind 'alt-c:clear-selection' --bind 'alt-v:select-all' <<< ${(F)subjectareas} | cut -d\  -f1));
-  if (($#subjectarea > 1)); then
-    query+='%20subject_collection_code%3A'${subjectarea[1]// /%20};
-    query+=$(printf '%%2C%s' ${subjectareas[2,-1]// /%20});
-  elif (($#subjectarea == 1)); then
-    query+='%20subject_collection_code%3A'${subjectareas// /%20};
-  fi;
+      read -r "from?${n}From date (YYYY-MM-DD): "; pcre2grep -q '^\d{4}-\d{2}-\d{2}$' <<< $from || from=;
+      read -r   "to?${n}To date   (YYYY-MM-DD): "; pcre2grep -q '^\d{4}-\d{2}-\d{2}$' <<< $to || to=;
+      query+='%20limit_from%3A'${from}'%20limit_to%3A'${to};
 
-  read -r "from?${n}From date (YYYY-MM-DD): "; pcre2grep -q '^\d{4}-\d{2}-\d{2}$' <<< $from || from='';
-  read -r "to?${n}To date   (YYYY-MM-DD): "; pcre2grep -q '^\d{4}-\d{2}-\d{2}$' <<< $to || to='';
-  query+='%20limit_from%3A'${from}'%20limit_to%3A'${to};
+      menu -t 4 -m 2b \
+        'Include_articles_in_table_of_contents_section: ' \
+        '1 New Results' \
+        '2 Contradictory Results' \
+        '3 Confirmatory Results' \
+        '* All Results';
+      case $(read -sek1 "?${n}> ") {
+        (1) query+='%20toc_section%3ANew%20Results';;
+        (2) query+='%20toc_section%3AContradictory';;
+        (3) query+='%20toc_section%3AConfirmatory';;
+      };
 
-  menu -t 4 -m 2b \
-    'Include_articles_in_table_of_contents_section: ' \
-    '1 New Results' \
-    '2 Contradictory Results' \
-    '3 Confirmatory Results' \
-    '* All Results';
-  case $(read -sek1 "?${n}> ") in
-    (1) query+='%20toc_section%3ANew%20Results';;
-    (2) query+='%20toc_section%3AContradictory';;
-    (3) query+='%20toc_section%3AConfirmatory';;
-  esac;
+      menu -t 4 -m 2b \
+        'Result_format: ' \
+        '* Standard' \
+        '2 Condensed';
+      case $(read -sek1 "?${n}> ") {
+        (2) query+='%20format_result%3Acondensed';;
+        (*) query+='%20format_result%3Astandard';;
+      };
 
-  menu -t 4 -m 2b \
-    'Result_format: ' \
-    '* Standard' \
-    '2 Condensed';
-  case $(read -sek1 "?${n}> ") in 
-    (2) query+='%20format_result%3Acondensed';;
-    (*) query+='%20format_result%3Astandard';;
-  esac;
+      menu -t 4 -m 2b \
+        'Sort_by: ' \
+        '* Best Match' \
+        '2 Oldest First' \
+        '3 Newest First';
+      case $(read -sek1 "?${n}> ") {
+        (2) query+='%20sort%3Apublication-date%20direction%3Aascending';;
+        (3) query+='%20sort%3Apublication-date%20direction%3Adescending';;
+        (*) query+='%20sort%3Arelevance-rank';;
+      };
 
-  menu -t 4 -m 2b \
-    'Sort_by: ' \
-    '* Best Match' \
-    '2 Oldest First' \
-    '3 Newest First';
-  case $(read -sek1 "?${n}> ") in
-    (2) query+='%20sort%3Apublication-date%20direction%3Aascending';;
-    (3) query+='%20sort%3Apublication-date%20direction%3Adescending';;
-    (*) query+='%20sort%3Arelevance-rank';;
-  esac;
+      query+='%20numresults%3A75';
 
-  query+='%20numresults%3A75';
+      # PAGES
 
-  # PAGES
+      # curl -sfLH User-Agent: $query | pcre2grep -M -O 'https://www.$1.org/content/$2v1' '.*((?:med|bio)Rxiv).*\n.*\.org/(\S+)' | less;
+      # rdrview -B 'elinks -dump -no-numbering -no-references' $query | pcre2grep -M -O 'https://www.$1.org/content/$2v1' '.*?((?:med|bio)Rxiv).*?\n.*?\.org\/(\S+)' | less;
+      curl -sfLH User-Agent: -o $tmp $query;
 
-  # curl -sfLH User-Agent: $query | pcre2grep -M -O 'https://www.$1.org/content/$2v1' '.*((?:med|bio)Rxiv).*\n.*\.org/(\S+)' | less;
-  # rdrview -B 'elinks -dump -no-numbering -no-references' $query | pcre2grep -M -O 'https://www.$1.org/content/$2v1' '.*?((?:med|bio)Rxiv).*?\n.*?\.org\/(\S+)' | less;
-  curl -sfLH User-Agent: -o $tmp $query;
+      results=$(pup -n -f $tmp '.highwire-cite-title');
+      ((results == 0)) && read -sk1 "?${n}${(F)${(s:%20:)query}}: No results for your query." && exit 0;
+      title=(${(f)"$(pup -p -f $tmp '.highwire-cite-title text{}'| perl -pe 'BEGIN{undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"});
+      pdf=(${(f)"$(pup -p -f $tmp '.highwire-cite-title a attr{href}')"});
+      author=(${(s.QQQQ.)"$(pup -p -f $tmp '.highwire-citation-authors text{}' | perl -pe 'BEGIN { $/ = undef; } s/(\w.+)\n(\w.+)/$1QQQQ$2/mg; s/\n//mg')"})
 
-  results=$(pup -n -f $tmp '.highwire-cite-title');
-  ((results == 0)) && read -sk1 "?${n}${(F)${(s:%20:)query}}: No results for your query." && exit 0;
-  title=(${(f)"$(pup -p -f $tmp '.highwire-cite-title text{}'| perl -pe 'BEGIN{undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"});
-  pdf=(${(f)"$(pup -p -f $tmp '.highwire-cite-title a attr{href}')"});
-  author=(${(s.QQQQ.)"$(pup -p -f $tmp '.highwire-citation-authors text{}' | perl -pe 'BEGIN { $/ = undef; } s/(\w.+)\n(\w.+)/$1QQQQ$2/mg; s/\n//mg')"})
-
-  for a in {1..$results}; do
-    printf '%b%s\n%b%s\n%b%s.pdf\n\n\n' \
-      '\033[37;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
-      '\033[34m'   "$(fmt -w $COLUMNS <<< ${(f)author[a]:--})" \
-      '\033[0;32m'  ${${pdf[a]/#\//http://biorxiv.org/}:--};
-  done | less -r; return 0;
-  ;;
-(*) return 0;;
-esac;
+      for a ( {1..$results} ) {
+        printf '%b%s\n%b%s\n%b%s.pdf\n\n\n' \
+          '\033[37;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
+          '\033[34m'   "$(fmt -w $COLUMNS <<< ${(f)author[a]:--})" \
+          '\033[0;32m'  ${${pdf[a]/#\//http://biorxiv.org/}:--};
+      } | less -r; return 0;;
+    (*) return 0;;
+  };
 }

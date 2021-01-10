@@ -1,46 +1,11 @@
 #!/bin/zsh
 cz() {
-local o s d;
-while getopts '' o; do case $o in (*)
-less -F <<HEREDOC
-NAME
-    cz - filesystem navigator
-
-SYNOPSIS
-    cz [-n]
-
-DESCRIPTION
-    Browse the filesystem from current working directory. Parent directory is always first 
-    item, the rest are directory present in the current directory. Use -n to list files in the 
-    terminal.
-
-BUGS
-    Please report any aberrant behavior or bugs to vlg@tutamail.com
-
-
-HEREDOC
-return 1;; esac; done;
-
-# until [[ -n $w ]]; do w=$(xwininfo -name 'cz' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
-
-# alias cmd="ls -ap | pcre2grep '/$' | tail -n +2";
-# alias cmd="find . -maxdepth 1 -mindepth 1 -type d"
-# alias cmd="fd -uu -t d -d 1 ."
-# alias cmd='ls -apd *(/D-)';
-
-clear;
-setopt nonomatch;
-while true; do
-  # s="$(cmd | dmenu -i -w $w -p "$(pwd)")" || break; [ -d $s ] && cd $s;
-  # s="$(cmd | slmenu -t -i -l $l )" || break;
-  # s="$(cmd | fzf -i +m --reverse --border=horizontal)" || break;
-  # s="$(cmd | fzy -l $LINES -p "$(printf '%s\t' "$(pwd) ")")" || break;
-  
-  d=(*(/D-)); [[ $d[1] = '*(/D-)' ]] && d[1]=();
-  # s="$(printf '%s/\n' '..' ${d} | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
-  s="$(printf '%s/\n' '..' ${d} | fzf -i +m --reverse --cycle --prompt="$(pwd) " --bind 'right:accept' --bind 'left:top+accept' --preview='if [[ -d {} ]]; then printf "%s\n" {}*(D-); elif [[ -f {} ]]; then head -n 64 {} | less; fi')" || break;
-
-  [[ -d $s ]] && cd $s;
-done
-clear; 
+  typeset sel;
+  clear;
+  while { true } {
+    # sel="$(printf '%s/\n' '..' *(/-DN) | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
+    sel="$(printf '%s/\n' .. *(/-DN) | fzf -i +m --reverse --cycle --bind=alt-/:toggle-preview,\[:up,\':down,alt-\[:preview-up,alt-\':preview-down,\\:accept,\;:top+accept --header="$(pwd)" --preview="printf '%s\n' {}/*(DN:t)" --preview-window=right:50%)" || break;
+    [[ -d ${sel} ]] && cd ${sel};
+  };
+  clear; 
 }

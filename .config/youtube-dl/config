@@ -1,6 +1,7 @@
 -o ~/mov/%(upload_date)s-%(title)s.%(ext)s
 -f (bestvideo+bestaudio/best)
-#-f "best[height<=720]"
---retries 64
---fragment-retries 64
+--retries infinite
+--fragment-retries infinite
 --age-limit 99
+--geo-bypass
+--youtube-skip-dash-manifest

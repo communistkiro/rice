@@ -1,0 +1,27 @@
+#!/bin/zsh
+function dmnt () {
+typeset dev dir n; n='
+'; typeset -a blk src;
+printf '%s\n' \
+  '[1]    mount' \
+  '[2]    umount';
+src=(${(f)$(findmnt --real -nlo 'source')});
+case $(read -resk1 "?${n}> ") in
+(1)
+  blk=(${(f)"$(lsblk -nlpo name,label,type,size,uuid,state,mountpoint 2>/dev/null | pcre2grep -v "running|/boot$|/$|SWAP|${(j:|:)src}")"});
+  dev=$(fzy -p 'device  label  type  size  uuid  status' -l $LINES <<< ${(F)blk} | cut -f 1 -d ' ');
+  [[ -n ${dev} ]] && mount ${dev} 2&>/dev/null || true;
+  while { true } {
+    dir=$(printf '%s\n' .. *(/-DN) | fzf -i +m --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down --preview="printf '%s\n' {}/*(DN:t)") || break;
+    [[ -d ${dir} ]] && cd ${dir};
+  };
+  [[ $(read -seq "?${n}Mount ${dev} to $(pwd) [y/n]?") == y ]] && mount ${dev} "$(pwd)";
+  cd ~;;
+(2)
+  blk=(${(f)"$(findmnt --real -nlo target,source,fstype | pcre2grep -v ${(j:|:)src})"});
+  ((${#blk} != 0)) || { printf '%s\n' 'No devices found.'; return 0 };
+  dev=$(fzy -l $LINES -p 'target  source  fstype' <<< ${(F)blk} | cut -f 1 -d ' ');
+  lsof | pcre2grep "\b${dev}\b" | awk '{print $2}' | xargs kill &>/dev/null;
+  umount ${dev};;
+esac;
+}

@@ -11,6 +11,6 @@ cat << HEREDOC
 Usage:  noise [-c b|Bp|Pw|W] [^(?:\d+:){0,2}\d+(?:\.\d+)?]
 HEREDOC
 return 1;; esac; done;
-((# - OPTIND == 0)) && pcre2grep -q '^(?:\d+:){0,2}\d+(?:\.\d+)?$' <<< ${@[OPTIND]} && d=${@[OPTIND]};
-sox -t sw -r 24k -c 2 /dev/zero -t alsa synth ${c:-pink}noise vol -9 dB band -n 800 1200 fade q 5 ${d:-90:00} 15;
+((# - OPTIND == 0)) && [[ "${@[OPTIND]}" =~ '^(?:\d+:){0,2}\d+(?:\.\d+)?$' ]] && d=${@[OPTIND]};
+sox -t sw -r 24k -c 2 /dev/zero -t alsa synth ${c:-pink}noise vol -10 dB band -n 800 1200 fade q 5 ${d:-90:00} 15;
 }

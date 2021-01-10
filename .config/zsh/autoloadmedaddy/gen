@@ -1,23 +1,23 @@
 #!/bin/zsh
 function gen () {
-((# > 0)) && return 1;
-typeset l u n s e x q a n1 n2 o1 o2; integer length; q="
-";
+  ((# > 0)) && return 1;
+  typeset l u n s e x q a n1 n2 o1 o2; integer length; q='
+';
 
-read -r 'length?Length [64]> ' && ((length == 0)) && length=64;
-l=$([[ $(read -eq "?${q}No lowercase?  ") = n ]] && <<< --lower);
-u=$([[ $(read -eq "?${q}No uppercase?  ") = n ]] && <<< --upper);
-n=$([[ $(read -eq "?${q}No numbers?    ") = n ]] && <<< --numeric);
-s=$([[ $(read -eq "?${q}No special?    ") = n ]] && <<< --special);
-e=$([[ $(read -eq "?${q}No extended?   ") = n ]] && <<< --extended);
-read -r "x?${q}Exclude>    ";
-x=${x:+--exclude ${(j.,.)${(s..)x}}};
+  read -r 'length?Length [64]> ' && ((length == 0)) && length=64;
+  l=$([[ $(read -eq "?${q}No lowercase [y/*]?") = n ]] && <<< --lower);
+  u=$([[ $(read -eq "?${q}No uppercase [y/*]?") = n ]] && <<< --upper);
+  n=$([[ $(read -eq "?${q}No numbers   [y/*]?") = n ]] && <<< --numeric);
+  s=$([[ $(read -eq "?${q}No special   [y/*]?") = n ]] && <<< --special);
+  e=$([[ $(read -eq "?${q}No extended  [y/*]?") = n ]] && <<< --extended);
+  read -r "x?${q}Exclude>    ";
+  x=${x:+--exclude ${(j.,.)${(un)${(s..)x}}}};
 
-o2=0;
-for a in {1..48}; do
-  n1="$(keepassxc-cli generate --length $length $l $u $n $s $e --every-group)";
-  n2="$(keepassxc-cli estimate "$n1" | awk '{print $4}')";
-  ((n2 > o2)) && { o2="$n2"; o1="$1"; };
-done;
-printf '%s\n' "$n1";
+  o2=0;
+  for a ( {1..48} ) {
+    n1="$(keepassxc-cli generate --length $length $l $u $n $s $e --every-group)";
+    n2="$(keepassxc-cli estimate "$n1" | awk '{print $4}')";
+    ((n2 > o2)) && { o2="$n2"; o1="$1"; };
+  };
+  printf '%s\n' "$n1";
 }

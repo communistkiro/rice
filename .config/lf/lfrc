@@ -53,7 +53,8 @@ set scrolloff 1
 # define a custom 'delete' command
 cmd delete ${{
     set -f;
-    printf "$fx\n\ndelete? [y/n]";
+    printf '%s\n' $fx;
+    printf '\n%s' 'delete above files? [y/n]';
     [[ $(read -seq ) = y ]] && rm -rf $fx;
     clear;
 }}
@@ -67,20 +68,21 @@ cmd open ${{
   local a;
   for a in $fx; do
     case $a in
-      (*.jpg|*.png|*.gif|*.tiff|*.jpeg|*.GIF|*.TIFF|*.PNG|*.BMP|*.JPEG|*.JPG) feh --scale-down --quiet $a 2>/dev/null &;;
+      (*.jpg|*.png|*.gif|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null &;;
       (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
       (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
       (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null &;;
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;
       (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null &;;
-      (*.docx) docx2txt $a - | fmt | less;;
-      (*.doc) catdoc $a | fmt | less;;
-      (*.epub) epub2txt -n -a $a | fmt -w $COLUMN | less;;
-      (*.htm|*.html|*.xhtml) firefox --new-tab $a &>/dev/null &;;
+      (*.docx) docx2txt $a - | fmt -w $COLUMNS | less;;
+      (*.doc) catdoc $a | fmt -w $COLUMNS | less;;
+      (*.epub) epub2txt -a $a | fmt -w $COLUMNS | less;;
+      (*.htm|*.html|*.xhtml) sf $a &>/dev/null &;;
       (*.info) info $a;;
       (*.torrent|*.magnet) qbittorrent $a &>/dev/null &;;
       (*.exe) wine $a &>/dev/null &;;
+      (*.txt) fmt -w $COLUMNS $a | less;;
     esac;
     disown &>/dev/null;
   done;

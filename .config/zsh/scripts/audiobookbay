@@ -1,45 +1,49 @@
 #!/bin/zsh
-[[ ! -t 0 ]] && return 1;
+[[ -t 0 ]] || return 1;
+# { which zsh && which pup && which curl } &>/dev/null || return 2;
+ping -c 1 github.com &>/dev/null || return 3;
 emulate -LR zsh;
-setopt pipefail;
-typeset query baseurl t;
-integer pages q c r R x;
-typeset -a title url size format bitrate posted;
-typeset -aU hash;
+typeset query baseurl t n; n='
+'; typeset -i pages q c r R x;
+typeset -a title url size format bitrate posted hash;
 t=$(mktemp);
 baseurl=http://audiobookbay.nl;
-
-((# == 0)) && read -r 'query?> ' || query="$@";
-[[ ${query} =~ '^\s*$' ]] && return 1;
-
+# ((# == 0)) && read -r 'query?> ' || query="$@";
+query="${${@}:-$(read -er "?${n}> ")}";
+[[ ! ${query} =~ '^\s*$' ]] || return 4;
 curl -sfLH User-Agent: ${baseurl}/page/1/'?s='${query// /+} > ${t};
 
-[[ $(pup -f ${t} 'h3 text{}') = 'Not Found' ]] || ((${$(pup -f ${t} -n '.postTitle'):-0} == 0)) && read -sk1 "?${q}: No results. " && exit 1;
-pages=${${$(pup -f ${t} '.wp-pagenavi a:last-child attr{href}')%/*}#/page/}; ((pages==0)) && exit 0
+[[ $(pup -f ${t} 'h3 text{}') == 'Not Found' ]] || ((${$(pup -f ${t} -n '.postTitle'):-0} == 0)) && { printf '\nNo results.\n' ${query}; exit 0 };
+pages=${${$(pup -f ${t} '.wp-pagenavi a:last-child attr{href}')%/*}#/page/}; 
+((pages!=0)) || { printf '\nNo results.\n'; exit 0 };
 
-for q in {1..${pages}}; do
-  title+=(${(f)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] text{}')"});
-  url+=(${(f)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] attr{href}')"});
-  size+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'File Size: (\d+(?:\.\d+)? [KMGT]i?B)sP?')"});
-  format+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(2) text{}')"});
-  bitrate+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(3) text{}')"});
-  posted+=(${(f)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'Posted: (.+?)Format')"});
-  ((q < pages)) && curl -sfLH User-Agent: ${baseurl}/page/$((q+1))/'?'s=${query// /+} > ${t};
-done;
+for q ( {1..${pages}} ) {
+  title+=(${(fqq)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] text{}')"});
+  url+=(${(fqq)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] attr{href}')"});
+  size+=(${(qq)${(ps.Size: .)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n')"}[2,-1]%%s*});
+  format+=(${(fqq)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(2) text{}')"});
+  bitrate+=(${(fqq)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(3) text{}')"});
+  posted+=(${(fqq)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'Posted:\s*(.+?)Format')"});
+  curl -sfLH User-Agent: ${baseurl}/page/$((q+1))/'?'s=${query// /+} > ${t};
+};
+
 R=${#title};
 r=${(c)#${#title}};
 x=$((COLUMNS - r - 2 - 2 - 10 - 2 - 8 - 2 - 3 - 2 - 11));
-while true; do
-  c=$(for q in {1..${R}}; do;
+
+while { true } {
+  c=$(for q ( {1..${R}} ) {
     printf "%.${r}d  %b%-${x}.${x}s  %b%10.10s  %b%8.8s  %b%3.3s  %b%11.11s\n" \
-      $q \
-      '\033[1m'    "${title[q]:--}" \
-      '\033[34;1m' "${size[q]:--}" \
-      '\033[32;1m' "${bitrate[q]:--}" \
-      '\033[0;32m' "${format[q]:--}" \
-      '\033[34m'   "${posted[q]:--}";
-  done| fzy -l $LINES -q "${query}" | cut -f 1 -d ' ');
-  ((c > 0)) && ((c < R +1)) && hash+=($(curl -sfLH User-Agent: ${baseurl}${url[c]} | pcre2grep -Mo1 'Info Hash:</td>\n<td>(.+?)</td>')) || break;
-done;
-if ((${#hash} > 0)); then qbittorrent ${hash} &>/dev/null & disown; fi;
-rm ${t}; return 0;
+      ${q} \
+      '\033[34;1m' ${(Q)title[q]:--} \
+      '\033[35;1m' ${(Q)size[q]:--} \
+      '\033[37;1m' ${(Q)bitrate[q]:--} \
+      '\033[36;1m' ${(Q)format[q]:--} \
+      '\033[32;1m' ${(Q)posted[q]:--};
+  } | fzy -l $LINES -q "${query}" | cut -f 1 -d ' ');
+  # ((c > 0 && c < R +1)) && { hash+=($(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} | pcre2grep -Mo1 'Info Hash:</td>\n<td>(.+)</td>')) } || { break };
+  ((c > 0 && c < R +1)) && { hash+=(${${${"$(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]})"##*Info Hash:</td>}%%</td>*}#*>}) } || { break };
+};
+
+((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
+rm -f ${t}; return 0;

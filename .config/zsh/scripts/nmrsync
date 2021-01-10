@@ -1,6 +1,13 @@
 #!/bin/zsh
-[ "$(realpath ..)" != '/media/ELEM/Music' ] && printf '/media/ELEM/Music not parent dir!\n' && return 1;
-for a in ${(@f)"$(ls . | cut -c 1 | sort -u)"}; do
-  [[ -d ../${(U)a} ]] && rsync -vah ${a}* ../${(U)a} || rsync -vah ${a}* ../123 ;
-done
+typeset a;
+[[ "$(realpath ..)" != '/media/ELEM/Music' ]] && printf '%s\n' '/media/ELEM/Music not parent dir!' && return 1;
+
+for a in ${(fU)"$(printf '%s\n' *(/DN) | cut -c 1 | sort -u)"}; do;
+  [[ -d ../${a} ]] && rsync -vah ${a}*(N) ${(L)a}*(N) ../${a};
+done;
+
+for a in ${(f)"$(printf '%s\n' *(/DN) | pre -v '^[[:ascii:]]')"}; do;
+  rsync -vah ${a} ../123;
+done;
+
 sync;

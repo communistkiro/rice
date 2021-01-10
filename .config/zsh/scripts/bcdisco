@@ -1,12 +1,10 @@
 #!/bin/zsh
-function bandcampdisco () {
 ((# == 0)) && return;
 typeset a s d q; s=$(mktemp); d=$(mktemp);
-# cp ~/nm/bcnew ~/nm/bcnew.$(date +%s);
-for q in $@; do
+for q ( $@ ) {
   a=$(pcre2grep -o1 '(https?://.+\.bandcamp\.com)' <<< $q);
   lynx -listonly -dump "${a}/music" | pcre2grep -o1 '^\s*\d+\.\s+(https?://.+\.bandcamp\.com/(album|track)/\S+)' >> $s;
-done;
+};
 sort -u $s > $d;
 diff ~/nm/bcnew $d | pcre2grep -o1 '^> +(.*)$' > $s;
 diff ~/nm/bcold $s | pcre2grep -o1 '^> +(.*)$' > $d;
@@ -14,4 +12,3 @@ diff ~/nm/soon  $d | pcre2grep -o1 '^> +(.*)$' > $s;
 cat ~/nm/bcnew >> $s;
 sort -u $s > ~/nm/bcnew;
 rm $s $d;
-}
