@@ -38,7 +38,7 @@
 
 # Examples of commands:
 
-#"xbindkeys_show" 
+#"xbindkeys_show"
 #control+shift + q
 
 # set directly keycode (here control + f with my keyboard)
@@ -104,7 +104,7 @@
     XF86AudioStop
 
 # printscreen
-"scrot --silent --quality=85 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
+"scrot --silent --quality=75 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
    Print
 
 # printscreen cropped

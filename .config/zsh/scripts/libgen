@@ -1,0 +1,155 @@
+#!/bin/zsh
+function menu () {
+  typeset m t a;
+  while getopts 'm:t:' a; do case $a in
+  (m)
+    [[ $OPTARG =~ '[0-7]' ]] && m='\033[0;3'${MATCH} || m='\033[0;37';
+    [[ $OPTARG =~ 'i|I' ]]   && m="${m};7";
+    [[ $OPTARG =~ 'b|B' ]]   && m="${m};1";
+    m="${m}m";;
+  (t)
+    [[ $OPTARG =~ '[0-7]' ]] && t='\033[0;3'${MATCH} || t='\033[0;37';
+    [[ $OPTARG =~ 'i|I' ]]   && t="${t};7";
+    [[ $OPTARG =~ 'b|B' ]]   && t="${t};1";
+    t="${t}m";;
+  esac; done;
+  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033]0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
+}
+
+[[ -t 0 ]] || return 1;
+# { which zsh && which pup && which curl} &>/dev/null || return 2;
+ping -c 1 github.com &>/dev/null || return 3;
+emulate -LR zsh
+typeset query baseurl tmp n # lang format
+typeset -i page pages results r t s a c q;
+typeset -a ext url mirror title author series sizeformat md5 # langs formats
+langs=(AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AZ BA BB BD BE BF BG BH BI BJ BM BN BO BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CS CU CV CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR FX GA GB GD GE GF GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IN IO IQ IR IS IT JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SU SV SY SZ TC TD TE TF TG TH TJ TK TM TN TO TP TR TT TV TW TZ UA UG UK UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT YU ZA ZM ZR ZW);
+formats=(epub mobi azw azw3 fb2 pdf rtf txt);
+n=$'\n'; tmp=$(mktemp);
+query=${${@}:-$(read -er "?${n}> ")};
+[[ ! ${query} =~ '^\s*$' ]] || return 4;
+baseurl='http://libgen.rs/'; # mirrors: libgen.st libgen.is
+
+menu -m 4b -t 2b 'Category: ' \
+  '* fiction' \
+  '2 non-fiction';
+case $(read -sek1 "?${n}") {
+  (2)
+    mirror=(
+      http://library.lol/main/
+      http://libgen.lc/ads.php\?md5=
+      http://b-ok.cc/md5/
+      # https://libgen.pw/item?id=NOT MD5
+      http://bookfi.net/md5/
+    );; 
+  (*) 
+    mirror=(
+      http://library.lol/fiction/
+      http://libgen.lc/foreignfiction/ads.php\?md5=
+      http://b-ok.cc/md5/
+    );
+    baseurl+=fiction/
+};
+
+baseurl+='?q='${query// /+};
+
+menu -m 4b -t 2b 'Fields_to_search: ' \
+  '* any' \
+  '1 title' \
+  '2 authors' \
+  '3 series';
+case $(read -sek1 "?${n}") {
+  (1) baseurl+='&criteria=title';;
+  (2) baseurl+='&criteria=authors';;
+  (3) baseurl+='&criteria=series';;
+  (*) baseurl+='&criteria=';;
+}
+
+case $(read -sek1 "?${n}No wildcards [y*]?> ") {
+  (y) true;;
+  (*) baseurl+='&wildcard=1';;
+};
+
+# lang=$(fzy -l $LINES -p 'Language?> ' <<< ${(F)langs});
+# baseurl+='&language='${langs:*lang};
+
+# format=$(fzy -l $LINES -p 'Format?> ' <<< ${(F)formats});
+# baseurl+='&format='${formats:*format};
+
+baseurl+='&language=&format=';
+
+curl -sfLH User-Agent: ${baseurl} > ${tmp};
+
+pages=$(pup -f ${tmp} -p '.page_selector text{}' | head -n 1 | cut -d ' ' -f 4);
+results=$(pup -f ${tmp} '.catalog_paginator [style=float:left] text{}' | head -n 1 | cut -d ' ' -f 1);
+((pages > 4)) && {
+  printf '%s\n' "${results} results over ${pages} pages.";
+  read -r "page?${n}Pages to show> ";
+  ((page > 0 && page < pages + 1)) && {
+    ((page == pages && results % 25 != 0)) && {
+      results=$((results - (25 - results % 25)));
+    } || {
+      results=$((page * 25))
+    };
+    pages=${page};
+  } || {
+    printf '%s\n' 'Invalid selection.' 'Showing first 100 results only.';
+    pages=5; results=100;
+  };
+};
+
+for page ( {1..${pages}} ) {
+  author+=(${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(1) text{}' | perl -pe 'BEGIN {undef $/} s/(\w.+)\n(\w.+)/$2 $1/mg; s/(\S)\n(\S)/$1 $2/mg; s/\s{2,}/\n/mg; s/(.+?), (.+)/$2 $1/g')"});
+  title+=(${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(3) text{}')"});
+  series+=(${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(2) json{}' | jq -r '.[].text')"});
+  sizeformat+=(${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(5) text{}')"});
+  md5+=(${${(f)"$(pup -f ${tmp} -p 'tbody td:nth-child(6) li:first-of-type a attr{href}')"}##*/});
+  # language+=(${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(4) text{}')"});
+  curl -sfLH User-Agent: ${baseurl}'&page='${page} > ${tmp};
+};
+
+r=${(c)#results};
+for q ( {1..${results}} ) {
+  ((${(c)#series[q]} > s)) && s=${(c)#series[q]};
+  ((${(c)#author[q]} > a)) && a=${(c)#author[q]};
+};
+t=$((COLUMNS - r - s - a - 2 - 10 - 6));
+
+while { true } {
+  c=$(for q ( {1..${results}} ) {
+    printf "%.${r}d  %b%-${t}.${t}s%b%-${s}.${s}s%b%-${a}.${a}s%b%10.10s%b%6.6s\n" \
+      $q \
+      '\033[37;1m' ${title[q]:--} \
+      '\033[36;1m' ${series[q]:/null/-} \
+      '\033[33;1m' ${author[q]:--} \
+      '\033[34;1m' ${${sizeformat[q]#* / }:--} \
+      '\033[32;1m' ${${sizeformat[q]% / *}:--};
+  } | fzy -l $LINES | cut -d ' ' -f 1) || break;
+  ((c > 1 && c < results + 1)) && {
+    while { true } {
+      clear; printf '%s\n' ${mirror} | nl --number-format ln;
+      ((${#mirror} == 3)) && {
+        case $(read -sek1 "?${n}Select mirror: ") {
+          (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | fzy)); ext+=(${(L)sizeformat[c]% / *});;
+          (2) url+=($(curl -sfLH User-Agent: ${mirror[2]}${md5[c]} | pup -p ':parent-of(h2) attr{href}')); ext+=(${(L)sizeformat[c]% / *});;
+          (3) printf 'FIXME\n';; # url+=($(curl -sfLH User-Agent: ${mirror[3]}${md5[c]} | pup -p '')); ext+=(${(L)sizeformat[c]% / *});;
+          (*) break;;
+        };
+      } || {
+        case $(read -sek1 "?${n}Select mirror: ") {
+          (1) true;;
+          (2) true;;
+          (3) true;;
+          (4) true;;
+          (*) break;;
+        };
+      };
+    };
+  } || { break };
+};
+
+q=0;
+for n ( ${url} ) {
+  [[ ${n} =~ ".${ext[++q]}" ]] && { wget -P ~/Downloads/ ${n} } || { wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 32).${ext[q]} ${n} };
+};
+rm ${tmp};

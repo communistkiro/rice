@@ -1,31 +1,32 @@
 #!/bin/zsh
 ping -c 1 github.com &>/dev/null || return 1;
-typeset omdbapikey OSuser OSpass f;
+typeset omdbapikey OSuser OSpass file;
 # --addic7ed Auser Apass --legendastv Luser Lpass;
-typeset -a open file;
+typeset -a open files;
 OSuser=VwAxYImyiMgeaXWXOSkB;
 OSpass=HgFdrwvpWYhSfSoHZhKcBQVGvimwRrKopFPNEXqWPEBsakGHXTTHgtoweeVXrnFXipDBICGSJeQzircESKtjPKUyBWZjKPBRyQKDVlIkinPrnSGDigJLYMMhGMwFIoS;
 omdbapikey=c62d6dc4;
 
-((# == 0)) && {
-  open=(${(u)${(f)"$( ps -o cmd -C mpv )"}/(* \/|*)//});
+if ((# == 0)) {
+  open=(${(u)${(f)"$( ps -o cmd= -C mpv )"}/(* \/|*)//});
   ((${#open} > 1)) && {
     [[ -t 0 ]] && {
-      file=(${(f)"$(fzf -i -m --header='Files to search subs for: ' --reverse --border=horizontal <<< ${(F)files})"}) || return 1;
+      files=(${(f)"$(fzf -i -m --header='Files to search subs for: ' --reverse --border=horizontal <<< ${(F)files})"}) || return 1;
     } || {
       while { true } { file+=("$(dmenu -p 'Select file to search subs for: ' -l 16 <<< ${(F)files})") || break };
     };
-  } || { file=${open[1]} };
-} || {
-  # file=(${(f)"$(printf '%s\n' ~/mov/**/* | fzf -i -m --header='Files to search subs for: ' --reverse --border=horizontal)"});
-  file=(${@:a});
+  } || { files=${open[1]} };
+} else {
+  # files=(${(f)"$(printf '%s\n' ~/mov/**/* | fzf -i -m --header='Files to search subs for: ' --reverse --border=horizontal)"});
+  files=(${@:a});
 };
 
-for f ( ${file} ) {
-  [[ -f ${f} ]] || continue;
-  subliminal \
-    --opensubtitles ${OSuser} ${OSpass} \
-    --omdb ${omdbapikey} \
-    download -l en -hi -d ${f:h} ${(qqq)f};
-    { kill ${"$(ps -o pid,cmd -C mpv | pcre2grep ${(q)f})"%% *} &>/dev/null } && { mpv ${f} & disown };
-}
+for file ( ${files} ) {
+  if [[ -f ${files} ]] {
+    subliminal \
+      --opensubtitles ${OSuser} ${OSpass} \
+      --omdb ${omdbapikey} \
+      download -l en -hi -d ${file:h} ${(qqq)file};
+      { kill ${"$(ps -o pid=,cmd= -C mpv | pcre2grep ${(q)file})"%% *} &>/dev/null } && { mpv ${file} & disown };
+  } else { continue };
+};

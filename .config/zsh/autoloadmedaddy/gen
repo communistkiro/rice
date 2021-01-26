@@ -1,8 +1,7 @@
 #!/bin/zsh
 function gen () {
   ((# > 0)) && return 1;
-  typeset l u n s e x q a n1 n2 o1 o2; integer length; q='
-';
+  typeset l u n s e x q a n1 n2 o1 o2; integer length; q=$'\n';
 
   read -r 'length?Length [64]> ' && ((length == 0)) && length=64;
   l=$([[ $(read -eq "?${q}No lowercase [y/*]?") = n ]] && <<< --lower);

@@ -150,9 +150,8 @@ function pickAddress () { # select one of previously set addresses
 }
 
 function () {
-  typeset dir api c a s emailLength emailNumber emailId emailFrom emailSubject emailTime userName domainName n; n='
-'; api=https://www.1secmail.com/api/v1/;
-  dir=/tmp/tmpmail; 
+  typeset dir api c a s emailLength emailNumber emailId emailFrom emailSubject emailTime userName domainName n;
+  n=$'\n'; api=https://www.1secmail.com/api/v1/; dir=/tmp/tmpmail; 
   [[ -d ${dir} ]] || mkdir ${dir};
   touch ${dir}/emailaddresses;
 

@@ -501,8 +501,7 @@ function quit () {
 function () {
   emulate -LR zsh;
   setopt no_case_match null_glob extended_glob;
-  typeset wordlistDir t n essid bssid channel security power cap; n='
-'; typeset -a dump clients;
+  typeset wordlistDir t n essid bssid channel security power cap; n=$'\n'; typeset -a dump clients;
   wordlistDir=~/dcs/wordlists;
   t=/mnt/tryhard && mkdir -p ${t} && cd ${t} || return 1;
   airmon-ng check kill;

@@ -1,22 +1,22 @@
 #!/bin/zsh
 function rymgenre() {
-local a s d t;
+  local a s d t;
 
-if ((# > 0)); then 
-  a="$@";
-else
-  a="$(mpc status -f '%artist% %album%' | head -1)";
-fi
+  if ((# > 0)) {
+    a="$@";
+  } else {
+    a="$(mpc status -f '%artist% %album%' | head -1)";
+  };
 
-t=$(mktemp /tmp/rymgenre.XXXXXXXX);
+  t=$(mktemp /tmp/rymgenre.XXXXXXXX);
 
 
-until s=$(sed -nr 's/.+(https?:\/\/rateyourmusic\.com\/release\/.*)/\1/p' $t | dmenu -l 18 -p "$a"); do
-    lynx -dump -listonly "https://rateyourmusic.com/search?searchtype=l&searchterm=${a}&page=$((++d))" >> $t;
-done;
+  until s=$(sed -nr 's/.+(https?:\/\/rateyourmusic\.com\/release\/.*)/\1/p' $t | dmenu -l 18 -p "$a") {
+      lynx -dump -listonly "https://rateyourmusic.com/search?searchtype=l&searchterm=${a}&page=$((++d))" >> $t;
+  };
 
-[[ ! $s =~ '^https?:\/\/rateyourmusic\.com\/release\/' ]] && return 0;
-lynx -dump "$s" | sed -n '/Genres/,/Descriptors/p' | sed -r '1d; $d; s/\ +[[0-9]+\]//g' | tr '\n,' ';' | tr -s ';';
+  [[ ! $s =~ '^https?:\/\/rateyourmusic\.com\/release\/' ]] && return 0;
+  lynx -dump "$s" | sed -n '/Genres/,/Descriptors/p' | sed -r '1d; $d; s/\ +[[0-9]+\]//g' | tr '\n,' ';' | tr -s ';';
 
-rm -f $t;
+  rm -f $t;
 }

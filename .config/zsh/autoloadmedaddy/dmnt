@@ -1,7 +1,6 @@
 #!/bin/zsh
 function dmnt () {
-typeset dev dir n; n='
-'; typeset -a blk src;
+typeset dev dir n; n=$'\n'; typeset -a blk src;
 printf '%s\n' \
   '[1]    mount' \
   '[2]    umount';

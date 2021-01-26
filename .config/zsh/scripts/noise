@@ -1,16 +1,11 @@
 #!/bin/zsh
 # https://raw.githubusercontent.com/tedmiston/zero-noise/master/noise.sh
 () {
-typeset c o d;
-while getopts 'c:' o; do case ${o} in
-  (b*|B*) c=brown;;
-  (p*|P*) c=pink;;
-  (w*|W*) c=white;;
-  (*) 
-cat << HEREDOC
-Usage:  noise [-c b|Bp|Pw|W] [^(?:\d+:){0,2}\d+(?:\.\d+)?]
-HEREDOC
-return 1;; esac; done;
-((# - OPTIND == 0)) && [[ "${@[OPTIND]}" =~ '^(?:\d+:){0,2}\d+(?:\.\d+)?$' ]] && d=${@[OPTIND]};
-sox -t sw -r 24k -c 2 /dev/zero -t alsa synth ${c:-pink}noise vol -10 dB band -n 800 1200 fade q 5 ${d:-90:00} 15;
+  typeset c o d;
+  while { getopts 'c:' o } { case ${o} {
+    (c) case ${(ML)OPTARG#?} {(w) c=white;; (p) c=pink;; (b) c=brown;; };;
+    (*) printf '%s\n' 'Usage:  noise [-c b|Bp|Pw|W] [^(?:\d+:){0,2}\d+(?:\.\d+)?]'; return 1;;
+  }; };
+  ((# - OPTIND == 0)) && [[ "${@[OPTIND]}" =~ '^(?:\d+:){0,2}\d+(?:\.\d+)?$' ]] && d=${@[OPTIND]};
+  sox -t sw -r 24k -c 2 /dev/zero -t alsa synth ${c:-pink}noise vol -10 dB band -n 800 1200 fade q 5 ${d:-90:00} 15;
 }

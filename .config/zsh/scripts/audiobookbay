@@ -3,10 +3,10 @@
 # { which zsh && which pup && which curl } &>/dev/null || return 2;
 ping -c 1 github.com &>/dev/null || return 3;
 emulate -LR zsh;
-typeset query baseurl t n; n='
-'; typeset -i pages q c r R x;
+typeset query baseurl t n; 
+typeset -i pages q c r R x;
 typeset -a title url size format bitrate posted hash;
-t=$(mktemp);
+n=$'\n'; t=$(mktemp);
 baseurl=http://audiobookbay.nl;
 # ((# == 0)) && read -r 'query?> ' || query="$@";
 query="${${@}:-$(read -er "?${n}> ")}";

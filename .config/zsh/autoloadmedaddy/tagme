@@ -1,10 +1,10 @@
 #!/bin/zsh
 # tag shit downloaded with youtube-dl -o '.../%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s'
 function tagme () {
-setopt ksh_glob extended_glob null_glob;
-typeset file dir o a n;
-typeset -a files;
-while getopts '' o; do case $o in (*) 
+  setopt ksh_glob extended_glob null_glob;
+  typeset file dir o a n;
+  typeset -a files;
+  while { getopts '' o } { case $o { (*) 
 less -F <<HEREDOC
 NAME
   tagme - tag audio files.
@@ -25,7 +25,7 @@ BUGS
 
 
 HEREDOC
-return 1;; esac; done;
+return 1;; }; };
 
   ((# == 0)) && return 1;
   for dir ( $@ ) {

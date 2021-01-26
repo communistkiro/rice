@@ -3,12 +3,13 @@
 # { which zsh && which pup && which curl} &>/dev/null || return 2;
 ping -c 1 github.com &>/dev/null || return 3;
 emulate -LR zsh;
-typeset query baseurl cat t n; n='
-'; typeset -i pages c q r s l x; 
+typeset query baseurl cat t n; 
+typeset -i pages c q r s l x; 
 typeset -a cats title seed leech size url category date hash;
-cats=(Anime Apps Documentaries Games Movies Music Other TV XXX);
+n=$'\n'; 
 t=$(mktemp);
 baseurl='https://1337x.to';
+cats=(Anime Apps Documentaries Games Movies Music Other TV XXX);
 # ((# == 0)) && read -r "query?${n}> " || query="$@";
 query="${${@}:-$(read -er "?${n}> ")}";
 [[ ! ${query} =~ '^\s*$' ]] || return 4;

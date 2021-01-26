@@ -1,6 +1,6 @@
 #!/bin/zsh
 function whn () {
-while getopts '' o; do case $o in (*)
+while { getopts '' o } { case $o { (*)
 less -F <<HEREDOC
 NAME
     whn - script using fzf facilitate when entry input.
@@ -17,7 +17,7 @@ DESCRIPTION
 
 
 HEREDOC
-return 1;; esac; done;
+return 1;; }; };
 
 (($# == 0)) && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d    ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-15s", $5; else printf "%15s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
 

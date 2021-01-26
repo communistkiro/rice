@@ -21,8 +21,9 @@ function menu () {
 
 function () {
   emulate -LR zsh;
-  setopt pipefail ksh_glob; n='
-'; menu -t 4 -m 2b \
+  setopt pipefail ksh_glob; 
+  n=$'\n';
+  menu -t 4 -m 2b \
     'Search_where: ' \
     '1 arXiv' \
     '2 medRxiv & bioRxiv' \
@@ -116,7 +117,7 @@ function () {
 
       results=$(pup -n -f $tmp '.authors');
       ((results == 0)) && printf '%s\n' 'No results for your query:' ${(F)${(s:&:)query}} && exit 0;
-      title=(${${(f)"$(pup -p -f $tmp '.title text{}'| perl -pe 'BEGIN{undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"}##+( )}); title[1]=();
+      title=(${${(f)"$(pup -p -f $tmp '.title text{}'| perl -pe 'BEGIN {undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"}##+( )}); title[1]=();
       author=(${(fs.Authors:.)"$(pup -p -f $tmp '.authors json{}' | jq -r '.[].children[].text')"});
       pdf=(${(f)"$(pup -p -f $tmp 'a[href^=https://arxiv.org/pdf]  attr{href}')"});
       abstract=(${(f)"$(pup -p -f $tmp '.abstract-full json{}' | jq '.[].text')"});
@@ -210,9 +211,9 @@ function () {
 
       results=$(pup -n -f $tmp '.highwire-cite-title');
       ((results == 0)) && read -sk1 "?${n}${(F)${(s:%20:)query}}: No results for your query." && exit 0;
-      title=(${(f)"$(pup -p -f $tmp '.highwire-cite-title text{}'| perl -pe 'BEGIN{undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"});
+      title=(${(f)"$(pup -p -f $tmp '.highwire-cite-title text{}'| perl -pe 'BEGIN {undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"});
       pdf=(${(f)"$(pup -p -f $tmp '.highwire-cite-title a attr{href}')"});
-      author=(${(s.QQQQ.)"$(pup -p -f $tmp '.highwire-citation-authors text{}' | perl -pe 'BEGIN { $/ = undef; } s/(\w.+)\n(\w.+)/$1QQQQ$2/mg; s/\n//mg')"})
+      author=(${(s.QQQQ.)"$(pup -p -f $tmp '.highwire-citation-authors text{}' | perl -pe 'BEGIN {undef $/} s/(\w.+)\n(\w.+)/$1QQQQ$2/mg; s/\n//mg')"})
 
       for a ( {1..$results} ) {
         printf '%b%s\n%b%s\n%b%s.pdf\n\n\n' \
