@@ -2,7 +2,7 @@
 # dependencies: zsh, xdccget, pcregrep/pcre2grep
 [[ ! -t 0 ]] && return 1;
 emulate -LR zsh;
-setopt ksh_glob pipefail;
+setopt ksh_glob pipe_fail;
 typeset tmp bots dest conf querydir qual query bot sth file n; n='
 '; typeset -a size name choice package botid;
 typeset -i ep p i pp PP ii II;

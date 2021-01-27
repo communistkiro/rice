@@ -21,7 +21,7 @@ function menu () {
 
 function () {
   emulate -LR zsh;
-  setopt pipefail ksh_glob; 
+  setopt pipe_fail ksh_glob;
   n=$'\n';
   menu -t 4 -m 2b \
     'Search_where: ' \

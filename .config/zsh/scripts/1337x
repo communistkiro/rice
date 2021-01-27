@@ -61,4 +61,4 @@ while { true } {
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
-rm -f ${t}; return 0;
+rm -v ${t}; return 0;

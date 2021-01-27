@@ -75,7 +75,7 @@ function box () {
 
 function () {
   emulate -LR zsh;
-  setopt pipefail extended_glob ksh_glob re_match_pcre;
+  setopt pipe_fail extended_glob ksh_glob re_match_pcre;
   typeset key lon lat loc a w z n; 
   typeset -a s d;
   key=85a4e3c55b73909f42c6a23ec35b7147; z=$(mktemp -d); w=$(mktemp ${z}/XXXXXXXX); cd ${z}; n=$'\n'; 

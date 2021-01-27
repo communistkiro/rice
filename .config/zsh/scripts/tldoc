@@ -1,7 +1,7 @@
 #!/bin/zsh
 typeset s;
 typeset -a a;
-a=(${(f)"$(printf '%s\n' /opt/texlive/2020/texmf-dist/doc/**/*pdf(.-D) | fzf -i -m --reverse )"});
+a=(${(f)"$(printf '%s\n' /opt/texlive/2020/texmf-dist/doc/**/*pdf(.-D) | fzf -i -m --reverse --tiebreak=end)"});
 for s ( $a ) {
   [[ -f $s ]] || continue;
   qpdfview --unique --quiet $s &;

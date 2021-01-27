@@ -6,7 +6,7 @@ preexec () { printf '%b' "\e]0;$2\a"; }
 precmd () { printf '%b' "\e]0;${PWD}\a"; }
 
 ####    OPTS
-setopt extended_glob ksh_glob no_sh_glob re_match_pcre null_glob pipefail;
+setopt extended_glob ksh_glob no_sh_glob re_match_pcre null_glob pipe_fail;
 
 # CASE_SENSITIVE="true";
 HYPHEN_INSENSITIVE="true";
@@ -19,7 +19,7 @@ autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-u
 HISTFILE=/root/.zsh_history;
 SAVEHIST=5000;
 HISTSIZE=5000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|./*|man *|tmr *|realpath *|run-help *|sf *|which *|cd *)';
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|./*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|cd *|zsh *)';
 zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1; } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
