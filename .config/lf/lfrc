@@ -378,8 +378,8 @@ map l           $$PAGER $fx
 map <tab>       cmd-complete
 map <c-l>       redraw
 map <c-l>       reload
-map R           redraw
-map R           reload
+map r           redraw
+map r           reload
 map <enter>     $$f
 # map X           !$f
 map <space>     toggle
