@@ -146,7 +146,7 @@ static SiteSpecific scripts[] = {
     { "http(s)?://.*?4chan(nel)?\\.org.*",  "4chan-X.user.js"   },
     { "http(s)?://.*?lainchan\\.org.*",     "4chan-X.user.js"   },
     { "http(s)?://.*?reddit\\.com.*",       "oldreddit.js"      },
-    { ".*"                                  "coincidence.js"    },
+    /*{ ".*"                                  "coincidence.js"    },*/
 
 };
 

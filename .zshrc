@@ -2,8 +2,8 @@ export PATH=$PATH:/root/.config/zsh/scripts:/root/bin;
 # export PS1="%B%F{red}%?%f %F{cyan}%d%f %F{green}|>%f%b ";
 export PS1="%B%F{red}%?%f %F{blue}%d%f%b
 ";
-preexec () { printf '%b' "\e]0;$2\a"; }
-precmd () { printf '%b' "\e]0;${PWD}\a"; }
+preexec () { printf '%b' "\e]0;$2\a" }
+precmd () { printf '%b' "\e]0;${PWD}\a" }
 
 ####    OPTS
 setopt extended_glob ksh_glob no_sh_glob re_match_pcre null_glob pipe_fail;
@@ -11,15 +11,16 @@ setopt extended_glob ksh_glob no_sh_glob re_match_pcre null_glob pipe_fail;
 # CASE_SENSITIVE="true";
 HYPHEN_INSENSITIVE="true";
 
-# Uncomment the following line if pasting URLs and other text is messed up.
-autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-url-magic
-# autoload -Uz url-quote-magic; zle -N self-insert url-quote-magic
+autoload -Uz bracketed-paste-url-magic; 
+zle -N bracketed-paste bracketed-paste-url-magic
+# autoload -Uz url-quote-magic; 
+# zle -N self-insert url-quote-magic
 
 ## History command configuration
 HISTFILE=/root/.zsh_history;
-SAVEHIST=5000;
-HISTSIZE=5000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|./*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|cd *|z*)';
+SAVEHIST=2000;
+HISTSIZE=2000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|./*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|cd *)';
 zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1; } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -138,6 +139,7 @@ alias xb='xbacklight -set';
 alias xbr='xbps-remove -R';
 alias xbs='xbps-install -Su';
 alias xc='xclip -r -selection clipboard';
+alias xp='xclip -r -selection primary';
 alias x='aunpack';
 alias zcp='zmv -Cv';
 alias zmv='zmv -Mv';

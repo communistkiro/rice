@@ -1,6 +1,7 @@
 #!/bin/zsh
 [[ ! -t 0 ]] && return 1;
 # { which zsh && which rdrview && which curl && which pcre2grep } &>/dev/null || return 2;
+ping -c 1 github.com 1 &>/dev/null || return 3;
 
 function menu () {
   typeset m t a;

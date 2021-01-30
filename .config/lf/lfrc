@@ -3,7 +3,7 @@
 
 # ===================== OPTIONS =====================
 
-set ratios          '1:2:6'
+set ratios          '1:4:6'
 set timefmt         '2006-01-03 15:04:05 '
 set dircounts       on
 set hidden          on
@@ -380,6 +380,8 @@ map <c-l>       redraw
 map <c-l>       reload
 map r           redraw
 map r           reload
+map R           redraw
+map R           reload
 map <enter>     $$f
 # map X           !$f
 map <space>     toggle
@@ -406,8 +408,8 @@ map zs          :set info size
 map zt          :set info time
 map za          :set info size:time
 map zp          :set preview!
-map zx          :set nopreview; set ratios '1:8'
-map zz          :set preview; set ratios '1:2:6'
+map zx          :set nopreview; set ratios '2:9'
+map zz          :set preview; set ratios '1:4:6'
 map sn          :set sortby natural; set info
 map ss          :set sortby size; set info size
 map st          :set sortby time; set info time

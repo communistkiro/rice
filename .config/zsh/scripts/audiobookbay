@@ -3,12 +3,12 @@
 # { which zsh && which pup && which curl } &>/dev/null || return 2;
 ping -c 1 github.com &>/dev/null || return 3;
 emulate -LR zsh;
+setopt pipe_fail;
 typeset query baseurl t n; 
 typeset -i pages q c r R x;
 typeset -a title url size format bitrate posted hash;
 n=$'\n'; t=$(mktemp);
 baseurl=http://audiobookbay.nl;
-# ((# == 0)) && read -r 'query?> ' || query="$@";
 query="${${@}:-$(read -er "?${n}> ")}";
 [[ ! ${query} =~ '^\s*$' ]] || return 4;
 curl -sfLH User-Agent: ${baseurl}/page/1/'?s='${query// /+} > ${t};
@@ -40,9 +40,8 @@ while { true } {
       '\033[37;1m' ${(Q)bitrate[q]:--} \
       '\033[36;1m' ${(Q)format[q]:--} \
       '\033[32;1m' ${(Q)posted[q]:--};
-  } | fzy -l $LINES -q "${query}" | cut -f 1 -d ' ');
-  # ((c > 0 && c < R +1)) && { hash+=($(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} | pcre2grep -Mo1 'Info Hash:</td>\n<td>(.+)</td>')) } || { break };
-  ((c > 0 && c < R +1)) && { hash+=(${${${"$(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]})"##*Info Hash:</td>}%%</td>*}#*>}) } || { break };
+  } | fzy -l $LINES -q "${query}" | cut -f 1 -d ' ') || break;
+  ((c > 0 && c < R +1)) && hash+=(${${${"$(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]})"##*Info Hash:</td>}%%</td>*}#*>});
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };

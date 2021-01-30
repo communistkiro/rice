@@ -3,8 +3,9 @@
 # { which zsh && which pup && which curl} &>/dev/null || return 2;
 ping -c 1 github.com &>/dev/null || return 3;
 emulate -LR zsh;
+setopt pipe_fail
 typeset query baseurl cat t n; 
-typeset -i pages c q r s l x; 
+typeset -i pages c q lr ls ll lt; 
 typeset -a cats title seed leech size url category date hash;
 n=$'\n'; 
 t=$(mktemp);
@@ -18,13 +19,13 @@ cat=${$(fzy -p 'Select category or search all: ' -l ${#cats} <<< ${(F)cats}):*ca
 [[ -z ${cat} ]] && query=/search/${query// /+}/ || query=/category-search/${query// /+}/${cat}/;
 
 curl -sfLH User-Agent: ${baseurl}${query}1/ > ${t};
-((${$(pup -f ${t} -n 'a[href^=/torrent/]'):-0} != 0)) || { read -sk1 "?${query}:    No results. "; exit 0 };
+((${$(pup -f ${t} -n 'a[href^=/torrent/]'):-0} != 0)) || { printf ' No results.\n'; return 0 };
 
 pages=${${$(pup -f ${t} '.last a attr{href}')%/}##*/};
 if ((pages == 0)) {
    pages=1;
 } elif ((pages > 4)) {
-  read -r "q?${n}More than 4 pages. Input number of pages to display [1--${pages}]> ";
+  read -r "q?${n}${pages} pages. Input number of pages to display> ";
   ((q < pages + 1)) && ((q > 1)) && pages=${q} || pages=5;
 };
 
@@ -39,25 +40,24 @@ for q ( {1..${pages}} ) {
   curl -sfLH User-Agent: ${baseurl}${query}$((q + 1))/ > ${t};
 };
 
-r=${(c)#${#title}};
-s=${(c)#${${(nO)seed}[1]}};
-l=${(c)#${${(nO)leech}[1]}};
-x=$((COLUMNS - r - 2 - 1 - 9 - 2 - 9 - 2 - s - 1 - l - 2 - 14));
+lr=${(c)#${#title}};
+ls=${(c)#${${(nO)seed}[1]}};
+ll=${(c)#${${(nO)leech}[1]}};
+lt=$((COLUMNS - lr - 2 - 1 - 9 - 2 - 9 - 2 - ls - 1 - ll - 2 - 14));
 
 while { true } {
   c=$(for q ( {1..${#title}} ) {
-    printf "%.${r}d  %b%-${x}.${x}s %b%-9.9s  %b%9.9s  %b%.${s}d%b/%b%.${l}d  %b%14.14s\n" \
+    printf "%.${lr}d  %b%-${lt}.${lt}s %b%-9.9s  %b%9.9s  %b%.${ls}d%b/%b%.${ll}d  %b%14.14s\n" \
       $q \
-      '\033[1m'    ${(Q)title[q]:--} \
-      '\033[33;1m' ${(Q)category[q]:--} \
-      '\033[34;1m' ${(Q)size[q]:--} \
+      '\033[1m'    ${(Q)title[q]:- } \
+      '\033[33;1m' ${(Q)category[q]:- } \
+      '\033[34;1m' ${(Q)size[q]:- } \
       '\033[32;1m' ${seed[q]} \
       '\033[37;1m' \
       '\033[31;1m' ${leech[q]} \
       '\033[36;1m' ${(Q)date[q]:--};
-  } | fzy -l $LINES | cut -f 1 -d ' ');
-
-  ((c > 0 && c < ${#title} +1)) && { hash+=($(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} | pup '.infohash-box span text{}')) } || { break };
+  } | fzy -l $LINES | cut -f 1 -d ' ') || break;
+  ((c > 0 && c < ${#title} +1)) && hash+=($(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} | pup '.infohash-box span text{}'));
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
