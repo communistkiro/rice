@@ -1,6 +1,6 @@
 #!/bin/zsh
 function tmr () {
-  # emulate -LR zsh;
+  emulate -LR zsh;
   typeset o;
   # local alarm=~/.local/CartoonFoghorn.m4a;
   while { getopts 'ap' o } {

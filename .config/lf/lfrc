@@ -356,7 +356,7 @@ map <esc>       cmd-escape
 map yy          copy
 map ya          copy-add
 map yr          copy-remove
-map yp          push &realpath<space>${(f)fx}|tr<space>-s<space>'\n'|xclip<space>-selection<space>clipboard<space>-rmlastnl<enter>
+map yp          push &realpath<space>${(fq)fx}|tr<space>-s<space>'\n'|xclip<space>-selection<space>clipboard<space>-rmlastnl<enter>
 map dd          cut
 map da          cut-add
 map dr          cut-remove
@@ -408,7 +408,7 @@ map zs          :set info size
 map zt          :set info time
 map za          :set info size:time
 map zp          :set preview!
-map zx          :set nopreview; set ratios '2:9'
+map zx          :set nopreview; set ratios '1:10'
 map zz          :set preview; set ratios '1:4:6'
 map sn          :set sortby natural; set info
 map ss          :set sortby size; set info size

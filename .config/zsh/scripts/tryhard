@@ -33,9 +33,9 @@ function box () {
   bh=(━ ─ ═ ⣀); bh=${bh[$s]};
   lv=(┃ │ ║ ⡇); lv=${lv[$s]};
   rv=(┃ │ ║ ⢸); rv=${rv[$s]};
-  r='\033[;0m';
+  r='\033[0m';
 
-  w=0; for a ( $@[OPTIND,-1] ) { ((${(c)#a} > w)) && w=${(c)#a} }; 
+  w=0; for a ( $@[OPTIND,-1] ) { ((${(c)#a} > w)) && w=${(c)#a} };
   ((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
 
   if ((w + 2 > COLUMNS)) {
@@ -67,7 +67,7 @@ function menu () {
     [[ $OPTARG =~ 'b|B' ]]   && t="${t};1";
     t="${t}m";;
   }; };
-  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033]0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m' };
+  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033[0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m' };
 }
 
 function select-cap () {

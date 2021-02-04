@@ -1,7 +1,7 @@
 #!/bin/zsh
-[[ ! -t 0 ]] && return 1;
+[[ -t 0 ]] || return 1;
 # { which zsh && which rdrview && which curl && which pcre2grep } &>/dev/null || return 2;
-ping -c 1 github.com 1 &>/dev/null || return 3;
+ping -c 1 1.1.1 1 &>/dev/null || return 3;
 
 function menu () {
   typeset m t a;
@@ -17,7 +17,7 @@ function menu () {
     [[ $OPTARG =~ b ]] && t="${t};1";
     t="${t}m";;
   }; };
-  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033];0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m' };
+  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033[;0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m' };
 }
 
 function () {
@@ -29,7 +29,7 @@ function () {
     '1 arXiv' \
     '2 medRxiv & bioRxiv' \
     '* exit';
-  case $(read -sek1 "?${n}> ") {
+  case $(read -sek1 "?${n}") {
     (1)
       typeset api tmp query operator term field sizes to from year;
       typeset -i termnum results;
@@ -80,7 +80,7 @@ function () {
         'Include_cross-listed_papers?' \
         '* Yes' \
         '2 No';
-      case $(read -sek1 "?${n}> ") {
+      case $(read -sek1 "?${n}") {
         (2) query+='&classification-include_cross_list=exclude';;
         (*) query+='&classification-include_cross_list=include';;
       };
@@ -91,7 +91,7 @@ function () {
         '2 Past 12 months' \
         '3 Specific year' \
         '4 Date range';
-      case $(read -sek1 "?${n}> ") {
+      case $(read -sek1 "?${n}") {
         (2) query+='&date-filter_by=past_12&date-year=&date-from_date=&date-to_date=';;
         (3) 
           read -rk4 "year?${n}Publication year [YYYY]: "; pcre2grep -q '^\d{4}$' <<< $year || year='';
@@ -152,7 +152,7 @@ function () {
         '1 bioRxiv' \
         '2 medRxiv' \
         '3 bioRxiv & medRxiv';
-      case $(read -sek1 "?${n}> ") {
+      case $(read -sek1 "?${n}") {
         (1) query+='%20jcode%3Abiorxiv'; subjectareas=('Animal Behavior and Cognition' 'Biochemistry' 'Bioengineering' 'Bioinformatics' 'Biophysics' 'Cancer Biology' 'Cell Biology' 'Clinical Trials' 'Developmental Biology' 'Ecology' 'Epidemiology' 'Evolutionary Biology' 'Genetics' 'Genomics' 'Immunology' 'Microbiology' 'Molecular Biology' 'Neuroscience' 'Paleontology' 'Pathology' 'Pharmacology and Toxicology' 'Physiology' 'Plant Biology' 'Scientific Communication and Education' 'Synthetic Biology' 'Systems Biology' 'Zoology');;
         (2) query+='%20jcode%3Amedrxiv'; subjectareas=('Addiction Medicine' 'Allergy and Immunology' 'Anesthesia' 'Cardiovascular Medicine' 'Dentistry and Oral Medicine' 'Dermatology' 'Emergency Medicine' 'Endocrinology' 'Epidemiology' 'Forensic Medicine' 'Gastroenterology' 'Genetic and Genomic Medicine' 'Geriatric Medicine' 'Health Economics' 'Health Informatics' 'Health Policy' 'Health Systems and Quality Improvement' 'Hematology' 'HIV/AIDS' 'Infectious Diseases' 'Intensive Care and Critical Care Medicine' 'Medical Education' 'Medical Ethics' 'Nephrology' 'Neurology' 'Nursing' 'Nutrition' 'Obstetrics and Gynecology' 'Occupational and Environmental Health' 'Oncology' 'Ophthalmology' 'Orthopedics' 'Otolaryngology' 'Pain Medicine' 'Palliative Medicine' 'Pathology' 'Pediatrics' 'Pharmacology and Therapeutics' 'Primary Care Research' 'Psychiatry and Clinical Psychology' 'Public and Global Health' 'Radiology and Imaging' 'Rehabilitation Medicine and Physical Therapy' 'Respiratory Medicine' 'Rheumatology' 'Sexual and Reproductive Health' 'Sports Medicine' 'Surgery' 'Toxicology' 'Transplantation' 'Urology');;
         (*) query+='%20jcode%3Amedrxiv%7C%7Cbiorxiv'; subjectareas=('Addiction Medicine' 'Allergy and Immunology' 'Anesthesia' 'Animal Behavior and Cognition' 'Biochemistry' 'Bioengineering' 'Bioinformatics' 'Biophysics' 'Cancer Biology' 'Cardiovascular Medicine' 'Cell Biology' 'Clinical Trials' 'Dentistry and Oral Medicine' 'Dermatology' 'Developmental Biology' 'Ecology' 'Emergency Medicine' 'Endocrinology' 'Epidemiology' 'Evolutionary Biology' 'Forensic Medicine' 'Gastroenterology' 'Genetic and Genomic Medicine' 'Genetics' 'Genomics' 'Geriatric Medicine' 'Health Economics' 'Health Informatics' 'Health Policy' 'Health Systems and Quality Improvement' 'Hematology' 'HIV/AIDS' 'Immunology' 'Infectious Diseases' 'Intensive Care and Critical Care Medicine' 'Medical Education' 'Medical Ethics' 'Microbiology' 'Molecular Biology' 'Nephrology' 'Neurology' 'Neuroscience' 'Nursing' 'Nutrition' 'Obstetrics and Gynecology' 'Occupational and Environmental Health' 'Oncology' 'Ophthalmology' 'Orthopedics' 'Otolaryngology' 'Pain Medicine' 'Paleontology' 'Palliative Medicine' 'Pathology' 'Pathology' 'Pediatrics' 'Pharmacology and Therapeutics' 'Pharmacology and Toxicology' 'Physiology' 'Plant Biology' 'Primary Care Research' 'Psychiatry and Clinical Psychology' 'Public and Global Health' 'Radiology and Imaging' 'Rehabilitation Medicine and Physical Therapy' 'Respiratory Medicine' 'Rheumatology' 'Scientific Communication and Education' 'Sexual and Reproductive Health' 'Sports Medicine' 'Surgery' 'Synthetic Biology' 'Systems Biology' 'Toxicology' 'Transplantation' 'Urology' 'Zoology');;
@@ -176,7 +176,7 @@ function () {
         '2 Contradictory Results' \
         '3 Confirmatory Results' \
         '* All Results';
-      case $(read -sek1 "?${n}> ") {
+      case $(read -sek1 "?${n}") {
         (1) query+='%20toc_section%3ANew%20Results';;
         (2) query+='%20toc_section%3AContradictory';;
         (3) query+='%20toc_section%3AConfirmatory';;
@@ -186,7 +186,7 @@ function () {
         'Result_format: ' \
         '* Standard' \
         '2 Condensed';
-      case $(read -sek1 "?${n}> ") {
+      case $(read -sek1 "?${n}") {
         (2) query+='%20format_result%3Acondensed';;
         (*) query+='%20format_result%3Astandard';;
       };
@@ -196,7 +196,7 @@ function () {
         '* Best Match' \
         '2 Oldest First' \
         '3 Newest First';
-      case $(read -sek1 "?${n}> ") {
+      case $(read -sek1 "?${n}") {
         (2) query+='%20sort%3Apublication-date%20direction%3Aascending';;
         (3) query+='%20sort%3Apublication-date%20direction%3Adescending';;
         (*) query+='%20sort%3Arelevance-rank';;

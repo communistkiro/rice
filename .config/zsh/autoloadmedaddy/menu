@@ -13,5 +13,5 @@ function menu () {
     [[ $OPTARG =~ 'b|B' ]]   && t="${t};1";
     t="${t}m";;
   esac; done;
-  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033]0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
+  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033[0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
 }

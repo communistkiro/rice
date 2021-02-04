@@ -1,11 +1,13 @@
 #!/bin/zsh
-# dependencies: zsh, xdccget, pcregrep/pcre2grep
-[[ ! -t 0 ]] && return 1;
+[[ -t 0 ]] || return 1;
+# { which xdccget && which pcre2grep } &>/dev/null || return 2;
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;
 setopt ksh_glob pipe_fail;
-typeset tmp bots dest conf querydir qual query bot sth file n; n='
-'; typeset -a size name choice package botid;
+typeset tmp bots dest conf querydir qual query bot sth file n;
+typeset -a size name choice package botid;
 typeset -i ep p i pp PP ii II;
+n=$'\n';
 tmp=$(mktemp  /tmp/a.XXXXXXXX);
 bots=$(mktemp /tmp/b.XXXXXXXX); 
 conf='/root/.config/animu.conf';
@@ -13,37 +15,37 @@ trap 'break 1;' INT;
 trap 'rm -f ${tmp} ${bots}; exit 1;' QUIT;
 cd /tmp;
 
-if [[ -f ${conf} ]]; then;
+[[ -f ${conf} ]] && {
   dest=$(pcre2grep -i -o1 '^d\s+(\S.+)$' ${conf}) || dest=;
   qual=$(pcre2grep -i -o1 '^q\s+(\S.+)$' ${conf}) || q=;
-fi;
+};
 
-while getopts 'd:q:e:' g; do case $g in
+while { getopts 'd:q:e:' g } { case $g {
   (d) dest=${OPTARG};;
   (q) qual=${OPTARG};;
   (e) ep=${OPTARG};;
-esac; done;
+}; };
 
-if [[ -n ${dest} ]] && [[ -d "$(dirname "$(realpath ${dest})")" ]] && [[ ! -d {dest} ]]; then;
+if [[ -n ${dest} ]] && [[ -d "$(dirname "$(realpath ${dest})")" ]] && [[ ! -d {dest} ]] {
   [[ -d ${dest} ]] || mkdir ${dest};
-else;
-  while [[ ! -d "$(dirname "$(realpath ${dest})")" ]]; do;
+} else {
+  while [[ ! -d "$(dirname "$(realpath ${dest})")" ]] {
     read -r "dest?${n}Input a download directory (max 1 child can be created): ";
-  done;
-fi;
+  };
+};
 dest=${dest//+(\/)//};
 
 query="$@[OPTIND,-1]";
 [[ -z ${query} ]] || [[ ${query} =~ '^\s+$' ]] && read -r "query?${n}Query: ";
 # read -r "ep?${n}Episode (leave empty for batch): ";
 
-curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${bots} "https://api.nibl.co.uk/nibl/bots";
-curl -s -f -L --max-redirs 0 -o ${tmp} "https://api.nibl.co.uk/nibl/search?query=${query// /%20}&episodeNumber=${ep}";
-if [[ -z $(<${tmp}) ]] || [[ -z $(<${bots}) ]]; then read -sk1 '?Files empty.'; return; fi;
+curl -sfL --max-redirs 0 -o ${bots} https://api.nibl.co.uk/nibl/bots;
+curl -sfL --max-redirs 0 -o ${tmp} https://api.nibl.co.uk/nibl/search\?query=${query// /%20}\&episodeNumber=${ep};
+if [[ -z $(<${tmp}) ]] || [[ -z $(<${bots}) ]] { read -sk1 "?${n}Files empty."; return 1 };
 
 size=(${(fQ)"$(jq '.content[].size' ${tmp})"});
 name=(${(fQ)"$(jq '.content[].name' ${tmp})"}); # tr -s '[[:space:]]' | tr '_' ' ' | 
-choice=(${(f)"$(printf '%6s | %s\n' ${size:^name} | sort -uhk1 | fzf --bind "alt-v:select-all" --bind "alt-c:clear-selection" -m --reverse --no-sort --exact --query="${qual}")"}) || return;
+choice=(${(f)"$(printf '%6s | %s\n' ${size:^name} | sort -uhk1 | fzf --bind "alt-v:select-all" --bind "alt-c:clear-selection" -m --reverse --no-sort --exact --query="${qual}")"}) || return 1;
 
 choice=(${choice##*| });
 sth=$(sed 's/_/ /g; s/\(.*\)- .*/\1/; s/[0-9]//g; s/\[[^]]*\]//g; s/[0-9]//g; s/([^)]*)//g; s/\.[^.]*$//; s/^ *//g; s/ *$//' <<< ${(F)choice} | uniq -ci | sort -nr | head -n 1 | awk '{print substr($0, index($0,$2))}' | sed 's/ /%20/g');
@@ -51,7 +53,7 @@ querydir=${dest}/$(wget -q -O - "https://kitsu.io/api/edge/anime?filter[text]=${
 
 [[ -d ${querydir} ]] || mkdir ${querydir};
 
-for file in ${choice}; do
+for file ( ${choice} ) {
   sth=${${(qM)file//(#b)(+$^)/\\${match[1]}}//./\\.};
   
   botid=($(jq '.' ${tmp} | pcre2grep -o1 -M -B 2 -e "\"botId\": (\d+),\s+\"number\": \d+,\n\s+\"name\": \"${(Q)sth}\","));
@@ -69,8 +71,8 @@ for file in ${choice}; do
   PP=${(c)#${#package}};
   II=${(c)#${#botid}};
 
-  for p in {1..${pp}}; do
-    for i in {1..${ii}}; do
+  for p ( {1..${pp}} ) {
+    for i ( {1..${ii}} ) {
       [[ -f "${querydir}/${file}" ]] && [[ ! -z "${querydir}/${file}" ]] && break 2;
       bot=$(jq '.' ${bots} | pcre2grep -o1 -M -A 1 -e "\"id\": ${botid[i]},\n\s+\"name\": \"(.+)\",");
       printf '%b%-16.16s%b%s\n' \
@@ -87,8 +89,8 @@ for file in ${choice}; do
         '\033[0;31m'    'quit:' \
         '\033[1m'       '^\';
       printf '\n\n%b' '\033[34;1m';
-      until xdccget --dont-confirm-offsets -d "${querydir}" -q "irc.rizon.net" "#nibl" "${bot} xdcc send #${package[p]}"; do sleep .025; done;
-    done;
-  done;
-done;
+      until { xdccget --dont-confirm-offsets -d "${querydir}" -q "irc.rizon.net" "#nibl" "${bot} xdcc send #${package[p]}" } { sleep .1 };
+    };
+  };
+};
 cd ~; rm -f ${tmp} ${bots}; return 0;

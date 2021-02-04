@@ -1,7 +1,7 @@
 #!/bin/zsh
 # DOWNLOADS FROM LIST OR, GIVEN A NEW LINK, SCRAPES ALBA FROM EMBEDDED PLAYER AND DIRECT LINKS RELEASES TO LIST
 function xrp () {
-  ping -c 1 github.com &>/dev/null || return 2;
+  ping -c 1 1.1.1.1 &>/dev/null || return 2;
   emulate -LR zsh;
   setopt null_glob;
   typeset o link t1 t2 t3 album vaalbum artists;

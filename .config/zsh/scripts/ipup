@@ -1,7 +1,7 @@
 #!/bin/zsh
-# pup made interactive interactive
+# pup made interactive
 # { which zsh && which fzf && which pup } &>/dev/null || return 2;
 [[ -t 0 ]] || return 1;
 { ((# == 1)) && [[ -f ${1} ]] && [[ -n $(<${1}) ]] }|| return 1;
 
-fzf --phony --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="pup -p -f ${1:a:q} {q}" --preview-window=99%:down:sharp<<< '';
+fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="pup -p -f ${1:a:q} {q}" --preview-window=99%:down:sharp <<< '';

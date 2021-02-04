@@ -1,7 +1,7 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
 # { which zsh && which pup && which curl} &>/dev/null || return 2;
-ping -c 1 github.com &>/dev/null || return 3;
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;
 setopt pipe_fail
 typeset query baseurl cat t n; 

@@ -1,7 +1,7 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
  # { which zsh && which pup && which curl && which wget } &>/dev/null || return 2;
-ping -c 1 github.com &>/dev/null || return 3;
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
 function menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
@@ -16,7 +16,7 @@ function menu () {
     [[ $OPTARG =~ b ]] && t="${t};1";
     t="${t}m";;
   }; };
-  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033];0m}" "${a%% *}" "${t:-\033[;0m}" "${a#* }" '\033[;0m' };
+  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033[;0m}" "${a%% *}" "${t:-\033[;0m}" "${a#* }" '\033[;0m' };
 }
 
 function box () {

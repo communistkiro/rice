@@ -1,5 +1,5 @@
 #!/bin/zsh
-ping -c 1 github.com &>/dev/null || return 1;
+ping -c 1 1.1.1.1 &>/dev/null || return 1;
 typeset omdbapikey OSuser OSpass file;
 # --addic7ed Auser Apass --legendastv Luser Lpass;
 typeset -a open files;
