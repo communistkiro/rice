@@ -12,7 +12,7 @@
     (1)
       blk=(${(f)"$(lsblk -nlpo name,label,type,size,uuid,state,mountpoint 2>/dev/null | pcre2grep -v "(running|/boot$|/$|SWAP|${(j:|:)src})\b")"});
       dev=$(fzy -p $'device\t\tlabel\ttype\tsize\tuuid\t\t\t\t\t\t\t\t\t\tmountpoint' -l $LINES <<< ${(F)blk} | cut -f 1 -d ' ') || return 1;
-      [[ -b ${dev} ]] && { mount ${dev} 2&>/dev/null; return 0 };
+      [[ -b ${dev} ]] && { mount ${dev} 2&>/dev/null && return 0 };
       cd /;
       while { true } {
         dir=$(printf '%s\n' .. *(/-DN) | fzf -i +m --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down --preview="printf '%s\n' {}/*(DN:t)") || return 1;

@@ -1,21 +1,22 @@
 #!/bin/zsh
 # a terminal solo cards against humanity experience using https://github.com/crhallberg/json-against-humanity
-function cah () {
-  typeset file choice
-  typeset -i white black card query;
+() {
+  typeset file choice;
+  typeset -i white black card # query;
   typeset -a packname packnum nwhite nblack;
   file=~/games/json-against-humanity/cah-all-compact.json;
+  [[ -f ${file} && -n $(<${file}) ]] || return 1;
 
-  white=$(jq '.white[]' $file | wc -l);
-  black=$(jq '.black[].text' $file | wc -l);
+  white=$(jq '.white[]' ${file} | wc -l);
+  black=$(jq '.black[].text' ${file} | wc -l);
 
-  packname=(${(f)"$(jq -r ".packs[${(j.,.)packname}].name" $file)"});
-  packnum=($(seq -w 0 $(jq '.packs[].name' $file | wc -l)));
+  packname=(${(f)"$(jq -r ".packs[${(j.,.)packname}].name" ${file})"});
+  packnum=($(seq -w 0 $(jq '.packs[].name' ${file} | wc -l)));
   packnum[-1]=();
 
   for choice ( ${(f)"$(printf '%s %s\n' ${packnum:^packname} | fzf -i -m --tiebreak=begin,end,index --reverse --no-info --border=horizontal --header='Packs to remove: ' --bind 'alt-c:clear-selection' --bind 'alt-v:select-all')"} ) {
-    nwhite+=(${(f)"$(jq -r ".packs[${choice%% *}].white[]" $file)"});
-    nblack+=(${(f)"$(jq -r ".packs[${choice%% *}].black[]" $file)"});
+    nwhite+=(${(f)"$(jq -r ".packs[${choice%% *}].white[]" ${file})"});
+    nblack+=(${(f)"$(jq -r ".packs[${choice%% *}].black[]" ${file})"});
   };
 
   while { true } {
@@ -28,7 +29,7 @@ function cah () {
       query=$((RANDOM % black));
     };
     clear;
-    jq ".white[${(j.,.)hand}]" $file | fzf -i -m --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[$query].text" $file)" || break;
+    jq ".white[${(j.,.)hand}]" ${file} | fzf -i -m --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[${query}].text" ${file})" || break;
     hand[1,-1]=();
     query=;
   };

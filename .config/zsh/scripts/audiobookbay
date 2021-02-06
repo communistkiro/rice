@@ -17,6 +17,11 @@ curl -sfLH User-Agent: ${baseurl}/page/1/'?s='${query// /+} > ${t};
 pages=${${$(pup -f ${t} '.wp-pagenavi a:last-child attr{href}')%/*}#/page/}; 
 ((pages!=0)) || { printf '\nNo results.\n'; exit 0 };
 
+((pages > 5)) && [[ $(read -seq "?${n}${pages} pages, show all?") == n ]] && {
+   read -seq "q?${n}Number of pages from total of ${pages} to show> ";
+  ((q > 0 && q <= pages)) && q=pages || q=5;
+};
+
 for q ( {1..${pages}} ) {
   title+=(${(fqq)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] text{}')"});
   url+=(${(fqq)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] attr{href}')"});

@@ -1,7 +1,10 @@
 #!/bin/zsh
 # jq made interactive /wo a fucking go install
-# { which zsh && which fzf && which pup } &>/dev/null || return 2;
-[[ -t 0 ]] || return 1;
-{ ((# == 1)) && [[ -f ${1} ]] && [[ -n $(<${1}) ]] }|| return 1;
-
-fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="jq -r {q} ${1:a:q}" --preview-window=99%:down:sharp <<< '';
+[[ -t 0 && ${#} -eq 1 && -f ${1} && -n $(<${1}) ]] && {
+  fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="jq -r {q} ${1:a:q}" --preview-window=99%:down:sharp <<< '';
+} || {
+  typeset q; q=$(mktemp);
+  while { read -e -t 1 -r } { } > ${q} && fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="jq -r {q} ${q}" --preview-window=99%:down:sharp <<< '';
+;
+  rm ${q};
+} || { return 1 };

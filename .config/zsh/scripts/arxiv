@@ -1,7 +1,7 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
 # { which zsh && which rdrview && which curl && which pcre2grep } &>/dev/null || return 2;
-ping -c 1 1.1.1 1 &>/dev/null || return 3;
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
 
 function menu () {
   typeset m t a;
@@ -118,7 +118,7 @@ function () {
 
       results=$(pup -n -f $tmp '.authors');
       ((results == 0)) && printf '%s\n' 'No results for your query:' ${(F)${(s:&:)query}} && exit 0;
-      title=(${${(f)"$(pup -p -f $tmp '.title text{}'| perl -pe 'BEGIN {undef $/} s/\n([^\n]*\S)/$1/g; s/\s*\n/\n/g')"}##+( )}); title[1]=();
+      title=(${${(f)"$(pup -p -f $tmp '.title text{}'| perl -pe 'BEGIN {undef $/} s/\n([^\n]*\S)\n/$1/g; s/\s*\n/\n/g')"}##+( )}); title[1]=();
       author=(${(fs.Authors:.)"$(pup -p -f $tmp '.authors json{}' | jq -r '.[].children[].text')"});
       pdf=(${(f)"$(pup -p -f $tmp 'a[href^=https://arxiv.org/pdf]  attr{href}')"});
       abstract=(${(f)"$(pup -p -f $tmp '.abstract-full json{}' | jq '.[].text')"});
@@ -129,11 +129,11 @@ function () {
       for a ( {1..$results} ) {
         printf '%b%s\n%b%s\n%b%s.pdf\n%b%s\n%bSubmitted: %18.18s\t\t%bAnnounced: %18.18s%b\n\n\n' \
           '\033[33;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
-          '\033[34m'   "$(fmt -w $COLUMNS <<< ${(j., .)${(f)author[a]:--}})" \
-          '\033[32m'    ${pdf[a]:--} \
-          '\033[0;37m' "$(fmt -w $COLUMNS <<< ${abstract[a]:--})" \
-          '\033[35;1m'  ${submitted[a]:--} \
-          '\033[0;35m'  ${announced[a]:--} '\033[0m';
+          '\033[34;1m' "$(fmt -w $COLUMNS <<< ${(j., .)${(f)author[a]:--}})" \
+          '\033[32;1m'  ${pdf[a]:--} \
+          '\033[37;1m' "$(fmt -w $COLUMNS <<< ${abstract[a]:--})" \
+          '\033[36;1m'  ${submitted[a]:--} \
+          '\033[35;1m'  ${announced[a]:--} '\033[0m';
       } | less -r;
 
       rm $tmp; return 0;;
@@ -219,8 +219,8 @@ function () {
       for a ( {1..$results} ) {
         printf '%b%s\n%b%s\n%b%s.pdf\n\n\n' \
           '\033[37;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
-          '\033[34m'   "$(fmt -w $COLUMNS <<< ${(f)author[a]:--})" \
-          '\033[0;32m'  ${${pdf[a]/#\//http://biorxiv.org/}:--};
+          '\033[34;1m' "$(fmt -w $COLUMNS <<< ${(f)author[a]:--})" \
+          '\033[32;1m'  ${${pdf[a]/#\//http://biorxiv.org/}:--};
       } | less -r; return 0;;
     (*) return 0;;
   };

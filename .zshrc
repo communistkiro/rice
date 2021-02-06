@@ -126,7 +126,7 @@ alias p="printf '%s\n'";
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
 alias rdl='rdrview -B "elinks -dump -no-references -no-numbering"';
-alias realpath='realpath -qe';
+# alias realpath='realpath -qe';
 alias rm='rm -v';
 alias rsync='rsync -vah --progress';
 # alias sex='sex | cow';
@@ -145,10 +145,10 @@ alias xbs='xbps-install -Su';
 alias xc='xclip -r -selection clipboard';
 alias xp='xclip -r -selection primary';
 alias x='aunpack';
+alias yp='xc <<< ${"$(pwd)":a:q}';
 alias zcp='zmv -Cv';
 alias zmv='zmv -Mv';
 alias zln='zln -Lv';
-
 
 ####    AUTOLOAD
 fpath=($fpath /root/.config/zsh/zsh-completions /root/.config/zsh/autoloadmedaddy)

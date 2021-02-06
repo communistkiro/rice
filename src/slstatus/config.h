@@ -46,7 +46,6 @@ static const char unknown_str[] = "";
  * ram_used            used memory in GB               NULL
  * run_command         custom shell command            command (echo foo)
  * swap_free           free swap in GB                 NULL
-81
  * swap_perc           swap usage in percent           NULL
  * swap_total          total swap size in GB           NULL
  * swap_used           used swap in GB                 NULL
@@ -66,20 +65,20 @@ static const struct arg args[] = {
     /* function             format      argument                                   */
     // { keymap,               "%.2s",     NULL                                        } ,
     { timer,                "%s│",      NULL                                        } ,
-    { temp,                 "%02s🔥",   "/sys/class/thermal/thermal_zone0/temp"     } ,
+    { temp,                 "%02s℃",   "/sys/class/thermal/thermal_zone0/temp"     } , /*🔥*/
     { temp,                 "%02s ",    "/sys/class/thermal/thermal_zone1/temp"     } ,
     { cpu_perc,             "%s ",      NULL                                        } ,
     { cpu_freq,             "%.3s│",    NULL                                        } ,
-    { ram_perc,             "%s🐏",     NULL                                        } ,
+    { ram_perc,             "%s ",      NULL                                        } , /*🐏*/
     { swap_perc,            "%s│",      NULL                                        } ,
     { wifi_essid,           "%s",       "wlp3s0"                                    } ,
     // { wifi_perc,            "%s ",      "wlp3s0"                                    } ,
     // { ipv4,                 "%s ",      "wlp3s0"                                    } ,
-   { netspeed_tx,          "%s",       "wlp3s0"                                    } ,
-   { netspeed_rx,          "%s",       "wlp3s0"                                    } ,
+    { netspeed_tx,          "%s",       "wlp3s0"                                    } ,
+    { netspeed_rx,          "%s",       "wlp3s0"                                    } ,
     // { ipv4,                 "%s",       "enp0s25"                                   } ,
-    // { netspeed_tx,          "%s",       "enp0s25"                                   } ,
-    // { netspeed_rx,          "%s",       "enp0s25"                                   } ,
+//     { netspeed_tx,          "%s",       "enp0s25"                                   } ,
+//     { netspeed_rx,          "%s",       "enp0s25"                                   } ,
     { datetime,             "│%s",      "%F %T"                                     } ,
     // { battery_perc,         "%s",       battery name (BAT0)                         } ,
     // { battery_state,        "%s",       battery name (BAT0)                         } ,

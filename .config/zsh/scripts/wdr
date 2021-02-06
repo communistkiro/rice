@@ -92,7 +92,7 @@ function () {
       } else { return 1 };
       while { true } {
         clear; box -H 1b -B 4 -T 3 -h openweathermap \
-          "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
+          "${(r.16...)$(<<< lon/lat:)}${lon:-23.3241} / ${lat:-42.6974}" \
           "${(r.16...)$(<<< location:)}${loc:-Sofia,Bulgaria}";
         menu -m 4b -t 2 \
           '1 longitude / latitude' \
@@ -163,7 +163,7 @@ function () {
       } else { return 1 };
       while { true } {
         clear; box -H 1b -B 4 -T 3 -h darksky \
-          "${(r.16...)$(<<< lon/lat:)}${lon:-42.6974} / ${lat:-23.3241}" \
+          "${(r.16...)$(<<< lon/lat:)}${lon:-23.3241} / ${lat:-42.6974}" \
           "${(r.16...)$(<<< location:)}${loc:-Sofia, Bulgaria}";
         menu -m 4b -t 2 \
           '1 longitude / latitude' \
