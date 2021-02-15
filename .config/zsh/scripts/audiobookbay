@@ -13,12 +13,12 @@ query="${${@}:-$(read -er "?${n}> ")}";
 [[ ! ${query} =~ '^\s*$' ]] || return 4;
 curl -sfLH User-Agent: ${baseurl}/page/1/'?s='${query// /+} > ${t};
 
-[[ $(pup -f ${t} 'h3 text{}') == 'Not Found' ]] || ((${$(pup -f ${t} -n '.postTitle'):-0} == 0)) && { printf '\nNo results.\n' ${query}; exit 0 };
+[[ $(pup -f ${t} 'h3 text{}') == 'Not Found' ]] || ((${$(pup -f ${t} -n '.postTitle'):-0} == 0)) && { printf '\nNo results.\n' ${query}; return 0 };
 pages=${${$(pup -f ${t} '.wp-pagenavi a:last-child attr{href}')%/*}#/page/}; 
-((pages!=0)) || { printf '\nNo results.\n'; exit 0 };
+((pages == 0)) && pages=1;
 
 ((pages > 5)) && [[ $(read -seq "?${n}${pages} pages, show all?") == n ]] && {
-   read -seq "q?${n}Number of pages from total of ${pages} to show> ";
+   read -e "q?${n}Number of pages from total of ${pages} to show> ";
   ((q > 0 && q <= pages)) && q=pages || q=5;
 };
 
@@ -46,8 +46,13 @@ while { true } {
       '\033[36;1m' ${(Q)format[q]:--} \
       '\033[32;1m' ${(Q)posted[q]:--};
   } | fzy -l $LINES -q "${query}" | cut -f 1 -d ' ') || break;
-  ((c > 0 && c < R +1)) && hash+=(${${${"$(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]})"##*Info Hash:</td>}%%</td>*}#*>});
+  ((c > 0 && c < R +1)) && {
+    # hash+=(${${${"$(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]})"##*Info Hash:</td>}%%</td>*}#*>});
+    curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} > ${t};
+    # hash+=($(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pcre2grep -O '&tr=$1' -M 'Tracker:\s*(\S+)' ${t})//:/%3a}//\//%2f});
+    hash+=($(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pup -p -f ${t} 'table td:nth-child(2) text{}' | pcre2grep -M -O '&tr=$1' '(\w+://\S+)')//:/%3a}//\//%2f});
+  };
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
-rm -f ${t}; return 0;
+# rm -f ${t}; return 0;

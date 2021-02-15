@@ -70,7 +70,7 @@ cmd open ${{
     case $a in
       (*.jpg|*.png|*.gif|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null &;;
       (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
-      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
+      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
       (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null &;;
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;

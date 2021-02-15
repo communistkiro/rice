@@ -135,6 +135,7 @@ alias sls='sls -u v -p'
 alias so='source /root/.zshrc';
 alias sx='/root/src/sx/sx ~/.xinitrc';
 alias timer="source /root/.config/omz/plugins/timer/timer.plugin.zsh; TIMER_FORMAT='[%d]'; TIMER_PRECISION=7";
+alias tox='tox -t dark --allow-root &>/dev/null & disown';
 alias unlove='mpc sendmessage mpdas unlove';
 alias vol='amixer set Master';
 alias which='which -a';

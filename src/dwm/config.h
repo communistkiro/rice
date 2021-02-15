@@ -37,7 +37,7 @@ static const Rule rules[] = {
     { "surf-download",      "surf-download",    NULL,       1 << 8,       1,           -1 },
     { "Gimp",               NULL,               NULL,       1 << 2,       1,           -1 },
     { "qpdfview",           NULL,               NULL,       1 << 2,       0,           -1 },
-    { "qBittorrent",        "qbittorrent",      NULL,       1 << 8,       0,           -1 },
+    { "qBittorrent",        "qbittorrent",      NULL,       1 << 7,       0,           -1 },
     // { "Xmessage",           "xmessage",         NULL,       0,            1,           -1 },
 };
 
