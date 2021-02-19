@@ -40,7 +40,7 @@ for a ( {1..${#file}} ) { wget -O ${t}/${a} ${file[a]} & }; wait;
 pup -f ${t}/25 -p '.BODY' | tail -n +99 > ${t}/0 && mv ${t}/0 ${t}/25;
 
 # https://unix.stackexchange.com/questions/29724/how-to-properly-collect-an-array-of-lines-in-zsh
-perl -ne 's/^#(?:0\.0\.0\.0) .+$/\1/ && print' /etc/hosts >> ~/dcs/holdme;
+perl -ne 's/^#0\.0\.0\.0 (\S+)$/\1/ && print' /etc/hosts >> ~/dcs/holdme;
 sort -uo ~/dcs/holdme ~/dcs/holdme;
 
 head -n 29 ${t}/21 | tail -n 14 > /etc/hosts;
@@ -50,16 +50,13 @@ cat ${t}/*(N) ~/dcs/blockme | perl -pe '
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n;
   s/[\ \t\f\r]+/ /g;
   s/#+/#/g;
-  s/^ //;
+  s/^ +//;
   s/^#? ?:+ //;
-  s/^# ?(0\.0\.0\.0) /0.0.0.0 /n;
-  s/^# ?.*$//;
+  s/^#\s*0\.0\.0\.0 /0.0.0.0 /n;
   s/^#.*$//;
-  s/(^(?!0\.0\.0\.0).+)/0.0.0.0 $1/; # negative look-ahead assertion
+  s/(^(?!0\.0\.0\.0).+)/0.0.0.0 $1/;
   s/^0\.0\.0\.0 127\.0\.0\.1/0.0.0.0/;
-  #s/(^.{1,6}$|^.{7}(?<!0\.0\.0\.0).*)/0\.0\.0\.0 $1/; # negative look-back assertionfor q ( ${(f)"$(< ~/dcs/holdme)"} ) { sed -ir "s/^0\.0\.0\.0 ${q}$/#&/" ${t}/h };
-  #s/^([^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^.]|\.($|[^0]|0($|[^ ])))))))).*/0.0.0.0 $1/; # char set and alternations
-  s/ $//;' | tr -s '\n' | sort -u > ${t}/h;
+  s/ +$//' | tr -s '\n' | sort -u > ${t}/h;
 
 # if [ -s holdme ]; then; 
 #   while IFS= read -r h; do perl -ie "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;

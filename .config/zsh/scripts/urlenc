@@ -1,0 +1,14 @@
+#!/bin/zsh
+emulate -LR zsh;
+typeset z x;
+typeset -A percenc;
+percenc[%20]=' '; percenc[%21]='!'; percenc[%22]='"'; percenc[%23]='#'; percenc[%24]='$'; percenc[%25]='%'; percenc[%26]='&'; percenc[%27]="'"; percenc[%28]='('; percenc[%29]=')'; percenc[%2A]='*'; percenc[%2B]='+'; percenc[%2C]=','; percenc[%2D]='-'; percenc[%2E]='.'; percenc[%2F]='/'; percenc[%3A]=':'; percenc[%3B]=';'; percenc[%3C]='<'; percenc[%3D]='='; percenc[%3E]='>'; percenc[%3F]='?'; percenc[%40]='@'; percenc[%5B]='['; percenc[%5C]='\'; percenc[%5D]=']'; percenc[%5E]='^'; percenc[%5F]='_'; percenc[%60]='`';
+while { getopts 'e' z } { case ${z} { (e) unset percenc; typeset -A percenc; percenc[\ ]='%20'; percenc[\!]='%21'; percenc[\"]='%22'; percenc[\#]='%23'; percenc[\$]='%24'; percenc[\%]='%25'; percenc[\&]='%26'; percenc[\']="%27"; percenc[\(]='%28'; percenc[\)]='%29'; percenc[\*]='%2A'; percenc[\+]='%2B'; percenc[\,]='%2C'; percenc[\-]='%2D'; percenc[\.]='%2E'; percenc[\/]='%2F'; percenc[\:]='%3A'; percenc[\;]='%3B'; percenc[\<]='%3C'; percenc[\=]='%3D'; percenc[\>]='%3E'; percenc[\?]='%3F'; percenc[\@]='%40'; percenc[\[]='%5B'; percenc[\\]='%5C'; percenc[\]]='%5D'; percenc[\^]='%5E'; percenc[\_]='%5F'; percenc[\`]='%60';; } };
+[[ -t 0 && ${#} -gt 0 ]] && {
+  for x ( ${@} ) {
+    for z ( ${(k)percenc} ) { x=${x//${z}/${percenc[${z}]}} };
+    printf '%s\n' ${x};
+  };
+} || {
+  while { read -t 1 x } { for z ( ${(k)percenc} ) { x=${x//${z}/${percenc[${z}]}} }; printf '%s\n' ${x} };
+} || return 1;

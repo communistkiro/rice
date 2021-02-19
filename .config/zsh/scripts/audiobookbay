@@ -17,18 +17,18 @@ curl -sfLH User-Agent: ${baseurl}/page/1/'?s='${query// /+} > ${t};
 pages=${${$(pup -f ${t} '.wp-pagenavi a:last-child attr{href}')%/*}#/page/}; 
 ((pages == 0)) && pages=1;
 
-((pages > 5)) && [[ $(read -seq "?${n}${pages} pages, show all?") == n ]] && {
-   read -e "q?${n}Number of pages from total of ${pages} to show> ";
-  ((q > 0 && q <= pages)) && q=pages || q=5;
+((pages > 5)) && [[ $(read -seq "?${n}${pages} pages, show all [y*]?") == n ]] && {
+   read -e "q?${n}Pages to show> ";
+  ((q > 0 && q <= pages)) && q=pages || { printf 'Invalid selection; showing first 5 pages.\n'; q=5 };
 };
 
 for q ( {1..${pages}} ) {
-  title+=(${(fqq)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] text{}')"});
-  url+=(${(fqq)"$(pup -p -f ${t} 'h2 a[href^=/audio-books/] attr{href}')"});
+  title+=(${(fqq)"$(            pup -p -f ${t} 'h2 a[href^=/audio-books/] text{}')"});
+  url+=(${(fqq)"$(              pup -p -f ${t} 'h2 a[href^=/audio-books/] attr{href}')"});
   size+=(${(qq)${(ps.Size: .)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n')"}[2,-1]%%s*});
-  format+=(${(fqq)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(2) text{}')"});
-  bitrate+=(${(fqq)"$(pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(3) text{}')"});
-  posted+=(${(fqq)"$(pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'Posted:\s*(.+?)Format')"});
+  format+=(${(fqq)"$(           pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(2) text{}')"});
+  bitrate+=(${(fqq)"$(          pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(3) text{}')"});
+  posted+=(${(fqq)"$(           pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'Posted:\s*(.+?)Format')"});
   curl -sfLH User-Agent: ${baseurl}/page/$((q+1))/'?'s=${query// /+} > ${t};
 };
 
@@ -47,12 +47,10 @@ while { true } {
       '\033[32;1m' ${(Q)posted[q]:--};
   } | fzy -l $LINES -q "${query}" | cut -f 1 -d ' ') || break;
   ((c > 0 && c < R +1)) && {
-    # hash+=(${${${"$(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]})"##*Info Hash:</td>}%%</td>*}#*>});
     curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} > ${t};
-    # hash+=($(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pcre2grep -O '&tr=$1' -M 'Tracker:\s*(\S+)' ${t})//:/%3a}//\//%2f});
     hash+=($(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pup -p -f ${t} 'table td:nth-child(2) text{}' | pcre2grep -M -O '&tr=$1' '(\w+://\S+)')//:/%3a}//\//%2f});
   };
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
-# rm -f ${t}; return 0;
+rm -f ${t}; return 0;

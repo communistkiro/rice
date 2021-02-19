@@ -1,37 +1,36 @@
 #!/bin/zsh
 # wallpaper setter script for X
-function () {
-  emulate -LR zsh;
-  typeset c o;
-  typeset -i n;
-  typeset -a opt dir file;
-  opt=(
-    --bg-center
-    --bg-fill
-    --bg-max
-    --bg-scale
-    --bg-tile
-  );
-  c=~/im/wp; # starting direcotry
-  cd ${c};
-  o=$(pcre2grep -o1 "feh --no-fehbg (.+?) '.+'" ~/.fehbg);
+emulate -LR zsh;
+typeset c o O;
+typeset -i n;
+typeset -a opt dir file;
+opt=(
+  --bg-center
+  --bg-fill
+  --bg-max
+  --bg-scale
+  --bg-tile
+);
+c=~/im/wp; # starting direcotry
+cd ${c};
+O=$(pcre2grep -o1 "feh --no-fehbg (.+?) '.+'" ~/.fehbg);
 
-  while { true } {
-    [[ -d ${c} ]] && {
-      dir=(*(/D-N));
-      file=(*(.D-N));
-      n=${#file};
-    };
-    c=$(printf '%s\n' .. ${dir} ${file} rand opts | dmenu -i -p "$(pwd) ") || break; 
-
-    if [[ -d ${c} ]] {
-      c=${c:a}; cd ${c};
-    } elif [[ -f ${c} ]] {
-      feh ${o} ${c};
-    } elif [[ ${c} == opts ]] {
-      o=$(dmenu -i -p 'options ' <<< ${(F)opt}) && feh ${o} "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";
-    } elif [[ ${c} == rand ]] {
-      feh ${o} ${file[RANDOM % ${n} + 1]};
-    };
+while { true } {
+  [[ -d ${c} ]] && {
+    dir=(*(/D-N));
+    file=(*(.D-N));
+    n=${#file};
   };
-}
+  c=$(printf '%s\n' .. ${dir} ${file} rand opts | dmenu -i -p "$(pwd) ") || break; 
+set -x
+  if [[ ${c} == opts ]] {
+    o=${$(dmenu -i <<< ${(F)opt}):*opt};
+    feh ${o:-${O}} "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";
+  } elif [[ ${c} == rand ]] {
+    feh ${o:-${O}} ${file[RANDOM % ${n} + 1]};
+  } elif [[ -d ${c} ]] {
+    c=${c:a}; cd ${c};
+  } elif [[ -f ${c} ]] {
+    feh ${o:-${O}} ${c} &;
+  };
+};

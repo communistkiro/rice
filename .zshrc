@@ -1,5 +1,4 @@
 export PATH=$PATH:/root/.config/zsh/scripts:/root/bin;
-# export PS1="%B%F{red}%?%f %F{cyan}%d%f %F{green}|>%f%b ";
 export PS1="%B%F{red}%?%f %F{blue}%d%f%b
 ";
 preexec () { printf '%b' "\e]0;$2\a" }
@@ -20,7 +19,7 @@ zle -N bracketed-paste bracketed-paste-url-magic
 HISTFILE=/root/.zsh_history;
 SAVEHIST=2000;
 HISTSIZE=2000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|./*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|cd *)';
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|pre *|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|.*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|cd *)';
 zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1; } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -105,7 +104,7 @@ alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
 alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.45 --setf int_f0_target_mean=90 -pw';
 alias fmt='fmt -w $((COLUMNS*94/100))';
-alias fzf="fzf -i -m --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down"; #  --preview='cat {}' --preview-window=80%:down
+alias fzf="fzf -i -m --reverse --ansi --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down"; #  --preview='cat {}' --preview-window=80%:down
 # alias gre='grep -P --color -i';
 alias hl='hledger-ui';
 alias l='less';

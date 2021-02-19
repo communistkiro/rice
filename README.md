@@ -22,5 +22,5 @@ my config for the most part;
   - `box` - script to embox strings, optional header, and box/text/header color choice, zsh and C's printf;
   - `menu` - script to present options to choose from;
   - `animu` - rewrite of the manyame script to be smaller, more robust, and in zsh;
+- `speedread` - modifications
 - `cfastread` - spritz reader in C, wherein I added optional wpm as first arg to facilitate input from `sfeed` script;
-- `speedread` - slight modifications

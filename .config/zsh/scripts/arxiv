@@ -128,12 +128,12 @@ function () {
       printf '%s\n\n' "$(pup -p -f $tmp 'h1 json{}'|jq -r '.[].text')";
       for a ( {1..$results} ) {
         printf '%b%s\n%b%s\n%b%s.pdf\n%b%s\n%bSubmitted: %18.18s\t\t%bAnnounced: %18.18s%b\n\n\n' \
-          '\033[33;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
-          '\033[34;1m' "$(fmt -w $COLUMNS <<< ${(j., .)${(f)author[a]:--}})" \
-          '\033[32;1m'  ${pdf[a]:--} \
-          '\033[37;1m' "$(fmt -w $COLUMNS <<< ${abstract[a]:--})" \
-          '\033[36;1m'  ${submitted[a]:--} \
-          '\033[35;1m'  ${announced[a]:--} '\033[0m';
+          '\033[31;1m' "$(fmt -w 80 <<< ${title[a]:- })" \
+          '\033[34;1m' "$(fmt -w 80 <<< ${(j., .)${(f)author[a]:- }})" \
+          '\033[32;1m'  ${pdf[a]:- } \
+          '\033[33;1m' "$(fmt -w 80 <<< ${abstract[a]:- })" \
+          '\033[36;1m'  ${submitted[a]:- } \
+          '\033[35;1m'  ${announced[a]:- } '\033[0m';
       } | less -r;
 
       rm $tmp; return 0;;
@@ -218,9 +218,9 @@ function () {
 
       for a ( {1..$results} ) {
         printf '%b%s\n%b%s\n%b%s.pdf\n\n\n' \
-          '\033[37;1m' "$(fmt -w $COLUMNS <<< ${title[a]:--})" \
-          '\033[34;1m' "$(fmt -w $COLUMNS <<< ${(f)author[a]:--})" \
-          '\033[32;1m'  ${${pdf[a]/#\//http://biorxiv.org/}:--};
+          '\033[37;1m' "$(fmt -w 80 <<< ${title[a]:- })" \
+          '\033[34;1m' "$(fmt -w 80 <<< ${(f)author[a]:- })" \
+          '\033[32;1m'  ${${pdf[a]/#\//http://biorxiv.org/}:- };
       } | less -r; return 0;;
     (*) return 0;;
   };

@@ -3,9 +3,7 @@ cz() {
   typeset sel;
   clear;
   while { true } {
-    # sel="$(printf '%s/\n' '..' *(/-DN) | fzy -l $l -p "$(printf '%s\t' "$(pwd) ")")" || break;
     sel="$(printf '%s/\n' .. *(/-DN) | fzf -i +m --reverse --cycle --bind=alt-/:toggle-preview,\[:up,\':down,alt-\[:preview-up,alt-\':preview-down,\\:accept,\;:top+accept --header="$(pwd)" --preview="printf '%s\n' {}/*(DN:t)" --preview-window=right:50%)" || break;
     [[ -d ${sel} ]] && cd ${sel};
   };
-  clear; 
 }

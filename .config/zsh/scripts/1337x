@@ -24,19 +24,19 @@ curl -sfLH User-Agent: ${baseurl}${query}1/ > ${t};
 pages=${${$(pup -f ${t} '.last a attr{href}')%/}##*/};
 if ((pages == 0)) {
    pages=1;
-} elif ((pages > 4)) {
-  read -r "q?${n}${pages} pages. Input number of pages to display> ";
-  ((q < pages + 1)) && ((q > 1)) && pages=${q} || pages=5;
+} elif ((pages > 4)) && [[ $(read -seq "?${n}${pages} pages, show all [y*]?") == n ]] {
+  read -r "q?${n}Input number of pages to display> ";
+  ((q > 0 && q <= pages)) && pages=${q} || { printf 'Invalid selection; showing first 5 pages.\n'; pages=5 };
 };
 
 for q ( {1..${pages}} ) {
-  title+=(${(fqq)"$(pup -p -f ${t} 'a[href^=/torrent/] text{}')"});
-  seed+=(${(f)"$(pup -p -f ${t} 'td.seeds text{}')"});
-  leech+=(${(f)"$(pup -p -f ${t} 'td.leeches text{}')"});
-  size+=(${(fqq)"$(pup -p -f ${t} 'td.size json{}' | jq -r '.[].text')"});
-  url+=(${(fqq)"$(pup -p -f ${t} 'td a[href^=/torrent/] attr{href}')"});
+  title+=(${(fqq)"$(   pup -p -f ${t} 'a[href^=/torrent/] text{}')"});
+  seed+=(${(f)"$(      pup -p -f ${t} 'td.seeds text{}')"});
+  leech+=(${(f)"$(     pup -p -f ${t} 'td.leeches text{}')"});
+  size+=(${(fqq)"$(    pup -p -f ${t} 'td.size json{}' | jq -r '.[].text')"});
+  url+=(${(fqq)"$(     pup -p -f ${t} 'td a[href^=/torrent/] attr{href}')"});
   category+=(${(fqq)"$(pup -p -f ${t} 'td.name .icon i attr{class}' | cut -d - -f 2-)"});
-  date+=(${(fqq)"$(pup -p -f ${t} 'td.coll-date text{}')"});
+  date+=(${(fqq)"$(    pup -p -f ${t} 'td.coll-date text{}')"});
   curl -sfLH User-Agent: ${baseurl}${query}$((q + 1))/ > ${t};
 };
 
@@ -57,7 +57,11 @@ while { true } {
       '\033[31;1m' ${leech[q]} \
       '\033[36;1m' ${(Q)date[q]:--};
   } | fzy -l $LINES | cut -f 1 -d ' ') || break;
-  ((c > 0 && c < ${#title} +1)) && hash+=($(curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} | pup '.infohash-box span text{}'));
+  ((c > 0 && c <= ${#title})) && {
+    curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} > ${t};
+    hash+=($(pup -p -f ${t} 'a[href^=magnet] attr{href}'));
+    [[ -n ${hash[-1]} ]] || hash[-1]=$(pup -p -f ${t} '.infohash-box span text{}');
+  };
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };

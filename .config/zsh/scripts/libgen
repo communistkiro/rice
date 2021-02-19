@@ -19,8 +19,12 @@ function menu () {
 [[ -t 0 ]] || return 1;
 # { which zsh && which pup && which curl && which wget && which pcre2grep } &>/dev/null || return 2;
 emulate -LR zsh;
+trap "printf 'Exiting..\nAll URLs:\n'; printf '%s\n' ${url}; return 1" HUP INT;
 setopt pipe_fail ksh_glob extended_glob;
-typeset query baseurl tmp n;
+typeset query baseurl tmp n z target;
+typeset -A percenc;
+percenc[%20]=' '; percenc[%21]='!'; percenc[%22]='"'; percenc[%23]='#'; percenc[%24]='$'; percenc[%25]='%'; percenc[%26]='&'; percenc[%27]="'"; percenc[%28]='('; percenc[%29]=')'; percenc[%2A]='*'; percenc[%2B]='+'; percenc[%2C]=','; percenc[%2D]='-'; percenc[%2E]='.'; percenc[%2F]='/'; percenc[%3A]=':'; percenc[%3B]=';'; percenc[%3C]='<'; percenc[%3D]='='; percenc[%3E]='>'; percenc[%3F]='?'; percenc[%40]='@'; percenc[%5B]='['; percenc[%5C]='\'; percenc[%5D]=']'; percenc[%5E]='^'; percenc[%5F]='_'; percenc[%60]='`';
+
 
 n=$'\n'; tmp=$(mktemp);
 query=${${@}:-$(read -er "?${n}> ")};
@@ -43,7 +47,7 @@ menu -m 4b -t 2b  'Search_where: ' \
 
 case $(read -sek1 "?${n}") {
   (1)
-    typeset -i results pages lr lt la le lp ls lf c q;
+    typeset -i results pages lr lt la le lp ls lf lP c q;
     typeset -a mirror title author md5 language edition publisher year length size format ext url;
     baseurl+=search.php\?view=detailed\&res=100;
     mirror=(
@@ -67,10 +71,7 @@ case $(read -sek1 "?${n}") {
       '8 md5' \
       '9 tags' \
       '0 extension' 
-    # while { true } { # FIXME MULTIPHRASE QUERY?
       case $(read -sek1 "?${n}> ") {
-      # case $(printf '%s\n' 'd any' '1 title' '2 authors' '3 series' '4 publisher' '5 year' '6 ISBN' '7 language' '8 md5' '9 tags' '0 extension' | fzy -l 11 | cut -d ' ' -f 1) {
-        # ([0-9d]) baseurl+=\&phrase=$((++q));|
         (1) baseurl+=\&column=title;;
         (2) baseurl+=\&column=authors;;
         (3) baseurl+=\&column=series;;
@@ -81,13 +82,9 @@ case $(read -sek1 "?${n}") {
         (8) baseurl+=\&column=md5;;
         (9) baseurl+=\&column=tags;;
         (0) baseurl+=\&column=extension;;
-        # (d) baseurl+=\&column=def;;
-        # (*) break;;
         (*) baseurl+=\&column=def;;
       };
       baseurl+=\&req=${query// /+};
-      # read -r "?${n}query> "
-    # };
 
     curl -sfLH User-Agent: ${baseurl}\&open=0 > ${tmp};
 
@@ -95,8 +92,7 @@ case $(read -sek1 "?${n}") {
     ((results == 0)) && { read -sk1 "?${n}No results."; return 0 };
     ((results < 101)) && pages=1 || { pages=$((results / 100)); ((results % 100 == 0)) || pages=$((pages + 1)) };
 
-    ((pages > 2)) && {
-      printf '%s\n' "${results} results over ${pages} pages.";
+    ((pages > 2)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
       read -r "q?${n}Pages to show> ";
       ((q > 0 && q <= pages)) && {
         ((q == pages)) || {
@@ -153,7 +149,9 @@ case $(read -sek1 "?${n}") {
       ((${(c)#format[q]}    > lf)) && lf=${(c)#format[q]};
       ((${(c)#language[q]}  > lL)) && lL=${(c)#language[q]};
     };
-    # lt=$((COLUMNS - lr - 1 - 1 - le - 1 - lp - 1 - 4 - 1 - lL - 1 - la - 1 - ll - 1 - ls - 1 - lf)); 
+    # lt=$((COLUMNS - lr - 1 - 1 - le - 1 - lp - 1 - 4 - 1 - lL - 1 - la - 1 - ll - 1 - ls - 1 - lf));
+    lP=$((lr + 1 + lt + 1 + le + 1 + lp + 1 + 4 + 1 + lL + 1 + la + 1 + ll + 1 + ls + 1 + lf));
+    ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
@@ -168,13 +166,12 @@ case $(read -sek1 "?${n}") {
           '\033[31;1m' ${length[q]:/null/ } \
           '\033[34;1m' ${size[q]:/null/ } \
           '\033[32;1m' ${format[q]:/null/ };
-      # } | fzy -l $LINES | cut -d ' ' -f 1) || break;
-      } | fzf -i +m --reverse --border=sharp --ansi --preview-window=down:wrap:10% --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
       ((c > 0 && c <= results)) && {
         while { true } {
           clear;
-          case $(nl -n ln <<< ${(F)mirror} | fzy | cut -d ' ' -f 1) {
-            (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | fzy)) && ext+=(${(L)format[c]}) || read -sk1 "?${n}Try another mirror.";;
+          case $(nl -n ln <<< ${(F)mirror} | fzf -i +m --reverse --tiebreak=begin | cut -d ' ' -f 1) {
+            (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | nl -n ln | fzf -i +m --reverse --tiebreak=begin | cut -f 2)) && ext+=(${(L)format[c]}) || read -sk1 "?${n}Try another mirror.";;
             (2) url+=($(curl -sfLH User-Agent: ${mirror[2]}${md5[c]} | pup -p ':parent-of(h2) attr{href}'))       && ext+=(${(L)format[c]}) || read -sk1 "?${n}Try another mirror.";;
             (3) read -sk1 "?${n}FIXME";; # url+=($(curl -sfLH User-Agent: ${mirror[3]}${md5[c]} | pup -p '...'))
             (4) read -sk1 "?${n}FIXME";; # url+=($(curl -sfLH User-Agent: ${mirror[4]}${md5[c]} | pup -p '...'))
@@ -188,9 +185,13 @@ case $(read -sek1 "?${n}") {
     q=0;
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
-        [[ ${n} =~ '\?filename=' ]] && wget -nc -O ~/Downloads/${n#*=} ${n} || wget -nc -P ~/Downloads/ ${n};
+        [[ ${n} =~ '\?filename=' ]] && {
+          target=${n#*=};
+          for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+          wget -nc -O ~/Downloads/${target} ${n};
+        } || wget -nc -P ~/Downloads/ ${n};
       } || {
-        wget -nc -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
+        wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
       };
     };
   ;;
@@ -198,8 +199,7 @@ case $(read -sek1 "?${n}") {
     baseurl+=scimag/;
     baseurl+=\?q=${query// /+};
     typeset -a mirror title author journal volume size doi url;
-    typeset -i pages lr lt la lj lv ls q c;
-
+    typeset -i pages lr lt la lj lv ls lP q c;
 
     curl -sfLH User-Agent: ${baseurl} > ${tmp};
     [[ $(pup -p -f ${tmp} 'html body p:nth-last-child(2) text{}') == 'No articles were found.' ]] && { printf '%s\n' 'No articles were found.'; return 0 };
@@ -231,6 +231,8 @@ case $(read -sek1 "?${n}") {
       ((${(c)#size[q]}    > ls)) && ls=${(c)#size[q]};
     };
     # lt=$((COLUMNS - lr - 1 - 1 - la - 1 - lj - 1 - lv - 1 - ls));
+    lP=$((lr + 1 + lt + 1 + la + 1 + lj + 1 + lv + 1 + ls));
+    ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));    
 
    while { true } {
       c=$(for q ( {1..${results}} ) {
@@ -241,13 +243,12 @@ case $(read -sek1 "?${n}") {
           '\033[33;1m' ${journal[q]:- } \
           '\033[33;1m' ${volume[q]:- } \
           '\033[32;1m' ${size[q]:- };
-      # } | fzy -l $LINES | cut -d ' ' -f 1) || break;
-      } | fzf -i +m --reverse --border=sharp --ansi --preview-window=down:wrap:10% --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
       ((c > 0 && c <= results)) && {
         while { true } {
           clear;
-          case $(nl -n ln <<< ${(F)mirror} | fzy | cut -d ' ' -f 1) {
+          case $(nl -n ln <<< ${(F)mirror} | fzf -i +m --reverse --tiebreak=begin | cut -d ' ' -f 1) {
             (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${doi[c]} | pup -p 'div ul li a attr{href}' | pcre2grep -o1 '(http.+)\?download=true')) || read -sk1 "?${n}Try another mirror.";;
             (2) url+=($(curl -sfLH User-Agent: ${mirror[2]}${doi[c]} | pup -p 'a:parent-of(h2) attr{href}')) || read -sk1 "?${n}Try another mirror.";;
             (3) url+=(https://booksc.xyz$(curl -sfLH User-Agent: ${mirror[3]}${doi[c]} | pup -p 'a.dlButton attr{href}')) || read -sk1 "?${n}Try another mirror.";;
@@ -258,15 +259,18 @@ case $(read -sek1 "?${n}") {
     };
 
     for n ( ${url} ) {
-      [[ ${n} =~ "\.pdf$" ]] && {
-        wget -nc -P ~/Downloads/ ${n};
+      [[ ${n} =~ '\.pdf$' ]] && {
+        target=${n##*/};
+        for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+        wget -nc -O ~/Downloads/${target} ${n};
+        # wget -nc -P ~/Downloads ${n};
       } || {
-        wget -nc -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).pdf ${n};
+        wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).pdf ${n};
       };
     };
   ;;
   (3)
-    typeset -i results pages lr lt la ls ll c q;
+    typeset -i results pages lr lt la ls ll lP c q;
     typeset -a mirror title author md5 language series sizeformat formats ext url langs format lang;
 
     formats=(epub mobi azw azw3 fb2 pdf rtf txt);
@@ -291,7 +295,7 @@ case $(read -sek1 "?${n}") {
       (*) baseurl+=\&criteria=;;
     };
 
-    [[ $(read -seq "?${n}Query uses wildcards [y*]?> ") == y ]] && baseurl+=\&wildcard=1;
+    [[ $(read -seq "?${n}Query uses wildcards [y/*]?> ") == y ]] && baseurl+=\&wildcard=1;
 
     lang=($(fzy -l $LINES -p 'Language?> ' <<< ${(F)langs}));
     lang=${lang:*langs};
@@ -308,8 +312,7 @@ case $(read -sek1 "?${n}") {
     results=${${"$(pup -f ${tmp} '.catalog_paginator [style=float:left] text{}' | head -n 1)"%% files found}#* }; # retarded: ' '  U+00A0  160    c2 a0       &nbsp;     NO-BREAK SPACE (Space_Separator)
     ((results == 0)) && { read -sk1 "?${n}No results."; return 0 };
 
-    ((pages > 4)) && {
-      printf '%s\n' "${results} results over ${pages} pages.";
+    ((pages > 4)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
       read -r "q?${n}Pages to show> ";
       ((q > 0 && q <= pages)) && {
         ((p == pages)) || {
@@ -343,6 +346,8 @@ case $(read -sek1 "?${n}") {
       ((${(c)#language[q]} > ll)) && ll=${(c)#language[q]};
     };
     # lt=$((COLUMNS - lr - 1 - 1 - ls - 1 - la - 1 - ll - 10 - 6));
+    lP=$((lr + 1 + lt + 1 + ls + 1 + la + 1 + ll + 10 + 6));
+    ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
@@ -354,14 +359,13 @@ case $(read -sek1 "?${n}") {
           '\033[31;1m' ${language[q]:- } \
           '\033[34;1m' ${${sizeformat[q]#* / }:- } \
           '\033[32;1m' ${${sizeformat[q]% / *}:- };
-      # } | fzy -l $LINES | cut -d ' ' -f 1) || break;
-      } | fzf -i +m --reverse --border=sharp --ansi --preview-window=down:wrap:10% --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
       ((c > 0 && c <= results)) && {
         while { true } {
           clear;
-          case $(nl -n ln <<< ${(F)mirror} | fzy | cut -d ' ' -f 1) {
-            (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | fzy)) && ext+=(${(L)sizeformat[c]% / *}) || read -sk1 "?${n}Try another mirror.";;
+          case $(nl -n ln <<< ${(F)mirror} | fzf -i +m --reverse --tiebreak=begin | cut -d ' ' -f 1) {
+            (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | nl -n ln | fzf -i +m --reverse --tiebreak=begin | cut -f 2)) && ext+=(${(L)sizeformat[c]% / *}) || read -sk1 "?${n}Try another mirror.";;
             (2) url+=($(curl -sfLH User-Agent: ${mirror[2]}${md5[c]} | pup -p ':parent-of(h2) attr{href}'))       && ext+=(${(L)sizeformat[c]% / *}) || read -sk1 "?${n}Try another mirror.";;
             (3) read -sk1 "?${n}FIXME";; # url+=($(curl -sfLH User-Agent: ${mirror[3]}${md5[c]} | pup -p '')); ext+=(${(L)sizeformat[c]% / *});;
             (*) break;;
@@ -373,17 +377,19 @@ case $(read -sek1 "?${n}") {
     q=0;
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
-        if [[ ${n} =~ '\?filename=' ]] { wget -nc -O ~/Downloads/${n#*=} ${n} } else { wget -nc -P ~/Downloads/ ${n} } 
+        [[ ${n} =~ '\?filename=' ]] && target=${n#*=} || target=${n##*/};
+        for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+        wget -nc -O ~/Downloads/${target} ${n};
       } || {
-        wget -nc -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
+        wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
       };
     };
   ;;
   (4)
-    typeset -i results pages lr lt li lv lp ld q;
+    typeset -i results pages lr lt li lv lp ld lP q;
     typeset -a title issue volume publisher language date issuehash serieshash url file;
     baseurl=libgen.lc/comics/index.php\?s=${query// /+}\&res=100\&sorted=1;
-    [[ $(read -seq "?${n}Query uses wildcards [y*]?> ") == y ]] && baseurl+=\&mask=1; printf '\n';
+    [[ $(read -seq "?${n}Query uses wildcards [y/*]?> ") == y ]] && baseurl+=\&mask=1; printf '\n';
 
     menu -m 4b -t 2b 'Search_for: ' \
       '* all FIXME' \
@@ -402,8 +408,7 @@ case $(read -sek1 "?${n}") {
     ((results == 0)) && { printf 'No results.\n'; return 0 };
     ((results < 101)) && pages=1 || { pages=$((results / 100)); ((results % 100 == 0)) || pages=$((pages + 1)) };
 
-    ((pages > 2)) && {
-      printf '%s\n' "${results} results over ${pages} pages.";
+    ((pages > 2)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
       read -r "q?${n}Pages to show> ";
       ((q > 0 && q <= pages)) && {
         ((q == pages)) || {
@@ -454,6 +459,8 @@ case $(read -sek1 "?${n}") {
       ((${(c)#date[q]}      > ld)) && ld=${(c)#date[q]};
     };
     # lt=$((COLUMNS - lr - 1 - 1 - lv - 1 - li - 1 - lp - 1 - 2 - 1 - ld));
+    lP=$((lr + 1 + lt + 1 + lv + 1 + li + 1 + lp + 1 + 2 + 1 + ld));
+    ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
@@ -465,11 +472,10 @@ case $(read -sek1 "?${n}") {
           '\033[33;1m' ${publisher[q]:- } \
           '\033[35;1m' ${(U)language[q]:- } \
           '\033[31;1m' ${date[q]:- };
-      # } | fzy -l $LINES | cut -d ' ' -f 1) || break;
-      } | fzf -i +m --reverse --border=sharp --ansi --preview-window=down:wrap:10% --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
       ((c > 0 && c <= results)) && {
-        if [[ ${(M)baseurl%?} == 1 ]] || { [[ ${(M)baseurl%?} == 2 ]] && [[ $(read -seq "?${n}Download entire series [y*]? ") == y ]] } {
+        if [[ ${(M)baseurl%?} == 1 ]] || { [[ ${(M)baseurl%?} == 2 ]] && [[ $(read -seq "?${n}Download entire series [y/*]? ") == y ]] } {
           curl -sfLH User-Agent: http://libgen.lc/comics/${serieshash[c]} > ${tmp} || break;
           q=0;
           for n ( ${(f)"$(pup -p -f ${tmp} 'tbody tr tr:first-child a[href^=get] attr{href}')"} ) {
@@ -490,11 +496,13 @@ case $(read -sek1 "?${n}") {
 
     q=0;
     for n ( ${url} ) {
-      wget -nc -O ~/Downloads/${file[++q]} ${n};
+      target=${file[++q]};
+      for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+      wget -nc -O ~/Downloads/${target} ${n};
     };
   ;;
   (5)
-    typeset -i pages results lr lt ls lf lS lp ln ll q c;
+    typeset -i pages results lr lt ls lf lS lp ln ll lP q c;
     typeset -a title format length language pubdate size url;
     baseurl=http://libgen.lc/standarts/index.php\?s=${query// /%20};
 
@@ -503,8 +511,7 @@ case $(read -sek1 "?${n}") {
     ((results == 0)) && { printf 'No results.\n'; return 0 };
     ((results < 26)) && pages=1 || { pages=$((results / 25)); ((results % 25 == 0)) || pages=$((pages + 1)) };
 
-    ((pages > 4)) && {
-      printf '%s\n' "${results} results over ${pages} pages.";
+    ((pages > 4)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
       read -r "q?${n}Pages to show> ";
       ((q > 0 && q <= pages)) && {
         ((q == pages)) || {
@@ -542,6 +549,8 @@ case $(read -sek1 "?${n}") {
       ((${(c)#format[q]}  > lf)) && lf=${(c)#format[q]};
     };
     # lt=$((COLUMNS - lr - 1 - 1 - ln - 1 - lp - 1 - lS - 1 - ll - 1 - ls - 1 - lf));
+    lP=$((lr + 1 + lt + 1 + ln + 1 + lp + 1 + lS + 1  ll + 1 + ls + 1 + lf));
+    ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
@@ -554,15 +563,14 @@ case $(read -sek1 "?${n}") {
           '\033[30;1m' ${length[q]:- } \
           '\033[33;1m' ${size[q]:- } \
           '\033[31;1m' ${format[q]:- };
-      # } | fzy -l $LINES | cut -d ' ' -f 1) || break;
-      } | fzf -i +m --reverse --border=sharp --ansi --preview-window=down:wrap:10% --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
       ((c > 0 && c <= results)) && url+=($(curl -sfLH User-Agent: http://libgen.lc/standarts/get.php\?md5=${md5[c]})) && ext+=(${(L)format[c]});
     };
 
     q=0;
     for n ( ${url} ) {
-      wget -nc -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
+      wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
     };
   ;;
   (6)

@@ -52,11 +52,11 @@ set scrolloff 1
 
 # define a custom 'delete' command
 cmd delete ${{
+    clear;
     set -f;
     printf '%s\n' $fx;
-    printf '\n%s' 'delete above files? [y/n]';
-    [[ $(read -seq ) = y ]] && rm -rf $fx;
-    clear;
+    printf '-\n%s\n' 'delete above files? [y/*]';
+    [[ $(read -seq ) == y ]] && rm -rf $fx;
 }}
 
 # use '<delete>' key for either 'trash' or 'delete' command
@@ -68,9 +68,10 @@ cmd open ${{
   local a;
   for a in $fx; do
     case $a in
-      (*.jpg|*.png|*.gif|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null &;;
+      (*.jpg|*.png|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null &;;
+      (*.gif) mpv --loop $a;;
       (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
-      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
+      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff|*.ogg) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
       (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null &;;
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;
@@ -97,7 +98,6 @@ cmd rndrename ${{
   set -f;
   local a s d;
   for a in $fx; do
-    # d=${a#*.};
     d=${a##*.};
     if [ $d = $a ]; then
       while true; do
@@ -135,12 +135,10 @@ cmd 7za ${{
 cmd extract ${{ set -f; aunpack -e $fx; }}
 
 cmd fzycd ${{
-  local s d;
-  setopt nonomatch;
-  s=(*(/D-)); [[ $s[1] = '*(/D-)' ]] && s[1]=();
-  d="$(printf '%s/\n' '..' $s | fzy -l ${"$(stty size)"% *} -p "$(pwd) ")";
-
-  [[ -d $d ]] && lf -remote "send $id cd \"$d\"" || break;
+  clear;  
+  local d;
+  d=$(printf '%s\n' .. *(/D-N) | fzy -l $LINES -p "$(pwd) ");
+  [[ -d $d ]] && lf -remote "send $id cd \"${d:a}\"";
 }}
 
 cmd Link %{{
@@ -248,12 +246,6 @@ cmd copy-remove %{{
   lf -remote "send $id unselect${newline}send $id sync"
 }}
 
-cmd cless ${{
-  set -f
-  chroma -s monokai -- $fx | $PAGER;
-}}
-
-
 # =================== KEYBINDINGS ===================
 
 # UNMAP ALL SHIT KEYBINDINGS
@@ -356,7 +348,7 @@ map <esc>       cmd-escape
 map yy          copy
 map ya          copy-add
 map yr          copy-remove
-map yp          push &realpath<space>${(fq)fx}|tr<space>-s<space>'\n'|xclip<space>-selection<space>clipboard<space>-rmlastnl<enter>
+map yp          push &printf<space>'%s<space>'<space>${(q)fx:a}|xclip<space>-selection<space>clipboard<enter>
 map dd          cut
 map da          cut-add
 map dr          cut-remove
@@ -373,7 +365,7 @@ map c           push :<space>cd<space>
 map f           fzf
 map e           fzycd
 map E           sublime
-map L           cless
+# map L           cless
 map l           $$PAGER $fx
 map <tab>       cmd-complete
 map <c-l>       redraw
