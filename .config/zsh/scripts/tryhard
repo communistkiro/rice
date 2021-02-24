@@ -117,12 +117,13 @@ function select-network () {
   
   sesh=(${t}/*.kismet.csv(.om));
   if ((${#sesh} > 0)) && [[ $(read -eq "?${n}Use previous dump? ") == y ]] {
-    dump=${$(fzf --preview-window=90%:down:wrap --reverse --preview='tr ";" "!" < {} | column -t -s "!" -o " "' <<< ${(F)sesh})%.kismet.csv};
-    [[ -z ${dump}*(#qN) ]] && dump= && read -sk1 "?${n}Invalid selection." && return 1;
+    dump=${$(fzf -i +m --preview-window=90%:down:wrap --bind=alt-\[:preview-up,alt-\':preview-down,\[:up,\':down --reverse --preview='tr ";" "!" < {} | column -t -s "!" -o " "' <<< ${(F)sesh})%.kismet.csv};
+    [[ -z ${dump}*(#qN) ]] && { dump=; read -sk1 "?${n}Invalid selection."; return 1 };
   } else {
     dump=$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8);
     capture-packets 1;
-    dump=$(printf '%s\n' *.kismet.csv(.om) | head -n 1 | cut -f 1 -d .);
+    # dump=$(printf '%s\n' *.kismet.csv(.om) | head -n 1 | cut -f 1 -d .);
+    dump=(*.kismet.csv(.om[1]:s/.*/)); dump=${dump%%.*};
     wpaclean /tmp/cap ${dump}.cap && mv /tmp/cap ${dump}.cap;
   };
 
@@ -323,7 +324,7 @@ function bully-reaver-attack () {
   sesh=(${t}/*.reaver.sesh(.om));
   if ((${#sesh} > 0)) && [[ $(read -eq '?${n}Resume reaver session? ') == y ]] {
     sesh="$(fzy -l $LINES -p 'select sesh> ' <<< ${(F)sesh})";
-    [[ -f ${sesh} ]] && [[ ! -z ${sesh} ]] && reaver -R ${sesh};
+    [[ -f ${sesh} && -n ${sesh} ]] && reaver -R ${sesh};
   } else {
     state 'BULLY/REAVER';
     menu -m 1b -t 2 \
@@ -370,18 +371,19 @@ function chopchop-attack () {
 }
 
 function hashcat-attack () {
-  local a c f h m o r t w z;
-  o+=(--session="$(date +'%F-%T').hashcat" --hwmon-temp-about=96 --workload-profile=3 --opencl-device-types=1);
+  typeset cmd attackmode f hash mask r hashtype z;
+  typeset -a opt wordlist;
+  opt=(--session="$(date +'%F-%T').hashcat" --hwmon-temp-about=96 --workload-profile=3 --opencl-device-types=1);
   r=(${t}/*.hashcat(.om));
 
   while { true } { 
     clear;
-    c="hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+${h} }${w:+${w} }${m:+${m} }";
+    cmd="hashcat ${attackmode:+--attack-mode=${attackmode} }${hashtype:+--hash-type=${hashtype} }${opt:+${(F)opt} }${hash:+${hash} }${wordlist:+${(F)wordlist} }${mask:+${mask} }";
     box -s 1 -H 5b -B 4 -T 3b -h HASHCAT \
-      "${(r.17.. .)$(<<< hccapx/hashfile/hash:)}${h:--}";
-      "${(@l.37..wordlist:  .r.2.. .)w:--}";
+      "${(r.17.. .)$(<<< hccapx/hashfile/hash:)}${hash:--}";
+      "${(@l.37..wordlist:  .r.2.. .)wordlist:--}";
     menu -m 1b -t 2 \
-      "cmd: ${c}" \
+      "cmd: ${cmd}" \
       '0 resume session' \
       '1 select attack mode' \
       '2 select wordlist(s)' \
@@ -403,38 +405,37 @@ function hashcat-attack () {
           '5 hybrid mask + wordlist' \
           '* return';
         case $(read -ek1 "?${n}Select attack mode> ") {
-          (1) a=0;;
-          (2) a=1;;
-          (3) a=3;;
-          (4) a=6;;
-          (5) a=7;;
+          (1) attackmode=0;;
+          (2) attackmode=1;;
+          (3) attackmode=3;;
+          (4) attackmode=6;;
+          (5) attackmode=7;;
         };;
       (2) 
-        w=(${wordlistDir}/**/*(.D-));
-        while ((${#w} > 2)) {
-          printf '%s\n' ${w} ''; 
-          wl[$(read -e "?${n}select wordlist entry # to remove> ")]=(); 
+        wordlist=(${(f)"$(printf '%s\n' ${wordlistDir}/**/*(.D-N) | fzf -i -m --reverse)"});
+        while ((${#wordlist} > 2)) {
+          printf '%s\n' ${wordlist} ''; 
+          wordlist[$(read -e "?${n}Wordlists must be 1 or 2. Select wordlist entry # to remove> ")]=(); 
         } && clear;
-        if ((${#w} == 2)) {
-          printf '%s\n' ${w} ''; 
-          [[ $(read -eq "?${n}reverse wordlist order for permutation attack? otherwise only first will be used> ") == y ]] && \
-            w[3]=${w[2]} && w[2]=${w[1]} && w[1]=${w[3]} && w[3]=(); 
-        } else {
-          ((${#w} == 1)) && [[ $(read -eq "?${n}use same wordlist twice for permutation attack? ") == y ]] && w[2]=${w[1]}
-        };;
+        if ((${#wordlist} == 2)) {
+          printf '%s\n' ${wordlist}; 
+          [[ $(read -eq "?${n}Reverse wordlist order for permutation attack?") == n ]] || wordlist=(${(Oa)wordlist});
+        } elif ((${#wordlist} == 1)) {
+          [[ $(read -eq "?${n}Use chosen wordlist as the second for a permutation attack?") == n ]] || wordlist[2]=${wordlist[1]};
+        } else { read -sk1 "?${n}${wordlistDir}: No wordlists found." };;
       (3) 
         menu -m 1b -t 2 \
           '1 Select .cap to convert, or .hccapx' \
           '2 Input hash file' \
           '* return';
         case $(read -ek1 "?${n}> ") {
-          (1) f=(${(f)"$(printf '%s\n' /mnt/tryhard/*.(hc)#cap(x)#(.om))"});
+          (1) f=(${(f)"$(printf '%s\n' ${t}/*.(hc)#cap(x)#(.om))"});
             ((${#f} > 0)) && f="$(fzy -l $LINES -p 'select file> ' <<< ${(F)f})";
             if [[ ${f} =~ '\.hccapx$' ]] {
-              h=${f};
+              hash=${f};
             } else {
-              h="$(dirname ${f})/${f%.cap}.hccapx";
-              cap2hccapx ${f} ${h} || unset h f;
+              hash="$(dirname ${f})/${f%.cap}.hccapx";
+              cap2hccapx ${f} ${hash} || { hash=; f= };
             };;
           (2) read -sk1 "?${n}FIXME...";;
         };;
@@ -449,27 +450,27 @@ function hashcat-attack () {
           '?s «space»!"#$%&()*+,-./:;<=>?@[\]^_`{|}~<apostrophe>' \
           '?a ?l?u?d?s' \
           '?b 0x00 - 0xff';
-        read -r "m?${n}Input mask> ";;
+        read -r "mask?${n}Input mask> ";;
       (5) 
-        t=$(printf '%s\n' ${(f)"$(hashcat --help | perl -ne 's/^\s+(\d+).+?(\S*WPA\S*).*/$1\t\t$2 / && print' | fzy -l $LINES -p 'select hash-type> ' | awk '{printf $1}')"});;
+        hashtype=$(printf '%s\n' ${(f)"$(hashcat --help | perl -ne 's/^\s+(\d+).+?(\S*WPA\S*).*/$1\t\t$2 / && print' | fzy -l $LINES -p 'select hash-type> ' | awk '{printf $1}')"});;
       (6) 
         while { true } {
           clear; menu -m 1b -t 2 \
-            "Current_options: ${o}" \
+            "Current_options: ${(F)opt}" \
             '1 add option' \
             '2 remove option' \
             '* return';
           case $(read -ek1 '?> ') {
-            (1) o+=(${(f)"$(read -e "?${n}input option> ")"});;
-            (2) o[$(read -e "?${n}number of option to remove> ")]=() || true;;
+            (1) opt+=(${(f)"$(read -e "?${n}Input option> ")"});;
+            (2) opt[$(read -e "?${n}Number of option to remove> ")]=();;
           };
         };;
       (7) 
-        if ! ((${+a} || ${+t} || ${+h})) {
+        if ! ((${+attackmode} || ${+hashtype} || ${+hash})) {
           read -sk1 "?${n}Attack mode, hash type, or hccapx/hash file not specified!";
         } else {
-          hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+ ${h} }${w:+${w} }--speed-only;
-          [[ $(read -eq "?${n}Run \033[32;1m${c}\033[0m)? ") == y ]] && hashcat ${a:+--attack-mode=${a} }${t:+--hash-type=${t} }${o:+${o} }${h:+ ${h} }${w:+${w} }${m:+${m} };
+          printf '%b%s\n\n' '\033[31;1m' "$(hashcat ${attackmode:+--attack-mode=${attackmode} }${hashtype:+--hash-type=${hashtype} }${opt:+${(F)opt} }${h:+ ${h} }${w:+${w} }--speed-only)";
+          [[ $(read -eq "?${n}Run \033[32;1m${cmd}\033[0m)? ") == n ]] || hashcat ${attackmode:+--attack-mode=${attackmode} }${hashtype:+--hash-type=${hashtype} }${opt:+${(F)opt} }${hash:+ ${hash} }${wordlist:+${(F)wordlist} }${mask:+${mask} };
         };;
       (*) break;;
     };
@@ -478,7 +479,7 @@ function hashcat-attack () {
 
 function wep-wash-attack () {
   typeset data;
-  clear; [[ ${mode} != monitor ]] && switch-mode; 
+  clear; [[ ${mode} == monitor ]] || switch-mode; 
   data=(${(qqs. .)"$(wash -i ${interface} | fzy -l)"});
   [[ -z ${data} ]] && return 1;
   ((${bssid} != ${d[1]})) && {
@@ -493,20 +494,21 @@ function wep-wash-attack () {
 }
 
 function quit () {
-  cd ~; [[ ${mode} != managed ]] && switch-mode;
+  cd ~; [[ ${mode} == managed ]] || switch-mode;
   jobs -lr | pcre2grep -o1 '^\[\d+\]\s+.\s+(\d+)\s+\w+\s+air.+$' | xargs -d '\n' kill &>/dev/null || true;
   unset essid bssid mode channel power interface security cap;
 }
 
 function () {
   emulate -LR zsh;
-  setopt no_case_match null_glob extended_glob;
+  setopt pipe_fail no_case_match null_glob extended_glob;
   typeset wordlistDir t n essid bssid channel security power cap; n=$'\n'; typeset -a dump clients;
   wordlistDir=~/dcs/wordlists;
-  t=/mnt/tryhard && mkdir -p ${t} && cd ${t} || return 1;
-  airmon-ng check kill;
+  t=/mnt/tryhard; [[ -d ${t} ]] || mkdir ${t}; cd ${t};
+  ((# > 0)) || airmon-ng check kill;
   select-interface || return 1;
-  trap 'break 4; quit;' QUIT;
+  trap '{ break 4 } always { quit }' QUIT;
+  trap 'return' INT;
   while { true } {
     clear; state;
     menu -m 1b -t 2 \
@@ -542,4 +544,4 @@ function () {
     };
   };
   quit;
-}
+};

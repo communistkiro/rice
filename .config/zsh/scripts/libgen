@@ -22,9 +22,6 @@ emulate -LR zsh;
 trap "printf 'Exiting..\nAll URLs:\n'; printf '%s\n' ${url}; return 1" HUP INT;
 setopt pipe_fail ksh_glob extended_glob;
 typeset query baseurl tmp n z target;
-typeset -A percenc;
-percenc[%20]=' '; percenc[%21]='!'; percenc[%22]='"'; percenc[%23]='#'; percenc[%24]='$'; percenc[%25]='%'; percenc[%26]='&'; percenc[%27]="'"; percenc[%28]='('; percenc[%29]=')'; percenc[%2A]='*'; percenc[%2B]='+'; percenc[%2C]=','; percenc[%2D]='-'; percenc[%2E]='.'; percenc[%2F]='/'; percenc[%3A]=':'; percenc[%3B]=';'; percenc[%3C]='<'; percenc[%3D]='='; percenc[%3E]='>'; percenc[%3F]='?'; percenc[%40]='@'; percenc[%5B]='['; percenc[%5C]='\'; percenc[%5D]=']'; percenc[%5E]='^'; percenc[%5F]='_'; percenc[%60]='`';
-
 
 n=$'\n'; tmp=$(mktemp);
 query=${${@}:-$(read -er "?${n}> ")};
@@ -186,8 +183,7 @@ case $(read -sek1 "?${n}") {
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
         [[ ${n} =~ '\?filename=' ]] && {
-          target=${n#*=};
-          for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+          target=${(q)$(uritool query unescape ${n#*=})};
           wget -nc -O ~/Downloads/${target} ${n};
         } || wget -nc -P ~/Downloads/ ${n};
       } || {
@@ -260,10 +256,8 @@ case $(read -sek1 "?${n}") {
 
     for n ( ${url} ) {
       [[ ${n} =~ '\.pdf$' ]] && {
-        target=${n##*/};
-        for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+        target=${(q)$(uritool query unescape ${n##*/})};
         wget -nc -O ~/Downloads/${target} ${n};
-        # wget -nc -P ~/Downloads ${n};
       } || {
         wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).pdf ${n};
       };
@@ -378,7 +372,7 @@ case $(read -sek1 "?${n}") {
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
         [[ ${n} =~ '\?filename=' ]] && target=${n#*=} || target=${n##*/};
-        for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+        target=${(q)$(uritool query unescape ${target})};
         wget -nc -O ~/Downloads/${target} ${n};
       } || {
         wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
@@ -496,8 +490,7 @@ case $(read -sek1 "?${n}") {
 
     q=0;
     for n ( ${url} ) {
-      target=${file[++q]};
-      for z (${(k)percenc}) { target=${target//${z}/${percenc[${z}]}} };
+      target=$(uritool query unescape ${file[++q]});
       wget -nc -O ~/Downloads/${target} ${n};
     };
   ;;

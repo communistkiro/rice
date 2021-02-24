@@ -19,7 +19,7 @@ zle -N bracketed-paste bracketed-paste-url-magic
 HISTFILE=/root/.zsh_history;
 SAVEHIST=2000;
 HISTSIZE=2000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|pre *|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|.*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|cd *)';
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|pre *|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|.*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|fmt *|cd *)';
 zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1; } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE

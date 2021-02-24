@@ -4,12 +4,12 @@
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;
 setopt pipe_fail
-typeset query baseurl cat t n; 
+typeset query base cat t n; 
 typeset -i pages c q lr ls ll lt; 
 typeset -a cats title seed leech size url category date hash;
 n=$'\n'; 
 t=$(mktemp);
-baseurl='https://1337x.to';
+base='https://1337x.to';
 cats=(Anime Apps Documentaries Games Movies Music Other TV XXX);
 # ((# == 0)) && read -r "query?${n}> " || query="$@";
 query="${${@}:-$(read -er "?${n}> ")}";
@@ -18,14 +18,14 @@ query="${${@}:-$(read -er "?${n}> ")}";
 cat=${$(fzy -p 'Select category or search all: ' -l ${#cats} <<< ${(F)cats}):*cats};
 [[ -z ${cat} ]] && query=/search/${query// /+}/ || query=/category-search/${query// /+}/${cat}/;
 
-curl -sfLH User-Agent: ${baseurl}${query}1/ > ${t};
+curl -sfLH User-Agent: ${base}${query}1/ > ${t};
 ((${$(pup -f ${t} -n 'a[href^=/torrent/]'):-0} != 0)) || { printf ' No results.\n'; return 0 };
 
 pages=${${$(pup -f ${t} '.last a attr{href}')%/}##*/};
 if ((pages == 0)) {
    pages=1;
 } elif ((pages > 4)) && [[ $(read -seq "?${n}${pages} pages, show all [y*]?") == n ]] {
-  read -r "q?${n}Input number of pages to display> ";
+  read "q?${n}Input number of pages to display> ";
   ((q > 0 && q <= pages)) && pages=${q} || { printf 'Invalid selection; showing first 5 pages.\n'; pages=5 };
 };
 
@@ -37,7 +37,7 @@ for q ( {1..${pages}} ) {
   url+=(${(fqq)"$(     pup -p -f ${t} 'td a[href^=/torrent/] attr{href}')"});
   category+=(${(fqq)"$(pup -p -f ${t} 'td.name .icon i attr{class}' | cut -d - -f 2-)"});
   date+=(${(fqq)"$(    pup -p -f ${t} 'td.coll-date text{}')"});
-  curl -sfLH User-Agent: ${baseurl}${query}$((q + 1))/ > ${t};
+  curl -sfLH User-Agent: ${base}${query}$((q + 1))/ > ${t};
 };
 
 lr=${(c)#${#title}};
@@ -58,7 +58,7 @@ while { true } {
       '\033[36;1m' ${(Q)date[q]:--};
   } | fzy -l $LINES | cut -f 1 -d ' ') || break;
   ((c > 0 && c <= ${#title})) && {
-    curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} > ${t};
+    curl -sfLH User-Agent: ${base}${(Q)url[c]} > ${t};
     hash+=($(pup -p -f ${t} 'a[href^=magnet] attr{href}'));
     [[ -n ${hash[-1]} ]] || hash[-1]=$(pup -p -f ${t} '.infohash-box span text{}');
   };

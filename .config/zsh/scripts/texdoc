@@ -2,6 +2,16 @@
 [[ -t 0 ]] || return 1;
 emulate -LR zsh;
 setopt pipe_fail;
+while { getopts s n } { case ${n} {
+  (s) 
+    typeset -a a s; a=(${(fq)"$(printf '%s\n' ~/Downloads/texpkg/**/*(.N) | fzf -i -m --reverse --bind=alt-c:clear-selection,alt-v:select-all,\[:up,\':down)"}); 
+    for n ( ${a} ) {
+      [[ ${n} =~ '\.pdf$' ]] && { qpdfview --unique --quiet ${n} & disown } || s+=${n};
+    }; ((${#s} > 0)) && less ${s}; return 0;;
+  (*) return 1;;
+}; };
+
+ping -c 1 1.1.1.1 &>/dev/null || return 1;
 typeset t base query n;
 typeset -i r lr q c p;
 typeset -a pkg url file dir;

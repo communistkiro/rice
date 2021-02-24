@@ -1,0 +1,67 @@
+#!/bin/zsh
+[[ -t 0 ]] || return 1;
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
+emulate -LR zsh;
+setopt pipe_fail extended_glob;
+typeset query base t n; 
+typeset -i results pages lr lt ls ll lS q c;
+typeset -a title url size seedleech hash;
+n=$'\n'; t=$(mktemp); T=$(mktemp);
+query="${${@}:-$(read -er "?${n}> ")}";
+[[ ! ${query} =~ '^\s*$' ]] || return 4;
+query=$(uritool query escape ${query});
+base=https://filelisting.com;
+curl -sfLH User-Agent: ${base}/result\?q=${query} > ${t};
+results=${(M)"$(pup -f ${t} -p 'p:contains("results")' text{})"//*of about (#b)([0-9]##) for */${match[1]}};
+((results > 0)) || { printf 'No results.\n'; return 0 };
+pages=$((results / 20)); ((results % 20 == 0)) || $((++pages));
+
+((pages > 25)) && [[ $(read -seq "?${n}${results} results over ${pages} pages, show all [y*]?") == n ]] && {
+   read "q?${n}Pages to show> ";
+  ((q > 0 && q <= pages)) && {
+    pages=${q}; results=$((pages * 20));
+  } || {
+    printf 'Invalid selection; showing first 25 pages.\n'; pages=25; results=500;
+  };
+};
+
+for q ( {0..${pages}} ) {
+  title+=(${(f)"$(pup -p -f ${t} 'td.dn-title text{}' | perl -pe 'BEGIN {undef $\} s/(\S)\s*\n/\1 /mg; s/\s{2,}/\n/m ')"});
+  url+=(${(f)"$(  pup -p -f ${t} 'td.dn-title a attr{href}')"});
+  size+=(${(f)"$( pup -p -f ${t} 'td.dn-size text{}' | perl -pe 's/\s*\n\s*/\n/')"});
+  seed+=(${(z)$(  pup -p -f ${t} 'td.dn-status text{}')%/*});
+  leech+=(${(z)$( pup -p -f ${t} 'td.dn-status text{}')#*/});
+  # files+=();
+  curl -sfLH User-Agent: ${base}/result\?q=${query}\&f=$(((q + 1) * 20)) > ${t};
+};
+
+lr=${(c)#results};
+for q ( {1..${results}} ) {
+  ((${(c)#title[q]} > lt)) && lt=${(c)#title[q]};
+  ((${(c)#size[q]}  > lz)) && lz=${(c)#size[q]};
+  ((${(c)#seed[q]}  > ls)) && ls=${(c)#seed[q]};
+  ((${(c)#leech[q]} > ll)) && ll=${(c)#leech[q]};
+};
+
+for q ( {1..${results}} ) {
+    printf "%.${lr}d  %b%-${lt}.${lt}s  %b%${lz}.${lz}s  %b%.${ls}d%b/%b%.${ll}d\n" \
+      ${q} \
+      '\033[34;1m' ${title[q]:- } \
+      '\033[35;1m' ${size[q]:- } \
+      '\033[32;1m' ${seed[q]:- } '\033[0;1m' \
+      '\033[31;1m' ${leech[q]:- };
+  } > ${T};
+
+while { true } {
+  c=$(fzy -l $LINES < ${T} | cut -f 1 -d ' ') || break;
+  ((c > 0 && c <= results)) && {
+    curl -sfLH User-Agent: ${base}${url[c]} > ${t}; clear;
+    pup -p -f ${t} 'div.well table tr td text{}' | perl -pe 's/\s*\n\s*/\n/';
+    printf '\n%bFiles:\n' '\033[34;1m'
+    printf '%s\n' ${(f)"$(pup -p -f ${t} 'div.path-list table tbody p text{}' | perl -pe 'BEGIN {undef $/} s/\s{2,}/\n/g; s/\n(\d+(?:\.\d+)? .B)$/\1/gm')"} | less -F;
+    [[ $(read -seq "?${n}Download?") == n ]] || hash+=(${${(z)$(pup -p -f ${t} 'div.well table tr td text{}')}[-1]});
+  };
+};
+
+((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
+rm -f ${t} ${T}; return 0;
