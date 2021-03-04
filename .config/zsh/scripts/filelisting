@@ -14,7 +14,7 @@ base=https://filelisting.com;
 curl -sfLH User-Agent: ${base}/result\?q=${query} > ${t};
 results=${(M)"$(pup -f ${t} -p 'p:contains("results")' text{})"//*of about (#b)([0-9]##) for */${match[1]}};
 ((results > 0)) || { printf 'No results.\n'; return 0 };
-pages=$((results / 20)); ((results % 20 == 0)) || $((++pages));
+pages=$((results / 20)); ((results % 20 == 0)) || pages=$((pages + 1));
 
 ((pages > 25)) && [[ $(read -seq "?${n}${results} results over ${pages} pages, show all [y*]?") == n ]] && {
    read "q?${n}Pages to show> ";
@@ -56,9 +56,9 @@ while { true } {
   c=$(fzy -l $LINES < ${T} | cut -f 1 -d ' ') || break;
   ((c > 0 && c <= results)) && {
     curl -sfLH User-Agent: ${base}${url[c]} > ${t}; clear;
-    pup -p -f ${t} 'div.well table tr td text{}' | perl -pe 's/\s*\n\s*/\n/';
+    pup -p -f ${t} 'div.well table tr td text{}' | perl -pe 'BEGIN {undef $\} s/\s*\n\s*/\n/m';
     printf '\n%bFiles:\n' '\033[34;1m'
-    printf '%s\n' ${(f)"$(pup -p -f ${t} 'div.path-list table tbody p text{}' | perl -pe 'BEGIN {undef $/} s/\s{2,}/\n/g; s/\n(\d+(?:\.\d+)? .B)$/\1/gm')"} | less -F;
+    printf '%s\n' ${(f)"$(pup -p -f ${t} 'div.path-list table tbody p text{}' | perl -pe 'BEGIN {undef $/} s/\s{2,}/\n/g; s/\n(\d+(?:\.\d+)? .B)$/\t\t\t\1/gm')"} | less -F;
     [[ $(read -seq "?${n}Download?") == n ]] || hash+=(${${(z)$(pup -p -f ${t} 'div.well table tr td text{}')}[-1]});
   };
 };

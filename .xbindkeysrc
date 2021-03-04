@@ -76,11 +76,11 @@
     XF86AudioMute
 
 # Increase backlight
-"xbacklight -inc 0.75"
+"xbacklight -inc 0.5"
     XF86MonBrightnessUp
 
 # Decrease backlight
-"xbacklight -dec 0.75"
+"xbacklight -dec 0.5"
    XF86MonBrightnessDown
 
 # Lock screen

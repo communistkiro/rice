@@ -2,7 +2,7 @@
 emulate -LR zsh;
 # { which wget && which perl && which pup && which sed } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
-typeset t q;
+typeset t q h;
 typeset -a file;
 typeset -i a;
 t=$(mktemp -d);
@@ -35,36 +35,46 @@ file=(
   https://gitlab.com/The_Quantum_Alpha/the-quantum-ad-list/-/raw/master/For%20hosts%20file/The_Quantum_Ad-List.txt  # 26
 );
 
-for a ( {1..${#file}} ) { wget -O ${t}/${a} ${file[a]} & }; wait;
+for a ( {1..${#file}} ) { wget -q -O ${t}/${a} ${file[a]} & }; printf '\nFucking wait.\n\n'; wait;
 
-pup -f ${t}/25 -p '.BODY' | tail -n +99 > ${t}/0 && mv ${t}/0 ${t}/25;
+pup -f ${t}/25 -p '.BODY' | tail -n +99 > ${t}/0 && mv ${t}/0 ${t}/25 || return 4;
 
 # https://unix.stackexchange.com/questions/29724/how-to-properly-collect-an-array-of-lines-in-zsh
-perl -ne 's/^#0\.0\.0\.0 (\S+)$/\1/ && print' /etc/hosts >> ~/dcs/holdme;
+perl -ne 's/^#0\.0\.0\.0 (\S+)$/$1/ && print' /etc/hosts >> ~/dcs/holdme;
 sort -uo ~/dcs/holdme ~/dcs/holdme;
 
 head -n 29 ${t}/21 | tail -n 14 > /etc/hosts;
 sed -i '1,40d' ${t}/21;
 
-cat ${t}/*(N) ~/dcs/blockme | perl -pe '
+cat ${t}/* ~/dcs/blockme | perl -pe '
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n;
   s/[\ \t\f\r]+/ /g;
   s/#+/#/g;
   s/^ +//;
-  s/^#? ?:+ //;
+  s/^#? ?:+ ?//;
   s/^#\s*0\.0\.0\.0 /0.0.0.0 /n;
   s/^#.*$//;
+  s/^(.+)#.*$/$1/;
   s/(^(?!0\.0\.0\.0).+)/0.0.0.0 $1/;
   s/^0\.0\.0\.0 127\.0\.0\.1/0.0.0.0/;
   s/ +$//' | tr -s '\n' | sort -u > ${t}/h;
 
-# if [ -s holdme ]; then; 
+# if [[ -s holdme ]] {
 #   while IFS= read -r h; do perl -ie "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;
-# else; cat h >> /etc/hosts; fi;
+# } else {
+#   cat h >> /etc/hosts;
+# };
+###
 # [[ -n $unblock ]] && for file in {1..${#unblock}}; do; perl -ipe "s/(.*\b${unblock[file]}$)/#\1/" h; done;
-for q ( ${(f)"$(< ~/dcs/holdme)"} ) { sed -ir "s/^0\.0\.0\.0 ${q}$/#&/" ${t}/h };
-# cat ${t}/h >> /etc/hosts && rm -vrf ${t};
-cat ${t}/h >> /etc/hosts;
+###
+# for q ( ${(f)"$(< ~/dcs/holdme)"} ) { sed -ir "s/^0\.0\.0\.0 ${q}$/#&/" ${t}/h };
+###
+
+h=${(j:|:)$(< ~/dcs/holdme)};
+perl -pe "s/(^....... ${h}$)/#$1/g" ${t}/h >> /etc/hosts;
+rm -vf ${t}/*;
+
+#diff ${t}/h ~/dcs/holdme | pcre2grep '^<' | cut -c 3- >> /etc/hosts
 
 file=(
   https://easylist.to/easylist/easylist.txt             # 5
@@ -75,4 +85,4 @@ file=(
 );
 wget -P ${t} ${(z)file};
 cat ${t}/*(oc[1,5]) | sort -u > ~/.config/wyebadblock/easylist.txt;
-rm -rvf ${t}
+rm -rvf ${t};

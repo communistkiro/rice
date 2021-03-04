@@ -1,0 +1,9 @@
+#!/bin/zsh
+# accepts DOIs, URLs, PMIDs, or search strings (?)
+[[ -t 0 ]] || return 1;
+# { which zsh && which pup && which curl} &>/dev/null || return 2;
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
+emulate -LR zsh;
+typeset base a;
+base='https://sci-hub.se';
+for a ( ${@} ) { wget -P ~/Downloads ${base}/${a} };

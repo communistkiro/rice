@@ -14,5 +14,5 @@ fi
 /root/.config/zsh/scripts/startup &
 subl3 &
 
-DISPLAY:=127.0.0.1:1
+#DISPLAY:=127.0.0.1:1
 exec dwm

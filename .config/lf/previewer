@@ -4,7 +4,7 @@ case "$1" in
   (*.jpg|*.jpeg|*.png|*.gif|*.tiff) chafa --size=113x50 "$1";;
   (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l -- "$1";;
   (*.mp3) mp3info2 "$1";;
-  (*.doc) catdoc -m94 -- "$1";;
+  (*.doc) catdoc -a -m94 -- "$1";;
   (*.docx) docx2txt "$1" -;;
   (*.epub) epub2txt -- "$1";;
   (*.info) info -- "$1";;

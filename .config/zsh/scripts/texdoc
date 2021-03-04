@@ -9,7 +9,7 @@ while { getopts s n } { case ${n} {
       [[ ${n} =~ '\.pdf$' ]] && { qpdfview --unique --quiet ${n} & disown } || s+=${n};
     }; ((${#s} > 0)) && less ${s}; return 0;;
   (*) return 1;;
-}; };
+} };
 
 ping -c 1 1.1.1.1 &>/dev/null || return 1;
 typeset t base query n;

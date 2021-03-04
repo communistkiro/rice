@@ -68,21 +68,21 @@ cmd open ${{
   local a;
   for a in $fx; do
     case $a in
-      (*.jpg|*.png|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null &;;
-      (*.gif) mpv --loop $a;;
+      (*.jpg|*.png|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null & disown;;
+      (*.gif) mpv --loop $a & disown;;
       (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
-      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff|*.ogg) mpv --force-window=yes --no-input-terminal --really-quiet $a &;;
-      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null &;;
+      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff|*.ogg|*.m3u|*.cue|*.m3u8) mpv --force-window=yes --no-input-terminal --really-quiet $a & disown;;
+      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null & disown;;
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;
-      (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null &;;
+      (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null & disown;;
       (*.docx) docx2txt $a - | fmt -w $COLUMNS | less;;
-      (*.doc) catdoc $a | fmt -w $COLUMNS | less;;
+      (*.doc) catdoc -a $a | fmt -w $COLUMNS | less;;
       (*.epub) epub2txt -a $a | fmt -w $COLUMNS | less;;
       (*.htm|*.html|*.xhtml) sf $a &>/dev/null &;;
       (*.info) info $a;;
-      (*.torrent|*.magnet) qbittorrent $a &>/dev/null &;;
-      (*.exe) wine $a &>/dev/null &;;
+      (*.torrent|*.magnet) qbittorrent $a &>/dev/null & disown;;
+      (*.exe) wine $a &>/dev/null & disown;;
       (*.txt) fmt -w $COLUMNS $a | less;;
     esac;
     disown &>/dev/null;
