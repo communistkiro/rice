@@ -116,48 +116,17 @@ startvalue:
 static void
 xml_parsecomment(XMLParser *x)
 {
-	size_t datalen = 0, i = 0;
-	int c;
+	int c, i = 0;
 
-	if (x->xmlcommentstart)
-		x->xmlcommentstart(x);
 	while ((c = GETNEXT()) != EOF) {
-		if (c == '-' || c == '>') {
-			if (x->xmlcomment && datalen) {
-				x->data[datalen] = '\0';
-				x->xmlcomment(x, x->data, datalen);
-				datalen = 0;
-			}
-		}
-
 		if (c == '-') {
-			if (++i > 2) {
-				if (x->xmlcomment)
-					for (; i > 2; i--)
-						x->xmlcomment(x, "-", 1);
+			if (++i > 2)
 				i = 2;
-			}
 			continue;
 		} else if (c == '>' && i == 2) {
-			if (x->xmlcommentend)
-				x->xmlcommentend(x);
 			return;
 		} else if (i) {
-			if (x->xmlcomment) {
-				for (; i > 0; i--)
-					x->xmlcomment(x, "-", 1);
-			}
 			i = 0;
-		}
-
-		if (datalen < sizeof(x->data) - 1) {
-			x->data[datalen++] = c;
-		} else {
-			x->data[datalen] = '\0';
-			if (x->xmlcomment)
-				x->xmlcomment(x, x->data, datalen);
-			x->data[0] = c;
-			datalen = 1;
 		}
 	}
 }
@@ -168,8 +137,6 @@ xml_parsecdata(XMLParser *x)
 	size_t datalen = 0, i = 0;
 	int c;
 
-	if (x->xmlcdatastart)
-		x->xmlcdatastart(x);
 	while ((c = GETNEXT()) != EOF) {
 		if (c == ']' || c == '>') {
 			if (x->xmlcdata && datalen) {
@@ -188,8 +155,6 @@ xml_parsecdata(XMLParser *x)
 			}
 			continue;
 		} else if (c == '>' && i == 2) {
-			if (x->xmlcdataend)
-				x->xmlcdataend(x);
 			return;
 		} else if (i) {
 			if (x->xmlcdata)
@@ -287,7 +252,8 @@ numericentitytostr(const char *e, char *buf, size_t bufsiz)
 	else
 		l = strtol(e, &end, 10);
 	/* invalid value or not a well-formed entity or invalid code point */
-	if (errno || e == end || *end != ';' || l < 0 || l > 0x10ffff)
+	if (errno || e == end || *end != ';' || l < 0 || l > 0x10ffff ||
+	    (l >= 0xd800 && l <= 0xdfff))
 		return -1;
 	len = codepointtoutf8(l, buf);
 	buf[len] = '\0';
@@ -326,7 +292,7 @@ xml_parse(XMLParser *x)
 
 			if (c == '!') { /* cdata and comments */
 				for (tagdatalen = 0; (c = GETNEXT()) != EOF;) {
-					/* NOTE: sizeof(x->data) must be atleast sizeof("[CDATA[") */
+					/* NOTE: sizeof(x->data) must be at least sizeof("[CDATA[") */
 					if (tagdatalen <= sizeof("[CDATA[") - 1)
 						x->data[tagdatalen++] = c;
 					if (c == '>')
@@ -393,8 +359,6 @@ xml_parse(XMLParser *x)
 		} else {
 			/* parse tag data */
 			datalen = 0;
-			if (x->xmldatastart)
-				x->xmldatastart(x);
 			while ((c = GETNEXT()) != EOF) {
 				if (c == '&') {
 					if (datalen) {
@@ -441,8 +405,6 @@ xml_parse(XMLParser *x)
 					x->data[datalen] = '\0';
 					if (x->xmldata && datalen)
 						x->xmldata(x, x->data, datalen);
-					if (x->xmldataend)
-						x->xmldataend(x);
 					break;
 				}
 			}

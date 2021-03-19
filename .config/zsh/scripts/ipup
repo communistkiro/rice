@@ -1,9 +1,11 @@
 #!/bin/zsh
 # pup made interactive
-if [[ -t 0 && ${#} -eq 1 && -f ${1} && -n $(<${1}) ]] {
-  fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="pup -p -f ${1:a:q} {q}" --preview-window=99%:down:sharp <<< '';
+emulate -LR zsh;
+FZF_DEFAULT_OPTS="--phony --reverse --print-query --border=horizontal --bind=alt-\':preview-down,alt-\[:preview-up --preview-window=99%:down:sharp";
+if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] {
+  fzf --preview="pup -p -f ${1:a:q} "{q}"" <<< '';
 } else {
   typeset q; q=$(mktemp);
-  while { read -e -t 1 -r } { } > ${q} && fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="pup -p -f ${q} {q}" --preview-window=99%:down:sharp <<< '';
+  while { read -e -t 1 -r } { } > ${q} && fzf --preview="pup -p -f ${q} "{q}"" --preview-window=99%:down:sharp <<< '';
   rm ${q};
 };

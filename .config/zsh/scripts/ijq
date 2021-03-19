@@ -1,9 +1,10 @@
 #!/bin/zsh
 # jq made interactive /wo a fucking go install
-if [[ -t 0 && ${#} -eq 1 && -f ${1} && -n $(<${1}) ]] {
-  fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="jq -r {q} ${1:a:q}" --preview-window=99%:down:sharp <<< '';
+FZF_DEFAULT_OPTS="--phony --reverse --print-query --border=horizontal --bind=alt-\[:preview-up,alt-\':preview-down --preview-window=99%:down:sharp";
+if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] {
+  fzf --preview="jq -r "{q}" ${1:a:q}" --preview-window=99%:down:sharp <<< '';
 } else {
   typeset q; q=$(mktemp);
-  while { read -e -t 1 -r } { } > ${q} && fzf --phony --reverse --print-query --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down --preview="jq -r {q} ${q}" --preview-window=99%:down:sharp <<< '';
+  while { read -e -t 1 -r } { } > ${q} && fzf --preview="jq -r "{q}" ${q}" <<< '';
   rm ${q};
 };

@@ -6,23 +6,18 @@ ping -c 1 1.1.1.1 &>/dev/null || return 3;
 function menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
-  (m)
-    [[ $OPTARG =~ '[0-7]' ]] && m='\033[3'${MATCH} || m='\033[37';
-    [[ $OPTARG =~ i ]] && m="${m};7";
-    [[ $OPTARG =~ b ]] && m="${m};1";
-    m="${m}m";;
-  (t)
-    [[ $OPTARG =~ '[0-7]' ]] && t='\033[3'${MATCH} || t='\033[37';
-    [[ $OPTARG =~ i ]] && t="${t};7";
-    [[ $OPTARG =~ b ]] && t="${t};1";
-    t="${t}m";;
+    (m) 
+      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+    (t)
+      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
   }; };
-  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033[;0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m' };
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
 }
 
 function () {
   emulate -LR zsh;
   setopt pipe_fail ksh_glob;
+  export FZF_DEFAULT_OPTS="-i -m --reverse --ansi --bind=\[:up,\':down,alt-c:clear-selection,alt-v:select-all";
   n=$'\n';
   menu -t 4 -m 2b \
     'Search_where: ' \
@@ -35,7 +30,7 @@ function () {
       typeset -i termnum results;
       typeset -a operators fields classification classifications title author pdf abstract submitted;
       tmp=$(mktemp);
-      api='https://arxiv.org/search/advanced?advanced=1';
+      api=https://arxiv.org/search/advanced\?advanced=1;
       termnum=0;
       operators=(AND OR ANDNOT);
       fields=(all title abstract author comments);
@@ -64,20 +59,21 @@ function () {
       );
 
       until ((?)) {
-        operator=$(fzf -i +m --reverse --prompt 'Operator: ' <<< ${(F)operators}); [[ -z $operator ]] && break;
+        operator=$(fzf +m --prompt 'Operator: ' <<< ${(F)operators}); [[ -z ${operator} ]] && break;
         read -r 'term?Term: '; [[ -z $term ]] && break;
-        field=$(fzf -i +m --reverse --prompt 'Field: ' <<< ${(F)fields} ); # [[ -z field ]] && break;
-        query+='&terms-'${termnum}'-operator='${operator}'&terms-'${termnum}'-term='${term// /%20}'&terms-'${termnum}'-field='${field:-all};
+        field=$(fzf +m --prompt 'Field: ' <<< ${(F)fields} ); # [[ -z field ]] && break;
+        # query+=\&terms-${termnum}-operator=${operator}\&terms-${termnum}-term=${term// /%20}\&terms-${termnum}-field=${field:-all};
+        query+=\&terms-${termnum}-operator=${operator}\&terms-${termnum}-term=$(uritool query escape ${term})\&terms-${termnum}-field=${field:-all};
         ((++termnum));
       };
-      ((termnum == 0)) && exit 0;
+      ((termnum > 0)) || return 0;
 
-      classification=($(fzf -i -m --reverse --tiebreak=end,begin,index --bind 'alt-c:clear-selection' --bind 'alt-v:select-all' <<< ${(F)classifications} | cut -d ' ' -f 1));
+      classification=($(fzf --tiebreak=end,begin,index <<< ${(F)classifications} | cut -d ' ' -f 1));
 
       (($#classification > 0)) && query+=$(printf '%s' $(cut -d ' ' -f 1 <<< ${(F)classifications}));
 
       menu -t 4 -m 2b \
-        'Include_cross-listed_papers?' \
+        'Include_cross-listed_papers? ' \
         '* Yes' \
         '2 No';
       case $(read -sek1 "?${n}") {
@@ -104,15 +100,15 @@ function () {
       };
 
       # sizes=(25 50 100 200);
-      query+='&size=200'; # query+='&size='${$(fzf -i +m --reverse --prompt 'Results: ' <<< ${(F)sizes}):-200};
+      query+=\&size=200; # query+='&size='${$(fzf -i +m --reverse --prompt 'Results: ' <<< ${(F)sizes}):-200};
 
-      query+='&abstracts=show'; # [[ $(read -seq '?Show abstract? ') == y ]] && query+='&abstracts=show' || query+='&abstracts=hide'; printf '\n';
+      query+=\&abstracts=show; # [[ $(read -seq '?Show abstract? ') == y ]] && query+='&abstracts=show' || query+='&abstracts=hide'; printf '\n';
 
-      query+='&date-date_type=submitted_date';
+      query+=\&date-date_type=submitted_date;
       # &date-date_type=submitted_date_first
       # &date-date_type=announcement_date
 
-      query+='&order=-announced_date_first';
+      query+=\&order=-announced_date_first;
 
       curl -sfL -o $tmp ${api}${query};
 
@@ -158,7 +154,7 @@ function () {
         (*) query+='%20jcode%3Amedrxiv%7C%7Cbiorxiv'; subjectareas=('Addiction Medicine' 'Allergy and Immunology' 'Anesthesia' 'Animal Behavior and Cognition' 'Biochemistry' 'Bioengineering' 'Bioinformatics' 'Biophysics' 'Cancer Biology' 'Cardiovascular Medicine' 'Cell Biology' 'Clinical Trials' 'Dentistry and Oral Medicine' 'Dermatology' 'Developmental Biology' 'Ecology' 'Emergency Medicine' 'Endocrinology' 'Epidemiology' 'Evolutionary Biology' 'Forensic Medicine' 'Gastroenterology' 'Genetic and Genomic Medicine' 'Genetics' 'Genomics' 'Geriatric Medicine' 'Health Economics' 'Health Informatics' 'Health Policy' 'Health Systems and Quality Improvement' 'Hematology' 'HIV/AIDS' 'Immunology' 'Infectious Diseases' 'Intensive Care and Critical Care Medicine' 'Medical Education' 'Medical Ethics' 'Microbiology' 'Molecular Biology' 'Nephrology' 'Neurology' 'Neuroscience' 'Nursing' 'Nutrition' 'Obstetrics and Gynecology' 'Occupational and Environmental Health' 'Oncology' 'Ophthalmology' 'Orthopedics' 'Otolaryngology' 'Pain Medicine' 'Paleontology' 'Palliative Medicine' 'Pathology' 'Pathology' 'Pediatrics' 'Pharmacology and Therapeutics' 'Pharmacology and Toxicology' 'Physiology' 'Plant Biology' 'Primary Care Research' 'Psychiatry and Clinical Psychology' 'Public and Global Health' 'Radiology and Imaging' 'Rehabilitation Medicine and Physical Therapy' 'Respiratory Medicine' 'Rheumatology' 'Scientific Communication and Education' 'Sexual and Reproductive Health' 'Sports Medicine' 'Surgery' 'Synthetic Biology' 'Systems Biology' 'Toxicology' 'Transplantation' 'Urology' 'Zoology');;
       };
 
-      subjectarea=($(fzf -i -m --reverse --prompt='Exclude articles outside subject area(s): ' --bind 'alt-c:clear-selection' --bind 'alt-v:select-all' <<< ${(F)subjectareas} | cut -d ' ' -f 1));
+      subjectarea=($(fzf --prompt='Exclude articles outside subject area(s): ' <<< ${(F)subjectareas} | cut -d ' ' -f 1));
       if (($#subjectarea > 1)) {
         query+='%20subject_collection_code%3A'${subjectarea[1]// /%20};
         query+=$(printf '%%2C%s' ${subjectareas[2,-1]// /%20});

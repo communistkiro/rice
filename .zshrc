@@ -1,4 +1,5 @@
-export PATH=$PATH:/root/.config/zsh/scripts:/root/bin;
+# export PATH=$PATH:/root/.config/zsh/scripts:/root/bin;
+export PATH=${(j : )${(u)${(s : )$(<<<${PATH}:/root/.config/zsh/scripts:/root/bin)}}}
 export PS1="%B%F{red}%?%f %F{blue}%d%f%b
 ";
 preexec () { printf '%b' "\e]0;$2\a" }
@@ -44,6 +45,7 @@ source /root/.config/omz/lib/completion.zsh;
 
 FZF_BASE=/root/src/fzf;
 source /root/.config/omz/plugins/fzf/fzf.plugin.zsh;
+export FZF_DEFAULT_OPTS="-i -m --reverse --ansi --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down";
 
 source /root/.config/zsh/plugins/zsh-colored-man-pages/colored-man-pages.plugin.zsh;
 
@@ -104,16 +106,17 @@ alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
 alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.45 --setf int_f0_target_mean=90 -pw';
 alias fmt='fmt -w $((COLUMNS*94/100))';
-alias fzf="fzf -i -m --reverse --ansi --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down"; #  --preview='cat {}' --preview-window=80%:down
+# alias fzf="fzf -i -m --reverse --ansi --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down"; #  --preview='cat {}' --preview-window=80%:down
 # alias gre='grep -P --color -i';
 alias hl='hledger-ui';
 alias l='less';
-alias l1='lsd -A1';
-alias love='mpc sendmessage mpdas love';
+alias l1='lsd -A -1 --icon never';
+# alias love='mpc sendmessage mpdas love';
 alias lr='lsd -A --tree';
 alias man='man -a';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
+alias mpva='mpv --force-window=yes --idle';
 alias mpvp='mpv --vo=tct --profile=sw-fast --ytdl-format="worst" --really-quiet';
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=24" &>/dev/null & disown';
 alias ncm='ncmpcpp 2>/dev/null';
@@ -125,17 +128,17 @@ alias p="printf '%s\n'";
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
 alias rdl='rdrview -B "elinks -dump -no-references -no-numbering"';
-# alias realpath='realpath -qe';
+alias realpath='realpath -qe';
 alias rm='rm -v';
 alias rsync='rsync -vah --progress';
 # alias sex='sex | cow';
 alias sls='sls -u v -p'
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
-alias so='source /root/.zshrc';
-alias sx='/root/src/sx/sx ~/.xinitrc';
+# alias so='source /root/.zshrc';
+# alias sx='/root/src/sx/sx ~/.xinitrc';
 alias timer="source /root/.config/omz/plugins/timer/timer.plugin.zsh; TIMER_FORMAT='[%d]'; TIMER_PRECISION=7";
 alias tox='tox -t dark --allow-root &>/dev/null & disown';
-alias unlove='mpc sendmessage mpdas unlove';
+# alias unlove='mpc sendmessage mpdas unlove';
 alias vol='amixer set Master';
 alias which='which -a';
 alias ytd='youtube-dl -f best --ignore-errors';

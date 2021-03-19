@@ -1,1 +1,1 @@
-perl -pe 'BEGIN { $/ = undef; } STUFF s///mg....'
+perl -pe 'BEGIN {undef $/} STUFF s///g....'

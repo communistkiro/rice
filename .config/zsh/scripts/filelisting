@@ -58,10 +58,13 @@ while { true } {
     curl -sfLH User-Agent: ${base}${url[c]} > ${t}; clear;
     pup -p -f ${t} 'div.well table tr td text{}' | perl -pe 'BEGIN {undef $\} s/\s*\n\s*/\n/m';
     printf '\n%bFiles:\n' '\033[34;1m'
-    printf '%s\n' ${(f)"$(pup -p -f ${t} 'div.path-list table tbody p text{}' | perl -pe 'BEGIN {undef $/} s/\s{2,}/\n/g; s/\n(\d+(?:\.\d+)? .B)$/\t\t\t\1/gm')"} | less -F;
+    printf '%s\n' ${(f)"$(pup -p -f ${t} 'div.path-list table tbody p text{}' | perl -pe 'BEGIN {undef $/} s/\s*\n\s*\n\s*/\n/g; s/\n(\d+(?:\.\d+)? .B)$/\t\t\t\1/g')"} | less -F;
     [[ $(read -seq "?${n}Download?") == n ]] || hash+=(${${(z)$(pup -p -f ${t} 'div.well table tr td text{}')}[-1]});
   };
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
+#((${#hash} > 0)) && for q ( {1..${#hash}} ) {
+#  printf '%s\n' d10:magnet-uri${#hash[q]}:${hash[q]}e > ~/Downloads/rtorrent/watch/start/meta-${${hash[q]%%&*}##*:}.torrent;
+#};
 rm -f ${t} ${T}; return 0;

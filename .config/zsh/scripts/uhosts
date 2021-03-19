@@ -2,6 +2,7 @@
 emulate -LR zsh;
 # { which wget && which perl && which pup && which sed } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
+(($(ps -aux | pcre2grep "\b${0}\b" | wc -l) == 1)) || return 4;
 typeset t q h;
 typeset -a file;
 typeset -i a;
@@ -31,13 +32,13 @@ file=(
   https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt                                  # 22
   https://github.com/oneoffdallas/dohservers/raw/master/list.txt                                                    # 23
   https://github.com/oneoffdallas/dohservers/raw/master/iplist.txt                                                  # 24
-  http://someonewhocares.org/hosts/zero/                                                                            # 25
+  https://someonewhocares.org/hosts/zero/                                                                           # 25
   https://gitlab.com/The_Quantum_Alpha/the-quantum-ad-list/-/raw/master/For%20hosts%20file/The_Quantum_Ad-List.txt  # 26
 );
 
 for a ( {1..${#file}} ) { wget -q -O ${t}/${a} ${file[a]} & }; printf '\nFucking wait.\n\n'; wait;
 
-pup -f ${t}/25 -p '.BODY' | tail -n +99 > ${t}/0 && mv ${t}/0 ${t}/25 || return 4;
+pup -f ${t}/25 -p '.BODY' | tail -n +108 > ${t}/0 && mv ${t}/0 ${t}/25 || return 4;
 
 # https://unix.stackexchange.com/questions/29724/how-to-properly-collect-an-array-of-lines-in-zsh
 perl -ne 's/^#0\.0\.0\.0 (\S+)$/$1/ && print' /etc/hosts >> ~/dcs/holdme;
@@ -71,7 +72,7 @@ cat ${t}/* ~/dcs/blockme | perl -pe '
 ###
 
 h=${(j:|:)$(< ~/dcs/holdme)};
-perl -pe "s/(^....... ${h}$)/#$1/g" ${t}/h >> /etc/hosts;
+perl -pe "s/^0\.0\.0\.0 (?:${h})$//" ${t}/h >> /etc/hosts;
 rm -vf ${t}/*;
 
 #diff ${t}/h ~/dcs/holdme | pcre2grep '^<' | cut -c 3- >> /etc/hosts

@@ -1,0 +1,45 @@
+#!/bin/zsh
+# rutracker script
+
+[[ -t 0 ]] || return 1;
+# { which zsh && which pup && which curl && which uritool } &>/dev/null || return 2;
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
+emulate -LR zsh;
+setopt pipe_fail extended_glob;
+typeset query base c t n; 
+typeset -i page q;
+typeset -a name url;
+n=$'\n'; 
+t=$(mktemp);
+quit () { rm ${t} &>/dev/null; exit ${1:-0} }
+export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=begin";
+
+query="${${@}:-$(read -er "?${n}> ")}";
+[[ ! ${query} =~ '^\s*$' ]] || quit 4;
+query=$(uritool query escape ${query}' site:rutracker.org');
+base=https://lite.duckduckgo.com;
+
+curl -sfLH User-Agent: -o ${t} ${base}/lite/\?q=${query};
+
+read "c?${n}Pages to show: ";
+((c >= 1)) && pages=${c} || { printf 'Invalid selection; showing first pages only.\n' };
+
+for q ({1..${pages}}) {
+	name+=(${(f)"$(pup -p -f ${t} 'tbody a text{}')"});
+	url+=($(for c ($(pup -p -f ${t} 'tbody tr a attr{href}') ) { uritool query unescape ${c#*=} }));
+	# url+=(${(f)"$(pup -p -f ${t} 'tbody a attr{href}')"});
+	curl -sfLH User-Agent -o ${t} ${base}$(pup -p -f ${t} 'td[colspan=2]' | pcre2grep -o1 '<a rel="next" href="(.+?)"');
+};
+
+while { true } {
+	c=$(printf '%s\n' ${name} | nl -n ln | fzf | cut -f 1 -d ' ') || break;
+	
+
+  ((c >= 1 && c <= ${#name})) && curl -sfLH User-Agent: -o ${t} ${url[c]} | p
+};
+
+
+
+
+
+

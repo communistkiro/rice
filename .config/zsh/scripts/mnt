@@ -5,10 +5,8 @@
   typeset dev dir n; n=$'\n';
   typeset -a blk src;
   src=(${(f)"$(findmnt --real -nlo 'source')"});
-  printf '%s\n' \
-    ' [1]  mount' \
-    ' [2]  umount';
-  case $(read -sek1 "?${n}> ") {
+  printf '\t%s\t\t%s\n' 1  mount 2 umount;
+  case $(read -sek1 "?${n}") {
     (1)
       blk=(${(f)"$(lsblk -nlpo name,label,type,size,uuid,state,mountpoint 2>/dev/null | pcre2grep -v "(running|/boot$|/$|SWAP|${(j:|:)src})\b")"});
       dev=$(fzy -p $'device\t\tlabel\ttype\tsize\tuuid\t\t\t\t\t\t\t\t\t\tmountpoint' -l $LINES <<< ${(F)blk} | cut -f 1 -d ' ') || return 1;

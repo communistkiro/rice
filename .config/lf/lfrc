@@ -55,7 +55,7 @@ cmd delete ${{
     clear;
     set -f;
     printf '%s\n' $fx;
-    printf '-\n%s\n' 'delete above files? [y/*]';
+    printf '%s\n%s\n' ${(l.COLUMNS..-.)$(<<<-)} 'delete above files? [y/*]';
     [[ $(read -seq ) == y ]] && rm -rf $fx;
 }}
 
@@ -69,9 +69,9 @@ cmd open ${{
   for a in $fx; do
     case $a in
       (*.jpg|*.png|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null & disown;;
-      (*.gif) mpv --loop $a & disown;;
+      (*.gif) mpv --no-terminal --loop $a & disown;;
       (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
-      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff|*.ogg|*.m3u|*.cue|*.m3u8) mpv --force-window=yes --no-input-terminal --really-quiet $a & disown;;
+      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff|*.ogg|*.m3u|*.cue|*.m3u8) mpv --no-terminal --force-window=yes --no-input-terminal --really-quiet $a & disown;;
       (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null & disown;;
       (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
       (*.eps) gv -- $a;;
@@ -85,7 +85,6 @@ cmd open ${{
       (*.exe) wine $a &>/dev/null & disown;;
       (*.txt) fmt -w $COLUMNS $a | less;;
     esac;
-    disown &>/dev/null;
   done;
 }}
 
@@ -319,10 +318,11 @@ map y
 
 # PREFIXES
 map \:          read
-map <enter>     shell
-map \%          shell-pipe
+map \$          shell
+# map \&          shell-async
+map \#          shell-async
 map \!          shell-wait
-map \&          shell-async
+map \%          shell-pipe
 
 # NAVIGATION
 map [           up
@@ -343,12 +343,12 @@ map \}          top
 # ACTIONS
 map Q           quit
 map <c-q>       quit
-map @           push $printf<space>'%s\n'<space>$fx<space>|<space>xargs<space>-d<space>'\n'<space>
+# map @           push $printf<space>'%s\n'<space>$fx<space>|<space>xargs<space>-d<space>'\n'<space>
 map <esc>       cmd-escape
 map yy          copy
 map ya          copy-add
 map yr          copy-remove
-map yp          push &printf<space>'%s<space>'<space>${(q)fx:a}|xclip<space>-selection<space>clipboard<enter>
+map yp          push #printf<space>'%s<space>'<space>${(q)fx:a}|xclip<space>-selection<space>clipboard<enter>
 map dd          cut
 map da          cut-add
 map dr          cut-remove
@@ -365,7 +365,6 @@ map c           push :<space>cd<space>
 map f           fzf
 map e           fzycd
 map E           sublime
-# map L           cless
 map l           $$PAGER $fx
 map <tab>       cmd-complete
 map <c-l>       redraw
@@ -374,8 +373,8 @@ map r           redraw
 map r           reload
 map R           redraw
 map R           reload
-map <enter>     $$f
-# map X           !$f
+# map <enter>     $$f
+map X           !$f
 map <space>     toggle
 map q           unselect
 # map q           clear
@@ -384,8 +383,6 @@ map S           $$SHELL
 map D           delete; reload
 map ,           push :glob-select<space>*
 map .           push :glob-unselect<space>*
-# map ,           globb
-# map .           globb 1
 map v           invert
 map n           push :mkdir<space>
 map Z           push :7za<space>

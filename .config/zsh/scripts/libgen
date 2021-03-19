@@ -1,37 +1,33 @@
 #!/bin/zsh
-function menu () {
-  typeset m t a;
-  while getopts 'm:t:' a; do case $a in
-  (m)
-    [[ $OPTARG =~ '[0-7]' ]] && m='\033[0;3'${MATCH} || m='\033[0;37';
-    [[ $OPTARG =~ 'i|I' ]]   && m="${m};7";
-    [[ $OPTARG =~ 'b|B' ]]   && m="${m};1";
-    m="${m}m";;
-  (t)
-    [[ $OPTARG =~ '[0-7]' ]] && t='\033[0;3'${MATCH} || t='\033[0;37';
-    [[ $OPTARG =~ 'i|I' ]]   && t="${t};7";
-    [[ $OPTARG =~ 'b|B' ]]   && t="${t};1";
-    t="${t}m";;
-  esac; done;
-  for a in $@[OPTIND,-1]; do printf '%b%4s    %b%s%b\n' "${m:-\033[0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m'; done;
-}
-
 [[ -t 0 ]] || return 1;
 # { which zsh && which pup && which curl && which wget && which pcre2grep && which uritool } &>/dev/null || return 2;
 emulate -LR zsh;
 setopt pipe_fail ksh_glob extended_glob;
-typeset query baseurl tmp n z target;
+typeset query base t n z target;
 
-n=$'\n'; tmp=$(mktemp);
+function quit () { rm -f ${t} &>/dev/null; exit ${1:-0} };
+
+n=$'\n'; t=$(mktemp);
 query=${${@}:-$(read -er "?${n}> ")};
-[[ ! ${query} =~ '^\s*$' ]] || return 4;
+[[ ! ${query} =~ '^\s*$' ]] || quit 4;
 
-ping -c 1 libgen.is &>/dev/null && baseurl=http://libgen.is/ ||
-ping -c 1 libgen.st &>/dev/null && baseurl=http://libgen.st/ ||
-ping -c 1 libgen.rs &>/dev/null && baseurl=http://libgen.rs/ ||
-return 3;
+ping -c 1 libgen.rs &>/dev/null && base=http://libgen.rs/ ||
+ping -c 1 libgen.is &>/dev/null && base=http://libgen.is/ ||
+ping -c 1 libgen.st &>/dev/null && base=http://libgen.st/ ||
+quit 3;
 
-trap 'rm -f ${tmp} &>/dev/null; return 1' INT QUIT;
+function menu () {
+  typeset m t a;
+  while { getopts 'm:t:' a } { case $a {
+    (m) 
+      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+    (t)
+      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+  }; };
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
+}
+
+export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=begin";
 
 menu -m 4b -t 2b  'Search_where: ' \
   '1 LibGen (Sci-Tech)' \
@@ -39,22 +35,16 @@ menu -m 4b -t 2b  'Search_where: ' \
   '3 Fiction' \
   '4 Comics' \
   '5 Standards' \
-  '6 Magazines';
+  '6 Magazines' \
+  '* Quit';
 
 case $(read -sek1 "?${n}") {
   (1)
     typeset -i results pages lr lt la le lp ls lf lP c q;
     typeset -a mirror title author md5 language edition publisher year length size format ext url;
-    baseurl+=search.php\?view=detailed\&res=100;
-    mirror=(
-      http://library.lol/main/
-      http://libgen.lc/ads.php\?md5=
-      # http://b-ok.cc/md5/
-      # https://libgen.pw/item?id=
-      # http://bookfi.net/md5/
-    );
+    base+=search.php\?view=detailed\&res=100;
 
-   baseurl+=\&phrase=$((++q));
+    base+=\&phrase=$((++q));
     menu -m 4b -t 2b 'Field_to_search: ' \
       '* any' \
       '1 title' \
@@ -68,24 +58,33 @@ case $(read -sek1 "?${n}") {
       '9 tags' \
       '0 extension' 
       case $(read -sek1 "?${n}> ") {
-        (1) baseurl+=\&column=title;;
-        (2) baseurl+=\&column=authors;;
-        (3) baseurl+=\&column=series;;
-        (4) baseurl+=\&column=publisher;;
-        (5) baseurl+=\&column=year;;
-        (6) baseurl+=\&column=isbn;;
-        (7) baseurl+=\&column=year;;
-        (8) baseurl+=\&column=md5;;
-        (9) baseurl+=\&column=tags;;
-        (0) baseurl+=\&column=extension;;
-        (*) baseurl+=\&column=def;;
+        (1) base+=\&column=title;;
+        (2) base+=\&column=authors;;
+        (3) base+=\&column=series;;
+        (4) base+=\&column=publisher;;
+        (5) base+=\&column=year;;
+        (6) base+=\&column=isbn;;
+        (7) base+=\&column=year;;
+        (8) base+=\&column=md5;;
+        (9) base+=\&column=tags;;
+        (0) base+=\&column=extension;;
+        (*) base+=\&column=def;;
       };
-      baseurl+=\&req=$(uritool query escape ${query});
+      base+=\&req=$(uritool query escape ${query});
 
-    curl -sfH User-Agent: ${baseurl}\&open=0 > ${tmp};
+    curl -sfLH User-Agent: -o ${t} ${base//detailed/simple}\&open=0;
 
-    results=$(pup -p -f ${tmp} 'tbody tr td[align=left] text{}' | cut -d ' ' -f 1);
-    ((results == 0)) && { read -sk1 "?${n}No results."; return 0 };
+    mirror+=($(pup -p -f ${t} 'tbody tr td:nth-child(10) a attr{href}' | head -n 1));
+    mirror+=($(pup -p -f ${t} 'tbody tr td:nth-child(11) a attr{href}' | head -n 1));
+    mirror+=($(pup -p -f ${t} 'tbody tr td:nth-child(12) a attr{href}' | head -n 1));
+    # mirror+=($(pup -p -f ${t} 'tbody tr td:nth-child(13) a attr{href}' | head -n 1)); #FIXME
+    mirror+=($(pup -p -f ${t} 'tbody tr td:nth-child(14) a attr{href}' | head -n 1));
+    mirror=($(pcre2grep -M -o1 '^(.+[=/])(\2|.+)$' <<< ${(F)mirror}));
+
+    curl -sfLH User-Agent: -o ${t} ${base}\&open=0;
+
+    results=$(pup -p -f ${t} 'tbody tr td[align=left] text{}' | cut -d ' ' -f 1);
+    ((results > 0)) || { read -sk1 "?${n}No results."; quit };
     ((results < 101)) && pages=1 || { pages=$((results / 100)); ((results % 100 == 0)) || pages=$((pages + 1)) };
 
     ((pages > 2)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
@@ -104,34 +103,34 @@ case $(read -sek1 "?${n}") {
 
     for q ( {1..${pages}} ) {
       # SIMPLE VIEW
-      # author+=(${(f)"$(pup -p -f ${tmp} 'tbody tr td:nth-child(2)')"});
+      # author+=(${(f)"$(pup -p -f ${t} 'tbody tr td:nth-child(2)')"});
       # md5+=(${${(f)"$(pup -f zz -p 'tbody tr td:nth-child(10) a attr{href}')"}##*/});
-      # pup -p -f ${tmp} 'tbody tr td:nth-child(14) a json{}' | jq -r '.[].href'
-      # pup -p -f ${tmp} 'tbody tr td:nth-child(14) a json{}' | jq -r '.[].style'
-      # pup -p -f ${tmp} 'tbody tr td:nth-child(10--14)'         # a:not([style="color: grey"]) attr{href}
+      # pup -p -f ${t} 'tbody tr td:nth-child(14) a json{}' | jq -r '.[].href'
+      # pup -p -f ${t} 'tbody tr td:nth-child(14) a json{}' | jq -r '.[].style'
+      # pup -p -f ${t} 'tbody tr td:nth-child(10--14)'         # a:not([style="color: grey"]) attr{href}
       # title edition isbn and publisher altogether in simple..
         # title+=(${(f)"$()"}); # isbn,
         # edition+=
-        # publisher+=(${${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(4) a text{}')"}[2,-1]});
-      # year+=(${${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(5) text{}')"}[2,-1]});
-      # length+=(${${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(6) text{}')"}[2,-1]});
-      # language+=(${${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(7) text{}')"}[2,-1]});
-      # size+=(${${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(8) text{}')"}[2,-1]});
-      # format+=(${${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(9) text{}')"}[2,-1]});
+        # publisher+=(${${(f)"$(pup -p -f ${t} 'tbody td:nth-child(4) a text{}')"}[2,-1]});
+      # year+=(${${(f)"$(pup -p -f ${t} 'tbody td:nth-child(5) text{}')"}[2,-1]});
+      # length+=(${${(f)"$(pup -p -f ${t} 'tbody td:nth-child(6) text{}')"}[2,-1]});
+      # language+=(${${(f)"$(pup -p -f ${t} 'tbody td:nth-child(7) text{}')"}[2,-1]});
+      # size+=(${${(f)"$(pup -p -f ${t} 'tbody td:nth-child(8) text{}')"}[2,-1]});
+      # format+=(${${(f)"$(pup -p -f ${t} 'tbody td:nth-child(9) text{}')"}[2,-1]});
 
       # DETAILED VIEW
-      author+=(${${(s.QQQQ.)"$(pup -p -f ${tmp} 'tbody td:nth-child(2) text{}' | perl -pe 'BEGIN {undef $/} s/\n,\n/,/g; s/\s*\nTitle\n(.+)\n(?:.+\n)+?\n{2}/QQQQ$1/g')"}[2,-1]});
-      title+=(${${(f)"$(       pup -p -f ${tmp} 'tbody tr td[colspan=2] text{}')"}[2,-1]});
-      md5+=(${${${(f)"$(       pup -p -f ${tmp} 'tbody tr td[colspan=2] b a attr{href}')"}##*=}});
-      publisher+=(${${(f)"$(pup -p -f ${tmp} 'tbody json{}' | jq -r '.[].children[4].children[1].text')"}[3,-2]});
-      year+=(${${(f)"$(     pup -p -f ${tmp} 'tbody json{}' | jq -r '.[].children[5].children[1].text')"}[3,-2]});
-      edition+=(${${(f)"$(  pup -p -f ${tmp} 'tbody json{}' | jq -r '.[].children[5].children[3].text')"}[3,-2]});
-      length+=(${${(f)"$(   pup -p -f ${tmp} 'tbody json{}' | jq -r '.[].children[6].children[3].text')"}[3,-2]//*([^0-9])(#b)(+([0-9]))*([^0-9]*)/${match[1]}});
-      language+=(${${(f)"$( pup -p -f ${tmp} 'tbody json{}' | jq -r '.[].children[6].children[1].text')"}[3,-2]});
-      size+=(${${${(f)"$(   pup -p -f ${tmp} 'tbody json{}' | jq -r '.[].children[9].children[1].text')"}[3,-2]%% \(*}});
-      format+=(${${(f)"$(   pup -p -f ${tmp} 'tbody json{}' | jq -r '.[].children[9].children[3].text')"}[3,-2]});
+      author+=(${${(s.QQQQ.)"$(pup -p -f ${t} 'tbody td:nth-child(2) text{}' | perl -pe 'BEGIN {undef $/} s/\n,\n/,/g; s/\s*\nTitle\n(.+)\n(?:.+\n)+?\n{2}/QQQQ$1/g')"}[2,-1]});
+      title+=(${${(f)"$(       pup -p -f ${t} 'tbody tr td[colspan=2] text{}')"}[2,-1]});
+      md5+=(${${${(f)"$(       pup -p -f ${t} 'tbody tr td[colspan=2] b a attr{href}')"}##*=}});
+      publisher+=(${${(f)"$(pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[4].children[1].text')"}[3,-2]});
+      year+=(${${(f)"$(     pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[5].children[1].text')"}[3,-2]});
+      edition+=(${${(f)"$(  pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[5].children[3].text')"}[3,-2]});
+      length+=(${${(f)"$(   pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[6].children[3].text')"}[3,-2]//*([^0-9])(#b)(+([0-9]))*([^0-9]*)/${match[1]}});
+      language+=(${${(f)"$( pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[6].children[1].text')"}[3,-2]});
+      size+=(${${${(f)"$(   pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[9].children[1].text')"}[3,-2]%% \(*}});
+      format+=(${${(f)"$(   pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[9].children[3].text')"}[3,-2]});
       # added=(${${(f)"$(     pup -f z -p 'tbody json{}' | jq -r '.[].children[9].children[3].text')"}[3,-2]});
-      curl -sfH User-Agent: ${baseurl}\&sort=def\&sortmode=ASC\&page=$((++q)) > ${tmp};
+      curl -sfLH User-Agent: -o ${t} ${base}\&sort=def\&sortmode=ASC\&page=$((++q));
     };
 
     lr=${(c)#results};
@@ -151,8 +150,8 @@ case $(read -sek1 "?${n}") {
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
-        printf "%.${lr}d %b%-${lt}.${lt}s %-${le}.${le}s %b%-${lp}.${lp}s %b%-4.4s %b%-${la}.${la}s %b%${lL}.${lL}s %b%${ll}.${ll}s %b%${ls}.${ls}s %b%-${lf}.${lf}s\n" \
-          $q \
+        printf "%b%.${lr}d %b%-${lt}.${lt}s %-${le}.${le}s %b%-${lp}.${lp}s %b%-4.4s %b%-${la}.${la}s %b%${lL}.${lL}s %b%${ll}.${ll}s %b%${ls}.${ls}s %b%-${lf}.${lf}s\n" \
+          '\033[0m'    $q \
           '\033[37;1m' ${title[q]:- } \
                        ${edition[q]:/null/ } \
           '\033[36;1m' ${publisher[q]:/null/ } \
@@ -162,13 +161,14 @@ case $(read -sek1 "?${n}") {
           '\033[31;1m' ${length[q]:/null/ } \
           '\033[34;1m' ${size[q]:/null/ } \
           '\033[32;1m' ${format[q]:/null/ };
-      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
       ((c > 0 && c <= results)) && {
         while { true } {
           clear;
-          case $(nl -n ln <<< ${(F)mirror} | fzf -i +m --reverse --tiebreak=begin | cut -d ' ' -f 1) {
-            (1) url+=($(curl -sfH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | nl -n ln | fzf -i +m --reverse --tiebreak=begin | cut -f 2)) && ext+=(${(L)format[c]}) || read -sk1 "?${n}Try another mirror.";;
-            (2) url+=($(curl -sfH User-Agent: ${mirror[2]}${md5[c]} | pup -p ':parent-of(h2) attr{href}'))       && ext+=(${(L)format[c]}) || read -sk1 "?${n}Try another mirror.";;
+          menu -m 4b -t 2b "md5: ${md5[c]}${n}Select_mirror: : " ${(f)"$(nl -n ln <<< ${(F)mirror})"};
+          case $(read -sek1) {
+            (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | nl -n ln | fzf | cut -f 2)) && ext+=(${(L)format[c]}) || read -sk1 "?${n}Try another mirror.";;
+            (2) url+=($(curl -sfLH User-Agent: ${mirror[2]}${md5[c]} | pup -p ':parent-of(h2) attr{href}')) && ext+=(${(L)format[c]}) || read -sk1 "?${n}Try another mirror.";;
             (3) read -sk1 "?${n}FIXME";; # url+=($(curl -sfLH User-Agent: ${mirror[3]}${md5[c]} | pup -p '...'))
             (4) read -sk1 "?${n}FIXME";; # url+=($(curl -sfLH User-Agent: ${mirror[4]}${md5[c]} | pup -p '...'))
             (5) read -sk1 "?${n}FIXME";; # url+=($(curl -sfLH User-Agent: ${mirror[5]}${md5[c]} | pup -p '...'))
@@ -178,7 +178,7 @@ case $(read -sek1 "?${n}") {
       };
     };
 
-    printf '%s\n' 'All URLs:' ${url};
+    ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
@@ -192,29 +192,24 @@ case $(read -sek1 "?${n}") {
     };
   ;;
   (2)
-    baseurl+=scimag/;
-    baseurl+=\?q=$(uritool query escape ${query});
+    base+=scimag/;
+    base+=\?q=$(uritool query escape ${query});
     typeset -a mirror title author journal volume size doi url;
     typeset -i pages lr lt la lj lv ls lP q c;
 
-    curl -sfH User-Agent: ${baseurl} > ${tmp};
-    [[ $(pup -p -f ${tmp} 'html body p:nth-last-child(2) text{}') == 'No articles were found.' ]] && { printf '%s\n' 'No articles were found.'; return 0 };
-    pages=$(pup -f ${tmp} '.page_selector text{}' | head -n 1 | cut -d ' ' -f 4);
-    # mirror=(
-    #   https://sci-hub.do/
-    #   http://libgen.lc/scimag/ads.php\?doi=
-    #   http://booksc.xyz/s/\?q=
-    # );
-    mirror=($(pcre2grep -o1 '^(.+[=/])(\d{2}\.\d+.+|\2)$' <<< ${(F)${(f)"$(pup -p -f ${tmp} 'tbody tr td ul.record_mirrors a attr{href}')"}[1,3]}));
+    curl -sfLH User-Agent: -o ${t} ${base};
+    [[ $(pup -p -f ${t} 'html body p:nth-last-child(2) text{}') != 'No articles were found.' ]] || { printf '%s\n' 'No articles were found.'; quit };
+    pages=$(pup -f ${t} '.page_selector text{}' | head -n 1 | cut -d ' ' -f 4);
+    mirror=($(pcre2grep -o1 '^(.+[=/])(\d{2}\.\d+.+|\2)$' <<< ${(F)${(f)"$(pup -p -f ${t} 'tbody tr td ul.record_mirrors a attr{href}')"}[1,3]}));
 
     for q ( {1..${pages}} ) {
-      doi+=(${${(f)"$(  pup -p -f ${tmp} 'tbody tr td:nth-child(4) a attr{href}')"}#*=});
-      title+=(${${(ps.</a>.)"$(pup -p -f ${tmp} 'tbody tr td:nth-child(2) p:first-child a' | perl -pe 'BEGIN {undef $/} s/^<a href.+\n//m; s/(\S)\n\s*/$1/g; s/<\/?em>//g')"}});
-      author+=(${(f)"$( pup -p -f ${tmp} 'tbody tr td:nth-child(1) text{}')"});
-      journal+=(${(f)"$(pup -p -f ${tmp} 'tbody tr td:nth-child(3) p:first-child text{}')"});
-      volume+=(${(f)"$( pup -p -f ${tmp} 'tbody tr td:nth-child(3) p:last-child  text{}')"});
-      size+=(${(ps.\[edit\].)"$(pup -p -f ${tmp} 'tbody tr td:nth-child(4) text{}' | tr -d '\n')"});
-      curl -sfH User-Agent: ${baseurl}\&page=$((++q)) > ${tmp};
+      doi+=(${${(f)"$(  pup -p -f ${t} 'tbody tr td:nth-child(4) a attr{href}')"}#*=});
+      title+=(${${(ps.</a>.)"$(pup -p -f ${t} 'tbody tr td:nth-child(2) p:first-child a' | perl -pe 'BEGIN {undef $/} s/^<a href.+\n//m; s/(\S)\n\s*/$1/g; s/<\/?em>//g')"}});
+      author+=(${(f)"$( pup -p -f ${t} 'tbody tr td:nth-child(1) text{}')"});
+      journal+=(${(f)"$(pup -p -f ${t} 'tbody tr td:nth-child(3) p:first-child text{}')"});
+      volume+=(${(f)"$( pup -p -f ${t} 'tbody tr td:nth-child(3) p:last-child  text{}')"});
+      size+=(${(ps.\[edit\].)"$(pup -p -f ${t} 'tbody tr td:nth-child(4) text{}' | tr -d '\n')"});
+      curl -sfLH User-Agent: -o ${t} ${base}\&page=$((++q));
     };
     
     results=${#doi};
@@ -232,29 +227,30 @@ case $(read -sek1 "?${n}") {
 
    while { true } {
       c=$(for q ( {1..${results}} ) {
-        printf "%.${lr}d %b%-${lt}.${lt}s %b%-${la}.${la}s %b%-${lj}.${lj}s %b%-${lv}.${lv}s %b%${ls}.${ls}s\n" \
-          $q \
+        printf "%b%.${lr}d %b%-${lt}.${lt}s %b%-${la}.${la}s %b%-${lj}.${lj}s %b%-${lv}.${lv}s %b%${ls}.${ls}s\n" \
+          '\033[0m'    $q \
           '\033[37;1m' ${title[q]:- } \
           '\033[34;1m' ${author[q]:- } \
           '\033[33;1m' ${journal[q]:- } \
           '\033[33;1m' ${volume[q]:- } \
           '\033[32;1m' ${size[q]:- };
-      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
       ((c > 0 && c <= results)) && {
         while { true } {
           clear;
-          case $(nl -n ln <<< ${(F)mirror} | fzf -i +m --reverse --tiebreak=begin | cut -d ' ' -f 1) {
-            (1) url+=($(curl -sfH User-Agent: ${mirror[1]}${doi[c]} | pup -p 'div ul li a attr{href}' | pcre2grep -o1 '(http.+)\?download=true')) || read -sk1 "?${n}Try another mirror.";;
-            (2) url+=($(curl -sfH User-Agent: ${mirror[2]}${doi[c]} | pup -p 'a:parent-of(h2) attr{href}')) || read -sk1 "?${n}Try another mirror.";;
-            (3) url+=(https://booksc.xyz$(curl -sfH User-Agent: ${mirror[3]}${doi[c]} | pup -p 'a.dlButton attr{href}')) || read -sk1 "?${n}Try another mirror.";;
+          menu -m 4b -t 2b "doi: ${doi[c]}${n}Select_mirror: : " ${(f)"$(nl -n ln <<< ${(F)mirror})"};
+          case $(read -sek1) {
+            (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${doi[c]} | pup -p 'div ul li a attr{href}' | pcre2grep -o1 '(http.+)\?download=true')) || read -sk1 "?${n}Try another mirror.";;
+            (2) url+=($(curl -sfLH User-Agent: ${mirror[2]}${doi[c]} | pup -p 'a:parent-of(h2) attr{href}')) || read -sk1 "?${n}Try another mirror.";;
+            (3) url+=(https://booksc.xyz$(curl -sfLH User-Agent: ${mirror[3]}${doi[c]} | pup -p 'a.dlButton attr{href}')) || read -sk1 "?${n}Try another mirror.";;
             (*) break;;
           };
         };
       };
     };
 
-    printf '%s\n' 'All URLs:' ${url};
+    ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     for n ( ${url} ) {
       [[ ${n} =~ '\.pdf$' ]] && {
         target=$(uritool query unescape ${n##*/});
@@ -269,14 +265,9 @@ case $(read -sek1 "?${n}") {
     typeset -a mirror title author md5 language series sizeformat formats ext url langs format lang;
 
     formats=(epub mobi azw azw3 fb2 pdf rtf txt);
-    baseurl+=fiction/;
-    langs=(${(f)"$(curl -sfH User-Agent: ${baseurl} | pup -p 'select[name=language] option attr{value}')"});
-    baseurl+=\?q=$(uritool query escape ${query});
-    mirror=(
-      http://library.lol/fiction/
-      http://libgen.lc/foreignfiction/ads.php\?md5=
-      http://b-ok.cc/md5/
-    );
+    base+=fiction/;
+    langs=(${(f)"$(curl -sfLH User-Agent: ${base} | pup -p 'select[name=language] option attr{value}')"});
+    base+=\?q=$(uritool query escape ${query});
 
     menu -m 4b -t 2b 'Field_to_search: ' \
       '* any' \
@@ -284,28 +275,29 @@ case $(read -sek1 "?${n}") {
       '2 authors' \
       '3 series';
     case $(read -sek1 "?${n}") {
-      (1) baseurl+=\&criteria=title;;
-      (2) baseurl+=\&criteria=authors;;
-      (3) baseurl+=\&criteria=series;;
-      (*) baseurl+=\&criteria=;;
+      (1) base+=\&criteria=title;;
+      (2) base+=\&criteria=authors;;
+      (3) base+=\&criteria=series;;
+      (*) base+=\&criteria=;;
     };
 
-    [[ $(read -seq "?${n}Query uses wildcards [y/*]?> ") == y ]] && baseurl+=\&wildcard=1;
+    [[ $(read -seq "?${n}Query uses wildcards [y/*]?> ") == y ]] && base+=\&wildcard=1;
 
     lang=($(fzy -l $LINES -p 'Language?> ' <<< ${(F)langs}));
     lang=${lang:*langs};
-    baseurl+=\&language=${lang};
+    base+=\&language=${lang};
 
     format=($(fzy -l $LINES -p 'Format?> ' <<< ${(F)formats}));
     format=${format:*formats};
-    baseurl+=\&format=${format};
+    base+=\&format=${format};
 
-    curl -sfLH User-Agent: ${baseurl} > ${tmp};
+    curl -sfLH User-Agent: -o ${t} ${base};
+    mirror=($(pup -p -f ${t} 'ul.record_mirrors_compact a attr{href}' | pcre2grep -M -o1 '^(.*[/=])($1|.+)$' | sort -u));
 
-    [[ $(pup -f ${tmp} 'p text{}' | tail -n 1) == 'No files were found.' ]] && { read -sk1 "?${n}No results."; return 0 };
-    pages=$(pup -f ${tmp} '.page_selector text{}' | head -n 1 | cut -d ' ' -f 4);
-    results=${${"$(pup -f ${tmp} '.catalog_paginator [style=float:left] text{}' | head -n 1)"%% files found}#* }; # retarded: ' '  U+00A0  160    c2 a0       &nbsp;     NO-BREAK SPACE (Space_Separator)
-    ((results == 0)) && { read -sk1 "?${n}No results."; return 0 };
+    [[ $(pup -f ${t} 'p text{}' | tail -n 1) != 'No files were found.' ]] || { read -sk1 "?${n}No results."; quit };
+    pages=$(pup -f ${t} '.page_selector text{}' | head -n 1 | cut -d ' ' -f 4);
+    results=${${"$(pup -f ${t} '.catalog_paginator [style=float:left] text{}' | head -n 1)"%% files found}#* }; # retarded: ' '  U+00A0  160    c2 a0       &nbsp;     NO-BREAK SPACE (Space_Separator)
+    ((results > 0)) || { read -sk1 "?${n}No results."; quit };
 
     ((pages > 4)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
       read -r "q?${n}Pages to show> ";
@@ -322,14 +314,14 @@ case $(read -sek1 "?${n}") {
     };
 
     for q ( {1..${pages}} ) {
-      author+=(${(f)"$(    pup -p -f ${tmp} 'tbody td:nth-child(1) text{}' | perl -pe 'BEGIN {undef $/} s/(\w.+)\n(\w.+)/$2 $1/g; s/(\S)\n(\S)/$1 $2/g; s/\s{2,}/\n/g; s/(.+?), (.+)/$2 $1/g')"});
-      md5+=(${${(f)"$(     pup -p -f ${tmp} 'tbody td:nth-child(6) li:first-of-type a attr{href}')"}##*/});
-      title+=(${(f)"$(     pup -p -f ${tmp} 'tbody td:nth-child(3) text{}')"});
-      series+=(${(f)"$(    pup -p -f ${tmp} 'tbody td:nth-child(2) json{}' | jq -r '.[].text')"});
-      sizeformat+=(${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(5) text{}')"});
+      author+=(${(f)"$(    pup -p -f ${t} 'tbody td:nth-child(1) text{}' | perl -pe 'BEGIN {undef $/} s/(\w.+)\n(\w.+)/$2 $1/g; s/(\S)\n(\S)/$1 $2/g; s/\s{2,}/\n/g; s/(.+?), (.+)/$2 $1/g')"});
+      md5+=(${${(f)"$(     pup -p -f ${t} 'tbody td:nth-child(6) li:first-of-type a attr{href}')"}##*/});
+      title+=(${(f)"$(     pup -p -f ${t} 'tbody td:nth-child(3) text{}')"});
+      series+=(${(f)"$(    pup -p -f ${t} 'tbody td:nth-child(2) json{}' | jq -r '.[].text')"});
+      sizeformat+=(${(f)"$(pup -p -f ${t} 'tbody td:nth-child(5) text{}')"});
       # [[ -n ${lang} ]] ||
-      language+=(${(f)"$(  pup -p -f ${tmp} 'tbody td:nth-child(4) text{}')"});
-      curl -sfH User-Agent: ${baseurl}\&page=$((++q)) > ${tmp};
+      language+=(${(f)"$(  pup -p -f ${t} 'tbody td:nth-child(4) text{}')"});
+      curl -sfLH User-Agent: -o ${t} ${base}\&page=$((++q));
     };
 
     lr=${(c)#results};
@@ -346,22 +338,23 @@ case $(read -sek1 "?${n}") {
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
-        printf "%.${lr}d %b%-${lt}.${lt}s %b%-${ls}.${ls}s %b%-${la}.${la}s %b%${ll}.${ll}s%b%10.10s%b%6.6s\n" \
-          $q \
+        printf "%b%.${lr}d %b%-${lt}.${lt}s %b%-${ls}.${ls}s %b%-${la}.${la}s %b%${ll}.${ll}s%b%10.10s%b%6.6s\n" \
+          '\033[0m'    $q \
           '\033[37;1m' ${title[q]:- } \
           '\033[36;1m' ${series[q]:/null/ } \
           '\033[33;1m' ${author[q]:- } \
           '\033[31;1m' ${language[q]:- } \
           '\033[34;1m' ${${sizeformat[q]#* / }:- } \
           '\033[32;1m' ${${sizeformat[q]% / *}:- };
-      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
       ((c > 0 && c <= results)) && {
         while { true } {
           clear;
-          case $(nl -n ln <<< ${(F)mirror} | fzf -i +m --reverse --tiebreak=begin | cut -d ' ' -f 1) {
-            (1) url+=($(curl -sfH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'div#download a attr{href}' | nl -n ln | fzf -i +m --reverse --tiebreak=begin | cut -f 2)) && ext+=(${(L)sizeformat[c]% / *}) || read -sk1 "?${n}Try another mirror.";;
-            (2) url+=($(curl -sfH User-Agent: ${mirror[2]}${md5[c]} | pup -p ':parent-of(h2) attr{href}'))       && ext+=(${(L)sizeformat[c]% / *}) || read -sk1 "?${n}Try another mirror.";;
+          menu -m 4b -t 2b "md5: ${md5[c]}${n}Select_mirror: " ${(f)"$(nl -n ln <<< ${(F)mirror})"};
+          case $(read -sek1) {
+            (1) url+=($(curl -sfLH User-Agent: ${mirror[1]}${md5[c]} | pup -p 'a attr{href}' | pcre2grep 'get.+md5=.+key=.+')) && ext+=(${(L)sizeformat[c]% / *}) || read -sk1 "?${n}Try another mirror.";;
+            (2) url+=($(curl -sfLH User-Agent: ${mirror[2]}${md5[c]} | pup -p 'a attr{href}' | pcre2grep "${(L)sizeformat[c]% / *}$" | nl -n ln | fzf | cut -f 2)) && ext+=(${(L)sizeformat[c]% / *}) || read -sk1 "?${n}Try another mirror.";;
             (3) read -sk1 "?${n}FIXME";; # url+=($(curl -sfLH User-Agent: ${mirror[3]}${md5[c]} | pup -p '')); ext+=(${(L)sizeformat[c]% / *});;
             (*) break;;
           };
@@ -369,7 +362,7 @@ case $(read -sek1 "?${n}") {
       };
     };
 
-    printf '%s\n' 'All URLs:' ${url};
+    ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
@@ -384,8 +377,8 @@ case $(read -sek1 "?${n}") {
   (4)
     typeset -i results pages lr lt li lv lp ld lP q;
     typeset -a title issue volume publisher language date issuehash serieshash url file;
-    baseurl=libgen.lc/comics/index.php\?s=$(uritool query escape ${query})\&res=100\&sorted=1;
-    [[ $(read -seq "?${n}Query uses wildcards [y/*]?> ") == y ]] && baseurl+=\&mask=1; printf '\n';
+    base=libgen.lc/comics/index.php\?s=$(uritool query escape ${query})\&res=100\&sorted=1;
+    [[ $(read -seq "?${n}Query uses wildcards [y/*]?> ") == y ]] && base+=\&mask=1; printf '\n';
 
     menu -m 4b -t 2b 'Search_for: ' \
       '* all FIXME' \
@@ -393,15 +386,15 @@ case $(read -sek1 "?${n}") {
       '2 issues' \
       '3 files FIXME';
     case $(read -sek1 "?${n}") {
-      (1) baseurl+=\&show=1;;
-      (2) baseurl+=\&show=2;;
-      (3) read -sk1 "?${n}FIXME"; return 1;; # baseurl+=\&show=3;;
-      (*) read -sk1 "?${n}FIXME"; return 1;; # baseurl+=\&show=0;;
+      (1) base+=\&show=1;;
+      (2) base+=\&show=2;;
+      (3) read -sk1 "?${n}FIXME"; quit 1;; # base+=\&show=3;;
+      (*) read -sk1 "?${n}FIXME"; quit 1;; # base+=\&show=0;;
     };
 
-    curl -sfH User-Agent: ${baseurl} > ${tmp};
-    results=$(pup -p -f ${tmp} 'font[size=1]:contains("results") text{}' | pcre2grep -o1 'Found.*?(\d+).*results');
-    ((results == 0)) && { printf 'No results.\n'; return 0 };
+    curl -sfLH User-Agent: -o ${t} ${base};
+    results=$(pup -p -f ${t} 'font[size=1]:contains("results") text{}' | pcre2grep -o1 'Found.*?(\d+).*results');
+    ((results > 0)) || { printf 'No results.\n'; quit };
     ((results < 101)) && pages=1 || { pages=$((results / 100)); ((results % 100 == 0)) || pages=$((pages + 1)) };
 
     ((pages > 2)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
@@ -418,30 +411,30 @@ case $(read -sek1 "?${n}") {
       };
     };
 
-    case ${(M)baseurl%?} {
+    case ${(M)base%?} {
       (2)
         for p ( {1..${pages}} ) {
-          issuehash+=(${(f)"$(             pup -p -f ${tmp} 'tbody a[href^=seriestable.php?issue_hash]  attr{href}')"});
-          serieshash+=(${(f)"$(            pup -p -f ${tmp} 'tbody a[href^=seriestable.php?series_hash] attr{href}')"});
-          title+=(${(f)"$(                 pup -p -f ${tmp} 'tbody a[href^=seriestable.php?series_hash] text{}')"});
-          issue+=(${${(s.Issue: .)"$(      pup -p -f ${tmp} 'tbody td:contains("Issue: ") text{}'     | tr -d '\n')"}%Volume:*});
-          volume+=(${${${(s.Volume: .)"$(  pup -p -f ${tmp} 'tbody td:contains("Volume: ") text{}'    | tr -d '\n')"}%% *Issue:*}});
-          date+=(${(s.Year: .)"$(          pup -p -f ${tmp} 'tbody :contains("Year: ") text{}'        | tr -d '\n')"});
-          language+=(${(s.Language: .)"$(  pup -p -f ${tmp} 'tbody td:contains("Language: ") text{}'  | tr -d '\n')"});
-          publisher+=(${(s.Publisher: .)"$(pup -p -f ${tmp} 'tbody td:contains("Publisher: ") text{}' | tr -d '\n')"});
-          curl -sfH User-Agent: ${baseurl}\&page=$((++q)) > ${tmp};
+          issuehash+=(${(f)"$(             pup -p -f ${t} 'tbody a[href^=seriestable.php?issue_hash]  attr{href}')"});
+          serieshash+=(${(f)"$(            pup -p -f ${t} 'tbody a[href^=seriestable.php?series_hash] attr{href}')"});
+          title+=(${(f)"$(                 pup -p -f ${t} 'tbody a[href^=seriestable.php?series_hash] text{}')"});
+          issue+=(${${(s.Issue: .)"$(      pup -p -f ${t} 'tbody td:contains("Issue: ") text{}'     | tr -d '\n')"}%Volume:*});
+          volume+=(${${${(s.Volume: .)"$(  pup -p -f ${t} 'tbody td:contains("Volume: ") text{}'    | tr -d '\n')"}%% *Issue:*}});
+          date+=(${(s.Year: .)"$(          pup -p -f ${t} 'tbody :contains("Year: ") text{}'        | tr -d '\n')"});
+          language+=(${(s.Language: .)"$(  pup -p -f ${t} 'tbody td:contains("Language: ") text{}'  | tr -d '\n')"});
+          publisher+=(${(s.Publisher: .)"$(pup -p -f ${t} 'tbody td:contains("Publisher: ") text{}' | tr -d '\n')"});
+          curl -sfLH User-Agent: -o ${t} ${base}\&page=$((++q));
         };
         ;;
       (1)
         for q ( {1..${pages}} ) {
-          serieshash+=(${(f)"$(            pup -p -f ${tmp} 'tbody a[href^=seriestable.php?series_hash] attr{href}')"});
-          title+=(${(f)"$(                 pup -p -f ${tmp} 'tbody a[href^=seriestable.php?series_hash] text{}')"});
-          issue+=(${(s.Issues: .)"$(       pup -p -f ${tmp} 'tbody :contains("Issues: ") text{}'      | tr -d '\n')"});
-          volume+=(${(s.Volume: .)"$(      pup -p -f ${tmp} 'tbody :contains("Volume: ") text{}'      | tr -d '\n')"});
-          date+=(${(s,Publ. Period: ,)"$(  pup -p -f ${tmp} 'tbody :contains("Publ. Period: ") text{}'| tr -d '\n')"});
-          language+=(${(s.Language: .)"$(  pup -p -f ${tmp} 'tbody :contains("Language: ") text{}'    | tr -d '\n')"});
-          publisher+=(${(s.Publisher: .)"$(pup -p -f ${tmp} 'tbody :contains("Publisher: ") text{}'   | tr -d '\n')"});
-          curl -sfH User-Agent: ${baseurl}\&page=$((++q)) > ${tmp};
+          serieshash+=(${(f)"$(            pup -p -f ${t} 'tbody a[href^=seriestable.php?series_hash] attr{href}')"});
+          title+=(${(f)"$(                 pup -p -f ${t} 'tbody a[href^=seriestable.php?series_hash] text{}')"});
+          issue+=(${(s.Issues: .)"$(       pup -p -f ${t} 'tbody :contains("Issues: ") text{}'      | tr -d '\n')"});
+          volume+=(${(s.Volume: .)"$(      pup -p -f ${t} 'tbody :contains("Volume: ") text{}'      | tr -d '\n')"});
+          date+=(${(s,Publ. Period: ,)"$(  pup -p -f ${t} 'tbody :contains("Publ. Period: ") text{}'| tr -d '\n')"});
+          language+=(${(s.Language: .)"$(  pup -p -f ${t} 'tbody :contains("Language: ") text{}'    | tr -d '\n')"});
+          publisher+=(${(s.Publisher: .)"$(pup -p -f ${t} 'tbody :contains("Publisher: ") text{}'   | tr -d '\n')"});
+          curl -sfLH User-Agent: -o ${t} ${base}\&page=$((++q));
         };
         ;;
     };
@@ -460,37 +453,37 @@ case $(read -sek1 "?${n}") {
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
-        printf "%.${lr}d %b%-${lt}.${lt}s %b%-${lv}.${lv}s %b%-${li}.${li}s %b%-${lp}.${lp}s %b%2.2s %b%-${ld}.${ld}s\n" \
-          $q \
+        printf "%b%.${lr}d %b%-${lt}.${lt}s %b%-${lv}.${lv}s %b%-${li}.${li}s %b%-${lp}.${lp}s %b%2.2s %b%-${ld}.${ld}s\n" \
+          '\033[0m'    $q \
           '\033[37;1m' ${title[q]:- } \
           '\033[34;1m' ${volume[q]:- } \
           '\033[32;1m' ${issue[q]:- } \
           '\033[33;1m' ${publisher[q]:- } \
           '\033[35;1m' ${(U)language[q]:- } \
           '\033[31;1m' ${date[q]:- };
-      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
       ((c > 0 && c <= results)) && {
-        if [[ ${(M)baseurl%?} == 1 ]] || { [[ ${(M)baseurl%?} == 2 ]] && [[ $(read -seq "?${n}Download entire series [y/*]? ") == y ]] } {
-          curl -sfLH User-Agent: http://libgen.lc/comics/${serieshash[c]} > ${tmp} || break;
+        if [[ ${(M)base%?} == 1 ]] || { [[ ${(M)base%?} == 2 ]] && [[ $(read -seq "?${n}Download entire series [y/*]? ") == y ]] } {
+          curl -sfLH User-Agent: -o ${t} http://libgen.lc/comics/${serieshash[c]} || break;
           q=0;
-          for n ( ${(f)"$(pup -p -f ${tmp} 'tbody tr tr:first-child a[href^=get] attr{href}')"} ) {
+          for n ( ${(f)"$(pup -p -f ${t} 'tbody tr tr:first-child a[href^=get] attr{href}')"} ) {
             url+=(http://libgen.lc/comics/${n});
             ((++q));
           };
           typeset -Z ${(c)#${q}}; q=0;
-          for n ( ${${(f)"$(pup -p -f ${tmp} 'tbody tr tr:first-child a[href^=get] text{}')"}%/*} ) {
+          for n ( ${${(f)"$(pup -p -f ${t} 'tbody tr tr:first-child a[href^=get] text{}')"}%/*} ) {
             file+=("${title[c]}-${volume[c]}-${issue[c]}.$((++q)).${n}");
           };
-        } elif [[ ${(M)baseurl%?} == 2 ]] {
-          curl -sfH User-Agent: http://libgen.lc/comics/${issuehash[c]} > ${tmp} || break;
-          file+=("${title[c]}-${volume[c]}-${issue[c]}.${${(f)"$(pup -f ${tmp} 'a[href^=get] text{}')"}[1]%/*}");
-          url+=(http://libgen.lc/comics/${${(f)"$(pup -f ${tmp} 'a[href^=get] attr{href}')"}[1]});
+        } elif [[ ${(M)base%?} == 2 ]] {
+          curl -sfLH User-Agent: -o ${t} http://libgen.lc/comics/${issuehash[c]} || break;
+          file+=("${title[c]}-${volume[c]}-${issue[c]}.${${(f)"$(pup -f ${t} 'a[href^=get] text{}')"}[1]%/*}");
+          url+=(http://libgen.lc/comics/${${(f)"$(pup -f ${t} 'a[href^=get] attr{href}')"}[1]});
         };
       };
     };
 
-    printf '%s\n' 'All URLs:' ${url};
+    ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
     for n ( ${url} ) {
       target=$(uritool query unescape ${file[++q]});
@@ -500,11 +493,11 @@ case $(read -sek1 "?${n}") {
   (5)
     typeset -i pages results lr lt ls lf lS lp ln ll lP q c;
     typeset -a title format length language pubdate size url;
-    baseurl=http://libgen.lc/standarts/index.php\?s=$(uritool query escape ${query});
+    base=http://libgen.lc/standarts/index.php\?s=$(uritool query escape ${query});
 
-    curl -sfLH User-Agent: ${baseurl} > ${tmp};
-    results=$(pup -p -f ${tmp} | pcre2grep -o1 'Found.*?(\d+).*results');
-    ((results == 0)) && { printf 'No results.\n'; return 0 };
+    curl -sfLH User-Agent: -o ${t} ${base};
+    results=$(pup -p -f ${t} | pcre2grep -o1 'Found.*?(\d+).*results');
+    ((results > 0)) || { printf 'No results.\n'; quit };
     ((results < 26)) && pages=1 || { pages=$((results / 25)); ((results % 25 == 0)) || pages=$((pages + 1)) };
 
     ((pages > 4)) && [[ $(read -seq "?${results} results over ${pages} pages. Show all [y/*]? ") == n ]] && {
@@ -522,16 +515,16 @@ case $(read -sek1 "?${n}") {
     };
 
     for q ( {1..${pages}} ) {
-      number+=(${(f)"$(  pup -p -f ${tmp} 'tbody tr td[width=200] b text{}')"});
-      md5+=(${(f)"$(     pup -p -f ${tmp} 'tbody td:nth-child(2) td:nth-child(1) a text{}')"});
-      format+=(${${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(2) td:nth-child(3) text{}')"}//Extension: (#b)(*);/${match[1]}});
-      size+=($(numfmt --to=iec <<< ${(F)${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(2) td:nth-child(2) text{}')"}//Filesize: (#b)(+([0-9]));/${match[1]}}));
-      Status+=(${(f)"$(  pup -p -f ${tmp} 'tbody td:nth-child(3) text{}' | pcre2grep -M -o1 'Status:\n(.*)')"});
-      length+=(${(f)"$(  pup -p -f ${tmp} 'tbody td:nth-child(3) text{}' | pcre2grep -M -o1 'Pages:\n(.*)')"});
-      language+=(${(f)"$(pup -p -f ${tmp} 'tbody td:nth-child(3) text{}' | pcre2grep -M -o1 'Language:\n(.*)')"});
-      title+=(${(f)"$(   pup -p -f ${tmp} 'tbody td[width=400] text{}'   | pcre2grep -M -o1 '(.*)\nMD5:')"});
-      pubdate+=(${(f)"$( pup -p -f ${tmp} 'tbody td:nth-child(1) tr:nth-child(3) td:nth-child(2) text{}')"});
-      curl -sfH User-Agent: ${baseurl}\&page=$((++q)) > ${tmp};
+      number+=(${(f)"$(  pup -p -f ${t} 'tbody tr td[width=200] b text{}')"});
+      md5+=(${(f)"$(     pup -p -f ${t} 'tbody td:nth-child(2) td:nth-child(1) a text{}')"});
+      format+=(${${(f)"$(pup -p -f ${t} 'tbody td:nth-child(2) td:nth-child(3) text{}')"}//Extension: (#b)(*);/${match[1]}});
+      size+=($(numfmt --to=iec <<< ${(F)${(f)"$(pup -p -f ${t} 'tbody td:nth-child(2) td:nth-child(2) text{}')"}//Filesize: (#b)(+([0-9]));/${match[1]}}));
+      Status+=(${(f)"$(  pup -p -f ${t} 'tbody td:nth-child(3) text{}' | pcre2grep -M -o1 'Status:\n(.*)')"});
+      length+=(${(f)"$(  pup -p -f ${t} 'tbody td:nth-child(3) text{}' | pcre2grep -M -o1 'Pages:\n(.*)')"});
+      language+=(${(f)"$(pup -p -f ${t} 'tbody td:nth-child(3) text{}' | pcre2grep -M -o1 'Language:\n(.*)')"});
+      title+=(${(f)"$(   pup -p -f ${t} 'tbody td[width=400] text{}'   | pcre2grep -M -o1 '(.*)\nMD5:')"});
+      pubdate+=(${(f)"$( pup -p -f ${t} 'tbody td:nth-child(1) tr:nth-child(3) td:nth-child(2) text{}')"});
+      curl -sfLH User-Agent: -o ${t} ${base}\&page=$((++q));
     };
 
     lr=${(c)#results};
@@ -550,8 +543,8 @@ case $(read -sek1 "?${n}") {
 
     while { true } {
       c=$(for q ( {1..${results}} ) {
-        printf "%.${lr}d %b%-${lt}.${lt}s %b%-${ln}.${ln}s %b%-${lp}.${lp}s %b%${lS}.${lS}s %b%${ll}.${ll}s %b%${ls}.${ls}s %b%${lf}.${lf}s\n" \
-          $q \
+        printf "%b%.${lr}d %b%-${lt}.${lt}s %b%-${ln}.${ln}s %b%-${lp}.${lp}s %b%${lS}.${lS}s %b%${ll}.${ll}s %b%${ls}.${ls}s %b%${lf}.${lf}s\n" \
+          '\033[0m'    $q \
           '\033[37;1m' ${title[q]:- } \
           '\033[34;1m' ${number[q]:- } \
           '\033[35;1m' ${pubdate[q]:- } \
@@ -559,25 +552,42 @@ case $(read -sek1 "?${n}") {
           '\033[30;1m' ${length[q]:- } \
           '\033[33;1m' ${size[q]:- } \
           '\033[31;1m' ${format[q]:- };
-      } | fzf -i +m --reverse --ansi --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
+      } | fzf --preview-window=down:${lP}:wrap:noborder --preview='printf "%s\n" {}' | cut -d ' ' -f 1) || break;
 
-      ((c > 0 && c <= results)) && { url+=($(curl -sfH User-Agent: http://libgen.lc/standarts/get.php\?md5=${md5[c]})); ext+=(${(L)format[c]}) }
+      ((c > 0 && c <= results)) && { url+=($(curl -sfLH User-Agent: http://libgen.lc/standarts/get.php\?md5=${md5[c]})); ext+=(${(L)format[c]}) }
     };
 
-    printf '%s\n' 'All URLs:' ${url};
+    ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
     for n ( ${url} ) {
       wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[++q]:-pdf} ${n};
     };
   ;;
   (6)
-    baseurl=http://magzdb.org/\?q=$(uritool query escape ${query});
-    return 0;
+    typeset -i results pages lr lt la ls ll lP c q;
+    typeset -a name url dur date lang issues issue n
+    base=http://magzdb.org;
+
+
+    curl -sfLH User-Agent: -o ${t} ${base}/makelist\?t=$(uritool query escape ${query});
+    for q ({1..${pages}}) {
+      name+=(${(f)"$(pup -p -f ${t} 'body div[align=left] a text{}')"});
+      url+=(${(f)"$(pup -p -f ${t} 'body div[align=left] a attr{href}')"});
+      dur+=(${(f)"$(pup -p -f ${t} 'body div[align=left] i text{}')"});
+      langissues+=(${(f)"$(pup -p -f ${t} 'body div[align=left]' | pcre2grep -O '$1 $2' -M '(?:\(([^()]+)\))?(?: \((\d+)\))?.*\n\s*<br>')"});
+
+    };
+
+
+    
+
+
+
+
   ;;
-  (*) return 1;;
+  (*) quit 1;;
 };
 
-rm -f ${tmp} &>/dev/null
-
+quit;
 # FULL TEXT SEARCH
 # https://b-ok.cc/fulltext/

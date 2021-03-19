@@ -1,9 +1,12 @@
 #!/bin/zsh
 # accepts DOIs, URLs, PMIDs, or search strings (?)
-[[ -t 0 ]] || return 1;
+((# > 0)) || return 0;
 # { which zsh && which pup && which curl} &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;
-typeset base a;
-base='https://sci-hub.se';
-for a ( ${@} ) { wget -P ~/Downloads ${base}/${a} };
+typeset base a s;
+base=https://sci-hub.se/;
+for a ( ${@} ) {
+  s=${$(curl -sfLH User-Agent: ${base}${a} | pup -p 'a attr{onclick}' | pcre2grep -o1 "'//(sci-?hub.+)'")%\?*};
+  [[ -z ${s} ]] && printf '%s: Not found.\n' ${a} || wget -nc -P ~/Downloads ${s};
+};

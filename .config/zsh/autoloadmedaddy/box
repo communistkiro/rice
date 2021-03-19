@@ -1,27 +1,20 @@
 #!/bin/zsh
 function box () {
-((# == 0)) && return 0;
-local a d h B T H tl tr bl br th bh lv rv r w; integer s; s=1;
-while getopts 's:h:B:T:H:' a; do case $a in
+((# > 0)) || return 0;
+typeset a d h B T H tl tr bl br th bh lv rv r w; 
+typeset -i s;
+s=1;
+while { getopts 's:h:B:T:H:' a } { case $a {
   (s) # line style
     ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
   (h) # header
-    h=$OPTARG;;
+    h=${OPTARG};;
   (B) # box color
-    [[ $OPTARG =~ '[0-7]' ]] && B='\033[3'${MATCH} || B='\033[37';
-    [[ $OPTARG =~ 'i|I' ]]   && B="${B};7";
-    [[ $OPTARG =~ 'b|B' ]]   && B="${B};1";
-    B="${B}m";;
+    B='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
   (T) # text color
-    [[ $OPTARG =~ '[0-7]' ]] && T='\033[3'${MATCH} || T='\033[37';
-    [[ $OPTARG =~ 'i|I' ]]   && T="${T};7";
-    [[ $OPTARG =~ 'b|B' ]]   && T="${T};1";
-    T="${T}m";;
+    T='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
   (H) # header color
-    [[ $OPTARG =~ '[0-7]' ]] && H='\033[3'${MATCH} || H='\033[37';
-    [[ $OPTARG =~ 'i|I' ]]   && H="${H};7";
-    [[ $OPTARG =~ 'b|B' ]]   && H="${H};1";
-    H="${H}m";;
+    H='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
 (*) less -F << HEREDOC # help wanted.
 NAME
   box - enclose strings in box
@@ -45,7 +38,8 @@ EXAMPLES
     a=Zz; box -s 3 -T 3b -B b2 -H 5i -h 'looooooooooooooooong snooze' ${(pr.16..$a.l.8...)a} "padding works, too"
 
 HEREDOC
-return 1;; esac; done;
+return 1;;
+}; };
 
 tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]}; # top left
 bl=(┗ └ ╚ ⣇); bl=${bl[$s]}; # bottom left

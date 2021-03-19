@@ -113,16 +113,16 @@ yt_fetch=$(
   curl 'https://www.youtube.com/results' -s \
   -G --data-urlencode "search_query=${search_query}" \
   -H 'authority: www.youtube.com' \
-  -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Safari/537.36' \
   -H 'accept-language: en-US,en;q=0.9' \
   --compressed);
+  # -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Safari/537.36' \
 
 [[ -n ${yt_fetch} ]] || { printf 'ERROR[#01]: Could not curl website. Please check your network and try again.\n'; exit 2 };
 
 yt_json=$(sed -n '/var *ytInitialData/,$p' <<< ${yt_fetch} | tr -d '\n' | sed -E ':a s_^.*var ytInitialData ?=__ ; s_;</script>.*__ ;');
 [[ -n ${yt_json} ]] || { printf 'ERROR[#02]: Could not find data on site.\n'; exit 2; }
 
-videos_data=$(jq '..|.videoRenderer?' <<< ${yt_json} | sed '/^null$/d' | jq  '.title.runs[0].text,.longBylineText.runs[0].text,.shortViewCountText.simpleText,.lengthText.simpleText,.publishedTimeText.simpleText,.videoId' | sed 's/^"//;s/"$//;s/\\"//g' | sed -E -n ';N;N;N;N;N;s/\n/\t\|/g;p')
+videos_data=$(jq '..|.videoRenderer?' <<< ${yt_json} | sed '/^null$/d' | jq '.title.runs[0].text,.longBylineText.runs[0].text,.shortViewCountText.simpleText,.lengthText.simpleText,.publishedTimeText.simpleText,.videoId' | sed 's/^"//;s/"$//;s/\\"//g' | sed -E -n ';N;N;N;N;N;s/\n/\t\|/g;p')
 [[ -n ${videos_data} ]] || { printf 'No results found. Try different keywords.\n'; exit 1 };
 
 user_selection () {
@@ -140,7 +140,7 @@ while { true } {
   user_selection || return 0;
   if ((${+p})) {
   } elif ((${+d})) {
-    youtube-dl -f best --ignore-errors ${url} &>/dev/null & disown;
+    youtube-dl -f 'bestvideo+bestaudio' --ignore-errors ${url} &>/dev/null & disown;
   } else { 
     $(${player} ${format:+--ytdl-format=${format}} --really-quiet --pause ${url}) & disown;
   };

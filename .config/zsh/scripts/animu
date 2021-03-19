@@ -13,7 +13,7 @@ tmp=$(mktemp  /tmp/a.XXXXXXXX);
 bots=$(mktemp /tmp/b.XXXXXXXX); 
 conf='/root/.config/animu.conf';
 trap 'break 1;' INT;
-quit () { cd ~; rm -f ${tmp} ${bots} }
+quit () { cd ~; rm -f ${tmp} ${bots} &>/dev/null ; exit ${1:-0} }
 cd /tmp;
 
 [[ -s ${conf} ]] && {
@@ -42,12 +42,12 @@ query="${${@[OPTIND,-1]}:-$(read -er "?${n}> ")}";
 
 curl -sfL -o ${bots} https://api.nibl.co.uk/nibl/bots;
 curl -sfL -o ${tmp}  https://api.nibl.co.uk/nibl/search\?query=$(uritool query escape ${query})\&episodeNumber=${ep};
-[[ -s ${tmp} && -s ${bots} ]] || { printf "${tmp}, ${bots}: File(s) empty.\n"; quit; return 1 };
+[[ -s ${tmp} && -s ${bots} ]] || { printf "${tmp}, ${bots}: File(s) empty.\n"; quit 1 };
 
 size=(${(fQ)"$(jq '.content[].size' ${tmp})"});
 name=(${(fQ)"$(jq '.content[].name' ${tmp})"}); # tr -s '[:space:]' | tr '_' ' ' | 
-[[ ${#name} -gt 1 && -z ${name[1]} ]] || { printf 'No results.\n'; quit; return 0 };
-choice=(${(f)"$(printf '%6s | %s\n' ${size:^name} | sort -uhk1 | fzf --bind "alt-v:select-all,alt-c:clear-selection" -i -m --reverse --no-sort --exact --query="${qual}")"}) || { quit; return 0 };
+[[ ${#name} -gt 1 && -z ${name[1]} ]] || { printf 'No results.\n'; quit };
+choice=(${(f)"$(printf '%6s | %s\n' ${size:^name} | sort -uhk1 | fzf --bind "alt-v:select-all,alt-c:clear-selection" -i -m --reverse --no-sort --exact --query="${qual}")"}) || quit;
 
 choice=(${choice##*| });
 sth=$(sed 's/_/ /g; s/\(.*\)- .*/\1/; s/[0-9]//g; s/\[[^]]*\]//g; s/[0-9]//g; s/([^)]*)//g; s/\.[^.]*$//; s/^ *//g; s/ *$//' <<< ${(F)choice} | uniq -ci | sort -nr | head -n 1 | awk '{print substr($0, index($0,$2))}' | sed 's/ /%20/g');
@@ -95,4 +95,4 @@ for file ( ${choice} ) {
     };
   };
 };
-quit; return 0;
+quit;

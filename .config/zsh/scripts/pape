@@ -22,7 +22,6 @@ while { true } {
     n=${#file};
   };
   c=$(printf '%s\n' .. ${dir} ${file} rand opts | dmenu -i -p "$(pwd) ") || break; 
-set -x
   if [[ ${c} == opts ]] {
     o=${$(dmenu -i <<< ${(F)opt}):*opt};
     feh ${o:-${O}} "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";

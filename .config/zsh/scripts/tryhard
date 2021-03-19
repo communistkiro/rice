@@ -1,73 +1,61 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
 function box () {
-  ((# == 0)) && return 0;
-  local a d h B T H tl tr bl br th bh lv rv r w; integer s; s=1;
-  while { getopts 's:h:B:T:H:' a } { case $a {
-    (s)
-      ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
-    (h)
-      h=$OPTARG;;
-    (B)
-      [[ $OPTARG =~ '[0-7]' ]] && B='\033[3'${MATCH} || B='\033[37';
-      [[ $OPTARG =~ 'i|I' ]]   && B="${B};7";
-      [[ $OPTARG =~ 'b|B' ]]   && B="${B};1";
-      B="${B}m";;
-    (T)
-      [[ $OPTARG =~ '[0-7]' ]] && T='\033[3'${MATCH} || T='\033[37';
-      [[ $OPTARG =~ 'i|I' ]]   && T="${T};7";
-      [[ $OPTARG =~ 'b|B' ]]   && T="${T};1";
-      T="${T}m";;
-    (H)
-      [[ $OPTARG =~ '[0-7]' ]] && H='\033[3'${MATCH} || H='\033[37';
-      [[ $OPTARG =~ 'i|I' ]]   && H="${H};7";
-      [[ $OPTARG =~ 'b|B' ]]   && H="${H};1";
-      H="${H}m";;
-  }; };
+((# > 0)) || return 0;
+typeset a d h B T H tl tr bl br th bh lv rv r w; 
+typeset -i s;
+s=1;
+while { getopts 's:h:B:T:H:' a } { case $a {
+  (s) # line style
+    ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
+  (h) # header
+    h=${OPTARG};;
+  (B) # box color
+    B='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+  (T) # text color
+    T='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+  (H) # header color
+    H='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+}; };
 
-  tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]};
-  bl=(┗ └ ╚ ⣇); bl=${bl[$s]};
-  tr=(┓ ┐ ╗ ⢹); tr=${tr[$s]};
-  br=(┛ ┘ ╝ ⣸); br=${br[$s]};
-  th=(━ ─ ═ ⠉); th=${th[$s]};
-  bh=(━ ─ ═ ⣀); bh=${bh[$s]};
-  lv=(┃ │ ║ ⡇); lv=${lv[$s]};
-  rv=(┃ │ ║ ⢸); rv=${rv[$s]};
-  r='\033[0m';
+tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]}; # top left
+bl=(┗ └ ╚ ⣇); bl=${bl[$s]}; # bottom left
+tr=(┓ ┐ ╗ ⢹); tr=${tr[$s]}; # top right
+br=(┛ ┘ ╝ ⣸); br=${br[$s]}; # bottom right
+th=(━ ─ ═ ⠉); th=${th[$s]}; # top horizontal
+bh=(━ ─ ═ ⣀); bh=${bh[$s]}; # bottom horizontal
+lv=(┃ │ ║ ⡇); lv=${lv[$s]}; # left vertical
+rv=(┃ │ ║ ⢸); rv=${rv[$s]}; # right vertical
+r='\033[0m';
+# box inside width
+w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
+((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
 
-  w=0; for a ( $@[OPTIND,-1] ) { ((${(c)#a} > w)) && w=${(c)#a} };
-  ((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
-
-  if ((w + 2 > COLUMNS)) {
-    ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
-    for a ( $@[OPTIND,-1] ) {
-      for d ( ${(f)"$(fmt -w $COLUMNS <<< $a)"} ) {
-        printf '%s %b%s%b %s\n' $lv $r$T ${(r.COLUMNS-4.. .)d} $r$B $rv; 
-      };
-    };
-    printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
-  } else {
-    ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
-    for a ( $@[OPTIND,-1] ) { printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv };
-    printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
-  };
+if ((w + 2 > COLUMNS)); then;
+  # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
+  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
+  for a in $@[OPTIND,-1]; do 
+    for d in ${(f)"$(fmt -w $COLUMNS <<< $a)"}; do
+      printf '%s %b%s%b %s\n' $lv $r$T ${(r.COLUMNS-4.. .)d} $r$B $rv;
+    done;
+  done;
+  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
+else;
+  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
+  for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
+  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
+fi;
 }
 
 function menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
-  (m) 
-    [[ $OPTARG =~ '[0-7]' ]] && m='\033[0;3'${MATCH} || m='\033[0;37';
-    [[ $OPTARG =~ 'i|I' ]]   && m="${m};7";
-    [[ $OPTARG =~ 'b|B' ]]   && m="${m};1";
-    m="${m}m";;
-  (t)
-    [[ $OPTARG =~ '[0-7]' ]] && t='\033[0;3'${MATCH} || t='\033[0;37';
-    [[ $OPTARG =~ 'i|I' ]]   && t="${t};7";
-    [[ $OPTARG =~ 'b|B' ]]   && t="${t};1";
-    t="${t}m";;
+    (m) 
+      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+    (t)
+      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
   }; };
-  for a ( $@[OPTIND,-1] ) { printf '%b%4s    %b%s%b\n' "${m:-\033[0m}" "${a%% *}" "${t:-\033[0m}" "${a#* }" '\033[0m' };
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
 }
 
 function select-cap () {

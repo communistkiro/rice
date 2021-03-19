@@ -4,22 +4,24 @@
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;
 setopt pipe_fail;
-typeset query baseurl t n; 
+typeset query base t n C; 
 typeset -i pages q c r R x;
 typeset -a title url size format bitrate posted hash;
+export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=begin";
 n=$'\n'; t=$(mktemp); T=$(mktemp);
-baseurl=http://audiobookbay.nl;
+base=http://audiobookbay.nl;
 query="${${@}:-$(read -er "?${n}> ")}";
 [[ ! ${query} =~ '^\s*$' ]] || return 4;
-curl -sfLH User-Agent: ${baseurl}/page/1/\?s=${query// /+} > ${t};
+# query=$(uritool query esacpe ${query})
+curl -sfLH User-Agent: -o ${t} ${base}/page/1/\?s=${query// /+};
 
-[[ $(pup -f ${t} 'h3 text{}') == 'Not Found' ]] || ((${$(pup -f ${t} -n '.postTitle'):-0} == 0)) && { printf '\nNo results.\n' ${query}; return 0 };
+{ [[ $(pup -f ${t} 'h3 text{}') == 'Not Found' ]] || ((${$(pup -n -f ${t} 'h2 a[href^=/audio-books/]'):-0} == 0)) } && { printf '\nNo results.\n' ${query}; return 0 };
 pages=${${$(pup -f ${t} '.wp-pagenavi a:last-child attr{href}')%/*}#/page/}; 
 ((pages == 0)) && pages=1;
 
 ((pages > 5)) && [[ $(read -seq "?${n}${pages} pages, show all [y*]?") == n ]] && {
-   read "q?${n}Pages to show> ";
-  ((q > 0 && q <= pages)) && pages=${q} || { printf 'Invalid selection; showing first 5 pages.\n'; pages=5 };
+   read "C?${n}Pages to show> ";
+  ((C > 0 && C <= pages)) && pages=${C} || { printf 'Invalid selection; showing first 5 pages.\n'; pages=5 };
 };
 
 for q ( {1..${pages}} ) {
@@ -29,31 +31,34 @@ for q ( {1..${pages}} ) {
   format+=(${(fqq)"$(           pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(2) text{}')"});
   bitrate+=(${(fqq)"$(          pup -p -f ${t} 'p[style=text-align:center;] span:nth-child(3) text{}')"});
   posted+=(${(fqq)"$(           pup -p -f ${t} 'p[style=text-align:center;] text{}' | tr -d '\n' | pcre2grep -o1 'Posted:\s*(.+?)Format')"});
-  curl -sfLH User-Agent: ${baseurl}/page/$((q+1))/'?'s=${query// /+} > ${t};
+  curl -sfLH User-Agent: -o ${t} ${base}/page/$((++q))/\?s=${query// /+};
 };
 
 R=${#title};
 r=${(c)#${#title}};
-x=$((COLUMNS - r - 2 - 2 - 10 - 2 - 8 - 2 - 3 - 2 - 11));
+x=$((COLUMNS - r - 2 - 2 - 10 - 2 - 8 - 2 - 3 - 2 - 11 -  4));
 
 for q ( {1..${R}} ) {
-  printf "%.${r}d  %b%-${x}.${x}s  %b%10.10s  %b%8.8s  %b%3.3s  %b%11.11s\n" \
-    ${q} \
-    '\033[34;1m' ${(Q)title[q]:--} \
-    '\033[35;1m' ${(Q)size[q]:--} \
-    '\033[37;1m' ${(Q)bitrate[q]:--} \
-    '\033[36;1m' ${(Q)format[q]:--} \
+  printf "%b%.${r}d  %b%-${x}.${x}s  %b%10.10s  %b%8.8s  %b%3.3s  %b%11.11s\n" \
+    '\033[0m'    ${q} \
+    '\033[33;1m' ${(Q)title[q]:--} \
+    '\033[34;1m' ${(Q)size[q]:--} \
+    '\033[36;1m' ${(Q)bitrate[q]:--} \
+    '\033[35;1m' ${(Q)format[q]:--} \
     '\033[32;1m' ${(Q)posted[q]:--};
 } > ${T};
 unset title size bitrate format posted;
 
 while { true } {
-  c=$(fzy -l $LINES -q "${query}" < ${T} | cut -f 1 -d ' ') || break;
+  c=$(fzf -q ${query} < ${T} | cut -f 1 -d ' ') || break;
   ((c > 0 && c <= R)) && {
-    curl -sfLH User-Agent: ${baseurl}${(Q)url[c]} > ${t};
+    curl -sfLH User-Agent: -o ${t} ${base}${(Q)url[c]};
     hash+=($(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pup -p -f ${t} 'table td:nth-child(2) text{}' | pcre2grep -M -O '&tr=$1' '(\w+://\S+)')//:/%3a}//\//%2f});
   };
 };
 
 ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
+#((${#hash} > 0)) && for q ( {1..${#hash}} ) {
+# printf '%s\n' d10:magnet-uri${#hash[q]}:${hash[q]}e > ~/Downloads/rtorrent/watch/start/meta-${${hash[q]%%&*}##*:}.torrent;
+#};
 rm -f ${t} ${T}; return 0;

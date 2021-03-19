@@ -1,5 +1,6 @@
 #!/bin/zsh
-ping -c 1 1.1.1.1 &>/dev/null || return 1;
+# fetches subtitles for media
+ping -c 1 1.1.1.1 &>/dev/null || return 3;
 typeset omdbapikey OSuser OSpass file;
 # --addic7ed Auser Apass --legendastv Luser Lpass;
 typeset -a open files;

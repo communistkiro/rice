@@ -1,4 +1,4 @@
-.Dd March 15, 2020
+.Dd February 28, 2021
 .Dt SFEED 1
 .Os
 .Sh NAME
@@ -13,8 +13,11 @@ reads RSS or Atom feed data (XML) from stdin.
 It writes the feed data in a TAB-separated format to stdout.
 A
 .Ar baseurl
-can be specified if the links in the feed are relative urls.
-It is recommended to always have absolute urls in your feeds.
+can be specified if the links or enclosures in the feed are relative URLs.
+If the
+.Ar baseurl
+is a valid absolute URL then the relative links or enclosures will be
+made absolute.
 .Sh TAB-SEPARATED FORMAT FIELDS
 The items are output per line in a TSV-like format.
 .Pp
@@ -29,13 +32,13 @@ Other whitespace characters except spaces are removed.
 Control characters are removed.
 .Pp
 The order and content of the fields are:
-.Bl -tag -width 17n
+.Bl -tag -width 12n
 .It timestamp
 UNIX timestamp in UTC+0, empty if missing or on parse failure.
 .It title
 Title text, HTML code in titles is ignored and is treated as plain-text.
 .It link
-Absolute url, unsafe characters are encoded.
+Link
 .It content
 Content, can have plain-text or HTML code depending on the content-type field.
 .It content-type
@@ -46,12 +49,20 @@ RSS item GUID or Atom id.
 Item author.
 .It enclosure
 Item, first enclosure.
+.It category
+Item, categories, multiple values are separated by |.
 .El
 .Sh EXIT STATUS
 .Ex -std
+.Sh EXAMPLES
+.Bd -literal
+curl -s 'https://codemadness.org/atom.xml' | sfeed
+.Ed
 .Sh SEE ALSO
 .Xr sfeed_plain 1 ,
-.Xr sfeed 5
+.Xr sfeed_update 1 ,
+.Xr sfeed 5 ,
+.Xr sfeedrc 5
 .Sh AUTHORS
 .An Hiltjo Posthuma Aq Mt hiltjo@codemadness.org
 .Sh CAVEATS

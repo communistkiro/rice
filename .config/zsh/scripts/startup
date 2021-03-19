@@ -11,7 +11,7 @@ amixer sset Capture nocap &
 xbacklight -set 15 &
 
 # ... delay repeatrate
-xset r rate 325 150 &
+xset r rate 350 130 &
 
 # /usr/share/X11/xkb/rules for `-option ""'
 # setxkbmap -layout "us,bg,de" -variant ",phonetic,deadgraveacute" -geometry "pc" -option "grp:win_space_toggle" &
