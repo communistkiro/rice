@@ -1,12 +1,20 @@
 #!/bin/zsh
 # accepts DOIs, URLs, PMIDs, or search strings (?)
 ((# > 0)) || return 0;
-# { which zsh && which pup && which curl} &>/dev/null || return 2;
-ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;
-typeset base a s;
-base=https://sci-hub.se/;
+setopt pipe_fail;
+typeset base a s d;
+# { which zsh && which pup && which curl && pcre2grep } &>/dev/null || return 2;
+#for base ( sci{-hub{.pub,.st,-links.com},hub{.tw,.se,tw.tw}} ) {} # unofficial
+#for base ( sci-hub.{st,se,do} ) {
+#  ping -c 1 ${base} &>/dev/null && { base=https://${base}/; break };
+#} || return 3;# cannot fucking ping em, but why??
+
+base=(https://sci-hub.{do,st,se}/);
 for a ( ${@} ) {
-  s=${$(curl -sfLH User-Agent: ${base}${a} | pup -p 'a attr{onclick}' | pcre2grep -o1 "'//(sci-?hub.+)'")%\?*};
-  [[ -z ${s} ]] && printf '%s: Not found.\n' ${a} || wget -nc -P ~/Downloads ${s};
+  for d ( {1..${#base}} ) {
+    s=${$(curl -sfLH User-Agent: ${base[d]}${a} | pup -p 'a attr{onclick}' | pcre2grep -o1 "'(.+)'")};
+    [[ -z ${s} ]] || break;
+  };
+  [[ -z ${s} ]] && printf '%s: Not found.\n' ${a} || wget -nc -P ~/Downloads ${s%\?*};
 };

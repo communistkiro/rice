@@ -1,19 +1,12 @@
-#!/bin/sh
+#!/bin/zsh
+xidfile='/tmp/tabbed-surf.xid';
+((# > 0)) || uri='file:///root/.config/startpage/ss1.htm';
+xid=$(<${xidfile}) &>/dev/null;
 
-xidfile='/tmp/tabbed-surf.xid'
+if { [[ ! -r ${xidfile} ]] || ! xprop -id ${xid} >/dev/null } &>/dev/null {
+  for u ( ${uri:-${@}} ) { tabbed -dn tabbedsurf -r 2 surf -e '' "${u}" >${xidfile} &>/dev/null & };
+} else {
+  for u ( ${uri:-${@}} ) { surf -e ${xid} "$u" &>/dev/null & };
+};
 
-if [ $# -gt 0 ]; then
-  uri="$1"
-else
-  # become new default starting page
-  uri='file:///root/.config/startpage/ss1.htm'
-fi
-
-xid=$(cat $xidfile) 2>/dev/null
-if [ ! -r $xidfile ] || ! xprop -id $xid >/dev/null 2>&1; then 
-  tabbed -dn tabbedsurf -r 2 surf -e '' "$uri" > $xidfile 2>/dev/null &
-else
-  surf -e $xid "$uri" >/dev/null 2>&1 &
-fi
-
-unset uri xid
+unset u uri xid

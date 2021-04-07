@@ -10,17 +10,19 @@ SURFRAW_graphical=no
 SURFRAW_text_browser="elinks -dump -no-references -no-numbering"
 
 # text browser arguments, or "none"
-# SURFRAW_text_browser_args=force-secure
+SURFRAW_text_browser_args="none"
 
 # name of screen command to run
 # SURFRAW_screen=screen
+SURFRAW_screen=
 
 # If surfraw is running under screen(1), start a new screen
 # for each text browser invocation?
 # SURFRAW_new_screen=yes
+SURFRAW_new_screen=no
 
 # arguments for the screen command
-# SURFRAW_screen_args=""
+SURFRAW_screen_args=""
 
 # "quote" arguments
 SURFRAW_quote_args=no
@@ -35,9 +37,9 @@ SURFRAW_results=100
 
 # Language/country (for elvi that support it)
 # Should be a 2-letter iso country code
-# SURFRAW_lang=""
+SURFRAW_lang="en"
 
 # provider for searches that use a search engine
 # with (eg) site: specifiers
 # supported: google duckduckgo#
-# SURFRAW_customsearch_provider=duckduckgo
+SURFRAW_customsearch_provider=duckduckgo

@@ -67,23 +67,23 @@ cmd open ${{
   set -f;
   local a;
   for a in $fx; do
-    case $a in
-      (*.jpg|*.png|*.tiff|*.jpeg) feh --scale-down --quiet $a 2>/dev/null & disown;;
-      (*.gif) mpv --no-terminal --loop $a & disown;;
-      (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e $a | less;;
-      (*.webm|*.mp3|*.mp4|*.mkv|*.m4a|*.m4b|*.wav|*.avi|*.flac|*.wmv|*.mov|*.wmv|*.aiff|*.ogg|*.m3u|*.cue|*.m3u8) mpv --no-terminal --force-window=yes --no-input-terminal --really-quiet $a & disown;;
-      (*.pdf|*.djvu|*.ps|*.eps) qpdfview --unique --quiet $a 2>/dev/null & disown;;
-      (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l $a;;
-      (*.eps) gv -- $a;;
-      (*.gnumeric|*.ods|*.xls|*.xlsx) gnumeric $a &>/dev/null & disown;;
-      (*.docx) docx2txt $a - | fmt -w $COLUMNS | less;;
-      (*.doc) catdoc -a $a | fmt -w $COLUMNS | less;;
-      (*.epub) epub2txt -a $a | fmt -w $COLUMNS | less;;
-      (*.htm|*.html|*.xhtml) sf $a &>/dev/null &;;
-      (*.info) info $a;;
-      (*.torrent|*.magnet) qbittorrent $a &>/dev/null & disown;;
-      (*.exe) wine $a &>/dev/null & disown;;
-      (*.txt) fmt -w $COLUMNS $a | less;;
+    case ${(L)a:e} in
+      (jp(|e)g|png|tiff) feh --scale-down --quiet $a 2>/dev/null & disown;;
+      (gif) mpv --no-terminal --loop $a & disown;;
+      ((|t)(bz(|2)|gz|xz)|tar|zip|rar|7z) als -e $a | less;;
+      (webm|mp[3-4]|mkv|m4[ab]|wav|avi|flac|mov|wmv|aiff|ogg|m3u(|8)|cue) mpv --no-terminal --force-window=yes --no-input-terminal --really-quiet $a & disown;;
+      (pdf|djvu|(|e)ps) qpdfview --unique --quiet $a 2>/dev/null & disown;;
+      ([1-9]) man -l $a;;
+      # (*.eps) gv -- $a;;
+      (gnumeric|ods|xls(|x)) gnumeric $a &>/dev/null & disown;;
+      (docx) docx2txt $a - | fmt -w $COLUMNS | less;;
+      (doc) catdoc -a $a | fmt -w $COLUMNS | less;;
+      (epub) epub2txt -a $a | fmt -w $COLUMNS | less;;
+      ((|x)htm(|l)) sf $a &>/dev/null &;;
+      (info) info $a;;
+      (torrent|magnet) qbittorrent $a &>/dev/null & disown;;
+      (exe) wine $a &>/dev/null & disown;;
+      (txt) fmt -w $COLUMNS $a | less;;
     esac;
   done;
 }}
@@ -131,9 +131,9 @@ cmd 7za ${{
   else 7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m $(cat /dev/random | tr -cd '[:alnum:]' | head -c 32).7z $fx; fi
 }}
 
-cmd extract ${{ set -f; aunpack -e $fx; }}
+cmd extract ${{ typeset a; set -f; for a (${fx}) { aunpack -e $a} }}
 
-cmd fzycd ${{
+cmd cz ${{
   clear;  
   local d;
   d=$(printf '%s\n' .. *(/D-N) | fzy -l $LINES -p "$(pwd) ");
@@ -363,7 +363,7 @@ map gp          cd /tmp
 map c           push :<space>cd<space>
 # map e           find
 map f           fzf
-map e           fzycd
+map e           cz
 map E           sublime
 map l           $$PAGER $fx
 map <tab>       cmd-complete

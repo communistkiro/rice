@@ -1,28 +1,37 @@
 #!/bin/zsh
 () {
-  emulate -LR zsh;
-  setopt pipe_fail;
-  typeset dev dir n; n=$'\n';
-  typeset -a blk src;
-  src=(${(f)"$(findmnt --real -nlo 'source')"});
-  printf '\t%s\t\t%s\n' 1  mount 2 umount;
-  case $(read -sek1 "?${n}") {
-    (1)
-      blk=(${(f)"$(lsblk -nlpo name,label,type,size,uuid,state,mountpoint 2>/dev/null | pcre2grep -v "(running|/boot$|/$|SWAP|${(j:|:)src})\b")"});
-      dev=$(fzy -p $'device\t\tlabel\ttype\tsize\tuuid\t\t\t\t\t\t\t\t\t\tmountpoint' -l $LINES <<< ${(F)blk} | cut -f 1 -d ' ') || return 1;
-      [[ -b ${dev} ]] && { mount ${dev} 2&>/dev/null && return 0 };
-      cd /;
-      while { true } {
-        dir=$(printf '%s\n' .. *(/-DN) | fzf -i +m --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down --preview="printf '%s\n' {}/*(DN:t)") || return 1;
-        [[ -d ${dir} ]] && cd ${dir};
-      };
-      [[ $(read -seq "?${n}Mount ${dev} to $(pwd) [y/n]?") == y ]] && mount ${dev} "$(pwd)";
-      cd ~;;
-    (2)
-      blk=(${(f)"$(findmnt --real -nlo target,source,fstype | pcre2grep -v '^/\s+')"});
-      ((${#blk} != 0)) || { printf '%s\n' 'No devices found.'; return 0 };
-      dev=$(fzy -l $LINES -p $'target\t\tsource\tfstype\t' <<< ${(F)blk} | cut -f 1 -d ' ') || return 1;
+emulate -LR zsh;
+setopt pipe_fail;
+typeset dev dir n m; n=$'\n';
+typeset -a blk src;
+printf '\t%s\t\t%s\n' 1  mount 2 umount;
+case $(read -sek1 "?${n}") {
+  (1)
+    src=(${(f)"$(findmnt --real -nlo 'source')"});
+    blk=(${(f)"$(lsblk -lpo name,label,uuid,type,fstype,size,fsuse%,uuid,state,mountpoint | pcre2grep -v "(running|/boot$|/$|SWAP|${(j:|:)src})\b")"});
+    printf '%s\n' ${blk[1]};
+    dev=$(fzy -l $LINES <<< ${(F)blk[2,-1]} | cut -f 1 -d ' ') || return 1;
+    m=$(mount ${dev});
+    if [[ -n ${m} ]] || ((?)) || return 0;
+    [[ -z ${m} ]] || read -sk1 "?${n}${m}";
+    cd /;
+    while { true } {
+      dir=$(printf '%s\n' .. *(/-DN) | fzf -i +m --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down --preview="printf '%s\n' {}/*(DN:t)") || return 1;
+      [[ -d ${dir} ]] && cd ${dir};
+    };
+    [[ $(read -seq "?${n}Mount ${dev} to $(pwd) [y/*]?") == y ]] && mount ${dev} "$(pwd)";
+    cd ~;;
+  (2)
+    blk=(${(f)"$(findmnt --real -lo target,source,fstype | pcre2grep -v '^/\s+')"});
+    ((${#blk} != 1)) || { printf '%s\n' 'No devices found.'; return 0 };
+    printf '%s\n' ${blk[1]};
+    dev=$(fzy -l $LINES <<< ${(F)blk[2,-1]} | cut -f 1 -d ' ') || return 1;
+    m=$(umount ${dev});
+    [[ -n ${m} ]] || ((?)) && {
+      printf '%s\nKilling processes associated with %s, please wait.\n' ${m} ${dev};
       lsof | pcre2grep "\b${dev}\b" | awk '{print $2}' | xargs kill &>/dev/null;
-      umount ${dev};;
-  };
+      umount ${dev}
+    };;
+  (*) return 1;;
+};
 }

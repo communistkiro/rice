@@ -32,7 +32,7 @@ setopt hist_verify;              # show command with history expansion to user b
 setopt share_history;            # share command history data
 setopt long_list_jobs list_packed no_beep auto_cd interactivecomments
 
-
+setopt rematch_pcre;
 
 
 ####    PLUGINS
@@ -58,7 +58,7 @@ source /root/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh;
 
 # source /root/.config/omz/lib/directories.zsh;
 
-source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
+# source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
 
 setopt auto_pushd;
 setopt pushd_ignore_dups;
@@ -106,24 +106,22 @@ alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
 alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.45 --setf int_f0_target_mean=90 -pw';
 alias fmt='fmt -w $((COLUMNS*94/100))';
-# alias fzf="fzf -i -m --reverse --ansi --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down"; #  --preview='cat {}' --preview-window=80%:down
 # alias gre='grep -P --color -i';
 alias hl='hledger-ui';
 alias l='less';
 alias l1='lsd -A -1 --icon never';
-# alias love='mpc sendmessage mpdas love';
+alias love='mpc sendmessage mpdas love';
 alias lr='lsd -A --tree';
 alias man='man -a';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
-alias mpva='mpv --force-window=yes --idle';
+alias mpva='mpv --force-window=yes --idle --no-terminal';
 alias mpvp='mpv --vo=tct --profile=sw-fast --ytdl-format="worst" --really-quiet';
 alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=24" &>/dev/null & disown';
 alias ncm='ncmpcpp 2>/dev/null';
 alias oc='octave-cli --quiet';
 alias oce='octave-cli --quiet --no-history --eval';
-alias pk='pkill -KILL -i -x';
-alias pkk='pkill -i -x';
+alias pk='pkill -KILL -x';
 alias p="printf '%s\n'";
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
@@ -132,12 +130,13 @@ alias realpath='realpath -qe';
 alias rm='rm -v';
 alias rsync='rsync -vah --progress';
 # alias sex='sex | cow';
-alias sls='sls -u v -p'
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
 # alias so='source /root/.zshrc';
 # alias sx='/root/src/sx/sx ~/.xinitrc';
 alias timer="source /root/.config/omz/plugins/timer/timer.plugin.zsh; TIMER_FORMAT='[%d]'; TIMER_PRECISION=7";
-alias tox='tox -t dark --allow-root &>/dev/null & disown';
+alias twitch=' mpv --profile=low-latency --video-latency-hacks=yes'
+# alias tox='utox -t dark --allow-root &>/dev/null & disown';
+alias toxic='toxic -r /root/.config/tox/nameservers';
 # alias unlove='mpc sendmessage mpdas unlove';
 alias vol='amixer set Master';
 alias which='which -a';
@@ -150,7 +149,6 @@ alias xbs='xbps-install -Su';
 alias xc='xclip -r -selection clipboard';
 alias xp='xclip -r -selection primary';
 alias x='aunpack';
-alias yp='xc <<< ${"$(pwd)":a:q}';
 alias zcp='zmv -Cv';
 alias zmv='zmv -Mv';
 alias zln='zln -Lv';

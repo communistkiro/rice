@@ -2,20 +2,24 @@
 [[ -t 0 ]] || return 1;
 emulate -LR zsh;
 setopt pipe_fail;
-# while { getopts s n } { case ${n} {
-#   (s) 
-  ((# > 0)) || {
-    typeset -a a s; a=(${(fq)"$(printf '%s\n' ~/Downloads/texpkg/**/*(.N) | fzf -i -m --reverse --bind=alt-c:clear-selection,alt-v:select-all,\[:up,\':down)"}); 
-    for n ( ${a} ) {
-      [[ ${n} =~ '\.pdf$' ]] && { qpdfview --unique --quiet ${n} & disown } || s+=${n};
-    }; ((${#s} > 0)) && less ${s}; return 0;
+
+((# > 0)) || {
+  typeset -a a s; a=(${(fq)"$(printf '%s\n' ~/Downloads/texpkg/**/*(.N) | fzf -i -m --reverse --bind=alt-c:clear-selection,alt-v:select-all,\[:up,\':down)"}); 
+  for n ( ${a} ) {
+    case ${n:e} {
+      (pdf) qpdfview --unique --quiet ${n};;
+      (htm(|l)) sf ${n};;
+      ([1-9]) man -l ${n};;
+      (jp(|e)g|png|tiff|gif) feh ${n};;
+      (*) less ${n};;
+    };
   };
-#   (*) return 1;;
-# } };
+  disown;
+};
 
 ping -c 1 1.1.1.1 &>/dev/null || return 1;
 typeset t base query n;
-typeset -i r lr q c p;
+typeset -i r q c p;
 typeset -a pkg url file dir;
 n=$'\n';
 base=https://ctan.org;
@@ -24,12 +28,11 @@ query="${@}";
 [[ -d ~/Downloads/texpkg ]] || mkdir ~/Downloads/texpkg;
 
 until [[ ${query} =~ '^\s*$' ]] {
-  curl -sfLH User-Agent: -o ${t} $(surfraw -p -escape-url-args=yes ctan ${query}) || return 3;
+  curl -sfLH User-Agent: -o ${t} $(surfraw -p -escape-url-args=yes ctan ${query}) || { rm ${t} &>/dev/null; return 3 };
 
   pkg=(${(ps.Package .)"$(pup -p -f ${t} 'div.hit text{}'|tr -d '\n')"});
   url=(${(f)"$(pup -p -f ${t} 'div.hit a attr{href}')"});
   r=${#pkg};
-  lr=${(c)#r};
 
   while { true } {
     c=$(printf '%s\n' ${pkg} | nl -n ln | fzf -i +m --reverse --bind=\[:up,\':down  | cut -f 1 -d ' ') || break;
@@ -51,4 +54,4 @@ for n ( ${file} ) {
   wget -P ~/Downloads/texpkg/${dir[++q]} ${n};
 };
 
-rm ${t};
+rm ${t} &>/dev/null;

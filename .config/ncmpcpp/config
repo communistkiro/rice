@@ -57,7 +57,7 @@ visualizer_spectrum_smooth_look = yes
 ## visualizer output.
 visualizer_spectrum_dft_size = 2
 
-visualizer_spectrum_gain = 10
+visualizer_spectrum_gain = 15
 
 ## Left-most frequency of visualizer in Hz, must be less than HZ MAX
 
@@ -65,7 +65,7 @@ visualizer_spectrum_hz_min = 20
 
 ## Right-most frequency of visualizer in Hz, must be greater than HZ MIN
 
-visualizer_spectrum_hz_max = 17500
+visualizer_spectrum_hz_max = 20000
 
 ## Available values: spectrum, wave, wave_filled, ellipse.
 visualizer_type                                = "spectrum"
@@ -74,6 +74,8 @@ visualizer_look                                = "●█"
 
 visualizer_color                               = "41, 83, 119, 155, 185, 215, 209, 203, 197, 161"
 # visualizer_color                               = "blue, cyan, green, yellow, red, magenta"
+
+visualizer_sync_interval = 10
 
 ##### system encoding #####
 ##

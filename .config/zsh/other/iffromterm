@@ -1,1 +1,0 @@
-test -t on a file descriptor, e.g. [ -t 0 ] for stdin checks if it's connected to a terminal, or test `ps ax | grep "^[[:space:]]*$$[[:space:]]+"` to see if your shell is attached to a terminal.

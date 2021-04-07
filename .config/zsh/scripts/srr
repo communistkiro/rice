@@ -1,9 +1,10 @@
 #!/bin/zsh
 emulate -LR zsh;
+setopt pipe_fail;
 # { which zsh && which surfraw && which rdrview && which elinks && which fzf } &>/dev/null || return 2;
 [[ -t 0 ]] || return 1;
 typeset elvi cmd;
-cmd='elinks -dump -no-numbering'"${1:+ -no-references}"; # any arg to srr to display href vals
+cmd='elinks -dump -no-numbering' #"${1:+ -no-references}"; # any arg to srr to display href vals
 
 elvi=$(fzf -i +m --reverse --border=horizontal < ~/.config/surfraw/cache) || return 1;
 [[ -n ${elvi} ]] || return 1;

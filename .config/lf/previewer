@@ -1,14 +1,14 @@
-#!/bin/sh
-case "$1" in
-  (*.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.tar) als -e -- "$1";;
-  (*.jpg|*.jpeg|*.png|*.gif|*.tiff) chafa --size=113x50 "$1";;
-  (*.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9) man -l -- "$1";;
-  (*.mp3) mp3info2 "$1";;
-  (*.doc) catdoc -a -m94 -- "$1";;
-  (*.docx) docx2txt "$1" -;;
-  # (*.epub) epub2txt -- "$1";;
-  (*.info) info -- "$1";;
-  (*.pdf) pdftotext -f 1 -l 3 "$1" -;;
-  (*.json) jq -r '.' "$1";;
-  (*) head -n 52 "$1";;
-esac;
+#!/bin/zsh
+case ${(L)1:e} {
+  ((|t)(bz(|2)|gz|xz)|tar|zip|rar|7z) als -e ${1};;
+  (jp(|e)g|png|gif|tiff) chafa --size=105x50 ${1};; 
+  ([1-9]) man -l ${1};;
+  (mp3) mp3info2 ${1};;
+  (doc) catdoc -a -m94 ${1};;
+  (docx) docx2txt ${1} -;;
+  # (*.epub) epub2txt ${1};;
+  (info) info ${1};;
+  (pdf) pdftotext -f 1 -l 4 ${1} -;;
+  (js(|on)) jq -r '.' ${1};;
+  (*) head -n 52 ${1};;
+};
