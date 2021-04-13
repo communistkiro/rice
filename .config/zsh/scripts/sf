@@ -3,10 +3,9 @@ xidfile='/tmp/tabbed-surf.xid';
 ((# > 0)) || uri='file:///root/.config/startpage/ss1.htm';
 xid=$(<${xidfile}) &>/dev/null;
 
-if { [[ ! -r ${xidfile} ]] || ! xprop -id ${xid} >/dev/null } &>/dev/null {
-  for u ( ${uri:-${@}} ) { tabbed -dn tabbedsurf -r 2 surf -e '' "${u}" >${xidfile} &>/dev/null & };
-} else {
-  for u ( ${uri:-${@}} ) { surf -e ${xid} "$u" &>/dev/null & };
+{ [[ -r ${xidfile} ]] && xprop -id ${xid} } &>/dev/null || {
+  tabbed -dn tabbedsurf -r 2 surf -e '' 'file:///root/.config/startpage/ss1.htm' >${xidfile} &>/tmp/z1 &;
+  unset uri; xid=$(<${xidfile}) &>/dev/null;
 };
 
-unset u uri xid
+for u ( ${uri:-${@}} ) { surf -e ${xid} "${u}" &>/tmp/z2 & };

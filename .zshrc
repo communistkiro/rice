@@ -58,7 +58,7 @@ source /root/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh;
 
 # source /root/.config/omz/lib/directories.zsh;
 
-# source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
+source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
 
 setopt auto_pushd;
 setopt pushd_ignore_dups;
@@ -95,9 +95,9 @@ alias bb='bye';
 alias bl='subl3';
 alias bll='subl3 -n --command toggle_side_bar -a';
 alias catdoc='catdoc -m ${"$(stty size)"#* }';
-alias clock='tty-clock -sbc';
+alias clock='tty-clock -sbcS';
 alias cmat='cmatrix -au2';
-alias cow='cowthink -e "^^" -f xxx -T "U"';
+# alias cow='cowthink -e "^^" -f xxx -T "U"';
 alias cp='cp -vR';
 # alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate";
 alias du='du -h';
@@ -117,7 +117,7 @@ alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
 alias mpva='mpv --force-window=yes --idle --no-terminal';
 alias mpvp='mpv --vo=tct --profile=sw-fast --ytdl-format="worst" --really-quiet';
-alias mss='st -n "sweaper" -f "Monofurbold Nerd Font:pixelsize=24" &>/dev/null & disown';
+alias mss='st -n "sweaper" -f "Fira Code Black:pixelsize=24" &>/dev/null & disown';
 alias ncm='ncmpcpp 2>/dev/null';
 alias oc='octave-cli --quiet';
 alias oce='octave-cli --quiet --no-history --eval';
@@ -140,7 +140,7 @@ alias toxic='toxic -r /root/.config/tox/nameservers';
 # alias unlove='mpc sendmessage mpdas unlove';
 alias vol='amixer set Master';
 alias which='which -a';
-alias ytd='youtube-dl -f best --ignore-errors';
+alias ytd='youtube-dl -f "bestvideo+bestaudio/best" --ignore-errors';
 alias ytdv='youtube-dl -f bestvideo --ignore-errors';
 alias ytda='youtube-dl -f bestaudio --ignore-errors';
 alias xb='xbacklight -set';

@@ -1,23 +1,23 @@
 #!/bin/zsh
 function whn () {
-while { getopts '' o } { case $o { (*)
-less -F <<HEREDOC
-NAME
-    whn - script using fzf facilitate when entry input.
-
-SYNOPSIS
-    whn
-    whn <reminder text>
-
-DESCRIPTION
-    Creates an event in when's calendar file for chosen date and beginning and ending 
-    times. Returns week's worth of upcoming events, if no text is input. Returns 1, if no 
-    date is chosen, otherwise all-day event if no initial time chosen; only starting event 
-    start, if no final time chosen. 
-
-
-HEREDOC
-return 1;; }; };
+#while { getopts '' o } { case $o { (*)
+#less -F <<HEREDOC
+#NAME
+#    whn - script using fzf facilitate when entry input.
+#
+#SYNOPSIS
+#    whn
+#    whn <reminder text>
+#
+#DESCRIPTION
+#    Creates an event in when's calendar file for chosen date and beginning and ending 
+#    times. Returns week's worth of upcoming events, if no text is input. Returns 1, if no 
+#    date is chosen, otherwise all-day event if no initial time chosen; only starting event 
+#    start, if no final time chosen. 
+#
+#
+#HEREDOC
+#return 1;; }; };
 
 (($# == 0)) && when --wrap=0 --past=0 | tail -n +3 | awk '{ printf "%-8s%6s-%s-%02d    ", $1, $2, $3, $4 ; if ($5 ~ /[0-9:-]{5}/) printf "%-15s", $5; else printf "%15s%s ", " ", $5} ; BEGIN { q = 6 } { for (i=q; i<=NF; i++) printf "%s%s", $(i), i < NF ? " " : "\n" }' && return 0;
 

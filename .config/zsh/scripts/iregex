@@ -1,7 +1,7 @@
 #!/bin/zsh
 # regex101 copy
 emulate -LR zsh;
-FZF_DEFAULT_OPTS="--phony --reverse --print-query --border=horizontal --bind=alt-\':preview-down,alt-\[:preview-up --preview-window=80%:down:sharp";
+FZF_DEFAULT_OPTS="--disabled --reverse --print-query --border=horizontal --bind=alt-\':preview-down,alt-\[:preview-up --preview-window=80%:down:sharp";
 if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] {
   fzf --preview="perl -pe "{q}" ${1:a:q}" <<< '';
 } else {

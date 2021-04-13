@@ -1,6 +1,6 @@
 #!/bin/zsh
 # jq made interactive /wo a fucking go install
-FZF_DEFAULT_OPTS="--phony --reverse --print-query --border=horizontal --bind=alt-\[:preview-up,alt-\':preview-down --preview-window=99%:down:sharp";
+FZF_DEFAULT_OPTS="--disabled --reverse --print-query --border=horizontal --bind=alt-\[:preview-up,alt-\':preview-down --preview-window=99%:down:sharp";
 if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] {
   fzf --preview="jq -r "{q}" ${1:a:q}" --preview-window=99%:down:sharp <<< '';
 } else {
