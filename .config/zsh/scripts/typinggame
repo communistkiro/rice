@@ -1,0 +1,10 @@
+#!/bin/zsh
+function () {
+typeset a v q;
+if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] { a=${1} } else { a=$(while { read -e -t 1 -r } { }) };
+[[ -n ${a} ]] || a=$(tr -cd '[:graph:][:blank:]' < /dev/urandom | head -c $((COLUMNS*LINES/2)));
+clear; printf '%s%b' ${a} '\e[1;1H';
+for v ({1..${#a}}) {
+  read -sk1 'q?'; [[ ${q} == ${a[v]} ]] && printf '%b%s%b' '\e[32m' ${q} '\e[0m' || printf '%b%s%b' '\e[1;31m' ${q} '\e[0m';
+};
+}

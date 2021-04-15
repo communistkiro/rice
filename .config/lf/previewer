@@ -1,6 +1,6 @@
 #!/bin/zsh
 case ${(L)1:e} {
-  ((|t)(bz(|2)|gz|xz)|tar|zip|rar|7z) als -e ${1};;
+  (t(ar|(|b|7|g|l|x)z)|(|t)bz(|2)|(|7|b|g|(|l)(|r)|x)z|(t|r|j|w)ar|tzo|zip|l(ha|z(h|ma|o))|zst(|d)|a(|ce|lz|rc|rj)|c(ab|pio)|deb|rpm) als -e ${1};;
   (jp(|e)g|png|gif|tiff) chafa --size=105x50 ${1};; 
   ([1-9]) man -l ${1};;
   (mp3) mp3info2 ${1};;
@@ -9,6 +9,6 @@ case ${(L)1:e} {
   # (*.epub) epub2txt ${1};;
   (info) info ${1};;
   (pdf) pdftotext -f 1 -l 4 ${1} -;;
-  (js(|on)) jq -r '.' ${1};;
+  (js(|on)) jq -s -r '.' ${1};;
   (*) head -n 52 ${1};;
 };

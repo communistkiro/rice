@@ -70,7 +70,7 @@ cmd open ${{
     case ${(L)a:e} in
       (jp(|e)g|png|tiff) feh --scale-down --quiet $a 2>/dev/null & disown;;
       (gif) mpv --no-terminal --loop $a & disown;;
-      ((|t)(bz(|2)|gz|xz)|tar|zip|rar|7z) als -e $a | less;;
+      (t(ar|(|b|7|g|l|x)z)|(|t)bz(|2)|(|7|b|g|(|l)(|r)|x)z|(t|r|j|w)ar|tzo|zip|l(ha|z(h|ma|o))|zst(|d)|a(|ce|lz|rc|rj)|c(ab|pio)|deb|rpm) als -e $a | less;;
       (webm|mp[3-4]|mkv|m4[ab]|wav|avi|flac|mov|wmv|aiff|ogg|m3u(|8)|cue) mpv --no-terminal --force-window=yes --no-input-terminal --really-quiet $a & disown;;
       (pdf|djvu|(|e)ps) qpdfview --unique --quiet $a 2>/dev/null & disown;;
       ([1-9]) man -l $a;;

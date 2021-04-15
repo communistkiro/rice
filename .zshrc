@@ -5,23 +5,22 @@ export PS1="%B%F{red}%?%f %F{blue}%d%f%b
 preexec () { printf '%b' "\e]0;$2\a" }
 precmd () { printf '%b' "\e]0;${PWD}\a" }
 
+
+
+
 ####    OPTS
-setopt extended_glob ksh_glob no_sh_glob re_match_pcre null_glob pipe_fail;
+setopt extended_glob ksh_glob no_sh_glob rematch_pcre null_glob pipe_fail # err_return;
+setopt long_list_jobs list_packed no_beep auto_cd interactivecomments;
+setopt auto_pushd pushd_ignore_dups pushdminus;
 
 # CASE_SENSITIVE="true";
 HYPHEN_INSENSITIVE="true";
-
-autoload -Uz bracketed-paste-url-magic; 
-zle -N bracketed-paste bracketed-paste-url-magic
-# autoload -Uz url-quote-magic; 
-# zle -N self-insert url-quote-magic
-
 ## History command configuration
 HISTFILE=/root/.zsh_history;
-SAVEHIST=2000;
-HISTSIZE=2000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|pre *|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|.*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|fmt *|cd *)';
-zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1; } # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
+SAVEHIST=1000;
+HISTSIZE=1000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
+HISTORY_IGNORE='(bl*|rm *|cat *|yt*|wc *|echo *|p *|l*|pre *|cp *|mv *|zed *|mle *|fd *|rg *|x*|qpp *|oc*|bc*|mpv*|.*|man *|tmr *|realpath *|run-help *|sf *|which *|feh *|fmt *|cd *|cl*)';
+zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1 }; # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
 setopt hist_reduce_blanks;
@@ -30,41 +29,46 @@ setopt hist_ignore_all_dups;     # remove old dupes
 setopt hist_ignore_space;        # ignore commands that start with space
 setopt hist_verify;              # show command with history expansion to user before running it
 setopt share_history;            # share command history data
-setopt long_list_jobs list_packed no_beep auto_cd interactivecomments
-
-setopt rematch_pcre;
 
 
-####    PLUGINS
-autoload -U compaudit compinit;
-autoload -U +X compinit && compinit;
-autoload -U +X bashcompinit && bashcompinit;
-autoload -U compdef;
 
-source /root/.config/omz/lib/completion.zsh;
+
+####    PLUGINS/AUTOLOAD
+autoload -Uz zed zmv;
+autoload -Uz /root/.config/zsh/autoloadmedaddy/*(.);
+
+# source /root/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh;
+
+source /root/.config/zsh/plugins/completion.zsh;
+autoload -Uz compaudit compinit;
+autoload -Uz +X compinit && compinit;
+autoload -Uz +X bashcompinit && bashcompinit;
+
+autoload -Uz compdef;
+
+autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-url-magic;
+autoload -Uz url-quote-magic; zle -N self-insert url-quote-magic;
+
+function d () { if [[ -n $1 ]]; then dirs "$@"; else dirs -v | head -n 10; fi };
+compdef _dirs d;
 
 FZF_BASE=/root/src/fzf;
-source /root/.config/omz/plugins/fzf/fzf.plugin.zsh;
+source /root/.config/zsh/plugins/fzf/fzf.plugin.zsh;
 export FZF_DEFAULT_OPTS="-i -m --reverse --ansi --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down";
-
-source /root/.config/zsh/plugins/zsh-colored-man-pages/colored-man-pages.plugin.zsh;
 
 # source /root/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh;
 source /root/.config/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh;
 
 source /root/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh;
 
-# source /root/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh;
-
-# source /root/.config/omz/lib/directories.zsh;
-
 source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
 
-setopt auto_pushd;
-setopt pushd_ignore_dups;
-setopt pushdminus;
-function d () {if [[ -n $1 ]]; then dirs "$@"; else dirs -v | head -n 10; fi}
-compdef _dirs d;
+# source /root/.config/zsh/plugins/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh;
+
+autoload -Uz /usr/share/zsh/functions/Calendar/*(.);
+zstyle ':datetime:calendar*' reformat-date true; zstyle ':datetime:calendar*' date-format '%F %R%t';
+
+
 
 
 ###     KEYBINDS
@@ -104,9 +108,8 @@ alias du='du -h';
 alias fd='fd -uu -i';
 alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
-alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.45 --setf int_f0_target_mean=90 -pw';
+# alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.46 --setf int_f0_target_mean=90 -pw';
 alias fmt='fmt -w $((COLUMNS*94/100))';
-# alias gre='grep -P --color -i';
 alias hl='hledger-ui';
 alias l='less';
 alias l1='lsd -A -1 --icon never';
@@ -131,18 +134,17 @@ alias rm='rm -v';
 alias rsync='rsync -vah --progress';
 # alias sex='sex | cow';
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
-# alias so='source /root/.zshrc';
-# alias sx='/root/src/sx/sx ~/.xinitrc';
-alias timer="source /root/.config/omz/plugins/timer/timer.plugin.zsh; TIMER_FORMAT='[%d]'; TIMER_PRECISION=7";
-alias twitch=' mpv --profile=low-latency --video-latency-hacks=yes'
+# alias sx='sx ~/.xinitrc';
+alias timer="source /root/.config/zsh/plugins/timer/timer.plugin.zsh; TIMER_FORMAT='[%d]'; TIMER_PRECISION=7";
+# alias twitch=' mpv --profile=low-latency --video-latency-hacks=yes'
 # alias tox='utox -t dark --allow-root &>/dev/null & disown';
-alias toxic='toxic -r /root/.config/tox/nameservers';
+# alias toxic='toxic -r /root/.config/tox/nameservers';
 # alias unlove='mpc sendmessage mpdas unlove';
-alias vol='amixer set Master';
+alias urlencode='perl -MURI::Escape -ep "uri_escape($ARGV[0]);"'
+alias urldecode='perl -MURI::Escape -ep "uri_unescape($ARGV[0]);"'
+# alias vol='amixer set Master';
 alias which='which -a';
-alias ytd='youtube-dl -f "bestvideo+bestaudio/best" --ignore-errors';
-alias ytdv='youtube-dl -f bestvideo --ignore-errors';
-alias ytda='youtube-dl -f bestaudio --ignore-errors';
+alias ytd='yt-dlp -f bestvideo+bestaudio/best --ignore-errors';
 alias xb='xbacklight -set';
 alias xbr='xbps-remove -R';
 alias xbs='xbps-install -Su';
@@ -153,6 +155,5 @@ alias zcp='zmv -Cv';
 alias zmv='zmv -Mv';
 alias zln='zln -Lv';
 
-####    AUTOLOAD
-fpath=($fpath /root/.config/zsh/zsh-completions /root/.config/zsh/autoloadmedaddy)
-autoload -U $(ls /root/.config/zsh/autoloadmedaddy) zed zmv
+alias cl='calendar';
+alias cla='calendar_add';

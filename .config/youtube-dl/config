@@ -1,8 +1,9 @@
 -o ~/mov/%(upload_date)s-%(title)s.%(ext)s
--f (bestvideo+bestaudio/best)
+-f bestvideo+bestaudio/best
 --retries infinite
 --fragment-retries infinite
 --age-limit 99
 --geo-bypass
 --youtube-skip-dash-manifest
 --add-metadata
+--no-mtime

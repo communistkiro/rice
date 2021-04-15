@@ -3,38 +3,38 @@
 # `escape' to cancel query chain so far generatated
 # makes use of delimiters in metadata tags somewhat
 a=(
-    'artist'
-    'album'
-    'albumartist'
-    'genre'
-    'date'
-    'title'
-    'insert'
+    artist
+    album
+    albumartist
+    genre
+    date
+    title
+    insert
 );
 i=0;
 # until [[ -n ${w} ]]; do; w=$(xwininfo -name 'mpp' -int | perl -ne 's/.*?Window id: ([0-9]+) ".*$/$1/ && print') 2>/dev/null; done;
 q[1]=''; q[2]='';
 while true; do
-    c=$(printf "%s\n" "${a[@]}" | dmenu -i -l ${#a});
+    c=$(printf '%s\n' ${a} | dmenu -r -l 7);
     case ${c} in
         (${a[1]})
             q[++i]=${a[1]};
-            q[++i]=$( (mpc list ${a[1]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|,] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[1]}" -l 8);;
+            q[++i]=$( (mpc list ${a[1]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|,] ?' -vORS='\n' '1' | sort -u ) | dmenu -r -p "${a[1]}" -l 8);;
         (${a[2]})
             q[++i]=${a[2]};
-            q[++i]=$( (mpc list ${a[2]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[2]}" -l 8);;
+            q[++i]=$( (mpc list ${a[2]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -r -p "${a[2]}" -l 8);;
         (${a[3]})
             q[++i]=${a[3]};
-            q[++i]=$( (mpc list ${a[3]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[3]}" -l 8);;
+            q[++i]=$( (mpc list ${a[3]} ${q:0:$((${#q}-1))} | gawk -vRS='' -vORS='\n' '1' | sort -u ) | dmenu -r -p "${a[3]}" -l 8);;
         (${a[4]})
             q[++i]=${a[4]};
-            q[++i]=$( (mpc list ${a[4]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|/\] ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[4]}" -l 8);;
+            q[++i]=$( (mpc list ${a[4]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?[;|/\] ?' -vORS='\n' '1' | sort -u ) | dmenu -r -p "${a[4]}" -l 8);;
         (${a[5]})
             q[++i]=${a[5]};
-            q[++i]=$( (mpc list ${a[5]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?; ?' -vORS='\n' '1' | sort -u ) | dmenu -i -p "${a[5]}" -l 8);;
+            q[++i]=$( (mpc list ${a[5]} ${q:0:$((${#q}-1))} | gawk -vRS=' ?; ?' -vORS='\n' '1' | sort -u ) | dmenu -r -p "${a[5]}" -l 8);;
         (${a[6]})
             q[++i]=${a[6]};
-            q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -i -p "${a[6]}" -l 8);;
+            q[++i]=$( (mpc list ${a[6]} ${q:0:$((${#q}-1))} | sort -u ) | dmenu -r -p "${a[6]}" -l 8);;
         (${a[7]})
             mpc search ${q} | mpc insert;&
         (*) break;;

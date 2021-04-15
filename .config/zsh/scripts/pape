@@ -21,9 +21,9 @@ while { true } {
     file=(*(.D-N));
     n=${#file};
   };
-  c=$(printf '%s\n' .. ${dir} ${file} rand opts | dmenu -i -p "$(pwd) ") || break; 
+  c=$(printf '%s\n' .. ${dir} ${file} rand opts | dmenu -p "$(pwd) ") || break; 
   if [[ ${c} == opts ]] {
-    o=${$(dmenu -i <<< ${(F)opt}):*opt};
+    o=${$(dmenu <<< ${(F)opt}):*opt};
     feh ${o:-${O}} "$(pcre2grep -o1 "'(.*)'" ~/.fehbg)";
   } elif [[ ${c} == rand ]] {
     feh ${o:-${O}} ${file[RANDOM % ${n} + 1]};

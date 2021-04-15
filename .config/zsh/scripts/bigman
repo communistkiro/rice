@@ -2,7 +2,7 @@
 () {
 emulate -LR zsh;
 typeset -a a;
-FZF_DEFAULT_OPTS='-i +m  --tiebreak=end,begin,length,index --preview "man {1}" --preview-window=bottom:99%:wrap'; # -O width=$((COLUMNS*3/4-8))
+FZF_DEFAULT_OPTS="-i +m --reverse --ansi --tiebreak=end,begin,length,index --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down "'--preview "man {1}" --preview-window=bottom:99%:wrap'; # -O width=$((COLUMNS*3/4-8))
 a=(/usr/share/man /usr/local/man /usr/local/share/man);
 printf '%s\n' ${^a}/**/*.[1,8]*(.-DN) | fzf;
 }

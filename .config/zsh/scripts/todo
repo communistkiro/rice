@@ -1,23 +1,22 @@
-#!/bin/sh
+#!/bin/zsh
 # Write/remove a task to do later. Select an existing entry to remove it from the file, or type a new entry to add it.
 
-file="$HOME/.todo";
-touch "$file";
-height=$(wc -l < "$file");
-prompt="Add/delete a task: ";
+file=$HOME/.todo;
+touch ${file};
+height=$(wc -l < ${file});
+prompt='Add/delete a task: ';
+cmd=$(dmenu -F -i -l ${height} -p ${prompt} ${@} < ${file})
 
-cmd=$(dmenu -i -l "$height" -p "$prompt" "$@" < "$file");
-while [ -n "$cmd" ]; do
-    if pcre2grep -q "^$cmd\$" "$file"; then
-		pcre2grep -v "^$cmd\$" "$file" > "$file.$$";
-		mv "$file.$$" "$file";
-        height=$(( height - 1 ));
- 	else
-		echo "$cmd" >> "$file";
-		height=$(( height + 1 ));
- 	fi
-
-	cmd=$(dmenu -l "$height" -p "$prompt" "$@" < "$file")
-done
-
+while [[ -n ${cmd} ]] {
+  num=$(pcre2grep -n "^${cmd}$" ${file} | cut -d : -f 1)
+  if [[ -z ${n} ]] {
+    printf '%s\n' ${cmd} >> ${file}
+    ((++height))
+  } else {
+    sed -i $num,${num}d ${file}
+    height=$((height - 1))
+    ((--height))
+  }
+  cmd=$(dmenu -F -i -l ${height} -p ${prompt} ${@} < ${file})
+}
 exit 0

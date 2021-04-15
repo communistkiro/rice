@@ -133,14 +133,14 @@ user_selection () {
   ! ((${+p})) || { printf '%s\n' ${url}; return };
   # to get back untruncated data
   selected_data=$(printf '%s\n' ${videos_data} | grep -m1 -e ${shorturl});
-  ! ((${+show_format})) || format=$(youtube-dl -F ${url} | sed '1,3d' | tac - | eval ${prompt_menu} | sed -E 's/^([^ ]*) .*/\1/')\ --really-quiet;
+  ! ((${+show_format})) || format=$(yt-dlp -F ${url} | sed '1,3d' | tac - | eval ${prompt_menu} | sed -E 's/^([^ ]*) .*/\1/')\ --really-quiet;
 }
 
 while { true } {
   user_selection || return 0;
   if ((${+p})) {
   } elif ((${+d})) {
-    youtube-dl -f 'bestvideo+bestaudio' --ignore-errors ${url} &>/dev/null & disown;
+    yt-dlp -f bestvideo+bestaudio/best --ignore-errors ${url} &>/dev/null & disown;
   } else { 
     $(${player} ${format:+--ytdl-format=${format}} --really-quiet --pause ${url}) & disown;
   };

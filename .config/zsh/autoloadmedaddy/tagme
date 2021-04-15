@@ -33,12 +33,12 @@ return 1;; }; };
     files=(${dir}/*.mp3(.D));
     ((${#files} == 0)) && continue;
 
-    if [[ ${${"$(dirname "$(realpath ${dir})")"%/*}##*/} == 'Various Artists' ]] || (($(sed -r 's/ \[.*//' <<< ${(F)files} | sort -u | wc -l) > 1)) && [[ "$(printf '%s\n' '2 No' '1 Yes' $files | dmenu -i -p "Rename album artist to Various Artists? " -l $((${#files} + 2)))" == '1 Yes' ]] || [[ "$(sed -r 's/ \[.*//' <<< ${files[1]} )" =~ '^[vV](\.|arious)?.?[aA](\.|rtists)?$' ]] {
+    if [[ ${${"$(dirname "$(realpath ${dir})")"%/*}##*/} == 'Various Artists' ]] || (($(sed -r 's/ \[.*//' <<< ${(F)files} | sort -u | wc -l) > 1)) && [[ "$(printf '%s\n' '2 No' '1 Yes' $files | dmenu -r -p "Rename album artist to Various Artists? " -l $((${#files} + 2)))" == '1 Yes' ]] || [[ "$(sed -r 's/ \[.*//' <<< ${files[1]} )" =~ '^[vV](\.|arious)?.?[aA](\.|rtists)?$' ]] {
       a='Various Artists';
     } else {
       o=(${(f)"$(sed -r 's/ \[.*//' <<< ${(F)files} | sort -u)"});
       if ((${#o} > 1)) {
-        a="$(dmenu -i -p "Select album artist: " -l ${#o} <<< ${(F)o})";
+        a="$(dmenu -r -p "Select album artist: " -l ${#o} <<< ${(F)o})";
       } else {
         a="$(sort -u <<< ${(F)o})";
       };
