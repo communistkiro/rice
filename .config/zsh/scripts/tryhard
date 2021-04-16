@@ -1,6 +1,6 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
-function box () {
+box () {
 ((# > 0)) || return 0;
 typeset a d h B T H tl tr bl br th bh lv rv r w; 
 typeset -i s;
@@ -47,7 +47,7 @@ else;
 fi;
 }
 
-function menu () {
+menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
     (m) 
@@ -58,7 +58,7 @@ function menu () {
   for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
 }
 
-function select-cap () {
+select-cap () {
   [[ -n ${cap} ]] && [[ $(read -eq "?${n}Select another cap file? ") != y ]] && return 0;
   typeset -a caps;
   caps=(*.cap(.om));
@@ -78,7 +78,7 @@ function select-cap () {
   };
 }
 
-function switch-mode () {
+switch-mode () {
   local a d;
   if [[ ! ${interface} =~ '^\S+mon\d*$' ]] {
     if interface=$(airmon-ng start ${interface} | perl -ne 's/^\s*\(\w+ monitor mode vif enabled for \[\w+\]'${interface}' on \[\w+\](\w+)\)$/$1/ && print') {
@@ -99,7 +99,7 @@ function switch-mode () {
   };
 }
 
-function select-network () {
+select-network () {
   [[ -n ${bssid} ]] && [[ $(read -eq "?${n}Select another network?") == n ]] && return 0;
   typeset -i sel;
   
@@ -132,7 +132,7 @@ function select-network () {
   return 0;
 }
 
-function select-interface () {
+select-interface () {
   local d;
   d=(${(f)"$(iw dev | pcre2grep -Mi -o1 -o2 'interface (\S+)[\s\S]+?type( \w+)')"});
   if (($#d == 0)) {
@@ -145,7 +145,7 @@ function select-interface () {
   };
 }
 
-function aircrack-pmk-attack () {
+aircrack-pmk-attack () {
   select-network || return 1;
   ((${+cap})) || { select-cap || return 1 };
   local a c s sp p w wl q;
@@ -179,11 +179,11 @@ function aircrack-pmk-attack () {
   # aircrack-ng -r "$(printf '%s,' ./*-DB(.))" ${cap};
 }
 
-function new-dump () {
+new-dump () {
   dump=$(cat /dev/urandom | tr -cd '[:alnum:]' | head -c 8);
 }
 
-function capture-packets () {
+capture-packets () {
   [[ ${mode} != monitor ]] && switch-mode; clear;
   ((# == 1)) || menu -m 1b -t 2 \
     '1 All traffic' \
@@ -211,13 +211,13 @@ function capture-packets () {
   };
 }
 
-function cafe-latte-attack () {
+cafe-latte-attack () {
   # FIXME
   # airbase-ng ....
   return 0;
 }
 
-function aircrack-dict-attack () {
+aircrack-dict-attack () {
   local wl sesh;
   sesh=(${t}/*.sesh(.bak)#(.om));
   ((${#sesh} > 0)) && [[ $(read -eq "?${n}Resume dictionary attack? ") == y ]] && {
@@ -240,7 +240,7 @@ function aircrack-dict-attack () {
   aircrack-ng -N ${essid}.sesh -l ${essid}.key -w ${(j.,.)wl} -b ${bssid} ${cap} && return 0;
 }
 
-function state () {
+state () {
   box -s 1 -H 5b -B 4 -T 3b -h ${1:-TRYHARD} \
     "${(r.17.. .)$(<<< interface:)}${(r.25.. .)interface:--}" \
     "${(r.17.. .)$(<<< mode:)}${(r.25.. .)mode:--}" \
@@ -253,7 +253,7 @@ function state () {
     "${(r.17.. .)$(<<< dump:)}${(r.25.. .)dump:--}";
 }
 
-function mdk4-attack () {
+mdk4-attack () {
   while { true } {
     clear; state MDK4;
     menu -m 1b -t 2 \
@@ -294,7 +294,7 @@ function mdk4-attack () {
   };
 }
 
-function aircrack-crunch-attack () {
+aircrack-crunch-attack () {
   select-network || return 1; select-cap || return 1;
   menu -m 1b -t 2 \
     '1  type in characters (in order of lower upper digit symbol) manually' \
@@ -307,7 +307,7 @@ function aircrack-crunch-attack () {
   };
 }
 
-function bully-reaver-attack () {
+bully-reaver-attack () {
   clear; local sesh;
   sesh=(${t}/*.reaver.sesh(.om));
   if ((${#sesh} > 0)) && [[ $(read -eq '?${n}Resume reaver session? ') == y ]] {
@@ -339,7 +339,7 @@ function bully-reaver-attack () {
   };
 }
 
-function chopchop-attack () {
+chopchop-attack () {
   select-network || return 1;
   until [[ ${security} =~ tkip ]] {
     read -k1 "?${n}Select a network with TKIP> ";
@@ -358,7 +358,7 @@ function chopchop-attack () {
   };
 }
 
-function hashcat-attack () {
+hashcat-attack () {
   typeset cmd attackmode f hash mask r hashtype z;
   typeset -a opt wordlist;
   opt=(--session="$(date +'%F-%T').hashcat" --hwmon-temp-about=96 --workload-profile=3 --opencl-device-types=1);
@@ -465,7 +465,7 @@ function hashcat-attack () {
   };
 }
 
-function wep-wash-attack () {
+wep-wash-attack () {
   typeset data;
   clear; [[ ${mode} == monitor ]] || switch-mode; 
   data=(${(qqs. .)"$(wash -i ${interface} | fzy -l)"});
@@ -481,13 +481,13 @@ function wep-wash-attack () {
   bully -i ${interface} -b ${bssid} -c ${channel} -l 40;
 }
 
-function quit () {
+quit () {
   cd ~; [[ ${mode} == managed ]] || switch-mode;
   jobs -lr | pcre2grep -o1 '^\[\d+\]\s+.\s+(\d+)\s+\w+\s+air.+$' | xargs -d '\n' kill &>/dev/null || true;
   unset essid bssid mode channel power interface security cap;
 }
 
-function () {
+() {
   emulate -LR zsh;
   setopt pipe_fail no_case_match null_glob extended_glob;
   typeset wordlistDir t n essid bssid channel security power cap; n=$'\n'; typeset -a dump clients;

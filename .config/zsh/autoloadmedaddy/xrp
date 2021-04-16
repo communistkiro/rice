@@ -1,6 +1,6 @@
 #!/bin/zsh
 # DOWNLOADS FROM LIST OR, GIVEN A NEW LINK, SCRAPES ALBA FROM EMBEDDED PLAYER AND DIRECT LINKS RELEASES TO LIST
-function xrp () {
+xrp () {
   ping -c 1 1.1.1.1 &>/dev/null || return 2;
   emulate -LR zsh;
   setopt null_glob;

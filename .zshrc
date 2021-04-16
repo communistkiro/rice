@@ -36,6 +36,7 @@ setopt share_history;            # share command history data
 ####    PLUGINS/AUTOLOAD
 autoload -Uz zed zmv;
 autoload -Uz /root/.config/zsh/autoloadmedaddy/*(.);
+zle -N tetris;
 
 # source /root/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh;
 

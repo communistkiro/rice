@@ -1,5 +1,5 @@
 #!/bin/zsh
-function rndpape () {
+rndpape () {
   emulate -LR zsh;
   setopt extended_glob;
   typeset -a a;

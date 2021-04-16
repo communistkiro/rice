@@ -1,5 +1,5 @@
 #!/bin/zsh
-function menu () {
+menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
     (m) 

@@ -1,5 +1,5 @@
 #!/bin/zsh
-function one () {
+one () {
 while getopts 'h' a; do case $a in (*)
 less << HEREDOC
 Query parameters

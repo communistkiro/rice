@@ -3,7 +3,7 @@
 # { which zsh && which rdrview && which curl && which pcre2grep } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 
-function menu () {
+menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
     (m) 
@@ -14,7 +14,7 @@ function menu () {
   for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
 }
 
-function () {
+() {
   emulate -LR zsh;
   setopt pipe_fail ksh_glob;
   export FZF_DEFAULT_OPTS="-i -m --reverse --ansi --bind=\[:up,\':down,alt-c:clear-selection,alt-v:select-all";

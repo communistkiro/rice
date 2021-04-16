@@ -22,7 +22,7 @@ SUBS_SLEEP_VALUE=0.01; # raise this if you experience problems
 SEP='^^^^^';
 [[ -d ${SUBS} ]] || mkdir ${SUBS};
 
-function yt_die () {
+yt_die () {
   >&2 printf '%s\n' "$*";
   exit 1;
 }
@@ -33,7 +33,7 @@ function yt_die () {
 # Updates local cache of xml subscription links from the
 # subscription file containing either usernames or channel ids.
 # -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-function yt_gen_links () {
+yt_gen_links () {
   :>$SUBS_LINKS
   typeset line;
   typeset -i count total c;
@@ -74,7 +74,7 @@ function yt_gen_links () {
 # Takes a channel rss feed link and creates a file
 # with a line of its videos dates, titles, and urls.
 # -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-function yt_get_vids () {
+yt_get_vids () {
   typeset line;
   data=${"$(curl -sfL --retry 15 ${1})"#*\<\/published\>};
   chan=${${data%%\<\/name*}##*name\>};
@@ -89,7 +89,7 @@ function yt_get_vids () {
 }
 
 # Updates the local cache of subscriptions. ([-u] flag)
-function yt_update_subs () {
+yt_update_subs () {
   [[ -f ${SUBS_LINKS} ]] || yt_die 'Subs links have not been generated.'
   typeset link
   typeset -i total count c;
@@ -109,12 +109,12 @@ function yt_update_subs () {
   printf '\n\n%s\n' 'Waiting for jobs to finish...'; wait; printf '%s\n' 'done!';
 }
 
-function yt_cat_subs () { # grab current cache of subscriptions, sort by date uploaded
+yt_cat_subs () { # grab current cache of subscriptions, sort by date uploaded
     [[ -d ${SUBS_CACHE} ]] ||  yt_die 'Subs cache has not been retrieved.';
     column -t -s '^^^^^' -o ' ' < ${SUBS_CACHE}/* | sort -rk1;
 }
 
-function yt_get_sel () { # split the concatenated lines into entities, send to selector, and play result w/ mpv
+yt_get_sel () { # split the concatenated lines into entities, send to selector, and play result w/ mpv
   typeset sel;
   [[ -n ${SUBS_CACHE}/*(#qN) ]] && {
     [[ -t 0 ]] && {
@@ -130,7 +130,7 @@ function yt_get_sel () { # split the concatenated lines into entities, send to s
   };
 }
 
-function yt_main () {
+yt_main () {
   typeset opt MPV_OPTS;
   MPV_OPTS='--no-terminal';
   while { getopts mpbguchs:d opt } { case ${opt} {

@@ -1,6 +1,6 @@
 #!/bin/zsh
 # tag shit downloaded with youtube-dl -o '.../%(artist)s [%(album)s #%(track_number)s (%(upload_date)s)] %(track)s.%(ext)s'
-function tagme () {
+tagme () {
   setopt ksh_glob extended_glob null_glob;
   typeset file dir o a n;
   typeset -a files;

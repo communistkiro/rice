@@ -25,7 +25,7 @@ tmr [-n] ...
 DESCRIPTION
 Start a countdown (default), set up an alarm (-a), or start a pomodoro session (-p)
 from the given time paramters, and play an audio file on completion, or just issue a
-bell. Days are always relative to today's, i.e., 1 is tomorrow, or +24h. For coundowns,
+bell. Days are always relative to today, i.e., 1 is tomorrow, or +24h. For coundowns,
 negatives values are parsed as corrections, for alarms, because the day is relative,
 a future alarm is always set unless all values are zero (default, if given empty
 string). All values are integers. The default pomodoro cycle count (3), work- and
@@ -124,13 +124,13 @@ if (($+a)) {
   M=$(date +%M);
   H=$(date +%H);
 
-  if ((S >= s && m == 0 && h == 0 && d == 0)) {
+  if     ((S >= s && m == 0 && h == 0 && d == 0)) {
     m=$((M + 1)); h=$H;
-  } elif ((M > m || (M == m && S >= s) && h == 0 && d == 0)) {
+  } elif ((M > m || M == m && S >= s && h == 0 && d == 0)) {
     h=$((H + 1));
   } elif ((M < m && h == 0 && d == 0)) {
     h=$H;
-  } elif ((H > h || (H == h && M >= m) && d == 0)) {
+  } elif ((H > h || H == h && M >= m && d == 0)) {
     ((d += 1));
   } elif ((d < 0 || 60 * (60 * (24 * d + h) + m) + s < 0)) {
     return 1;
@@ -152,12 +152,12 @@ for ((0; t > 0; t-= 1)) {
   sleep 1;
 };
 
-# if ((? == 0)) && if mpc status &>/dev/null | pcre2grep -q playing {
+# if ((? == 0)) && { mpc status &>/dev/null | pcre2grep -q playing } {
 #   mpc -q toggle; mpv --no-config --really-quiet $alarm; mpc -q toggle;
 #   mpc -q toggle; beep -f 200 -l 100 -d 100 -r 2; mpc -q toggle;
 # } else {
 #   mpv --really-quiet $alarm;
-  beep -f 200 -l 50 -d 50 -r 2; printf '\a'; 
+  beep -f 400 -l 66 -d 66 -r 3; printf '\a'; 
 # };
 
 rm $tmp &>/dev/null; return 0;

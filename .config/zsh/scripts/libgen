@@ -5,7 +5,7 @@ emulate -LR zsh;
 setopt pipe_fail ksh_glob extended_glob;
 typeset query base t n z target;
 
-function quit () { rm -f ${t} &>/dev/null; exit ${1:-0} };
+quit () { rm -f ${t} &>/dev/null; exit ${1:-0} };
 
 n=$'\n'; t=$(mktemp);
 query=${${@}:-$(read -er "?${n}> ")};
@@ -16,7 +16,7 @@ ping -c 1 libgen.is &>/dev/null && base=http://libgen.is/ ||
 ping -c 1 libgen.st &>/dev/null && base=http://libgen.st/ ||
 quit 3;
 
-function menu () {
+menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
     (m) 

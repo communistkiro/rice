@@ -1,5 +1,5 @@
 #!/bin/zsh
-function whn () {
+whn () {
 #while { getopts '' o } { case $o { (*)
 #less -F <<HEREDOC
 #NAME

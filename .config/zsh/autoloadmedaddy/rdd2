@@ -1,6 +1,6 @@
 #!/bin/zsh
 # DIR(S) OF MP3S, -> DIR OF ARTIST/ALBA/MP3S
-function rdd2 () {
+rdd2 () {
   ((# == 0)) && printf '%s\n' 'rdd2: Recursively puts all .mp3s contained in current directory into a "Artist/Artist [Album (Date)]" format.' && return 1;
   ((# == 1)) && [[ -d $1 ]] && cd $1;
   typeset a s d q; q=$(mktemp);

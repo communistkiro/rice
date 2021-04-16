@@ -1,6 +1,6 @@
 #!/bin/zsh
 # ADDS NEW LINKS (FROM CTEBCM POSTS)
-function xrpp () {
+xrpp () {
   ping -c 1 1.1.1.1 &>/dev/null || return 2;
   emulate -LR zsh;
   setopt rematch_pcre;

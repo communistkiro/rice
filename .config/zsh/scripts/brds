@@ -5,7 +5,7 @@ d=/tmp/brds; mkdir -p ${d}; cd ${d};
 alias fetch="curl -sfLH User-Agent:";
 [[ -f ${d}/boards.json ]] || fetch -o ${d}/boards.json https://a.4cdn.org/boards.json;
 
-function menu () {
+menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
     (m) 
@@ -16,14 +16,14 @@ function menu () {
   for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
 }
 
-function selb () {
+selb () {
   typeset a s;
   a=(${(fr.5..../.)"$(jq -r '.boards[].board' ${d}/boards.json)"});
   s=(${(f)"$(jq -r '.boards[].title' ${d}/boards.json)"});
   b=$(printf '/%-10s%s\n' ${a:^s} | fzy -l $LINES | awk -F / '{print $2}');
 }
 
-function selt () {
+selt () {
   [[ -z $n ]] && return;
   typeset t1 t2 t3 t4 t5 t6; integer q w e; e=0;
   until ((e > 0)) && ((e <= n)); do clear; read 'e?Input thread #: '; done;
@@ -62,11 +62,11 @@ function selt () {
   printf '%s\n' $#t1 >> ${d}/${b}-${c1[e]};
 }
 
-function refresh () {
+refresh () {
   fetch https://a.4cdn.org/${b}/catalog.json > ${d}/${b}.json || read -sk1 "?$?: Curling issue.";
 }
 
-function viewcat () {
+viewcat () {
   [[ -f ${d}/${b}-cat ]] && [[ $(read -seq '?Refresh catalog?') == n ]] && c1=(${(f)"$(jq -r '.[].threads[].no'      ${d}/${b}.json)"}) && n=$#c1 && less ${d}/${b}-cat && return 0;
   refresh;
   typeset c2 c3 c4 c5 c6 c7 c8 c9 a s; rm -f ${d}/${b}-cat;
@@ -98,7 +98,7 @@ function viewcat () {
   less ${d}/${b}-cat;
 }
 
-function () {
+() {
   until [[ ! -z ${b} ]]; do selb; done; # refresh;
   while true; do clear;
     menu -m 5b -t 5 "/${b}/ current board" "№$c1[e] current thread";

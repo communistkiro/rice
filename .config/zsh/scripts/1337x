@@ -9,7 +9,7 @@ typeset -i results pages c q lr ls ll lc ld lt;
 typeset -a cats title size url category date hash seed leech;
 n=$'\n'; 
 t=$(mktemp);
-function quit () { rm ${t} &>/dev/null; exit ${1:-0} }
+quit () { rm ${t} &>/dev/null; exit ${1:-0} }
 export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=begin";
 for base (1337x.to 1337x.tw 1337x.st 1377x.one 1337x.gd x1337x.eu x1337x.se) {
   ping -c 1 ${base} &>/dev/null && { base=https://${base}; break };

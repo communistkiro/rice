@@ -1,5 +1,5 @@
 #!/bin/zsh
-function () {
+() {
 typeset a v q;
 if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] { a=${1} } else { a=$(while { read -e -t 1 -r } { }) };
 [[ -n ${a} ]] || a=$(tr -cd '[:graph:][:blank:]' < /dev/urandom | head -c $((COLUMNS*LINES/2)));

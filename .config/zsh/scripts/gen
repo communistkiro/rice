@@ -1,5 +1,5 @@
 #!/bin/zsh
-# function gen () {
+# gen () {
 ((# == 0)) || return 1;
 typeset l u n s e x q a n1 n2 o1 o2; typeset -i length; q=$'\n';
 

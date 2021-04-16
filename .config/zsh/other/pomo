@@ -8,7 +8,7 @@ STAT_CMD="stat"
 [ -n $POMO_WORK_TIME ] && WORK_TIME=$POMO_WORK_TIME || WORK_TIME=40
 [ -n $POMO_BREAK_TIME ] && BREAK_TIME=$POMO_BREAK_TIME || BREAK_TIME=5
 
-function pomo_bar {
+pomo_bar {
   # smack dab in the middle of the dzen bar, a tomato
   local FG='#9ffb00'
   local BG='#202020'
@@ -16,25 +16,25 @@ function pomo_bar {
   dzen2 -e - -ta l -x '1080' -w '64' -h '16' -fg $FG -bg $BG -fn $FONT < <(/root/.config/zsh/scripts/pomo status) &> /dev/null &
 }
 
-function pomo_start {
+pomo_start {
     # Start new pomo block (work+break cycle).
     test -e $(dirname $POMO) || mkdir $(dirname $POMO)
     touch $POMO
 }
 
-function pomo_stop {
+pomo_stop {
     # Stop pomo cycles.
     rm -f $POMO
 }
 
-# function pomo_ispaused {
+# pomo_ispaused {
     # Return 0 if paused, 1 otherwise.
     # pomo.sh is paused if the POMO file contains any information.
     # [ $(wc -l $POMO | cut -d" " -f1) -gt 0 ]
     # return $?
 # }
 
-function pomo_pause {
+pomo_pause {
     # Toggle the pause status on the POMO file.
     if [ $(wc -l $POMO | cut -d" " -f1) -gt 0 ]; then
         # Restart a paused pomo block by updating the time stamp of the POMO
@@ -51,7 +51,7 @@ function pomo_pause {
     fi
 }
 
-function pomo_update {
+pomo_update {
     # Update the time stamp on POMO a new cycle has started.
     running=$(pomo_stat)
     block_time=$(( (WORK_TIME+BREAK_TIME)*60 ))
@@ -62,7 +62,7 @@ function pomo_update {
     fi
 }
 
-function pomo_stat {
+pomo_stat {
     # Return number of seconds since start of pomo block (work+break cycle).
     [[ -e $POMO ]] && running=$(cat $POMO) || running=0
     if [[ -z $running ]]; then
@@ -73,7 +73,7 @@ function pomo_stat {
     echo $running
 }
 
-function pomo_clock {
+pomo_clock {
     # Print out how much time is remaining in block.
     # WMM:SS indicates MM:SS left in the work block.
     # BMM:SS indicates MM:SS left in the break block.
@@ -96,14 +96,14 @@ function pomo_clock {
     fi
 }
 
-function pomo_status {
+pomo_status {
     while true; do
         echo $(pomo_clock)
         sleep 1
     done
 }
 
-function pomo_notify {
+pomo_notify {
     # Send a message using the GUI or console at the end of each
     # Pomodoro block.  This requires a Pomodoro session to
     # have already been started...
@@ -141,7 +141,7 @@ function pomo_notify {
 }
 
 
-function send_msg {
+send_msg {
     if command -v notify-send &> /dev/null; then
         notify-send Pomodoro "${1}"
     else
@@ -151,7 +151,7 @@ function send_msg {
 
 #--- Help ---
 
-function pomo_usage {
+pomo_usage {
     # Print out usage message.
     cat <<END
 pomo.sh [-h] [bar | start | stop | pause | clock | status | notify | usage]

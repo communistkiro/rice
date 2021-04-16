@@ -1,5 +1,5 @@
 #!/bin/zsh
-function unicode () {
+unicode () {
   typeset q;
   q=$(fzf -i +m --reverse --border=horizontal --print-query --bind=alt-\[:preview-up,alt-\':preview-down,\[:up,\':down --preview="uni -q -f '%(char)' search {q}" <<< '');
   [[ -n $q ]] && uni -q -f '%(char)' search ${q} | fzf -i -m --reverse --border=horizontal --bind=\[:up,\':down;

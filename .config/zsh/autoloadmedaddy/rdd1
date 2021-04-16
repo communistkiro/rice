@@ -1,5 +1,5 @@
 #!/bin/zsh
-function rdd1() {
+rdd1() {
   ((# == 0)) && printf '%s\n' 'rdd1: Turns a directory of alba into directories of artists filled with directories of alba in "Artist/Artist [Album (Date)]" format.' && return 1;
   ((# == 1)) && [[ -d $1 ]] && cd $1;
   typeset f d s z x;

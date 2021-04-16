@@ -1,5 +1,5 @@
 #!/bin/zsh
-function box () {
+box () {
 ((# > 0)) || return 0;
 typeset a d h B T H tl tr bl br th bh lv rv r w; 
 typeset -i s;

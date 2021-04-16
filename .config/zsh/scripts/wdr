@@ -3,7 +3,7 @@
  # { which zsh && which pup && which curl && which wget } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 
-function menu () {
+menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {
     (m) 
@@ -14,7 +14,7 @@ function menu () {
   for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
 }
 
-function box () {
+box () {
 ((# > 0)) || return 0;
 typeset a d h B T H tl tr bl br th bh lv rv r w; 
 typeset -i s;
@@ -61,7 +61,7 @@ else;
 fi;
 }
 
-function () {
+() {
   emulate -LR zsh;
   setopt pipe_fail extended_glob ksh_glob re_match_pcre;
   typeset key lon lat loc a w z n; 
