@@ -164,7 +164,7 @@ pickAddress () { # select one of previously set addresses
       (s) setAddress;;
       (r) fetchEmail;;
       (R) fetchEmail && viewEmail ${emailId[1+1]};;
-      (y) [[ -z ${userName} || -z ${domainName} ]] || printf '%s' ${userName}@${domainName} | xclip -selection clipboard;;
+      (y) [[ -z ${userName} || -z ${domainName} ]] || printf '%s' ${userName}@${domainName} | xclip -se c;;
       (c) pickAddress;;
       (C) customAddress;;
       (0) ((c += 10));&

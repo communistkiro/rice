@@ -1,0 +1,10 @@
+#!/bin/zsh
+#cz () {
+FZF_DEFAULT_OPTS="-i +m --layout=reverse --cycle --header=$(pwd) --bind=[:up,\':down,alt-[:preview-up,alt-':preview-down,\:accept-non-empty --preview='printf %s\n {}/*(DN:t)'";
+typeset sel;
+while { true } {
+  sel=${()$(printf '%s/\n' .. *(-/DN) | fzf)} || break;
+  [[ -d ${sel:a} ]] || sel=..;
+  cd ${sel:a};
+};
+#}

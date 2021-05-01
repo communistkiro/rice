@@ -7,5 +7,5 @@ if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] {
 } else {
   typeset q; q=$(mktemp); 
   while { read -e -t 1 -r } { } > ${q} && fzf --preview="perl -pe "{q}" ${q}" --preview-window=80%:down:sharp <<< '';
-  rm ${q} &>/dev/null;
+  rm -f ${q};
 };

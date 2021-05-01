@@ -5,7 +5,7 @@ emulate -LR zsh;
 setopt pipe_fail;
 
 # DEFAULTS
-EXTMENU='dmenu -i -l 48';
+EXTMENU='dmenu -r -l 48';
 EXTMENU_LEN=210;
 # typeset show_format;
 

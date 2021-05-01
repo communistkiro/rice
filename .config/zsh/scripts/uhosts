@@ -2,54 +2,94 @@
 emulate -LR zsh;
 # { which wget && which perl && which pup && which sed } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
-(($(ps -aux | pcre2grep "\b${0}\b" | wc -l) == 1)) || return 4;
+# (($(ps -aux | pcre2grep "\b${0}\b" | wc -l) == 1)) || return 4;
 typeset t q h;
 typeset -a file;
 typeset -i a;
 t=$(mktemp -d);
 file=(
-  http://winhelp2002.mvps.org/hosts.txt                                                                             #  1
-  https://raw.githubusercontent.com/c-edw/ios-telemetry/master/blacklist                                            #  2
-  https://raw.githubusercontent.com/jmdugan/blocklists/master/corporations/microsoft/all                            #  3
-  https://raw.githubusercontent.com/anudeepND/blacklist/master/facebook.txt                                         #  4
-  https://raw.githubusercontent.com/jmdugan/blocklists/master/corporations/facebook/all                             #  5
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/analytics.txt                               #  6
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/android.txt                                 #  7
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/dns.txt                                     #  8
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/domains.txt                                 #  9
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/doubleclick.txt                             # 10
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/firebase.txt                                # 11
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/fonts.txt                                   # 12
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/general.txt                                 # 13
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/mail.txt                                    # 14
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/products.txt                                # 15
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/proxies.txt                                 # 16
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/shortlinks.txt                              # 17
-  https://github.com/nickspaargaren/pihole-google/raw/master/categories/youtube.txt                                 # 18
-  https://raw.githubusercontent.com/nickspaargaren/pihole-google/master/google-domains                              # 19
-  https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt                                # 20
-  https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts              # 21
-  https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt                                  # 22
-  https://github.com/oneoffdallas/dohservers/raw/master/list.txt                                                    # 23
-  https://github.com/oneoffdallas/dohservers/raw/master/iplist.txt                                                  # 24
-  https://someonewhocares.org/hosts/zero/                                                                           # 25
-  https://gitlab.com/The_Quantum_Alpha/the-quantum-ad-list/-/raw/master/For%20hosts%20file/The_Quantum_Ad-List.txt  # 26
+  # 01
+  http://winhelp2002.mvps.org/hosts.txt
+  # 02
+  https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt
+  # 03
+  https://someonewhocares.org/hosts/zero/
+  # 04
+  https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+  # 05
+  https://raw.githubusercontent.com/nickspaargaren/pihole-google/master/google-domains
+  # 06
+  https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt
+  # 07
+  https://raw.githubusercontent.com/jmdugan/blocklists/master/corporations/microsoft/all
+  # 08
+  https://raw.githubusercontent.com/jmdugan/blocklists/master/corporations/facebook/all
+  # 09
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/analytics.txt
+  # 10
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/android.txt
+  # 11
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/dns.txt
+  # 12
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/domains.txt
+  # 13
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/doubleclick.txt
+  # 14
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/firebase.txt
+  # 15
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/fonts.txt
+  # 16
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/general.txt
+  # 17
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/mail.txt
+  # 18
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/products.txt
+  # 19
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/proxies.txt
+  # 20
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/shortlinks.txt
+  # 21
+  https://github.com/nickspaargaren/pihole-google/raw/master/categories/youtube.txt
+  # 22
+  https://raw.githubusercontent.com/anudeepND/blacklist/master/facebook.txt
+  # 23
+  https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt
+  # 24
+  https://github.com/oneoffdallas/dohservers/raw/master/list.txt
+  # 25
+  https://github.com/oneoffdallas/dohservers/raw/master/iplist.txt
+  # 26
+  https://raw.githubusercontent.com/c-edw/ios-telemetry/master/blacklist
+  # 27
+  https://gitlab.com/The_Quantum_Alpha/the-quantum-ad-list/-/raw/master/For%20hosts%20file/The_Quantum_Ad-List.txt  
+  # 28
+  https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-social/hosts
 );
 
-for a ( {1..${#file}} ) { wget -q -O ${t}/${a} ${file[a]} & }; printf '\nFucking wait.\n\n'; wait;
+for a ( {1..${#file}} ) { wget -q -O ${t}/${a} ${file[a]} & }; printf '%s\n' 'Downloading hosts files.' 'Fucking wait.' ${(l.COLUMNS..-.)}; wait;
 
-pup -f ${t}/25 -p '.BODY' | tail -n +108 > ${t}/0 && mv ${t}/0 ${t}/25 || return 4;
+pup -f ${t}/3 -p '.BODY' | tail -n +108 > ${t}/q; mv ${t}/q ${t}/3;
 
 # https://unix.stackexchange.com/questions/29724/how-to-properly-collect-an-array-of-lines-in-zsh
 perl -ne 's/^#0\.0\.0\.0 (\S+)$/$1/ && print' /etc/hosts >> ~/dcs/holdme;
 sort -uo ~/dcs/holdme ~/dcs/holdme;
 
-head -n 29 ${t}/21 | tail -n 14 > /etc/hosts;
-sed -i '1,40d' ${t}/21;
+printf '%s\n' \
+  '127.0.0.1 localhost' \
+  '127.0.0.1 localhost.localdomain' \
+  '127.0.0.1 local' \
+  '255.255.255.255 broadcasthost' \
+  '::1 localhost' \
+  '::1 ip6-localhost' \
+  '::1 ip6-loopback' \
+  'fe80::1%lo0 localhost' \
+  'ff00::0 ip6-localnet' \
+  'ff00::0 ip6-mcastprefix' \
+  '0.0.0.0 0.0.0.0' > /etc/hosts;
 
-cat ${t}/* ~/dcs/blockme | perl -pe '
+sort -u <(perl -pe '
   s/.*\b((local|broadcast)host|loopback|ip6-\w+)\b.*//n;
-  s/[\ \t\f\r]+/ /g;
+  s/[ \t\f\r]+/ /g;
   s/#+/#/g;
   s/^ +//;
   s/^#? ?:+ ?//;
@@ -58,7 +98,7 @@ cat ${t}/* ~/dcs/blockme | perl -pe '
   s/^(.+)#.*$/$1/;
   s/(^(?!0\.0\.0\.0).+)/0.0.0.0 $1/;
   s/^0\.0\.0\.0 127\.0\.0\.1/0.0.0.0/;
-  s/ +$//' | tr -s '\n' | sort -u > ${t}/h;
+  s/ +$//' ${t}/* | tr -s '\n') ~/dcs/{blockme,redirections} > ${t}/h;
 
 # if [[ -s holdme ]] {
 #   while IFS= read -r h; do perl -ie "s/^${h}$/#&/" h >> /etc/hosts; done < holdme;
@@ -70,20 +110,29 @@ cat ${t}/* ~/dcs/blockme | perl -pe '
 ###
 # for q ( ${(f)"$(< ~/dcs/holdme)"} ) { sed -ir "s/^0\.0\.0\.0 ${q}$/#&/" ${t}/h };
 ###
-
+# diff ${t}/h ~/dcs/holdme | pcre2grep '^<' | cut -c 3- >> /etc/hosts
+###
 h=${(j:|:)$(< ~/dcs/holdme)};
-perl -pe "s/^0\.0\.0\.0 (?:${h})$//" ${t}/h >> /etc/hosts;
+perl -pe "s/^0\.0\.0\.0 (?:${h})\n//" ${t}/h >> /etc/hosts;
 rm -vf ${t}/*;
 
-#diff ${t}/h ~/dcs/holdme | pcre2grep '^<' | cut -c 3- >> /etc/hosts
+
+
 
 file=(
-  https://easylist.to/easylist/easylist.txt             # 5
-  https://easylist.to/easylist/fanboy-social.txt        # 4
-  https://secure.fanboy.co.nz/fanboy-cookiemonster.txt  # 3
-  https://easylist.to/easylist/fanboy-annoyance.txt     # 2
-  https://easylist.to/easylist/easyprivacy.txt          # 1
+  https://easylist.to/easylist/easylist.txt
+  https://easylist.to/easylist/easyprivacy.txt
+  https://easylist.to/easylist/fanboy-social.txt
+  https://easylist.to/easylist/fanboy-annoyance.txt
+  https://secure.fanboy.co.nz/fanboy-cookiemonster.txt
+  http://stanev.org/abp/adblock_bg.txt
+  https://easylist.to/easylistgermany/easylistgermany.txt
+  https://easylist-downloads.adblockplus.org/antiadblockfilters.txt
 );
-wget -P ${t} ${(z)file};
-cat ${t}/*(oc[1,5]) | sort -u > ~/.config/wyebadblock/easylist.txt;
+for a ( {1..${#file}} ) { wget -P ${t} ${file[a]} & }; printf '%s\n' 'Downloading wyebadblock json files.' 'Fucking wait.' ${(l.COLUMNS..-.)}; wait;
+#sort -u ${t}/* > ~/.config/wyebadblock/easylist.txt;
+perl -pe 's/^!.*\n//' ${t}/* | sort -u | tail -n +3 > ~/.config/wyebadblock/easylist.txt;
+
+#printf '(window.onload = function() {\nconst blockme = [ %s ];\nfunction removal(value) {\n\tdocument.querySelectorAll(value).forEach(el => el.remove());\n}\nblockme.forEach(removal);\n})' ${(j., .)${(f)"$(<~/.config/wyebadblock/easylist.txt)"//(#m)[.\\\+\*\?\(\)\{\}\[\]\!\^\$\=\<\>\|\:\-]/\\${MATCH}}} > ~/.surf/script/elmblock.js;
+
 rm -rvf ${t};

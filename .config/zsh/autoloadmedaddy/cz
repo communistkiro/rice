@@ -1,9 +1,0 @@
-#!/bin/zsh
-cz () {
-typeset sel;
-while { true } {
-  sel="$(printf '%s/\n' .. *(-/DN) | fzf -i +m --reverse --cycle --bind=\[:up,\':down,alt-\[:preview-up,alt-\':preview-down,\\:accept,\;:unix-line-discard --header="$(pwd)" --preview="printf '%s\n' {}/*(DN:t)" --preview-window=right:40%)" || break;
-    [[ -d ${sel:a} ]] || sel=..;
-    cd ${sel:a};
-};
-}

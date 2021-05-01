@@ -120,7 +120,7 @@ yt_get_sel () { # split the concatenated lines into entities, send to selector, 
     [[ -t 0 ]] && {
       sel=$(yt_cat_subs | fzy -l ${LINES}) || return 0;
     } || {
-      sel=$(yt_cat_subs | dmenu -l 16 -i) || return 0;
+      sel=$(yt_cat_subs | dmenu -l 32 -r) || return 0;
     };
   } || yt_die 'Subs cache has not been retrieved.';
   if ((${+dl})) {

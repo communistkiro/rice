@@ -109,6 +109,6 @@ HEREDOC
       printf '%s\n' ${link} >> ~/nm/bcold && sort -uo ~/nm/bcold ~/nm/bcold;
     };
     sed -i '1,1d' ~/nm/bcnew;
-    rm -f ${t1} ${t2} ${t3} &>/dev/null;
+    rm -f ${t1} ${t2} ${t3};
   };
 }

@@ -127,7 +127,7 @@ cmd fzf ${{
 
 cmd 7za ${{
   set -f;
-  if (($# > 0)); then 7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m ${"$(printf '%s ' $@)"%?}.7z $fx;
+  if (($# > 0)); then 7za a -t7z -mx=9 -mfb=64 -md=32m ${"$(printf '%s ' $@)"%?}.7z $fx;
   else 7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m $(cat /dev/random | tr -cd '[:alnum:]' | head -c 32).7z $fx; fi
 }}
 
@@ -343,12 +343,12 @@ map \}          top
 # ACTIONS
 map Q           quit
 map <c-q>       quit
-# map @           push $printf<space>'%s\n'<space>$fx<space>|<space>xargs<space>-d<space>'\n'<space>
 map <esc>       cmd-escape
 map yy          copy
 map ya          copy-add
 map yr          copy-remove
-map yp          push #printf<space>'%s<space>'<space>${(q)fx:a}|xclip<space>-selection<space>clipboard<enter>
+map yp          push #printf<space>'%s<space>'<space>${(q)fx:a}|xclip<space>-se<space>c<enter>
+map yP          push #printf<space>'%s<space>'<space>${fx:a}|xclip<space>-se<space>c<enter>
 map dd          cut
 map da          cut-add
 map dr          cut-remove

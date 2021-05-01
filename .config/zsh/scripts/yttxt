@@ -4,7 +4,7 @@ for s ( ${@} ) {
     a=(~/mov/*.en.vtt(.oc[1]));
     [[ -n ${a} ]] || { printf '%s: No English subtitles found.\n' ${s#*=}; continue };
     sed '/-->/d; /<c>/d; /^[[:space:]]*$/d' ${a} | uniq > ${a%.en.vtt}.txt;
-    rm $a &>/dev/null;
+    rm -f $a;
   };
 };
 

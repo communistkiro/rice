@@ -8,7 +8,7 @@
 emulate -L zsh
 
 tetris_hsz=10
-tetris_vsz=$((LINES * 4 / 5))
+tetris_vsz=$((LINES * 95 / 100))
 typeset -ga tetris_shapes
 tetris_shapes=(
 	0x0f00 0x4444 0x0f00 0x4444

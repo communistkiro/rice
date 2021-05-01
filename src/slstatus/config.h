@@ -64,7 +64,7 @@ static const char unknown_str[] = "";
 static const struct arg args[] = {
     /* function             format      argument                                   */
     // { keymap,               "%.2s",     NULL                                        } ,
-    { timer,                "%s│",      NULL                                        } ,
+    // { timer,                "%s│",      NULL                                        } ,
     { temp,                 "%02s℃",   "/sys/class/thermal/thermal_zone0/temp"     } , /*🔥*/
     { temp,                 "%02s ",    "/sys/class/thermal/thermal_zone1/temp"     } ,
     { cpu_perc,             "%s ",      NULL                                        } ,

@@ -1,0 +1,9 @@
+#!/bin/zsh
+uridecode () {
+emulate -LR zsh;
+typeset q w;
+[[ ${#} > 0 ]] || { q=$(mktemp); while { read -e -t 1 -r } { } > ${q}; [[ -s ${q} ]] || return };
+eval "w=\$'${${${@:-$(<${q})}:gs/\\/\\\\}:gs/%/\\x}'";
+printf '%s\n' ${w};
+rm -f ${q};
+}

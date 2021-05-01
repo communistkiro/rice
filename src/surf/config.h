@@ -1,0 +1,254 @@
+/* modifier 0 means no modifier */
+static int surfuseragent    = 0;  /* Append Surf version to default WebKit user agent */
+static char *fulluseragent  = ""; /* Or override the whole user agent string */
+static char *scriptfile     = "~/.surf/script.js";
+static char *styledir       = "~/.surf/styles/";
+static char *scriptdir      = "~/.surf/script/";
+static char *certdir        = "~/.surf/certificates/";
+static char *cachedir       = "~/.surf/cache/";
+static char *cookiefile     = "~/.surf/cookies.txt";
+static char **plugindirs    = (char*[]){
+	// "~/.surf/plugins/",
+	// LIBPREFIX "/mozilla/plugins/",
+	NULL
+};
+
+/* Webkit default features */
+/* Highest priority value will be used.
+ * Default parameters are priority 0
+ * Per-uri parameters are priority 1
+ * Command parameters are priority 2
+ */
+static Parameter defconfig[ParameterLast] = {
+	/* Parameter 			Arg value       Priority */
+	[AcceleratedCanvas]   =	{	{ .i = 1 },		},
+	[AccessMicrophone]    = {	{ .i = 0 },		},
+	[AccessWebcam]        =	{	{ .i = 0 },		},
+	[Certificate]         =	{	{ .i = 0 },		},
+	[CaretBrowsing]       =	{	{ .i = 0 },		},
+	[CookiePolicies]      =	{	{ .v = "a@" },	},
+	[DefaultCharset]      =	{	{ .v = "UTF-8"	}, 	},
+	[DiskCache]           =	{	{ .i = 1 },		},
+	[DNSPrefetch]         =	{	{ .i = 0 },		},
+	[Ephemeral]           =	{	{ .i = 0 },		},
+	[FileURLsCrossAccess] =	{	{ .i = 0 },		},
+	[FontSize]            =	{	{ .i = 16 },	},
+	[FrameFlattening]     =	{	{ .i = 0 },		},
+	[Geolocation]         =	{	{ .i = 0 },		},
+	[HideBackground]      =	{	{ .i = 0 },		},
+	[Inspector]           =	{	{ .i = 1 },		},
+	[Java]                =	{	{ .i = 1 },		},
+	[JavaScript]          =	{	{ .i = 0 },		},
+	[KioskMode]           =	{	{ .i = 0 },		},
+	[LoadImages]          =	{	{ .i = 1 },		},
+	[MediaManualPlay]     =	{	{ .i = 0 },		},
+	[Plugins]             =	{	{ .i = 0 },		},
+	[PreferredLanguages]  =	{	{ .v = (char *[]){ NULL } }, },
+	[RunInFullscreen]     =	{	{ .i = 0 },		},
+	[ScrollBars]          =	{	{ .i = 1 },		},
+	[ShowIndicators]      =	{	{ .i = 1 },		},
+	[SiteQuirks]          =	{	{ .i = 1 },		},
+	[SmoothScrolling]     =	{	{ .i = 0 },		},
+	[SpellChecking]       =	{	{ .i = 0 },		},
+	[SpellLanguages]      =	{	{ .v = ((char *[]){ "en_US", NULL }) }, },
+	[StrictTLS]           =	{	{ .i = 0 },		},
+	[Style]               =	{	{ .i = 1 },		},
+	[UserScript]          =	{	{ .i = 1 },		},
+	[WebGL]               =	{	{ .i = 0 },		},
+	[ZoomLevel]           =	{	{ .f = 1.05 },	},
+};
+
+static UriParameters uriparams[] = {
+	{ "://(www\\.)?(lainchan|boards.4chan(nel)?)\\.org(/|$)", {
+	[CookiePolicies]      =	{	{ .v = "@a" },	2},
+		[JavaScript]		= { { .i =	1	},	2 },
+		[Style]				= {	{ .i = 	0 	},	2 },
+		[UserScript]		= {	{ .i =	1	},	2 },
+	}, },
+
+	{ "://(www\\.)?(wizchan\\.org|endchan\\.net|2ch\\.hk)(/|$)", {
+		[JavaScript]		= { { .i =	1	},	2 },
+		[Style]				= {	{ .i = 	0 	},	2 },
+		[UserScript]		= {	{ .i =	0	},	2 },
+	}, },
+	{ "://(www\\.)?git(hub|lab)\\.com(/|$)", {
+		[JavaScript]		= { { .i =	1	},	2 },
+		[Style]				= {	{ .i = 	1 	},	2 },
+		[UserScript]		= {	{ .i =	0	},	2 },
+	}, },
+
+	{ "://(www\\.)?mail\\.(protonmail|tuta(nota|mail))\\.com(/|$)", {
+		[JavaScript]		= { { .i =	1	},	2 },
+		[Style]				= {	{ .i = 	1 	},	2 },
+		[UserScript]		= {	{ .i =	0	},	2 },
+	}, },
+
+	{ "://([^.]+\\.)?neocities\\.org(/|$)", {
+		[JavaScript]		= { { .i =	1	},	2 },
+		[Style]				= {	{ .i = 	1 	},	2 },
+		[UserScript]		= {	{ .i =	0	},	2 },
+	}, },
+
+	{ "://(www\\.)?([^.]+\\.)wik(tionary|i(pedia|species|news|source|books|quote|media|versity|voyage))\\.org/", {
+		[JavaScript] 		= { { .i =	1	},	2 },
+		[Style]				= {	{ .i = 	1 	},	2 },
+		[UserScript]		= {	{ .i =	0	},	2 },
+	}, },
+
+	{ "://(www\\.)?(reddit|twitter)\\.com(/|$)", {
+		[JavaScript] 		= { { .i =	0	},	2 },
+		[Style]				= {	{ .i = 	1 	},	2 },
+		[UserScript]		= {	{ .i =	1	},	2 },
+	}, },
+
+	// { "duckduckgo\\.com(/|$)", {
+	// 	[CookiePolicies]	= {	{ .v =	"a"	},	2 },
+	// 	[JavaScript] 		= { { .i =	1	},	2 },
+	// 	[Style]				= {	{ .i = 	1 	},	2 },
+	// 	[UserScript]		= {	{ .i =	0	},	2 },
+	// 	[Geolocation]		= {	{ .i =	0	},	2 },
+	// }, },
+
+	{ ".*", {
+		[JavaScript] 		= { { .i =	0	},	2 },
+		[Style]				= {	{ .i = 	1 	},	2 },
+		[UserScript]		= {	{ .i =	0	},	2 },
+		[Geolocation]		= {	{ .i =	0	},	2 },
+	}, },
+};
+
+/* default window size: width, height */
+static int winsize[] = { 800, 600 };
+
+static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
+									WEBKIT_FIND_OPTIONS_WRAP_AROUND;
+
+#define PROMPT_GO   "Go:"
+#define PROMPT_FIND "Find:"
+
+/* SETPROP(readprop, setprop, prompt)*/
+#define SETPROP(r, s, p) { \
+		.v = (const char *[]){ "/bin/sh", "-c", \
+			 "prop=\"$(printf '%b' \"$(xprop -id $1 $2 " \
+			 "| sed \"s/^$2(STRING) = //;s/^\\\"\\(.*\\)\\\"$/\\1/\")\" " \
+			 "| dmenu -p \"$4\")\" && xprop -id $1 -f $3 8s -set $3 \"$prop\"", \
+			 "surf-setprop", winid, r, s, p, NULL \
+		} \
+}
+
+/* DOWNLOAD(URI, referer) */
+#define DOWNLOAD(u, r) { \
+		.v = (const char *[]){ "st", "-c", "surf-download", "-n", "surf-download", "-e", "/bin/sh", "-c",\
+			 "curl -g -L -J -O -A \"$1\" -b \"$2\" -c \"$2\"" \
+			 " -e \"$3\" \"$4\"; read", \
+			 "surf-download", useragent, cookiefile, r, u, NULL \
+		} \
+}
+
+/* PLUMB(URI) */
+/* This called when some URI which does not begin with "about:",
+ * "http://" or "https://" should be opened.
+ */
+#define PLUMB(u) {\
+		.v = (const char *[]){ "/bin/sh", "-c", \
+			"xdg-open \"$0\"", u, NULL \
+		} \
+}
+
+/* VIDEOPLAY(URI) */
+#define VIDEOPLAY(u) {\
+		.v = (const char *[]){ "/bin/sh", "-c", \
+			 "mpv --really-quiet \"$0\"", u, NULL \
+		} \
+}
+
+/* surfraw implementation; instead of "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))" do "echo '/etc/crontab 00 * * * * surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks | cut -d\  -f1 >> ~/.config/surfraw/cache' >> /etc/crontab", and just cat the file into dmenu - it's faster */
+#define SR_SEARCH {\
+		.v = (char *[]){ "/bin/sh", "-c", \
+			 "e=$(cat ~/.config/surfraw/cache | dmenu -p 'elvi:') || return; xprop -id $0 -f _SURF_GO 8s -set _SURF_GO \"$(surfraw -p $e)\"", winid, NULL  \
+		} \
+}
+
+/* styles */
+/*
+ * The iteration will stop at the first match, beginning at the beginning of
+ * the list.
+ */
+static SiteSpecific styles[] = {
+	/* regexp                                   file in $styledir  */
+	{ ".*",                                     "default.css"       },
+};
+
+
+/* scripts */
+static SiteSpecific scripts[] = {
+	/* regexp												file in $scriptdir */
+	{ "https://(lainchan|boards.4chan(nel)?)\\.org(/|$)",	"4chan-X.user.js"	},
+	{ "https://(www\\.)?reddit\\.com(/|$)",					"teddit.js"			},
+	{ "https://(www\\.)?twitter\\.com(/|$)",				"nitter.js"			},
+	// { ".*",													"elmblock.js"		},
+};
+
+/* certificates */
+/*
+ * Provide custom certificate for urls
+ */
+static SiteSpecific certs[] = {
+	/* regexp                           file in $certdir */
+};
+
+#define MODKEY GDK_MOD1_MASK
+
+/* HOTKEYS */
+/*
+ * IF YOU USE ANYTHING ELSE BUT MODKEY AND GDK_SHIFT_MASK, DON'T FORGET TO
+ * EDIT THE CLEANMASK() MACRO.
+ */
+static Key keys[] = {
+	/* modifier					keyval						function			arg */
+	{ MODKEY,					GDK_KEY_g,					spawn,				SETPROP("_SURF_URI", "_SURF_GO", PROMPT_GO) },
+	{ MODKEY,					GDK_KEY_f,					spawn,				SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
+	{ MODKEY,					GDK_KEY_q,					spawn,				SR_SEARCH },
+	{ 0,						GDK_KEY_Escape,				stop,				{ 0 } },
+	{ MODKEY,					GDK_KEY_r,					reload,				{ .i =  0 } },
+	{ MODKEY,					GDK_KEY_r,					reload,				{ .i =  1 } },
+	{ MODKEY,					GDK_KEY_Right	,			navigate,			{ .i =  1 } },
+	{ MODKEY,					GDK_KEY_Left,				navigate,			{ .i = -1 } },
+	{ MODKEY,					GDK_KEY_apostrophe,			scrollv,			{ .i =  10 } },
+	{ MODKEY,					GDK_KEY_bracketleft,		scrollv,			{ .i = -10 } },
+	// { MODKEY|GDK_SHIFT_MASK,	GDK_KEY_semicolon,			scrollh,			{ .i =  10 } },
+	// { MODKEY|GDK_SHIFT_MASK,	GDK_KEY_backslash,			scrollh,			{ .i = -10 } },
+	{ MODKEY,					GDK_KEY_minus,				zoom,				{ .i = -1 } },
+	{ MODKEY,					GDK_KEY_equal,				zoom,				{ .i =  1 } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_plus,				zoom,				{ .i =  0 } },
+	{ MODKEY,					GDK_KEY_o,					clipboard,			{ .i =  0 } },
+	{ MODKEY,					GDK_KEY_p,					clipboard,			{ .i =  1 } },
+	{ MODKEY,					GDK_KEY_n,					find,				{ .i =  1 } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_n,					find,				{ .i = -1 } },
+	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_p,                  print,              { 0 } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_a,                  togglecookiepolicy, { 0 } },
+	{ 0,						GDK_KEY_F11,                togglefullscreen,   { 0 } },
+	{ 0,						GDK_KEY_F12,                toggleinspector,    { 0 } },
+	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_y,                  showcert,           { 0 } },
+	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_F10,                toggle,             { .i = CaretBrowsing } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_f,					toggle,				{ .i = FrameFlattening } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_s,					toggle,				{ .i = JavaScript } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_i,					toggle,				{ .i = LoadImages } },
+	// { MODKEY|GDK_CONTROL_MASK, GDK_KEY_g,                  toggle,             { .i = Geolocation } },
+	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_a,                  toggle,             { .i = Plugins } },
+	// { MODKEY|GDK_CONTROL_MASK, GDK_KEY_b,                  toggle,             { .i = ScrollBars } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_t,					toggle,				{ .i = StrictTLS } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_m,					toggle,				{ .i = Style } },
+};
+
+/* button definitions */
+/* target can be OnDoc, OnLink, OnImg, OnMedia, OnEdit, OnBar, OnSel, OnAny */
+static Button buttons[] = {
+	/* target       event mask      	button  function           argument        stop event */
+	{ OnLink,       0,              	2,      clicknewwindow,    { .i =  0 },    1 },
+	// { OnLink,       GDK_SHIFT_MASK,		2,      clicknewwindow,    { .i =  1 },    1 },
+	// { OnLink,       GDK_SHIFT_MASK,		1,      clicknewwindow,    { .i =  1 },    1 },
+	{ OnAny,        0,              	8,      clicknavigate,     { .i = -1 },    1 },
+	{ OnAny,        0,              	9,      clicknavigate,     { .i =  1 },    1 },
+	{ OnMedia,      GDK_SHIFT_MASK,		1,      clickexternplayer, { 0       },    1 },
+};

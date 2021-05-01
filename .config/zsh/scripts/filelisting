@@ -36,12 +36,10 @@ for q ( {0..${pages}} ) {
 };
 
 lr=${(c)#results};
-for q ( {1..${results}} ) {
-  ((${(c)#title[q]} > lt)) && lt=${(c)#title[q]};
-  ((${(c)#size[q]}  > lz)) && lz=${(c)#size[q]};
-  ((${(c)#seed[q]}  > ls)) && ls=${(c)#seed[q]};
-  ((${(c)#leech[q]} > ll)) && ll=${(c)#leech[q]};
-};
+lt=${${(On)title//(#m)*/${#MATCH}}[1]};
+lz=${${(On)size//(#m)*/${#MATCH}}[1]};
+ls=${${(On)seed//(#m)*/${#MATCH}}[1]};
+ll=${${(On)leech//(#m)*/${#MATCH}}[1]};
 
 for q ( {1..${results}} ) {
     printf "%.${lr}d  %b%-${lt}.${lt}s  %b%${lz}.${lz}s  %b%.${ls}d%b/%b%.${ll}d\n" \

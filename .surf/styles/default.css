@@ -1,9 +1,10 @@
-html {
-  font-family: "Fira Code";
+.mwe-math-element,
+img
+{
+    filter: invert(1) hue-rotate(180deg);
 }
-html, img { 
-  -webkit-filter: invert(90%) hue-rotate(180deg); 
-}
-.mwe-math-element  { 
-  -webkit-filter: invert(100%) hue-rotate(180deg); 
+
+html
+{
+    filter: invert(.9) hue-rotate(180deg);
 }

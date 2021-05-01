@@ -9,7 +9,7 @@ typeset -i results pages c q lr ls ll lc ld lt;
 typeset -a cats title size url category date hash seed leech;
 n=$'\n'; 
 t=$(mktemp);
-quit () { rm ${t} &>/dev/null; exit ${1:-0} }
+quit () { rm -f ${t}; exit ${1:-0} }
 export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=begin";
 for base (1337x.to 1337x.tw 1337x.st 1377x.one 1337x.gd x1337x.eu x1337x.se) {
   ping -c 1 ${base} &>/dev/null && { base=https://${base}; break };
@@ -43,16 +43,13 @@ for q ( {1..${pages}} ) {
   url+=(${(f)"$(     pup -p -f ${t} 'td a[href^=/torrent/] attr{href}')"});
   category+=(${(f)"$(pup -p -f ${t} 'td.name .icon i attr{class}' | cut -d - -f 2-)"});
   date+=(${(f)"$(    pup -p -f ${t} 'td.coll-date text{}')"});
-  curl -sfLH User-Agent: -o ${t} ${base}${query}$((q + 1))/;
+  curl -sfLH User-Agent: -o ${t} ${base}${query}$((q + 1))/; 
 };
 
 results=${#title};
-for q ( {1..${results}} ) {
-  ((${(c)#title[q]}    > lt)) && lt=${(c)#title[q]};
-  ((${(c)#category[q]} > lc)) && lc=${(c)#category[q]};
-  ((${(c)#date[q]}     > ld)) && ld=${(c)#date[q]};
-};
-
+lt=${${(On)title//(#m)*/${#MATCH}}[1]};
+lc=${${(On)category//(#m)*/${#MATCH}}[1]};
+ld=${${(On)date//(#m)*/${#MATCH}}[1]};
 lr=${(c)#${results}};
 ls=${(c)#${${(nO)seed}[1]}};
 ll=${(c)#${${(nO)leech}[1]}};

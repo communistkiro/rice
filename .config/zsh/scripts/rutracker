@@ -11,7 +11,7 @@ typeset -i page q;
 typeset -a name url;
 n=$'\n'; 
 t=$(mktemp);
-quit () { rm ${t} &>/dev/null; exit ${1:-0} }
+quit () { rm -f ${t}; exit ${1:-0} }
 export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=begin";
 
 query="${${@}:-$(read -er "?${n}> ")}";

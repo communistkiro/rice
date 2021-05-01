@@ -1,0 +1,12 @@
+#!/bin/zsh
+# pcre2grep made interactive - https://github.com/igoyak/igrepper
+FZF_DEFAULT_OPTS="--disabled --reverse --print-query --ansi --border=horizontal --bind=alt-\[:preview-up,alt-\':preview-down --preview-window=99%:down:sharp";
+if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] {
+  fzf --preview='pcre2grep --color -i "{q}" '${1:a:q} --preview-window=99%:down:sharp <<< '';
+} else {
+  typeset q; q=$(mktemp);
+  while { read -e -t 1 -r } { } > ${q};
+  fzf --preview='pcre2grep --color -i "{q}" '${q:q} <<< '';
+  # while { read -e -t 1 -r } { } | fzf --preview='pcre2grep --color -i "{q}"';
+  rm ${q};
+};

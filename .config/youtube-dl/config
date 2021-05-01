@@ -5,5 +5,4 @@
 --age-limit 99
 --geo-bypass
 --youtube-skip-dash-manifest
---add-metadata
 --no-mtime

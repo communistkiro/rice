@@ -13,7 +13,7 @@ query="${${@}:-$(read -er "?${n}> ")}";
 # [[ ! ${query} =~ '^\s*$' ]] || return 4;
 [[ ${query} =~ '^\s*$' ]] && query= || query=$(uritool query escape ${query});
 base=https://nyaa.si/;
-quit () { rm -f ${t} &>/dev/null; exit ${1:-0} };
+quit () { rm -f ${t}; exit ${1:-0} };
 menu () {
   typeset m t a;
   while { getopts 'm:t:' a } { case $a {

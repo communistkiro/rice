@@ -63,5 +63,5 @@ HEREDOC
   cat ~/nm/spnew >> ${t2};
   sort -u ${t2} > ~/nm/spnew;
 
-  rm ${t1} ${t2} ${t3} ${t4} &>/dev/null; return 0;
+  rm ${t1} ${t2} ${t3} ${t4};
 }

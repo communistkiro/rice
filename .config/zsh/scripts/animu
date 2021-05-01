@@ -2,7 +2,7 @@
 [[ -t 0 ]] || return 1;
 # { which xdccget && which pcre2grep } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
-trap "cd ~; rm -rf ${tmp} ${bots}; return 0;" QUIT HUP;
+trap "cd ~; rm -f ${tmp} ${bots}; return 0;" QUIT HUP;
 emulate -LR zsh;
 setopt ksh_glob pipe_fail;
 typeset tmp bots dest conf querydir qual query bot sth file n;
@@ -13,7 +13,7 @@ tmp=$(mktemp  /tmp/a.XXXXXXXX);
 bots=$(mktemp /tmp/b.XXXXXXXX); 
 conf='/root/.config/animu.conf';
 trap 'break 1;' INT;
-quit () { cd ~; rm -f ${tmp} ${bots} &>/dev/null ; exit ${1:-0} }
+quit () { cd ~; rm -f ${tmp} ${bots}; exit ${1:-0} }
 cd /tmp;
 
 [[ -s ${conf} ]] && {

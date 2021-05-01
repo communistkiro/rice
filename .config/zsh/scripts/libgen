@@ -1,11 +1,11 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
-# { which zsh && which pup && which curl && which wget && which pcre2grep && which uritool } &>/dev/null || return 2;
+# { which zsh && which pup && which curl && which wget && which pcre2grep } &>/dev/null || return 2;
 emulate -LR zsh;
 setopt pipe_fail ksh_glob extended_glob;
-typeset query base t n z target;
+typeset query base t n;
 
-quit () { rm -f ${t} &>/dev/null; exit ${1:-0} };
+quit () { rm -f ${t}; exit ${1:-0} };
 
 n=$'\n'; t=$(mktemp);
 query=${${@}:-$(read -er "?${n}> ")};
@@ -15,6 +15,23 @@ ping -c 1 libgen.rs &>/dev/null && base=http://libgen.rs/ ||
 ping -c 1 libgen.is &>/dev/null && base=http://libgen.is/ ||
 ping -c 1 libgen.st &>/dev/null && base=http://libgen.st/ ||
 quit 3;
+
+uriencode () {
+  emulate -LR zsh;
+  setopt extendedglob;
+  typeset input;
+  input=( ${(s::)@} );
+  printf '%s\n' ${(j::)input/(#b)([^A-Za-z0-9-_.~])/%${(l:2::0:)$(([##16]#match))}};
+}
+
+uridecode () {
+  emulate -LR zsh;
+  typeset q w;
+  # [[ ${#} > 0 ]] || { q=$(mktemp); while { read -e -t 1 -r } { } > ${q}; [[ -s ${q} ]] || return };
+  eval "w=\$'${${${@:-$(<${q})}:gs/\\/\\\\}:gs/%/\\x}'";
+  printf '%s\n' ${w};
+  rm -f ${q};
+}
 
 menu () {
   typeset m t a;
@@ -70,7 +87,7 @@ case $(read -sek1 "?${n}") {
         (0) base+=\&column=extension;;
         (*) base+=\&column=def;;
       };
-      base+=\&req=$(uritool query escape ${query});
+      base+=\&req=$(uriencode ${query});
 
     curl -sfLH User-Agent: -o ${t} ${base//detailed/simple}\&open=0;
 
@@ -134,16 +151,13 @@ case $(read -sek1 "?${n}") {
     };
 
     lr=${(c)#results};
-    for q ( {1..${results}} ) {
-      ((${(c)#title[q]}     > lt)) && lt=${(c)#title[q]};
-      ((${(c)#edition[q]}   > le)) && le=${(c)#edition[q]};
-      ((${(c)#publisher[q]} > lp)) && lp=${(c)#publisher[q]};
-      ((${(c)#author[q]}    > la)) && la=${(c)#author[q]};
-      ((${(c)#length[q]}    > ll)) && ll=${(c)#length[q]};
-      ((${(c)#size[q]}      > ls)) && ls=${(c)#size[q]};
-      ((${(c)#format[q]}    > lf)) && lf=${(c)#format[q]};
-      ((${(c)#language[q]}  > lL)) && lL=${(c)#language[q]};
-    };
+    le=${${(On)edition//(#m)*/${#MATCH}}[1]};
+    lp=${${(On)publisher//(#m)*/${#MATCH}}[1]};
+    la=${${(On)author//(#m)*/${#MATCH}}[1]};
+    ll=${${(On)length//(#m)*/${#MATCH}}[1]};
+    ls=${${(On)size//(#m)*/${#MATCH}}[1]};
+    lf=${${(On)format//(#m)*/${#MATCH}}[1]};
+    lL=${${(On)language//(#m)*/${#MATCH}}[1]};
     # lt=$((COLUMNS - lr - 1 - 1 - le - 1 - lp - 1 - 4 - 1 - lL - 1 - la - 1 - ll - 1 - ls - 1 - lf));
     lP=$((lr + 1 + lt + 1 + le + 1 + lp + 1 + 4 + 1 + lL + 1 + la + 1 + ll + 1 + ls + 1 + lf));
     ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
@@ -183,17 +197,15 @@ case $(read -sek1 "?${n}") {
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
         [[ ${n} =~ '\?filename=' ]] && {
-          target=$(uritool query unescape ${n#*=});
-          wget -nc -O ~/Downloads/${target} ${n};
-        } || wget -nc -P ~/Downloads/ ${n};
+          wget -O ~/Downloads/"$(uridecode ${n#*=})" ${n};
+        } || wget -P ~/Downloads/ ${n};
       } || {
         wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
       };
     };
   ;;
   (2)
-    base+=scimag/;
-    base+=\?q=$(uritool query escape ${query});
+    base+=scimag/\?q=$(uriencode ${query});
     typeset -a mirror title author journal volume size doi url;
     typeset -i pages lr lt la lj lv ls lP q c;
 
@@ -214,13 +226,11 @@ case $(read -sek1 "?${n}") {
     
     results=${#doi};
     lr=${(c)#results};
-    for q ( {1..${results}} ) {
-      ((${(c)#title[q]}   > lt)) && lt=${(c)#title[q]};
-      ((${(c)#author[q]}  > la)) && la=${(c)#author[q]};
-      ((${(c)#journal[q]} > lj)) && lj=${(c)#journal[q]};
-      ((${(c)#volume[q]}  > lv)) && lv=${(c)#volume[q]};
-      ((${(c)#size[q]}    > ls)) && ls=${(c)#size[q]};
-    };
+    lt=${${(On)title//(#m)*/${#MATCH}}[1]};
+    la=${${(On)author//(#m)*/${#MATCH}}[1]};
+    lj=${${(On)journal//(#m)*/${#MATCH}}[1]};
+    lv=${${(On)volume//(#m)*/${#MATCH}}[1]};
+    ls=${${(On)size//(#m)*/${#MATCH}}[1]};
     # lt=$((COLUMNS - lr - 1 - 1 - la - 1 - lj - 1 - lv - 1 - ls));
     lP=$((lr + 1 + lt + 1 + la + 1 + lj + 1 + lv + 1 + ls));
     ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));    
@@ -253,8 +263,7 @@ case $(read -sek1 "?${n}") {
     ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     for n ( ${url} ) {
       [[ ${n} =~ '\.pdf$' ]] && {
-        target=$(uritool query unescape ${n##*/});
-        wget -nc -O ~/Downloads/${target} ${n};
+        wget -O ~/Downloads/"$(uridecode ${n##*/})" ${n};
       } || {
         wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).pdf ${n};
       };
@@ -262,7 +271,7 @@ case $(read -sek1 "?${n}") {
   ;;
   (3)
     typeset -i results pages lr lt la ls ll lP c q;
-    typeset -a mirror title author md5 language series sizeformat formats ext url langs format lang;
+    typeset -a mirror title author md5 language series sizeformat formats ext url langs format lang target;
 
     formats=(epub mobi azw azw3 fb2 pdf rtf txt);
     base+=fiction/;
@@ -319,19 +328,18 @@ case $(read -sek1 "?${n}") {
       title+=(${(f)"$(     pup -p -f ${t} 'tbody td:nth-child(3) text{}')"});
       series+=(${(f)"$(    pup -p -f ${t} 'tbody td:nth-child(2) json{}' | jq -r '.[].text')"});
       sizeformat+=(${(f)"$(pup -p -f ${t} 'tbody td:nth-child(5) text{}')"});
-      # [[ -n ${lang} ]] ||
+      [[ -n ${lang} ]] ||
       language+=(${(f)"$(  pup -p -f ${t} 'tbody td:nth-child(4) text{}')"});
       curl -sfLH User-Agent: -o ${t} ${base}\&page=$((++q));
     };
 
     lr=${(c)#results};
-    for q ( {1..${results}} ) {
-      ((${(c)#title[q]}    > lt)) && lt=${(c)#title[q]};
-      ((${(c)#series[q]}   > ls)) && ls=${(c)#series[q]};
-      ((${(c)#author[q]}   > la)) && la=${(c)#author[q]};
-      # [[ -n ${lang} ]] ||
-      ((${(c)#language[q]} > ll)) && ll=${(c)#language[q]};
-    };
+    lt=${${(On)title//(#m)*/${#MATCH}}[1]};
+    ls=${${(On)series//(#m)*/${#MATCH}}[1]};
+    la=${${(On)author//(#m)*/${#MATCH}}[1]};
+    [[ -n ${lang} ]] ||
+    ll=${${(On)language//(#m)*/${#MATCH}}[1]};
+
     # lt=$((COLUMNS - lr - 1 - 1 - ls - 1 - la - 1 - ll - 10 - 6));
     lP=$((lr + 1 + lt + 1 + ls + 1 + la + 1 + ll + 10 + 6));
     ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
@@ -367,8 +375,7 @@ case $(read -sek1 "?${n}") {
     for n ( ${url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
         [[ ${n} =~ '\?filename=' ]] && target=${n#*=} || target=${n##*/};
-        target=$(uritool query unescape ${target});
-        wget -nc -O ~/Downloads/${target} ${n};
+        wget -O ~/Downloads/"$(uridecode ${target})" ${n};
       } || {
         wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[q]} ${n};
       };
@@ -440,13 +447,11 @@ case $(read -sek1 "?${n}") {
     };
 
     lr=${(c)#results};
-    for q ( {1..${results}} ) {
-      ((${(c)#title[q]}     > lt)) && lt=${(c)#title[q]};
-      ((${(c)#issue[q]}     > li)) && li=${(c)#issue[q]};
-      ((${(c)#volume[q]}    > lv)) && lv=${(c)#volume[q]};
-      ((${(c)#publisher[q]} > lp)) && lp=${(c)#publisher[q]};
-      ((${(c)#date[q]}      > ld)) && ld=${(c)#date[q]};
-    };
+    lt=${${(On)title//(#m)*/${#MATCH}}[1]};
+    li=${${(On)issue//(#m)*/${#MATCH}}[1]};
+    lv=${${(On)volume//(#m)*/${#MATCH}}[1]};
+    lp=${${(On)publisher//(#m)*/${#MATCH}}[1]};
+    ld=${${(On)date//(#m)*/${#MATCH}}[1]};
     # lt=$((COLUMNS - lr - 1 - 1 - lv - 1 - li - 1 - lp - 1 - 2 - 1 - ld));
     lP=$((lr + 1 + lt + 1 + lv + 1 + li + 1 + lp + 1 + 2 + 1 + ld));
     ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
@@ -486,8 +491,7 @@ case $(read -sek1 "?${n}") {
     ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
     for n ( ${url} ) {
-      target=$(uritool query unescape ${file[++q]});
-      wget -nc -O ~/Downloads/${target} ${n};
+      wget -O ~/Downloads/"$(uridecode ${file[++q]})" ${n};
     };
   ;;
   (5)
@@ -528,15 +532,14 @@ case $(read -sek1 "?${n}") {
     };
 
     lr=${(c)#results};
-    for q ( {1..${results}} ) {
-      ((${(c)#title[q]}   > lt)) && lt=${(c)#title[q]};
-      ((${(c)#number[q]}  > ln)) && ln=${(c)#number[q]};
-      ((${(c)#pubdate[q]} > lp)) && lp=${(c)#pubdate[q]};
-      ((${(c)#Status[q]}  > lS)) && lS=${(c)#Status[q]};
-      ((${(c)#length[q]}  > ll)) && ll=${(c)#length[q]};
-      ((${(c)#size[q]}    > ls)) && ls=${(c)#size[q]};
-      ((${(c)#format[q]}  > lf)) && lf=${(c)#format[q]};
-    };
+    lt=${${(On)title//(#m)*/${#MATCH}}[1]};
+    ln=${${(On)number//(#m)*/${#MATCH}}[1]};
+    lp=${${(On)pubdate//(#m)*/${#MATCH}}[1]};
+    lS=${${(On)Status//(#m)*/${#MATCH}}[1]};
+    ll=${${(On)length//(#m)*/${#MATCH}}[1]};
+    ls=${${(On)size//(#m)*/${#MATCH}}[1]};
+    lf=${${(On)format//(#m)*/${#MATCH}}[1]};
+
     # lt=$((COLUMNS - lr - 1 - 1 - ln - 1 - lp - 1 - lS - 1 - ll - 1 - ls - 1 - lf));
     lP=$((lr + 1 + lt + 1 + ln + 1 + lp + 1 + lS + 1 + ll + 1 + ls + 1 + lf));
     ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
@@ -577,13 +580,6 @@ case $(read -sek1 "?${n}") {
       langissues+=(${(f)"$(pup -p -f ${t} 'body div[align=left]' | pcre2grep -O '$1 $2' -M '(?:\(([^()]+)\))?(?: \((\d+)\))?.*\n\s*<br>')"});
 
     };
-
-
-    
-
-
-
-
   ;;
   (*) quit 1;;
 };

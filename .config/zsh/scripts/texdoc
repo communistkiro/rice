@@ -28,7 +28,7 @@ query="${@}";
 [[ -d ~/Downloads/texpkg ]] || mkdir ~/Downloads/texpkg;
 
 until [[ ${query} =~ '^\s*$' ]] {
-  curl -sfLH User-Agent: -o ${t} $(surfraw -p -escape-url-args=yes ctan ${query}) || { rm ${t} &>/dev/null; return 3 };
+  curl -sfLH User-Agent: -o ${t} $(surfraw -p -escape-url-args=yes ctan ${query}) || { rm -f ${t}; return 3 };
 
   pkg=(${(ps.Package .)"$(pup -p -f ${t} 'div.hit text{}'|tr -d '\n')"});
   url=(${(f)"$(pup -p -f ${t} 'div.hit a attr{href}')"});
@@ -54,4 +54,4 @@ for n ( ${file} ) {
   wget -P ~/Downloads/texpkg/${dir[++q]} ${n};
 };
 
-rm ${t} &>/dev/null;
+rm -f ${t};

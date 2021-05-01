@@ -1,4 +1,4 @@
-###########################
+1;5F###########################
 # xbindkeys configuration #
 ###########################
 #
@@ -76,11 +76,11 @@
     XF86AudioMute
 
 # Increase backlight
-"xbacklight -inc 0.6"
+"xbacklight -inc 0.4"
     XF86MonBrightnessUp
 
 # Decrease backlight
-"xbacklight -dec 0.4"
+"xbacklight -dec 0.6"
    XF86MonBrightnessDown
 
 # Lock screen
@@ -107,11 +107,10 @@
 "scrot --silent --quality=66 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
    Print
 
-# printscreen cropped
 # "scrot --silent --select --line style=dash,width=2,color='red' --quality=75 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
 #    Mod4 + Print
 
-# play link in clipboards
-#    Super_L + w
-"u=$(xclip -o -se c) || u=$(xclip -o -se p) || return; mpv $u"
+
+# "mpv ${$(xclip -se c -o):-$(xclip -se p -o)} || return"
+"mpv $(xclip -se c -o) || mpv $(xclip -se p -o) || return"
     Mod4 + w

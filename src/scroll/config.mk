@@ -4,7 +4,7 @@ VERSION = 0.1
 # paths
 PREFIX	= /usr/local
 BINDIR	= $(PREFIX)/bin
-MANDIR	= $(PREFIX)/man
+MANDIR	= $(PREFIX)/share/man
 
 CPPFLAGS = -DVERSION=\"$(VERSION)\" -D_DEFAULT_SOURCE
 # if your system is not POSIX, add -std=c99 to CFLAGS
