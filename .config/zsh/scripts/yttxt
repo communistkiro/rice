@@ -1,10 +1,17 @@
 #!/bin/zsh
-for s ( ${@} ) {
-   { youtube-dl --quiet --write-auto-sub --skip-download --output '~/mov/%(title)s' ${s} } && {
-    a=(~/mov/*.en.vtt(.oc[1]));
-    [[ -n ${a} ]] || { printf '%s: No English subtitles found.\n' ${s#*=}; continue };
-    sed '/-->/d; /<c>/d; /^[[:space:]]*$/d' ${a} | uniq > ${a%.en.vtt}.txt;
-    rm -f $a;
-  };
-};
+emulate -LR zsh;
+typeset a s;
 
+# for s ( ${@} ) {
+#    yt-dlp --quiet --write-auto-sub --skip-download --output '~/mov/%(title)s' ${s} && {
+#     a=(~/mov/*.+([a-z])vtt(.oc[1]));
+#     sed '/-->/d; /<c>/d; /^[[:space:]]*$/d' ${a} | uniq > ${a:r}.txt;
+#     rm -f ${a};
+#   };
+# };
+
+youtube-dl --write-auto-sub --skip-download --output '~/mov/%(title)s' ${@} &&
+for a ( ~/mov/*.vtt(.oc[1,#]N) ) {
+    sed '/-->/d; /<c>/d; /^[[:space:]]*$/d' ${a} | uniq > ${a:r}.txt;
+    rm -f ${a};
+}

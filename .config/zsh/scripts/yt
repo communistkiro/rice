@@ -124,7 +124,7 @@ yt_get_sel () { # split the concatenated lines into entities, send to selector, 
     };
   } || yt_die 'Subs cache has not been retrieved.';
   if ((${+dl})) {
-    { yt-dlp -f bestvideo+bestaudio/best --ignore-errors ${${sel% }##* } } & disown || return 1;
+    yt-dlp -f bestvideo+bestaudio/best --ignore-errors ${${sel% }##* } & disown || return 1;
   } else {
     { exec mpv ${(z)MPV_OPTS} --pause ${${sel% }##* } } & disown || return 1;
   };

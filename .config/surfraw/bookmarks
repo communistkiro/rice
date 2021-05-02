@@ -9,3 +9,5 @@ rym				https://rateyourmusic.com/search?searchtype=a&searchterm=%s
 rymr			https://rateyourmusic.com/search?searchtype=l&searchterm=%s
 s				https://www.startpage.com/sp/search?q=%s
 sh				https://sci-hub.tw/%s
+we 				https://en.wikipedia.org/w/index.php?search=%s
+w 				https://en.wikipedia.org/wiki/%s

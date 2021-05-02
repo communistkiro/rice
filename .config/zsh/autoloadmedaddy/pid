@@ -1,6 +1,0 @@
-pid () {
-  local i
-  for i ( /proc/<->/stat ) {
-    [[ "$(< $i)" = *\((${(j:|:)~@})\)* ]] && printf '%s\n' ${i:h:t}
-  }
-}

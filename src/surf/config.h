@@ -60,59 +60,45 @@ static Parameter defconfig[ParameterLast] = {
 
 static UriParameters uriparams[] = {
 	{ "://(www\\.)?(lainchan|boards.4chan(nel)?)\\.org(/|$)", {
-	[CookiePolicies]      =	{	{ .v = "@a" },	2},
+		[CookiePolicies]    = {	{ .v = "@a" },	2 },
 		[JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	0 	},	2 },
-		[UserScript]		= {	{ .i =	1	},	2 },
+		// [UserScript]		= {	{ .i =	1	},	2 },
 	}, },
 
 	{ "://(www\\.)?(wizchan\\.org|endchan\\.net|2ch\\.hk)(/|$)", {
 		[JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	0 	},	2 },
-		[UserScript]		= {	{ .i =	0	},	2 },
+		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 	{ "://(www\\.)?git(hub|lab)\\.com(/|$)", {
 		[JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		[UserScript]		= {	{ .i =	0	},	2 },
+		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 
 	{ "://(www\\.)?mail\\.(protonmail|tuta(nota|mail))\\.com(/|$)", {
 		[JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		[UserScript]		= {	{ .i =	0	},	2 },
+		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 
 	{ "://([^.]+\\.)?neocities\\.org(/|$)", {
 		[JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		[UserScript]		= {	{ .i =	0	},	2 },
+		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 
 	{ "://(www\\.)?([^.]+\\.)wik(tionary|i(pedia|species|news|source|books|quote|media|versity|voyage))\\.org/", {
 		[JavaScript] 		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		[UserScript]		= {	{ .i =	0	},	2 },
+		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
-
-	{ "://(www\\.)?(reddit|twitter)\\.com(/|$)", {
-		[JavaScript] 		= { { .i =	0	},	2 },
-		[Style]				= {	{ .i = 	1 	},	2 },
-		[UserScript]		= {	{ .i =	1	},	2 },
-	}, },
-
-	// { "duckduckgo\\.com(/|$)", {
-	// 	[CookiePolicies]	= {	{ .v =	"a"	},	2 },
-	// 	[JavaScript] 		= { { .i =	1	},	2 },
-	// 	[Style]				= {	{ .i = 	1 	},	2 },
-	// 	[UserScript]		= {	{ .i =	0	},	2 },
-	// 	[Geolocation]		= {	{ .i =	0	},	2 },
-	// }, },
 
 	{ ".*", {
 		[JavaScript] 		= { { .i =	0	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		[UserScript]		= {	{ .i =	0	},	2 },
+		// [UserScript]		= {	{ .i =	0	},	2 },
 		[Geolocation]		= {	{ .i =	0	},	2 },
 	}, },
 };
@@ -175,18 +161,16 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
  * the list.
  */
 static SiteSpecific styles[] = {
-	/* regexp                                   file in $styledir  */
-	{ ".*",                                     "default.css"       },
+	/* regexp									file in $styledir  */
+	// { "https://boards\\.4chan(nel)?\\.org",		"tomorrow.css"		},
+	{ ".*",										"default.css"		},
 };
 
 
 /* scripts */
 static SiteSpecific scripts[] = {
 	/* regexp												file in $scriptdir */
-	{ "https://(lainchan|boards.4chan(nel)?)\\.org(/|$)",	"4chan-X.user.js"	},
-	{ "https://(www\\.)?reddit\\.com(/|$)",					"teddit.js"			},
-	{ "https://(www\\.)?twitter\\.com(/|$)",				"nitter.js"			},
-	// { ".*",													"elmblock.js"		},
+	{ "https://(lainchan|boards\\.4chan(nel)?)\\.org(/|$)",	"4chan-X.user.js"	},
 };
 
 /* certificates */

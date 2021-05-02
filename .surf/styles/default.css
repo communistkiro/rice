@@ -1,10 +1,24 @@
 .mwe-math-element,
 img
 {
-    filter: invert(1) hue-rotate(180deg);
+	filter: invert(1) hue-rotate(180deg);
 }
 
 html
 {
-    filter: invert(.9) hue-rotate(180deg);
+	filter: invert(.9) hue-rotate(180deg);
+
+	margin: auto;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	
+	text-align: justify;
+	text-justify: inter-word;
+	-webkit-hyphens: auto;
+	-webkit-hyphenate-limit-before: 3;
+	-webkit-hyphenate-limit-after: 3;
+	-webkit-hyphenate-limit-chars: 6 3 3;
+	-webkit-hyphenate-limit-lines: 2;
+	-webkit-hyphenate-limit-last: always;   
+	-webkit-hyphenate-limit-zone: 8%;
 }

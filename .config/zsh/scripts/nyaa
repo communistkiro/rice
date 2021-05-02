@@ -11,7 +11,13 @@ export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=
 n=$'\n'; t=$(mktemp);
 query="${${@}:-$(read -er "?${n}> ")}";
 # [[ ! ${query} =~ '^\s*$' ]] || return 4;
-[[ ${query} =~ '^\s*$' ]] && query= || query=$(uritool query escape ${query});
+# [[ ${query} =~ '^\s*$' ]] && query= || query=$(uritool query escape ${query});
+[[ ${query} =~ '^\s*$' ]] && query= || {
+  typeset q;
+  q=( ${(s::)query} );
+  query=${(j::)q/(#b)([^A-Za-z0-9-_.~])/%${(l:2::0:)$(([##16]#match))}};
+}
+
 base=https://nyaa.si/;
 quit () { rm -f ${t}; exit ${1:-0} };
 menu () {
@@ -149,14 +155,14 @@ if [[ -n ${query} ]] {
   if [[ $(pup -p -f ${t} 'h3 text{}') != 'No results found' ]] {
     results=$(pup -p -f ${t} 'div.pagination-page-info' | pcre2grep -o1 '\b(\d+)\b result');
     pages=$((results / rpp));
-    ((results % rpp == 0 || results < rpp)) && pages+=1;
-    ((pages > 1)) && [[ $(read -seq "?${n}${results} results over ${pages} pages, show all [y/*]?") == n ]] && {
+    ((results % rpp != 0 || results < rpp)) && pages+=1;
+    ((pages > 5)) && [[ $(read -seq "?${n}${results} results over ${pages} pages, show all [y/*]?") == n ]] && {
       read -r "C?${n}Input number of pages to display> ";
       ((C > 0 && C <= pages)) && {
         ((C == pages)) || results=$((C * rpp));
         pages=${C};
       } || { 
-        printf 'Invalid selection; showing first 2 pages only.\n'; ((pages == 2)) || results=$((2 * rpp)); pages=2;
+        printf 'Invalid selection; showing first 5 pages only.\n'; ((pages == 5)) || results=$((5 * rpp)); pages=5;
       };
     };
   } else {
@@ -167,21 +173,21 @@ if [[ -n ${query} ]] {
   ((C > 0)) && {
     pages=${C}; results=$((pages * rpp));
   } || {
-    printf 'Invalid selection; showing first 2 pages only.\n';
-    pages=2; results=$((pages * rpp));
+    printf 'Invalid selection; showing first 5 pages only.\n';
+    pages=5; results=$((pages * rpp));
   };
 };
 
 for q ( {1..${pages}} ) {
-  category+=(${(f)"$(pup -p -f ${t} 'tr.default td:nth-child(1) img attr{alt}')"});
-  title+=(${(f)"$(   pup -p -f ${t} 'tr.default td:nth-child(2) text{}' | perl -pe 'BEGIN {undef $/} s/\d+\n//g; s/\n\s*/\n/g')"});
-  magnet+=(${(f)"$(  pup -p -f ${t} 'tr.default td:nth-child(3) a:nth-child(2) attr{href}')"});
-  size+=(${(f)"$(    pup -p -f ${t} 'tr.default td:nth-child(4) text{}')"});
-  date+=(${(f)"$(    pup -p -f ${t} 'tr.default td:nth-child(5) text{}')"});
-  seed+=(${(f)"$(    pup -p -f ${t} 'tr.default td:nth-child(6) text{}')"});
-  leech+=(${(f)"$(   pup -p -f ${t} 'tr.default td:nth-child(7) text{}')"});
-  dls+=(${(f)"$(     pup -p -f ${t} 'tr.default td:nth-child(8) text{}')"});
-  curl -sfLH User-Agent: -o ${t} ${base}\&p=$((++q))
+  category+=(${(f)"$(pup -p -f ${t} 'tr td:nth-child(1) img attr{alt}')"});
+  title+=(${(f)"$(   pup -p -f ${t} 'tr td:nth-child(2) text{}' | perl -pe 'BEGIN {undef $/} s/\d+\n//g; s/\n\s*/\n/g')"});
+  magnet+=(${(f)"$(  pup -p -f ${t} 'tr td:nth-child(3) a:nth-child(2) attr{href}')"});
+  size+=(${(f)"$(    pup -p -f ${t} 'tr td:nth-child(4) text{}')"});
+  date+=(${(f)"$(    pup -p -f ${t} 'tr td:nth-child(5) text{}')"});
+  seed+=(${(f)"$(    pup -p -f ${t} 'tr td:nth-child(6) text{}')"});
+  leech+=(${(f)"$(   pup -p -f ${t} 'tr td:nth-child(7) text{}')"});
+  dls+=(${(f)"$(     pup -p -f ${t} 'tr td:nth-child(8) text{}')"});
+  curl -sfLH User-Agent: -o ${t} ${base}\&p=$((q+1));
 };
 
 lr=${(c)#${results}};

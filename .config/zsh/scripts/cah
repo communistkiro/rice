@@ -5,7 +5,7 @@
   typeset -i white black card # query;
   typeset -a packname packnum nwhite nblack;
   file=~/games/json-against-humanity/cah-all-compact.json;
-  [[ -f ${file} && -n $(<${file}) ]] || return 1;
+  [[ -s ${file} ]] || return 1;
 
   white=$(jq '.white[]' ${file} | wc -l);
   black=$(jq '.black[].text' ${file} | wc -l);
@@ -28,8 +28,8 @@
     until [[ -n ${query:|nblack} ]] {
       query=$((RANDOM % black));
     };
-    clear;
-    jq ".white[${(j.,.)hand}]" ${file} | fzf -i -m --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[${query}].text" ${file})" || break;
+    # jq ".white[${(j.,.)hand}]" ${file} | fzf -i -m --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[${query}].text" ${file})" || break;    
+    jq -r ".white[${(j.,.)hand}]" ${file} | tr '\n' '\0' | fzf --read0 -i -m --no-info --reverse --border=horizontal --tiebreak=length,end --height=15 --header="$(jq -r ".black[${query}].text" ${file})" || break;
     hand[1,-1]=();
     query=;
   };
