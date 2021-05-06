@@ -3,10 +3,10 @@
 /* appearance */
 static const char font[]        = "Fira Code Medium:pixelsize=16:antialias=true:autohint=true";
 
-static const char* normbgcolor  = "#301E28";
-static const char* normfgcolor  = "#82B3B3";
-static const char* selbgcolor   = "#170E12";
-static const char* selfgcolor   = "#BAFFFF";
+static const char* normbgcolor  = "#301e28";
+static const char* normfgcolor  = "#82f5ff";
+static const char* selbgcolor   = "#170e12";
+static const char* selfgcolor   = "#82f5ff";
 
 static const char* urgbgcolor   = "#111111";
 static const char* urgfgcolor   = "#cc0000";

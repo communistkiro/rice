@@ -104,7 +104,7 @@
     XF86AudioStop
 
 # printscreen
-"scrot --silent --quality=66 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
+"scrot --silent --quality=75 '/tmp/%Y%m%dT%H%M%S.png'"
    Print
 
 # "scrot --silent --select --line style=dash,width=2,color='red' --quality=75 '/tmp/%Y-%m-%d-%H-%M-%S.png'"

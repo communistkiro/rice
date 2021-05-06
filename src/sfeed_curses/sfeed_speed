@@ -1,0 +1,2 @@
+#!/bin/sh
+rdrview -B 'elinks -dump -no-references -no-numbering' $(awk -F '\t' '{print $3}') | /root/src/speedread/myspeedread;

@@ -7,11 +7,6 @@ static char *scriptdir      = "~/.surf/script/";
 static char *certdir        = "~/.surf/certificates/";
 static char *cachedir       = "~/.surf/cache/";
 static char *cookiefile     = "~/.surf/cookies.txt";
-static char **plugindirs    = (char*[]){
-	// "~/.surf/plugins/",
-	// LIBPREFIX "/mozilla/plugins/",
-	NULL
-};
 
 /* Webkit default features */
 /* Highest priority value will be used.
@@ -21,7 +16,6 @@ static char **plugindirs    = (char*[]){
  */
 static Parameter defconfig[ParameterLast] = {
 	/* Parameter 			Arg value       Priority */
-	[AcceleratedCanvas]   =	{	{ .i = 1 },		},
 	[AccessMicrophone]    = {	{ .i = 0 },		},
 	[AccessWebcam]        =	{	{ .i = 0 },		},
 	[Certificate]         =	{	{ .i = 0 },		},
@@ -41,8 +35,7 @@ static Parameter defconfig[ParameterLast] = {
 	[JavaScript]          =	{	{ .i = 0 },		},
 	[KioskMode]           =	{	{ .i = 0 },		},
 	[LoadImages]          =	{	{ .i = 1 },		},
-	[MediaManualPlay]     =	{	{ .i = 0 },		},
-	[Plugins]             =	{	{ .i = 0 },		},
+	[MediaManualPlay]     =	{	{ .i = 1 },		},
 	[PreferredLanguages]  =	{	{ .v = (char *[]){ NULL } }, },
 	[RunInFullscreen]     =	{	{ .i = 0 },		},
 	[ScrollBars]          =	{	{ .i = 1 },		},
@@ -84,6 +77,7 @@ static UriParameters uriparams[] = {
 	}, },
 
 	{ "://([^.]+\\.)?neocities\\.org(/|$)", {
+		[CookiePolicies]    = {	{ .v = "@a" },	2 },
 		[JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
 		// [UserScript]		= {	{ .i =	0	},	2 },
@@ -150,8 +144,8 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 
 /* surfraw implementation; instead of "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))" do "echo '/etc/crontab 00 * * * * surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks | cut -d\  -f1 >> ~/.config/surfraw/cache' >> /etc/crontab", and just cat the file into dmenu - it's faster */
 #define SR_SEARCH {\
-		.v = (char *[]){ "/bin/sh", "-c", \
-			 "e=$(cat ~/.config/surfraw/cache | dmenu -p 'elvi:') || return; xprop -id $0 -f _SURF_GO 8s -set _SURF_GO \"$(surfraw -p $e)\"", winid, NULL  \
+		.v = (char *[]){ "/bin/sh", "-ec", \
+			 "e=$(dmenu -p elvi: <~/.config/surfraw/cache); xprop -id $0 -f _SURF_GO 8s -set _SURF_GO \"$(surfraw -p -- ${e%% *} ${e#* })\"", winid, NULL  \
 		} \
 }
 
@@ -162,7 +156,6 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
  */
 static SiteSpecific styles[] = {
 	/* regexp									file in $styledir  */
-	// { "https://boards\\.4chan(nel)?\\.org",		"tomorrow.css"		},
 	{ ".*",										"default.css"		},
 };
 

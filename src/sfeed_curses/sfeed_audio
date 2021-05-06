@@ -1,0 +1,3 @@
+#!/bin/sh
+# rdrview -B 'elinks -dump -no-references -no-numbering' $(awk -F '\t' '{print $3}') | flite -voice slt --setf duration_stretch=0.629960524 -pw;
+rdrview -B 'elinks -dump -no-references -no-numbering' "$(awk -F '\t' '{print $3}')" | flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.43 -pw;

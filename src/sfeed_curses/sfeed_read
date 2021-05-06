@@ -1,0 +1,5 @@
+#!/bin/zsh
+local a;
+a=$(awk -F '\t' '{print $3}');
+[[ ${a##*.} = pdf ]] && curl -sfLo ~/Downloads/${a##*/} -H User-Agent: $a || \
+rdrview -B 'elinks -dump -no-references -no-numbering' $a | fmt -w 80 | less;
