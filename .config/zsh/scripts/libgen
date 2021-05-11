@@ -117,7 +117,6 @@ case $(read -sek1 "?${n}") {
         results=200;
       };
     };
-# set -x
     for q ( {1..${pages}} ) {
       # SIMPLE VIEW
       # title=(${(f)"$(pup -p -f ${t} 'tbody tr td[width=500]:nth-child(3) > a[id] text{}' | perl -pe 'BEGIN {undef $/} s/\n \n[^\n]+//g')"});
@@ -134,10 +133,10 @@ case $(read -sek1 "?${n}") {
       # DETAILED VIEW
       author+=(${(f)"$(     pup -p -f ${t} 'tbody td[colspan=3] text{}' | perl -pe 'BEGIN {undef $/} s/(\S ?)\n/\1/g; s/\n\s*/\n/g')"});
       title+=(${(f)"$(      pup -p -f ${t} 'tbody tr td[colspan=2] text{}')"});
-      md5+=(${(f)"$(        pup -p -f ${t} 'tbody tr td[colspan=2] a attr{href}')"});
+      md5+=(${${(f)"$(        pup -p -f ${t} 'tbody tr td[colspan=2] a attr{href}')"}##*=});
       publisher+=(${${(f)"$(pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[4].children[1].text')"}[3,-2]});
       year+=(${${(f)"$(     pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[5].children[1].text')"}[3,-2]});
-        edition+=(${${(f)"$(  pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[5].children[3].text')"}[3,-2]});
+      edition+=(${${(f)"$(  pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[5].children[3].text')"}[3,-2]}); #FIXME
       length+=(${${(f)"$(   pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[6].children[3].text')"}[3,-2]//*([^0-9])(#b)(+([0-9]))*([^0-9]*)/${match[1]}});
       language+=(${${(f)"$( pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[6].children[1].text')"}[3,-2]});
       size+=(${${${(f)"$(   pup -p -f ${t} 'tbody json{}' | jq -r '.[].children[9].children[1].text')"}[3,-2]%% \(*}});
@@ -154,7 +153,8 @@ case $(read -sek1 "?${n}") {
     ls=${${(On)size//(#m)*/${#MATCH}}[1]};
     lf=${${(On)format//(#m)*/${#MATCH}}[1]};
     lL=${${(On)language//(#m)*/${#MATCH}}[1]};
-    lt=$((COLUMNS - lr - 1 - 1 - le - 1 - lp - 1 - 4 - 1 - lL - 1 - la - 1 - ll - 1 - ls - 1 - lf));
+    lt=${${(On)title//(#m)*/${#MATCH}}[1]};
+    # lt=$((COLUMNS - lr - 1 - 1 - le - 1 - lp - 1 - 4 - 1 - la - 1 - lL - 1 - ll - 1 - ls - 1 - lf));
     lP=$((lr + 1 + lt + 1 + le + 1 + lp + 1 + 4 + 1 + lL + 1 + la + 1 + ll + 1 + ls + 1 + lf));
     ((lP % COLUMNS == 0)) && lP=$((lP / COLUMNS)) || lP=$((lP / COLUMNS + 1));
 

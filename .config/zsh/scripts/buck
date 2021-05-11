@@ -1,0 +1,5 @@
+#!/bin/zsh
+[[ ${(M)1#?} != - ]] || { kill `pid buckle` 2>/dev/null };
+ps -C buckle &>/dev/null && kill `pid buckle` 2>/dev/null;
+typeset -i q; q=${1}; ((q > 0)) || return;
+buckle -s 0 -f 0b -g ${1:-30} & disown;

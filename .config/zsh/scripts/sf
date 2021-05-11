@@ -5,7 +5,7 @@ xid=$(<${xidfile}) &>/dev/null;
 
 { [[ -r ${xidfile} ]] && xprop -id ${xid} } &>/dev/null || {
   tabbed -dn tabbedsurf -r 2 surf -e '' 'file:///root/.config/startpage/ss1.htm' >${xidfile} &>/dev/null &;
-  unset uri; xid=$(<${xidfile}) &>/dev/null;
-};
+  unset uri; xid=$(<${xidfile});
+} &>/dev/null
 
 for u ( ${uri:-${@}} ) { surf -e ${xid} ${u} &>/dev/null & };

@@ -9,28 +9,28 @@ case $(read -sek1 "?${n}") {
   (1)
     src=(${(f)"$(findmnt --real -nlo 'source')"});
     blk=(${(f)"$(lsblk -lpo name,label,uuid,type,fstype,size,fsuse%,uuid,state,mountpoint | pcre2grep -v "(running|/boot$|/$|SWAP|${(j:|:)src})\b")"});
-    printf '%s\n' ${blk[1]};
+    printf '%s\n' MOUNT ${blk[1]};
     dev=$(fzy -l $LINES <<< ${(F)blk[2,-1]} | cut -f 1 -d ' ') || return 1;
-    m=$(mount ${dev});
-    [[ -n ${m} ]] || ((?)) || return 0;
-    [[ -z ${m} ]] || read -sk1 "?${n}${m}";
+    m=$(mount -a ${dev});
+    [[ -n ${m} ]] || ! ((?)) || return 0;
+    read -sk1 "?${n}${?}: ${m}";
     cd /;
     while { true } {
       dir=$(printf '%s\n' .. *(/-DN) | fzf -i +m --reverse --border=horizontal --bind=alt-/:toggle-preview,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down --preview="printf '%s\n' {}/*(DN:t)") || return 1;
       [[ -d ${dir} ]] && cd ${dir};
     };
-    [[ $(read -seq "?${n}Mount ${dev} to $(pwd) [y/*]?") == y ]] && mount ${dev} "$(pwd)";
+    [[ $(read -seq "?${n}Mount ${dev} to $(pwd) [y/*]?") == n ]] || mount ${dev} "$(pwd)";
     cd ~;;
   (2)
     blk=(${(f)"$(findmnt --real -lo target,source,fstype | pcre2grep -v '^/\s+')"});
     ((${#blk} != 1)) || { printf '%s\n' 'No devices found.'; return 0 };
-    printf '%s\n' ${blk[1]};
+    printf '%s\n' UNMOUNT ${blk[1]};
     dev=$(fzy -l $LINES <<< ${(F)blk[2,-1]} | cut -f 1 -d ' ') || return 1;
+    sync;
     m=$(umount ${dev});
-    [[ -n ${m} ]] || ((?)) && {
-      printf '%s\nKilling processes associated with %s, please wait.\n' ${m} ${dev};
-      lsof | pcre2grep "\b${dev}\b" | awk '{print $2}' | xargs kill &>/dev/null;
-      umount ${dev}
+    [[ -n ${m} ]] || ((?)) || {
+      printf '%s: %s\nKilling processes associated with %s, please wait.\n' ${?} ${m} ${dev};
+      { lsof | pcre2grep "\b${dev}\b" | awk '{print $2}' | xargs kill; umount ${dev} } &>/dev/null;
     };;
   (*) return 1;;
 };

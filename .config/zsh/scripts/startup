@@ -14,7 +14,7 @@ xbacklight -set 15 &
 
 
 # ... delay repeatrate
-xset r rate 240 135 &
+xset r rate 225 130 &
 
 
 # /usr/share/X11/xkb/rules for `-option ""'
@@ -43,7 +43,7 @@ ps -C syndaemon &>/dev/null || syndaemon -d -i 131072 &
 
 
 # click-clack
-ps -C buckle &>/dev/null || buckle -s 0 -f 0b -g 40 &;
+# ps -C buckle &>/dev/null || buck 30 &
 
 
 # Snowstorm
@@ -54,8 +54,10 @@ ps -C buckle &>/dev/null || buckle -s 0 -f 0b -g 40 &;
 /root/.fehbg &
 
 
+xinput --disable 15 &
+
+
 ps -C scrond &>/dev/null || scrond &
 
 
-# ~/src/dwmsss/dwmsss &
 slstatus &

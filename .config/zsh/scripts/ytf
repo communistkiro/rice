@@ -140,7 +140,7 @@ while { true } {
   user_selection || return 0;
   if ((${+p})) {
   } elif ((${+d})) {
-    yt-dlp -f bestvideo+bestaudio/best --ignore-errors ${url} &>/dev/null & disown;
+    yt-dlp --ignore-errors ${url} &>/dev/null & disown;
   } else { 
     $(${player} ${format:+--ytdl-format=${format}} --really-quiet --pause ${url}) & disown;
   };

@@ -171,7 +171,7 @@ static int usemouse = 1; /* use xterm mouse tracking */
 static struct termios tsave; /* terminal state at startup */
 static struct termios tcur;
 static int devnullfd;
-static int needcleanup;
+static int istermsetup, needcleanup;
 
 static struct feed *feeds;
 static struct feed *curfeed;
@@ -487,7 +487,7 @@ printutf8pad(FILE *fp, const char *s, size_t len, int pad)
 }
 
 void
-resettitle(void)
+resetstate(void)
 {
 	ttywrite("\x1b""c"); /* rs1: reset title and state */
 }
@@ -514,8 +514,8 @@ appmode(int on)
 void
 mousemode(int on)
 {
-	ttywrite(on ? "\x1b[?1000h" : "\x1b[?1000l"); /* xterm mouse mode */
-	ttywrite(on ? "\x1b[?1006h" : "\x1b[?1006l"); /* SGR mouse mode (if supported) */
+	ttywrite(on ? "\x1b[?1000h" : "\x1b[?1000l"); /* xterm X10 mouse mode */
+	ttywrite(on ? "\x1b[?1006h" : "\x1b[?1006l"); /* extended SGR mouse mode */
 }
 
 void
@@ -588,27 +588,26 @@ cleanup(void)
 
 	if (!needcleanup)
 		return;
+	needcleanup = 0;
+
+	if (istermsetup) {
+		resetstate();
+		cursormode(1);
+		appmode(0);
+		clearscreen();
+
+		if (usemouse)
+			mousemode(0);
+	}
 
 	/* restore terminal settings */
 	tcsetattr(0, TCSANOW, &tsave);
-
-	cursormode(1);
-	appmode(0);
-	clearscreen();
-
-	/* xterm mouse-mode */
-	if (usemouse)
-		mousemode(0);
-
-	resettitle();
 
 	memset(&sa, 0, sizeof(sa));
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART; /* require BSD signal semantics */
 	sa.sa_handler = SIG_DFL;
 	sigaction(SIGWINCH, &sa, NULL);
-
-	needcleanup = 0;
 }
 
 void
@@ -624,10 +623,13 @@ void
 resizewin(void)
 {
 	struct winsize winsz;
+	int width, height;
 
-	if (ioctl(1, TIOCGWINSZ, &winsz) != -1 &&
-	    winsz.ws_col > 0 && winsz.ws_row > 0)
-		win_update(&win, winsz.ws_col, winsz.ws_row);
+	if (ioctl(1, TIOCGWINSZ, &winsz) != -1) {
+		width = winsz.ws_col > 0 ? winsz.ws_col : 80;
+		height = winsz.ws_row > 0 ? winsz.ws_row : 24;
+		win_update(&win, width, height);
+	}
 	if (win.dirty)
 		alldirty();
 }
@@ -636,6 +638,9 @@ void
 init(void)
 {
 	struct sigaction sa;
+	int errret = 1;
+
+	needcleanup = 1;
 
 	tcgetattr(0, &tsave);
 	memcpy(&tcur, &tsave, sizeof(tcur));
@@ -644,17 +649,19 @@ init(void)
 	tcur.c_cc[VTIME] = 0;
 	tcsetattr(0, TCSANOW, &tcur);
 
-	setupterm(NULL, 1, NULL);
+	if (!istermsetup &&
+	    (setupterm(NULL, 1, &errret) != OK || errret != 1)) {
+		errno = 0;
+		die("setupterm: terminfo database or entry for $TERM not found");
+	}
+	istermsetup = 1;
 	resizewin();
 
 	appmode(1);
 	cursormode(0);
 
-	/* xterm mouse-mode */
 	if (usemouse)
 		mousemode(usemouse);
-
-	updategeom();
 
 	memset(&sa, 0, sizeof(sa));
 	sigemptyset(&sa.sa_mask);
@@ -664,8 +671,6 @@ init(void)
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
 	sigaction(SIGWINCH, &sa, NULL);
-
-	needcleanup = 1;
 }
 
 void
@@ -683,9 +688,10 @@ processexit(pid_t pid, int interactive)
 	if (interactive) {
 		while ((wpid = wait(NULL)) >= 0 && wpid != pid)
 			;
-		updatesidebar();
-		updatetitle();
 		init();
+		updatesidebar();
+		updategeom();
+		updatetitle();
 	} else {
 		sa.sa_handler = sighandler;
 		sigaction(SIGINT, &sa, NULL);
@@ -793,7 +799,8 @@ pane_row_draw(struct pane *p, off_t pos, int selected)
 {
 	struct row *row;
 
-	if (p->hidden || !p->width || !p->height)
+	if (p->hidden || !p->width || !p->height ||
+	    p->x >= win.width || p->y + (pos % p->height) >= win.height)
 		return;
 
 	row = pane_row_get(p, pos);
@@ -941,8 +948,9 @@ updategeom(void)
 		linebar.y = y;
 		linebar.width = win.width;
 
-		h -= 1;
-		y += 1;
+		h--;
+		y++;
+
 		panes[PaneFeeds].width = MAX(w - 1, 0);
 		break;
 	case LayoutMonocle:
@@ -951,10 +959,12 @@ updategeom(void)
 		break;
 	}
 
-	panes[PaneItems].width = MAX(w - 1, 0);
-	panes[PaneItems].height = MAX(h, 1);
 	panes[PaneItems].x = x;
 	panes[PaneItems].y = y;
+	panes[PaneItems].width = MAX(w - 1, 0);
+	panes[PaneItems].height = MAX(h, 1);
+	if (x >= win.width || y + 1 >= win.height)
+		panes[PaneItems].hidden = 1;
 
 	scrollbars[PaneFeeds].x = panes[PaneFeeds].x + panes[PaneFeeds].width;
 	scrollbars[PaneFeeds].y = panes[PaneFeeds].y;
@@ -964,14 +974,11 @@ updategeom(void)
 	scrollbars[PaneItems].x = panes[PaneItems].x + panes[PaneItems].width;
 	scrollbars[PaneItems].y = panes[PaneItems].y;
 	scrollbars[PaneItems].size = panes[PaneItems].height;
-	/* if the items don't fit on the screen then hide the scrollbar,
-	   preventing it from overlapping with the feeds scrollbar */
-	scrollbars[PaneItems].hidden = panes[PaneItems].width ? panes[PaneItems].hidden : 1;
+	scrollbars[PaneItems].hidden = panes[PaneItems].hidden;
 
-	/* statusbar below */
 	statusbar.width = win.width;
 	statusbar.x = 0;
-	statusbar.y = panes[PaneItems].y + panes[PaneItems].height;
+	statusbar.y = MAX(win.height - 1, 0);
 
 	alldirty();
 }
@@ -1018,7 +1025,7 @@ scrollbar_draw(struct scrollbar *s)
 	if (!s->dirty)
 		return;
 	s->dirty = 0;
-	if (s->hidden || !s->size)
+	if (s->hidden || !s->size || s->x >= win.width || s->y >= win.height)
 		return;
 
 	cursorsave();
@@ -1182,7 +1189,7 @@ statusbar_draw(struct statusbar *s)
 	if (!s->dirty)
 		return;
 	s->dirty = 0;
-	if (s->hidden || !s->width)
+	if (s->hidden || !s->width || s->x >= win.width || s->y >= win.height)
 		return;
 
 	cursorsave();
@@ -1318,7 +1325,7 @@ updatenewitems(struct feed *f)
 	f->totalnew = 0;
 	for (i = 0; i < p->nrows; i++) {
 		row = &(p->rows[i]); /* do not use pane_row_get */
-		item = (struct item *)row->data;
+		item = row->data;
 		if (urlfile)
 			item->isnew = urls_isnew(item->matchnew);
 		else
@@ -1454,20 +1461,113 @@ feeds_load(struct feed *feeds, size_t nfeeds)
 	}
 }
 
+/* find row position of the feed if visible, else return -1 */
+off_t
+feeds_row_get(struct pane *p, struct feed *f)
+{
+	struct row *row;
+	struct feed *fr;
+	off_t pos;
+
+	for (pos = 0; pos < p->nrows; pos++) {
+		if (!(row = pane_row_get(p, pos)))
+			continue;
+		fr = row->data;
+		if (!strcmp(fr->name, f->name))
+			return pos;
+	}
+	return -1;
+}
+
 void
 feeds_reloadall(void)
 {
+	struct pane *p;
+	struct feed *f = NULL;
+	struct row *row;
 	off_t pos;
 
-	pos = panes[PaneItems].pos; /* store numeric position */
+	p = &panes[PaneFeeds];
+	if ((row = pane_row_get(p, p->pos)))
+		f = row->data;
+
+	pos = panes[PaneItems].pos; /* store numeric item position */
 	feeds_set(curfeed); /* close and reopen feed if possible */
 	urls_read();
 	feeds_load(feeds, nfeeds);
 	urls_free();
-	/* restore numeric position */
+	/* restore numeric item position */
 	pane_setpos(&panes[PaneItems], pos);
 	updatesidebar();
 	updatetitle();
+
+	/* try to find the same feed in the pane */
+	if (f && (pos = feeds_row_get(p, f)) != -1)
+		pane_setpos(p, pos);
+	else
+		pane_setpos(p, 0);
+}
+
+void
+feed_open_selected(struct pane *p)
+{
+	struct feed *f;
+	struct row *row;
+
+	if (!(row = pane_row_get(p, p->pos)))
+		return;
+	f = row->data;
+	feeds_set(f);
+	urls_read();
+	if (f->fp)
+		feed_load(f, f->fp);
+	urls_free();
+	/* redraw row: counts could be changed */
+	updatesidebar();
+	updatetitle();
+
+	if (layout == LayoutMonocle) {
+		selpane = PaneItems;
+		updategeom();
+	}
+}
+
+void
+feed_plumb_selected_item(struct pane *p, int field)
+{
+	struct row *row;
+	struct item *item;
+
+	if (!(row = pane_row_get(p, p->pos)))
+		return;
+	item = row->data;
+	markread(p, p->pos, p->pos, 1);
+	forkexec((char *[]) { plumbercmd, item->fields[field], NULL }, plumberia);
+}
+
+void
+feed_pipe_selected_item(struct pane *p)
+{
+	struct row *row;
+	struct item *item;
+
+	if (!(row = pane_row_get(p, p->pos)))
+		return;
+	item = row->data;
+	markread(p, p->pos, p->pos, 1);
+	pipeitem(pipercmd, item, -1, piperia);
+}
+
+void
+feed_yank_selected_item(struct pane *p, int field)
+{
+	struct row *row;
+	struct item *item;
+
+	if (!(row = pane_row_get(p, p->pos)))
+		return;
+	item = row->data;
+	pipeitem(yankercmd, item, field, yankeria);
 }
 
 /* calculate optimal (default) size */
@@ -1491,7 +1591,7 @@ getsidebarsizedefault(void)
 			if (onlynew && feed->totalnew == 0)
 				continue;
 		}
-		return MIN(win.width - 1, size);
+		return MAX(MIN(win.width - 1, size), 0);
 	case LayoutHorizontal:
 		for (i = 0, size = 0; i < nfeeds; i++) {
 			feed = &feeds[i];
@@ -1499,7 +1599,7 @@ getsidebarsizedefault(void)
 				continue;
 			size++;
 		}
-		return MIN((win.height - 1) / 2, size);
+		return MAX(MIN((win.height - 1) / 2, size), 1);
 	}
 	return 0;
 }
@@ -1511,7 +1611,7 @@ getsidebarsize(void)
 
 	if ((size = fixedsidebarsizes[layout]) < 0)
 		size = getsidebarsizedefault();
-	return MAX(size, layout == LayoutHorizontal ? 1 : 0);
+	return size;
 }
 
 void
@@ -1544,7 +1644,7 @@ updatesidebar(void)
 	struct row *row;
 	struct feed *feed;
 	size_t i, nrows;
-	int oldvalue, newvalue;
+	int oldvalue = 0, newvalue = 0;
 
 	p = &panes[PaneFeeds];
 	if (!p->rows)
@@ -1578,18 +1678,10 @@ updatesidebar(void)
 	}
 	p->nrows = nrows;
 
-	switch (layout) {
-	case LayoutVertical:
-	case LayoutHorizontal:
-		if (oldvalue != newvalue)
-			updategeom();
-		else
-			p->dirty = 1;
-		break;
-	default:
+	if (oldvalue != newvalue)
+		updategeom();
+	else
 		p->dirty = 1;
-		break;
-	}
 
 	if (!p->nrows)
 		p->pos = 0;
@@ -1631,16 +1723,14 @@ draw(void)
 	struct item *item;
 	size_t i;
 
-	if (win.dirty) {
+	if (win.dirty)
 		win.dirty = 0;
-		clearscreen();
-	}
 
-	/* There is the same amount and indices of panes and scrollbars. */
 	for (i = 0; i < LEN(panes); i++) {
 		pane_setfocus(&panes[i], i == selpane);
 		pane_draw(&panes[i]);
 
+		/* each pane has a scrollbar */
 		scrollbar_setfocus(&scrollbars[i], i == selpane);
 		scrollbar_update(&scrollbars[i],
 		                 panes[i].pos - (panes[i].pos % panes[i].height),
@@ -1650,9 +1740,9 @@ draw(void)
 
 	linebar_draw(&linebar);
 
-	/* If item selection text changed then update the status text. */
+	/* if item selection text changed then update the status text */
 	if ((row = pane_row_get(&panes[PaneItems], panes[PaneItems].pos))) {
-		item = (struct item *)row->data;
+		item = row->data;
 		statusbar_update(&statusbar, item->fields[FieldLink]);
 	} else {
 		statusbar_update(&statusbar, "");
@@ -1661,12 +1751,9 @@ draw(void)
 }
 
 void
-mousereport(int button, int release, int mask, int x, int y)
+mousereport(int button, int release, int keymask, int x, int y)
 {
 	struct pane *p;
-	struct feed *f;
-	struct row *row;
-	struct item *item;
 	size_t i;
 	int changedpane, dblclick, pos;
 
@@ -1678,7 +1765,26 @@ mousereport(int button, int release, int mask, int x, int y)
 		if (p->hidden || !p->width || !p->height)
 			continue;
 
-		if (!(x >= p->x && x < p->x + p->width &&
+		/* these button actions are done regardless of the position */
+		switch (button) {
+		case 7: /* side-button: backward */
+			if (selpane == PaneFeeds)
+				return;
+			selpane = PaneFeeds;
+			if (layout == LayoutMonocle)
+				updategeom();
+			return;
+		case 8: /* side-button: forward */
+			if (selpane == PaneItems)
+				return;
+			selpane = PaneItems;
+			if (layout == LayoutMonocle)
+				updategeom();
+			return;
+		}
+
+		/* check if mouse position is in pane or in its scrollbar */
+		if (!(x >= p->x && x < p->x + p->width + (!scrollbars[i].hidden) &&
 		      y >= p->y && y < p->y + p->height))
 			continue;
 
@@ -1686,66 +1792,28 @@ mousereport(int button, int release, int mask, int x, int y)
 		selpane = i;
 		/* relative position on screen */
 		pos = y - p->y + p->pos - (p->pos % p->height);
-		dblclick = (pos == p->pos); /* clicking the same row */
+		dblclick = (pos == p->pos); /* clicking the same row twice */
 
 		switch (button) {
 		case 0: /* left-click */
 			if (!p->nrows || pos >= p->nrows)
 				break;
 			pane_setpos(p, pos);
-			if (i == PaneFeeds) {
-				row = pane_row_get(p, p->pos);
-				f = (struct feed *)row->data;
-				feeds_set(f);
-				urls_read();
-				if (f->fp)
-					feed_load(f, f->fp);
-				urls_free();
-				/* redraw row: counts could be changed */
-				updatesidebar();
-				updatetitle();
-
-				if (layout == LayoutMonocle) {
-					selpane = PaneItems;
-					updategeom();
-				}
-			} else if (i == PaneItems) {
-				if (dblclick && !changedpane) {
-					row = pane_row_get(p, p->pos);
-					item = (struct item *)row->data;
-					markread(p, p->pos, p->pos, 1);
-					forkexec((char *[]) { plumbercmd, item->fields[FieldLink], NULL }, plumberia);
-				}
-			}
+			if (i == PaneFeeds)
+				feed_open_selected(&panes[PaneFeeds]);
+			else if (i == PaneItems && dblclick && !changedpane)
+				feed_plumb_selected_item(&panes[PaneItems], FieldLink);
 			break;
 		case 2: /* right-click */
 			if (!p->nrows || pos >= p->nrows)
 				break;
 			pane_setpos(p, pos);
-			if (i == PaneItems) {
-				row = pane_row_get(p, p->pos);
-				item = (struct item *)row->data;
-				markread(p, p->pos, p->pos, 1);
-				pipeitem(pipercmd, item, -1, 1);
-			}
+			if (i == PaneItems)
+				feed_pipe_selected_item(&panes[PaneItems]);
 			break;
 		case 3: /* scroll up */
 		case 4: /* scroll down */
 			pane_scrollpage(p, button == 3 ? -1 : +1);
-			break;
-		case 7: /* side-button: backward */
-			if (selpane == PaneFeeds)
-				break;
-			selpane = PaneFeeds;
-			if (layout == LayoutMonocle)
-				updategeom();
-			break;
-		case 8: /* side-button: forward */
-			if (selpane == PaneItems)
-				break;
-			selpane = PaneItems;
-			if (layout == LayoutMonocle)
-				updategeom();
 			break;
 		}
 		return; /* do not bubble events */
@@ -1764,9 +1832,9 @@ feed_row_format(struct pane *p, struct row *row)
 	char counts[128];
 	int len, w;
 
-	feed = (struct feed *)row->data;
+	feed = row->data;
 
-	/* align counts to the right and pad remaining width with spaces */
+	/* align counts to the right and pad the rest with spaces */
 	len = snprintf(counts, sizeof(counts), "(%lu/%lu)",
 	               feed->totalnew, feed->total);
 	if (len > p->width)
@@ -1799,7 +1867,7 @@ feed_row_match(struct pane *p, struct row *row, const char *s)
 {
 	struct feed *feed;
 
-	feed = (struct feed *)row->data;
+	feed = row->data;
 
 	return (strcasestr(feed->name, s) != NULL);
 }
@@ -1815,7 +1883,7 @@ item_row_get(struct pane *p, off_t pos)
 	ssize_t linelen;
 
 	itemrow = p->rows + pos;
-	item = (struct item *)itemrow->data;
+	item = itemrow->data;
 
 	f = curfeed;
 	if (f && f->path && f->fp && !item->line) {
@@ -1848,7 +1916,7 @@ item_row_format(struct pane *p, struct row *row)
 	struct tm tm;
 	size_t needsize;
 
-	item = (struct item *)row->data;
+	item = row->data;
 
 	needsize = strlen(item->fields[FieldTitle]) + 21;
 	if (needsize > textsize) {
@@ -1896,9 +1964,10 @@ markread(struct pane *p, off_t from, off_t to, int isread)
 		if (!(fp = popen(cmd, "w")))
 			die("popen: %s", cmd);
 
-		for (i = from; i <= to; i++) {
-			row = &(p->rows[i]); /* use pane_row_get: no need for lazyload */
-			item = (struct item *)row->data;
+		for (i = from; i <= to && i < p->nrows; i++) {
+			/* do not use pane_row_get: no need for lazyload */
+			row = &(p->rows[i]);
+			item = row->data;
 			if (item->isnew != isnew) {
 				fputs(item->matchnew, fp);
 				putc('\n', fp);
@@ -1918,7 +1987,7 @@ markread(struct pane *p, off_t from, off_t to, int isread)
 		visstart = p->pos - (p->pos % p->height); /* visible start */
 		for (i = from; i <= to && i < p->nrows; i++) {
 			row = &(p->rows[i]);
-			item = (struct item *)row->data;
+			item = row->data;
 			if (item->isnew == isnew)
 				continue;
 
@@ -1990,12 +2059,11 @@ main(int argc, char *argv[])
 	struct pane *p;
 	struct feed *f;
 	struct row *row;
-	struct item *item;
 	size_t i;
 	char *name, *tmp;
 	char *search = NULL; /* search text */
-	int button, ch, fd, mask, release, x, y;
-	off_t off;
+	int button, ch, fd, keymask, release, x, y;
+	off_t pos;
 
 #ifdef __OpenBSD__
 	if (pledge("stdio rpath tty proc exec", NULL) == -1)
@@ -2068,9 +2136,10 @@ main(int argc, char *argv[])
 	if ((devnullfd = open("/dev/null", O_WRONLY)) == -1)
 		die("open: /dev/null");
 
-	updatesidebar();
-	updatetitle();
 	init();
+	updatesidebar();
+	updategeom();
+	updatetitle();
 	draw();
 
 	while (1) {
@@ -2096,13 +2165,13 @@ main(int argc, char *argv[])
 					goto event;
 				y = ch - 32;
 
-				mask = button & (4 | 8 | 16); /* shift, meta, ctrl */
-				button &= ~mask; /* unset key mask */
+				keymask = button & (4 | 8 | 16); /* shift, meta, ctrl */
+				button &= ~keymask; /* unset key mask */
 
 				/* button numbers (0 - 2) encoded in lowest 2 bits
 				   release does not indicate which button (so set to 0).
 				   Handle extended buttons like scrollwheels
-				   and side-buttons by subtracting 64 in each range. */
+				   and side-buttons by each range. */
 				release = 0;
 				if (button == 3) {
 					button = -1;
@@ -2112,7 +2181,7 @@ main(int argc, char *argv[])
 				} else if (button >= 64) {
 					button -= 61;
 				}
-				mousereport(button, release, mask, x - 1, y - 1);
+				mousereport(button, release, keymask, x - 1, y - 1);
 				break;
 			case '<': /* mouse: SGR encoding */
 				for (button = 0; ; button *= 10, button += ch - '0') {
@@ -2134,15 +2203,15 @@ main(int argc, char *argv[])
 						break; /* release or press */
 				}
 				release = ch == 'm';
-				mask = button & (4 | 8 | 16); /* shift, meta, ctrl */
-				button &= ~mask; /* unset key mask */
+				keymask = button & (4 | 8 | 16); /* shift, meta, ctrl */
+				button &= ~keymask; /* unset key mask */
 
 				if (button >= 128)
 					button -= 121;
 				else if (button >= 64)
 					button -= 61;
 
-				mousereport(button, release, mask, x - 1, y - 1);
+				mousereport(button, release, keymask, x - 1, y - 1);
 				break;
 			// case 'A': goto keyup;    /* arrow up */
 			// case 'B': goto keydown;  /* arrow down */
@@ -2170,47 +2239,34 @@ main(int argc, char *argv[])
 				continue;
 			}
 			break;
-		case 'A': /* flite */
-			p = &panes[selpane];
-			row = pane_row_get(p, p->pos);
-			if (selpane == PaneItems && panes[selpane].nrows) {
-				item = (struct item *)row->data;
-				markread(p, p->pos, p->pos, 1);
-				pipeitem("/root/src/sfeed_curses/sfeed_audio", item, -1, 1);
-			}
-      break;
-		case ']': /* spritz-reader */
-			p = &panes[selpane];
-			row = pane_row_get(p, p->pos);
-			if (selpane == PaneItems && panes[selpane].nrows) {
-				item = (struct item *)row->data;
-				markread(p, p->pos, p->pos, 1);
-				pipeitem("/root/src/sfeed_curses/sfeed_speed", item, -1, 1);
-			}
-			break;
 keyup:
 		// case 'k':
+		// case 'K':
 		case '[':
 			pane_scrolln(&panes[selpane], -1);
+			// if (ch == 'K')
+			// 	goto openitem;
 			break;
 keydown:
 		// case 'j':
+		// case 'J':
 		case '\'':
 			pane_scrolln(&panes[selpane], +1);
+			// if (ch == 'J')
+				// goto openitem;
 			break;
 keyleft:
 		// case 'h':
-		// 	if (selpane == PaneFeeds)
-		// 		break;
-		// 	selpane = PaneFeeds;
-		// 	if (layout == LayoutMonocle)
-		// 		updategeom();
-		// 	break;
- 		case ';':
+		case ';':
+			// if (selpane == PaneFeeds)
+			// 	break;
+			// selpane = PaneFeeds;
+			// if (layout == LayoutMonocle)
+			// 	updategeom();
 			selpane = selpane == PaneFeeds ? PaneItems : PaneFeeds;
  			if (layout == LayoutMonocle)
  				updategeom();
- 			break;
+			break;
 keyright:
 		// case 'l':
 		// 	if (selpane == PaneItems)
@@ -2223,14 +2279,13 @@ keyright:
 		// 	selpane = selpane == PaneFeeds ? PaneItems : PaneFeeds;
 		// 	if (layout == LayoutMonocle)
 		// 		updategeom();
-		// 	break;
 		case '\\':
 			p = &panes[selpane];
 			row = pane_row_get(p, p->pos);
 			if (selpane == PaneItems && panes[selpane].nrows) {
-				item = (struct item *)row->data;
+				// item = (struct item *)row->data;
 				markread(p, p->pos, p->pos, 1);
-				pipeitem("/root/src/sfeed_curses/sfeed_read", item, -1, 1);
+				pipeitem("/root/src/sfeed_curses/sfeed_read", row->data, -1, 1);
 			} else if (selpane == PaneFeeds && panes[selpane].nrows) {
 				urls_read();
 				f = (struct feed *)row->data;
@@ -2281,17 +2336,17 @@ nextpage:
 
 			if (ch == '/' || ch == 'n') {
 				/* forward */
-				for (off = p->pos + 1; off < p->nrows; off++) {
-					if (pane_row_match(p, pane_row_get(p, off), search)) {
-						pane_setpos(p, off);
+				for (pos = p->pos + 1; pos < p->nrows; pos++) {
+					if (pane_row_match(p, pane_row_get(p, pos), search)) {
+						pane_setpos(p, pos);
 						break;
 					}
 				}
 			} else {
 				/* backward */
-				for (off = p->pos - 1; off >= 0; off--) {
-					if (pane_row_match(p, pane_row_get(p, off), search)) {
-						pane_setpos(p, off);
+				for (pos = p->pos - 1; pos >= 0; pos--) {
+					if (pane_row_match(p, pane_row_get(p, pos), search)) {
+						pane_setpos(p, pos);
 						break;
 					}
 				}
@@ -2306,79 +2361,62 @@ nextpage:
 		case 'a': /* attachment */
 		case 'e': /* enclosure */
 		case '@':
-			if (selpane == PaneItems && panes[selpane].nrows) {
-				p = &panes[selpane];
-				row = pane_row_get(p, p->pos);
-				item = (struct item *)row->data;
-				forkexec((char *[]) { plumbercmd, item->fields[FieldEnclosure], NULL }, plumberia);
-			}
+			if (selpane == PaneItems)
+				feed_plumb_selected_item(&panes[selpane], FieldEnclosure);
 			break;
-		// case 'm': /* toggle mouse mode */
-		// 	usemouse = !usemouse;
-		// 	mousemode(usemouse);
-		// 	break;
-		// case '<': /* decrease fixed sidebar width */
-		// case '>': /* increase fixed sidebar width */
-		// 	adjustsidebarsize(ch == '<' ? -1 : +1);
-		// 	break;
-		// case '=': /* reset fixed sidebar to automatic size */
-		// 	fixedsidebarsizes[layout] = -1;
-		// 	updategeom();
-		// 	break;
+		case 'm': /* toggle mouse mode */
+			usemouse = !usemouse;
+			mousemode(usemouse);
+			break;
+		case '<': /* decrease fixed sidebar width */
+		case '>': /* increase fixed sidebar width */
+			adjustsidebarsize(ch == '<' ? -1 : +1);
+			break;
+		case '=': /* reset fixed sidebar to automatic size */
+			fixedsidebarsizes[layout] = -1;
+			updategeom();
+			break;
 		case 't': /* toggle showing only new in sidebar */
-			onlynew = !onlynew;
-			pane_setpos(&panes[PaneFeeds], 0);
-			updatesidebar();
-			break;
-		// case 'o': /* feeds: load, items: plumb URL */
-		case '\n':
-			p = &panes[selpane];
-			if (selpane == PaneFeeds && panes[selpane].nrows) {
-				row = pane_row_get(p, p->pos);
-				f = (struct feed *)row->data;
-				feeds_set(f);
-				urls_read();
-				if (f->fp)
-					feed_load(f, f->fp);
-				urls_free();
-				/* redraw row: counts could be changed */
-				updatesidebar();
-				updatetitle();
+			p = &panes[PaneFeeds];
+			if ((row = pane_row_get(p, p->pos)))
+				f = row->data;
 
-				if (layout == LayoutMonocle) {
-					selpane = PaneItems;
-					updategeom();
-				}
-			} else if (selpane == PaneItems && panes[selpane].nrows) {
-				row = pane_row_get(p, p->pos);
-				item = (struct item *)row->data;
-				markread(p, p->pos, p->pos, 1);
-				forkexec((char *[]) { plumbercmd, item->fields[FieldLink], NULL }, plumberia);
-			}
+			onlynew = !onlynew;
+			updatesidebar();
+
+			/* try to find the same feed in the pane */
+			if (row && f && f->totalnew &&
+			    (pos = feeds_row_get(p, f)) != -1)
+				pane_setpos(p, pos);
+			else
+				pane_setpos(p, 0);
+			break;
+		case 'o': /* feeds: load, items: plumb URL */
+		case '\n':
+openitem:
+			if (selpane == PaneFeeds && panes[selpane].nrows)
+				feed_open_selected(&panes[selpane]);
+			else if (selpane == PaneItems && panes[selpane].nrows)
+				feed_plumb_selected_item(&panes[selpane], FieldLink);
 			break;
 		case 'c': /* items: pipe TSV line to program */
 		case 'p':
 		case '|':
+			if (selpane == PaneItems)
+				feed_pipe_selected_item(&panes[selpane]);
+			break;
 		case 'y': /* yank: pipe TSV field to yank URL to clipboard */
 		case 'E': /* yank: pipe TSV field to yank enclosure to clipboard */
-			if (selpane == PaneItems && panes[selpane].nrows) {
-				p = &panes[selpane];
-				row = pane_row_get(p, p->pos);
-				item = (struct item *)row->data;
-				switch (ch) {
-				case 'y': pipeitem(yankercmd, item, FieldLink, yankeria); break;
-				case 'E': pipeitem(yankercmd, item, FieldEnclosure, yankeria); break;
-				default:
-					markread(p, p->pos, p->pos, 1);
-					pipeitem(pipercmd, item, -1, piperia);
-					break;
-				}
-			}
+			if (selpane == PaneItems)
+				feed_yank_selected_item(&panes[selpane],
+				                        ch == 'y' ? FieldLink : FieldEnclosure);
 			break;
-		case 'V': /* mark all read */
+		// case 'f': /* mark all read */
 		// case 'F': /* mark all unread */
+		case 'V':
 			if (panes[PaneItems].nrows) {
 				p = &panes[PaneItems];
+				// markread(p, 0, p->nrows - 1, ch == 'f');
 				markread(p, 0, p->nrows - 1, ch == 'V');
 			}
 			break;
@@ -2398,6 +2436,24 @@ nextpage:
 		case '3': /* monocle layout */
 			setlayout(ch - '1');
 			updategeom();
+			break;
+		case 'A': /* flite */
+			if (selpane == PaneItems && panes[selpane].nrows) {
+				p = &panes[selpane];
+				row = pane_row_get(p, p->pos);
+				// item = row->data;
+				pipeitem("/root/src/sfeed_curses/sfeed_audio", row->data, -1, 1);
+				markread(p, p->pos, p->pos, 1);
+			}
+			break;
+		case ']': /* spritz-reader */
+			if (selpane == PaneItems && panes[selpane].nrows) {
+				p = &panes[selpane];
+				row = pane_row_get(p, p->pos);
+				// item = row->data;
+				pipeitem("/root/src/sfeed_curses/sfeed_speed", row->data, -1, 1);
+				markread(p, p->pos, p->pos, 1);
+			}
 			break;
 		case 4: /* EOT */
 		case 'q': goto end;

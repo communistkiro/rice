@@ -90,7 +90,7 @@ cmd open ${{
 
 cmd sublime %{{
   set -f;
-  subl3 -n --command toggle_side_bar $fx;
+  subl4 -n --command toggle_side_bar $fx;
 }}
 
 cmd rndrename ${{
@@ -118,7 +118,7 @@ cmd mkdir ${{((# > 0)) && mkdir -p ${"$(printf '%s ' $@)"%?} || mktemp -d .XXXXX
 
 cmd fzf ${{
   printf '%s\n' *(.D-) | fzf -i -m --reverse \
-    --bind "alt-e:execute(subl3 -n --command toggle_side_bar -a {+})" \
+    --bind "alt-e:execute(subl4 -n --command toggle_side_bar -a {+})" \
     --bind "alt-c:clear-selection" \
     --bind "alt-v:select-all" \
     --preview 'cat {}' \
@@ -127,8 +127,8 @@ cmd fzf ${{
 
 cmd 7za ${{
   set -f;
-  if (($# > 0)); then 7za a -t7z -mx=9 -mfb=64 -md=32m ${"$(printf '%s ' $@)"%?}.7z $fx;
-  else 7za a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m $(cat /dev/random | tr -cd '[:alnum:]' | head -c 32).7z $fx; fi
+  if (($# > 0)); then 7za a -t7z ${"$(printf '%s ' $@)"%?}.7z $fx;
+  else 7za a -t7z  $(cat /dev/random | tr -cd '[:alnum:]' | head -c 32).7z $fx; fi
 }}
 
 cmd extract ${{ typeset a; set -f; for a (${fx}) { aunpack -e $a} }}

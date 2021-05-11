@@ -1,4 +1,4 @@
-1;5F###########################
+###########################
 # xbindkeys configuration #
 ###########################
 #
@@ -34,7 +34,7 @@
 
 #keystate_numlock = enable
 #keystate_capslock = enable
-#keystate_scrolllock= enable
+#keystate_scrolllock = enable
 
 # Examples of commands:
 
@@ -84,7 +84,7 @@
    XF86MonBrightnessDown
 
 # Lock screen
-"xbacklight -set 0 && slock && xbacklight -set 12"
+"slock"
     XF86ScreenSaver
 
 # Next track
@@ -104,13 +104,12 @@
     XF86AudioStop
 
 # printscreen
-"scrot --silent --quality=75 '/tmp/%Y%m%dT%H%M%S.png'"
-   Print
+"scrot --silent --quality=75 '/tmp/%s.png'"
+    Print
 
 # "scrot --silent --select --line style=dash,width=2,color='red' --quality=75 '/tmp/%Y-%m-%d-%H-%M-%S.png'"
-#    Mod4 + Print
+#     Mod4 + Print
 
-
-# "mpv ${$(xclip -se c -o):-$(xclip -se p -o)} || return"
 "mpv $(xclip -se c -o) || mpv $(xclip -se p -o) || return"
     Mod4 + w
+

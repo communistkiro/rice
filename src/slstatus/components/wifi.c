@@ -98,8 +98,7 @@
 			return NULL;
 		}
 
-		// return id;
-		return bprintf("%s ", id);
+		return id;
 	}
 #elif defined(__OpenBSD__)
 	#include <net/if.h>

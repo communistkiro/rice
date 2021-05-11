@@ -1,12 +1,13 @@
 /* modifier 0 means no modifier */
 static int surfuseragent    = 0;  /* Append Surf version to default WebKit user agent */
-static char *fulluseragent  = ""; /* Or override the whole user agent string */
-static char *scriptfile     = "~/.surf/script.js";
-static char *styledir       = "~/.surf/styles/";
-static char *scriptdir      = "~/.surf/script/";
-static char *certdir        = "~/.surf/certificates/";
-static char *cachedir       = "~/.surf/cache/";
-static char *cookiefile     = "~/.surf/cookies.txt";
+static char *fulluseragent	= ""; /* Or override the whole user agent string */
+static char *scriptfile		= "~/.surf/script.js";
+static char *styledir		= "~/.surf/styles/";
+static char *scriptdir		= "~/.surf/script/";
+static char *certdir		= "~/.surf/certificates/";
+static char *cachedir		= "~/.surf/cache/";
+static char *cookiefile		= "~/.surf/cookies.txt";
+static char *filterfile		= "~/.surf/filters.tmp";
 
 /* Webkit default features */
 /* Highest priority value will be used.
@@ -15,85 +16,78 @@ static char *cookiefile     = "~/.surf/cookies.txt";
  * Command parameters are priority 2
  */
 static Parameter defconfig[ParameterLast] = {
-	/* Parameter 			Arg value       Priority */
-	[AccessMicrophone]    = {	{ .i = 0 },		},
-	[AccessWebcam]        =	{	{ .i = 0 },		},
-	[Certificate]         =	{	{ .i = 0 },		},
-	[CaretBrowsing]       =	{	{ .i = 0 },		},
-	[CookiePolicies]      =	{	{ .v = "a@" },	},
-	[DefaultCharset]      =	{	{ .v = "UTF-8"	}, 	},
-	[DiskCache]           =	{	{ .i = 1 },		},
-	[DNSPrefetch]         =	{	{ .i = 0 },		},
-	[Ephemeral]           =	{	{ .i = 0 },		},
-	[FileURLsCrossAccess] =	{	{ .i = 0 },		},
-	[FontSize]            =	{	{ .i = 16 },	},
-	[FrameFlattening]     =	{	{ .i = 0 },		},
-	[Geolocation]         =	{	{ .i = 0 },		},
-	[HideBackground]      =	{	{ .i = 0 },		},
-	[Inspector]           =	{	{ .i = 1 },		},
-	[Java]                =	{	{ .i = 1 },		},
-	[JavaScript]          =	{	{ .i = 0 },		},
-	[KioskMode]           =	{	{ .i = 0 },		},
-	[LoadImages]          =	{	{ .i = 1 },		},
-	[MediaManualPlay]     =	{	{ .i = 1 },		},
-	[PreferredLanguages]  =	{	{ .v = (char *[]){ NULL } }, },
-	[RunInFullscreen]     =	{	{ .i = 0 },		},
-	[ScrollBars]          =	{	{ .i = 1 },		},
-	[ShowIndicators]      =	{	{ .i = 1 },		},
-	[SiteQuirks]          =	{	{ .i = 1 },		},
-	[SmoothScrolling]     =	{	{ .i = 0 },		},
-	[SpellChecking]       =	{	{ .i = 0 },		},
-	[SpellLanguages]      =	{	{ .v = ((char *[]){ "en_US", NULL }) }, },
-	[StrictTLS]           =	{	{ .i = 0 },		},
-	[Style]               =	{	{ .i = 1 },		},
-	[UserScript]          =	{	{ .i = 1 },		},
-	[WebGL]               =	{	{ .i = 0 },		},
-	[ZoomLevel]           =	{	{ .f = 1.05 },	},
+	/* Parameter					Arg value	Priority */
+	[AccessMicrophone]		=	{	{ .i = 0 },		},
+	[AccessWebcam]			=	{	{ .i = 0 },		},
+	[Certificate]			=	{	{ .i = 0 },		},
+	[CaretBrowsing]			=	{	{ .i = 1 },		},
+	[ContentFilter]			=	{ 	{ .i = 1 },	1	},
+	[CookiePolicies]		=	{	{ .v = "a@" },	},
+	[DefaultCharset]		=	{	{ .v = "UTF-8"	}, },
+	[DiskCache]				=	{	{ .i = 1 },		},
+	[DNSPrefetch]			=	{	{ .i = 0 },		},
+	[Ephemeral]				=	{	{ .i = 0 },		},
+	[FileURLsCrossAccess]	=	{	{ .i = 0 },		},
+	[FontSize]				=	{	{ .i = 18 },	},
+	[FrameFlattening]		=	{	{ .i = 0 },		},
+	[Geolocation]			=	{	{ .i = 0 },		},
+	[HideBackground]		=	{	{ .i = 0 },		},
+	[Inspector]				=	{	{ .i = 1 },		},
+	[Java]					=	{	{ .i = 1 },		},
+	[JavaScript]			=	{	{ .i = 1 },		},
+	[KioskMode]				=	{	{ .i = 0 },		},
+	[LoadImages]			=	{	{ .i = 1 },		},
+	[MediaManualPlay]		=	{	{ .i = 1 },		},
+	[PreferredLanguages]	=	{	{ .v = (char *[]){ NULL } }, },
+	[RunInFullscreen]		=	{	{ .i = 0 },		},
+	[ScrollBars]			=	{	{ .i = 1 },		},
+	[ShowIndicators]		=	{	{ .i = 1 },		},
+	[SiteQuirks]			=	{	{ .i = 1 },		},
+	[SmoothScrolling]		=	{	{ .i = 0 },		},
+	[SpellChecking]			=	{	{ .i = 0 },		},
+	[SpellLanguages]		= 	{	{ .v = ((char *[]){ "en	_US", NULL }) }, },
+	[StrictTLS]				=	{	{ .i = 1 },		},
+	[Style]					=	{	{ .i = 1 },		},
+	[UserScript]			=	{	{ .i = 1 },		},
+	[WebGL]					=	{	{ .i = 0 },		},
+	[ZoomLevel]				=	{	{ .f = 1.15 },	},
 };
 
 static UriParameters uriparams[] = {
 	{ "://(www\\.)?(lainchan|boards.4chan(nel)?)\\.org(/|$)", {
 		[CookiePolicies]    = {	{ .v = "@a" },	2 },
 		[JavaScript]		= { { .i =	1	},	2 },
-		[Style]				= {	{ .i = 	0 	},	2 },
-		// [UserScript]		= {	{ .i =	1	},	2 },
+		// [Style]				= {	{ .i = 	0 	},	2 },
 	}, },
 
 	{ "://(www\\.)?(wizchan\\.org|endchan\\.net|2ch\\.hk)(/|$)", {
-		[JavaScript]		= { { .i =	1	},	2 },
+		// [JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	0 	},	2 },
-		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 	{ "://(www\\.)?git(hub|lab)\\.com(/|$)", {
-		[JavaScript]		= { { .i =	1	},	2 },
+		// [JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 
 	{ "://(www\\.)?mail\\.(protonmail|tuta(nota|mail))\\.com(/|$)", {
-		[JavaScript]		= { { .i =	1	},	2 },
+		// [JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 
 	{ "://([^.]+\\.)?neocities\\.org(/|$)", {
 		[CookiePolicies]    = {	{ .v = "@a" },	2 },
-		[JavaScript]		= { { .i =	1	},	2 },
+		// [JavaScript]		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 
 	{ "://(www\\.)?([^.]+\\.)wik(tionary|i(pedia|species|news|source|books|quote|media|versity|voyage))\\.org/", {
-		[JavaScript] 		= { { .i =	1	},	2 },
+		// [JavaScript] 		= { { .i =	1	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		// [UserScript]		= {	{ .i =	0	},	2 },
 	}, },
 
 	{ ".*", {
-		[JavaScript] 		= { { .i =	0	},	2 },
+		// [JavaScript] 		= { { .i =	0	},	2 },
 		[Style]				= {	{ .i = 	1 	},	2 },
-		// [UserScript]		= {	{ .i =	0	},	2 },
-		[Geolocation]		= {	{ .i =	0	},	2 },
 	}, },
 };
 
@@ -118,7 +112,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 
 /* DOWNLOAD(URI, referer) */
 #define DOWNLOAD(u, r) { \
-		.v = (const char *[]){ "st", "-c", "surf-download", "-n", "surf-download", "-e", "/bin/sh", "-c",\
+		.v = (const char *[]){ "st", "-c", "surf-download", "-n", "surf-download", "-g", "80x4", "-e", "/bin/sh", "-c",\
 			 "curl -g -L -J -O -A \"$1\" -b \"$2\" -c \"$2\"" \
 			 " -e \"$3\" \"$4\"; read", \
 			 "surf-download", useragent, cookiefile, r, u, NULL \
@@ -164,6 +158,7 @@ static SiteSpecific styles[] = {
 static SiteSpecific scripts[] = {
 	/* regexp												file in $scriptdir */
 	{ "https://(lainchan|boards\\.4chan(nel)?)\\.org(/|$)",	"4chan-X.user.js"	},
+	{ ".*",													"links.js"			},
 };
 
 /* certificates */
@@ -189,7 +184,7 @@ static Key keys[] = {
 	{ 0,						GDK_KEY_Escape,				stop,				{ 0 } },
 	{ MODKEY,					GDK_KEY_r,					reload,				{ .i =  0 } },
 	{ MODKEY,					GDK_KEY_r,					reload,				{ .i =  1 } },
-	{ MODKEY,					GDK_KEY_Right	,			navigate,			{ .i =  1 } },
+	{ MODKEY,					GDK_KEY_Right,				navigate,			{ .i =  1 } },
 	{ MODKEY,					GDK_KEY_Left,				navigate,			{ .i = -1 } },
 	{ MODKEY,					GDK_KEY_apostrophe,			scrollv,			{ .i =  10 } },
 	{ MODKEY,					GDK_KEY_bracketleft,		scrollv,			{ .i = -10 } },
@@ -202,18 +197,15 @@ static Key keys[] = {
 	{ MODKEY,					GDK_KEY_p,					clipboard,			{ .i =  1 } },
 	{ MODKEY,					GDK_KEY_n,					find,				{ .i =  1 } },
 	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_n,					find,				{ .i = -1 } },
-	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_p,                  print,              { 0 } },
-	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_a,                  togglecookiepolicy, { 0 } },
-	{ 0,						GDK_KEY_F11,                togglefullscreen,   { 0 } },
-	{ 0,						GDK_KEY_F12,                toggleinspector,    { 0 } },
-	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_y,                  showcert,           { 0 } },
-	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_F10,                toggle,             { .i = CaretBrowsing } },
+	// { MODKEY|GDK_SHIFT_MASK,	GDK_KEY_p,					print,				{ 0 } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_a,					togglecookiepolicy,	{ 0 } },
+	{ 0,						GDK_KEY_F11,				togglefullscreen,	{ 0 } },
+	{ 0,						GDK_KEY_F12,				toggleinspector,	{ 0 } },
+	// { MODKEY|GDK_SHIFT_MASK,	GDK_KEY_y					showcert,			{ 0 } },
+	// { 0,						GDK_KEY_F10,                toggle,             { .i = CaretBrowsing } },
 	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_f,					toggle,				{ .i = FrameFlattening } },
 	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_s,					toggle,				{ .i = JavaScript } },
 	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_i,					toggle,				{ .i = LoadImages } },
-	// { MODKEY|GDK_CONTROL_MASK, GDK_KEY_g,                  toggle,             { .i = Geolocation } },
-	// { MODKEY|GDK_SHIFT_MASK,   GDK_KEY_a,                  toggle,             { .i = Plugins } },
-	// { MODKEY|GDK_CONTROL_MASK, GDK_KEY_b,                  toggle,             { .i = ScrollBars } },
 	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_t,					toggle,				{ .i = StrictTLS } },
 	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_m,					toggle,				{ .i = Style } },
 };
@@ -221,11 +213,11 @@ static Key keys[] = {
 /* button definitions */
 /* target can be OnDoc, OnLink, OnImg, OnMedia, OnEdit, OnBar, OnSel, OnAny */
 static Button buttons[] = {
-	/* target       event mask      	button  function           argument        stop event */
-	{ OnLink,       0,              	2,      clicknewwindow,    { .i =  0 },    1 },
-	// { OnLink,       GDK_SHIFT_MASK,		2,      clicknewwindow,    { .i =  1 },    1 },
-	// { OnLink,       GDK_SHIFT_MASK,		1,      clicknewwindow,    { .i =  1 },    1 },
-	{ OnAny,        0,              	8,      clicknavigate,     { .i = -1 },    1 },
-	{ OnAny,        0,              	9,      clicknavigate,     { .i =  1 },    1 },
-	{ OnMedia,      GDK_SHIFT_MASK,		1,      clickexternplayer, { 0       },    1 },
+	/* target		event mask			button	function			argument			stop event */
+	{ OnLink,		0,					2,		clicknewwindow,		{ .i =  0 },		1 },
+	// { OnLink,		MODKEY,				2,		clicknewwindow,		{ .i =  1 },		1 },
+	// { OnLink,		MODKEY,				1,		clicknewwindow,		{ .i =  1 },		1 },
+	{ OnAny,		0,					8,		clicknavigate,		{ .i = -1 },		1 },
+	{ OnAny,		0,					9,		clicknavigate,		{ .i =  1 },		1 },
+	{ OnMedia,		GDK_SHIFT_MASK,		1,		clickexternplayer,	{ 0       },		1 },
 };

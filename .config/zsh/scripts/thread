@@ -1,0 +1,47 @@
+#!/bin/zsh
+unset a;
+typeset dir thread t ext;
+while { getopts a t } { case ${(L)t} { (a) typeset a } };
+t=$(mktemp);
+for thread ( ${@} ) {
+  if [[ ${thread} =~ '^(https?://)?boards.4chan(nel)?\.org' ]] {
+    dir=/tmp/${${thread#*thread/}%#*}; [[ -d ${dir} ]] || mkdir ${dir};
+    curl -sfo ${t} ${thread%%\#*};
+    if ((${+a})) {
+      wget -nc -P ${dir} ${(u)${(f)"$(pup -p -f ${t} 'a[href^=//i.4cdn] attr{href}')"}#??};
+    } else {
+      ext=($(pup -p -f ${t} 'a[href^=//i.4cdn] attr{href}' |  cut -d . -f 4 | sort -u));
+      printf '\a'; ext=(${$(fzf -i -m --reverse --bind=alt-c:clear-selection,alt-v:select-all <<< ${(F)ext}):*ext});
+      for ext ( ${ext} ) {
+        wget -nc -P ${dir} ${(u)${(f)"$(pup -p -f ${t} 'a[href$=.'${ext}'] attr{href}')"}#??};
+      };
+    };
+  } elif [[ ${thread} =~ '^(https?://)?2ch\.hk' ]] {
+    thread=$(pcre2grep -o '(https?://)?2ch\.hk.+(res|src)/\d+' <<< ${thread});
+    dir=/tmp/${thread##*/}; [[ -d ${dir} ]] || mkdir ${dir};
+    curl -sfo ${t} ${thread/src/res}.html\#${thread##*\/};
+    if ((${+a})) {
+      wget -nc -P ${dir} $(printf '2ch.hk%s ' ${(fu)"$(pup -p -f ${t} 'a[href*=/src/] attr{href}')"});
+    } else {
+      ext=($(pup -p -f ${t} 'a[href*=/src/] attr{href}' | cut -d . -f 2 | sort -u));
+      print '\a'; ext=(${$(fzf -i -m --reverse --bind=alt-c:clear-selection,alt-v:select-all <<< ${(F)ext}):*ext});
+      for ext ( ${ext} ) {
+        wget -nc -P ${dir} $(printf '2ch.hk%s ' ${(fu)"$(pup -p -f ${t} 'a[href$=.'${ext}'] attr{href}')"});
+      };
+    };
+  } elif [[ ${thread} =~ '^(https?://)?wikieat\.club' ]] {
+    thread=${thread%\#*}; [[ ${thread} =~ '\.html' ]] || continue;
+    dir=/tmp/${${thread##*/}%.*}; [[ -d ${dir} ]] || mkdir ${dir};
+    curl -sfo ${t} ${thread};
+    if ((${+a})) {
+      wget -nc -P ${dir} http://wikieat.club${url}${^${(uf)"$(pup -p -f ${t} 'div.file p a attr{href}')"}};
+    } else {
+      ext=(${$(pup -p -f ${t} 'div.file p a text{}' | cut -d . -f 2 | sort -u)});
+      printf '\a'; ext=(${$(fzf -i -m --reverse --bind=alt-c:clear-selection,alt-v:select-all <<< ${(F)ext}):*ext})
+      for ext ( ${ext} ) {
+        wget -nc -P ${dir} http://wikieat.club${url}${^${(uf)"$(pup -p -f ${t} 'div.file p a[href$=.'${ext}'] attr{href}')"}};
+      };
+    };
+  };
+};
+rm ${t} &>/dev/null;

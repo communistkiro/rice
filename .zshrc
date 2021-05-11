@@ -19,7 +19,7 @@ HYPHEN_INSENSITIVE="true";
 HISTFILE=/root/.zsh_history;
 SAVEHIST=1000;
 HISTSIZE=1000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='((r(m|dr)|c([dp]|l(|a))|f(d|eh|mt)|m(an|le|v|)|neo|p(|re)|qpp|r(ealpath|g|un-help)|sf|t(mr|ime)|w(c|hich)|z(ed|sh|mv|cp|ln)|vol|x(b(|r|s)|i|rs|q)|kill|abb|pid|e(links|cho)) *|((|b)l|L|oc|[.<]|mpv|yt)*)';
+HISTORY_IGNORE='((r(m|dr|ealpath|g|un-help|)|c([dp]|l(|a|n))|f(d|eh|mt)|m(an|le|v)|p(|re|k)|b(l(|l)|uck)|t(mr|ime)|w(c|hich)|z(ed|sh|mv|cp|ln)|x(b(|r|s)|i|rs|q|)|e(links|cho)|l(1|r|s|ibgen)|oc(|c)|sf|qpp|kill|abb|pid|vol|neo|L) *|([.</~]|mpv|yt)*)';
 zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1 }; # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -76,16 +76,13 @@ zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 # And if you want the number of errors allowed by _approximate to increase with the length of what you have typed so far:
-# zstyle -e ':completion:*:approximate:*' \
-#         max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
+zstyle -e ':completion:*:approximate:*' \
+        max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
 
 
 
 
 ###     KEYBINDS
-#exit_zsh() { exit }
-#zle -N exit_zsh
-#bindkey '^D' exit_zsh
 
 
 
@@ -108,52 +105,52 @@ alias 9='cd -9';
 # https://grml.org/zsh/zsh-lovers.html
 # alias -g CA="2>&1 | cat -A";
 alias -g C='| wc -l';
-alias -g D='& disown';
+alias -g dnd='&>/dev/null&disown';
 alias -g dn='&>/dev/null';
 alias -g l='|& less';
-alias -g f=' | fmt -w $((COLUMNS*94/100)) -';
+alias -g f='| fmt -w $((COLUMNS*9/10)) -';
 # alias -g ne="2> /dev/null";
-#alias -g x0='| xargs -0';
-#alias -g xf="| xargs -d '\n'";
+alias -g x0='| xargs -0';
+alias -g xf="| xargs -d '\n'";
 
 alias 16t='mpv --no-audio-pitch-correction --force-window=yes';
 alias bb='bye';
 alias b='beep -f800 -r3 -l60 -d20';
-alias bl='subl3 --';
-alias bll='subl3 -n --command toggle_side_bar -a --';
+alias bl='subl4';
+alias bll='subl4 -n --command toggle_side_bar -a';
 alias cl='calendar';
 alias cla='calendar_add';
-alias catdoc='catdoc -m ${"$(stty size)"#* } --';
+alias cln='() { calendar -s $(date -I) $(date -I -d +${1:-7}days) }';
+alias catdoc='catdoc -m ${"$(stty size)"#* }';
 alias clock='tty-clock -sbcS';
 alias cmat='cmatrix -au2';
 # alias cow='cowthink -e "^^" -f xxx -T "U"';
 alias cp='cp -vR';
 # alias dlwiki="wget --recursive --html-extension --page-requisites --no-parent --convert-links --no-check-certificate -nc";
 alias du='du -h';
-alias fd='fd -uu -i --';
+alias fd='fd -uu -i';
 alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
-# alias flite='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.46 --setf int_f0_target_mean=90 -pw';
+alias flit='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.44 --setf int_f0_target_mean=90 -pw';
 # alias fmt='fmt -w $((COLUMNS*94/100))';
 alias hl='hledger-ui';
-alias j='/usr/lib/j/j64avx/jconsole';
+alias j='ijconsole';
 alias L='less';
 alias l1='() { w=(${(f)"$(ls -A1 ${1:-.})"}); q=${${(On)w//(#m)*/${#MATCH}}[1]}; print -C $((COLUMNS/q)) -- ${w} }';
-#alias l1='ls -A -1';
+# alias l1='ls -A -1';
 alias love='mpc sendmessage mpdas love';
-alias lr='ls -A -1 --recursive --';
-alias man='man -a';
+alias lr='ls -A -1 --recursive';
+alias man='() { man -a ${1} 2>/dev/null || xmandoc ${1} || return 1 }';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
 alias mpva='mpv --force-window=yes --idle --no-terminal';
 alias mpvp='mpv --vo=tct --profile=sw-fast --ytdl-format=worst --really-quiet';
 alias mss='st -n "sweaper" -f "Fira Code Black:pixelsize=24"';
 alias ncm='ncmpcpp 2>/dev/null';
-alias neo=' ruby ~/src/neocities-ruby/bin/neocities'
+alias neo='ruby ~/src/neocities-ruby/bin/neocities';
 alias oc='octave-cli --quiet';
 alias oce='octave-cli --quiet --no-history --eval';
-#alias pk='pkill -KILL -x';
-alias pk='() { kill -s KILL `pid $@` }'
+alias pk='() { kill -s KILL `pid $@` }';
 alias p="printf '%s\n'";
 alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
@@ -165,20 +162,21 @@ alias rsync='rsync -vah --progress';
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';
 # alias sx='sx ~/.xinitrc';
 alias timer="source /root/.config/zsh/plugins/timer/timer.plugin.zsh; TIMER_FORMAT='[%d]'; TIMER_PRECISION=7";
-alias tidy='tidy -q --tidy-mark no --vertical-space yes --indent yes --literal-attributes yes --indent-with-tabs yes --tab-size 4 -wrap 0';
+alias tidy='tidy -q --tidy-mark no --vertical-space yes --indent yes --literal-attributes yes --indent-with-tabs yes --tab-size 4 -wrap 0 --custom-tags yes -access 3';
 # alias twitch=' mpv --profile=low-latency --video-latency-hacks=yes';
 # alias tox='utox -t dark --allow-root &>/dev/null & disown';
 alias toxic='toxic -r /root/.config/tox/nameservers';
 # alias unlove='mpc sendmessage mpdas unlove';
-# alias vol='amixer set Master';
+alias vol='amixer set Master';
 alias which='which -a';
-alias ytd='yt-dlp -f bestvideo+bestaudio/best --ignore-errors --';
+alias ytd='yt-dlp';
 alias xb='xbacklight -set';
 alias xbr='xbps-remove -R';
 alias xbs='xbps-install -Su';
 alias xc='xclip -se c -noutf8 -r';
 alias xp='xclip -se p -noutf8 -r';
 alias x='aunpack';
+alias -g xm='xmessage';
 alias zcp='zmv -Cv';
 alias zmv='zmv -Mv';
 alias zln='zln -Lv';

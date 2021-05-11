@@ -1,0 +1,4 @@
+#!/bin/zsh
+query="${${@}:-$(read -er \?$'\n'\> )}";
+[[ ! ${query} =~ '^\s*$' ]] || return 4;
+so -s $(so --list-sites | pcre2grep -o1 '\s+([a-z.]+)' | fzy -l $LINES) ${query}

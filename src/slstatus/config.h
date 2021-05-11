@@ -13,11 +13,11 @@ static const char unknown_str[] = "";
  * function            description                     argument (example)
  *
  * battery_perc        battery percentage              battery name (BAT0)
- *                                                     NULL on OpenBSD/FreeBSD
+ *									                 NULL on OpenBSD/FreeBSD
  * battery_state       battery charging state          battery name (BAT0)
- *                                                     NULL on OpenBSD/FreeBSD
+ *									                 NULL on OpenBSD/FreeBSD
  * battery_remaining   battery remaining HH:MM         battery name (BAT0)
- *                                                     NULL on OpenBSD/FreeBSD
+ *									                 NULL on OpenBSD/FreeBSD
  * cpu_perc            cpu usage in percent            NULL
  * cpu_freq            cpu frequency in MHz            NULL
  * datetime            date and time                   format string (%F %T)
@@ -32,14 +32,14 @@ static const char unknown_str[] = "";
  * ipv6                IPv6 address                    interface name (eth0)
  * kernel_release      `uname -r`                      NULL
  * keyboard_indicators caps/num lock indicators        format string (c?n?)
- *                                                     see keyboard_indicators.c
+ *									                 see keyboard_indicators.c
  * keymap              layout (variant) of current     NULL
  *                     keymap
  * load_avg            load average                    NULL
  * netspeed_rx         receive network speed           interface name (wlan0)
  * netspeed_tx         transfer network speed          interface name (wlan0)
  * num_files           number of files in a directory  path
- *                                                     (/home/foo/Inbox/cur)
+ *									                 (/home/foo/Inbox/cur)
  * ram_free            free memory in GB               NULL
  * ram_perc            memory usage in percent         NULL
  * ram_total           total memory size in GB         NULL
@@ -50,10 +50,10 @@ static const char unknown_str[] = "";
  * swap_total          total swap size in GB           NULL
  * swap_used           used swap in GB                 NULL
  * temp                temperature in degree celsius   sensor file
- *                                                     (/sys/class/thermal/...)
- *                                                     NULL on OpenBSD
- *                                                     thermal zone on FreeBSD
- *                                                     (tz0, tz1, etc.)
+ *									                 (/sys/class/thermal/...)
+ *									                 NULL on OpenBSD
+ *									                 thermal zone on FreeBSD
+ *									                 (tz0, tz1, etc.)
  * uid                 UID of current user             NULL
  * uptime              system uptime                   NULL
  * username            username of current user        NULL
@@ -62,55 +62,31 @@ static const char unknown_str[] = "";
  * wifi_essid          WiFi ESSID                      interface name (wlan0)
  */
 static const struct arg args[] = {
-    /* function             format      argument                                   */
-    // { keymap,               "%.2s",     NULL                                        } ,
-    // { timer,                "%s│",      NULL                                        } ,
-    { temp,                 "%02s℃",   "/sys/class/thermal/thermal_zone0/temp"     } , /*🔥*/
-    { temp,                 "%02s ",    "/sys/class/thermal/thermal_zone1/temp"     } ,
-    { cpu_perc,             "%s ",      NULL                                        } ,
-    { cpu_freq,             "%.3s│",    NULL                                        } ,
-    { ram_perc,             "%s ",      NULL                                        } , /*🐏*/
-    { swap_perc,            "%s│",      NULL                                        } ,
-    { wifi_essid,           "%s",       "wlp3s0"                                    } ,
-    // { wifi_perc,            "%s ",      "wlp3s0"                                    } ,
-    // { ipv4,                 "%s ",      "wlp3s0"                                    } ,
-    { netspeed_tx,          "%s",       "wlp3s0"                                    } ,
-    { netspeed_rx,          "%s",       "wlp3s0"                                    } ,
-    // { ipv4,                 "%s",       "enp0s25"                                   } ,
-    // { netspeed_tx,          "%s",       "enp0s25"                                   } ,
-    // { netspeed_rx,          "%s",       "enp0s25"                                   } ,
-    { datetime,             "│%s",      "%F %T"                                     } ,
-    // { battery_perc,         "%s",       battery name (BAT0)                         } ,
-    // { battery_state,        "%s",       battery name (BAT0)                         } ,
-    // { battery_remaining,    "%s",       battery name (BAT0)                         } ,
-    // { cpu_perc,             "%s",       NULL                                        } ,
-    // { cpu_freq,             "%s",       NULL                                        } ,
-    // { datetime,             "%s",       format string (%F %T)                       } ,
-    // { disk_free,            "%s",       mountpoint path (/)                         } ,
-    // { disk_perc,            "%s",       mountpoint path (/)                         } ,
-    // { disk_total,           "%s",       mountpoint path (/)                         } ,
-    // { disk_used,            "%s",       mountpoint path (/)                         } ,
-    // { entropy,              "%s",       NULL                                        } ,
-    // { gid,                  "%s",       NULL                                        } ,
-    // { hostname,             "%s",       NULL                                        } ,
-    // { ipv6,                 "%s",       interface name (eth0)                       } ,
-    // { kernel_release,       "%s",       NULL                                        } ,
-    // { load_avg,             "%s",       NULL                                        } ,
-    // { num_files,            "%s",       path                                        } ,
-    // { ram_free,             "%s",       NULL                                        } ,
-    // { ram_perc,             "%s",       NULL                                        } ,
-    // { ram_total,            "%s",       NULL                                        } ,
-    // { ram_used,             "%s",       NULL                                        } ,
-    // { run_command,          "%s",       command (echo foo)                          } ,
-    // { swap_free,            "%s",       NULL                                        } ,
-    // { swap_perc,            "%s",       NULL                                        } ,
-    // { swap_total,           "%s",       NULL                                        } ,
-    // { swap_used,            "%s",       NULL                                        } ,
-    // { temp,                 "%s",       sensor file                                 } ,
-    // { uid,                  "%s",       NULL                                        } ,
-    // { uptime,               "%s",       NULL                                        } ,
-    // { username,             "%s",       NULL                                        } ,
-    // { vol_perc,             "%s",       mixer file (/dev/mixer)                     } ,
-    // { wifi_perc,            "%s",       interface name (wlan0)                      } ,
-    // { wifi_essid,           "%s",       interface name (wlan0)                      } ,
+	/* function             format      argument                                   */
+	// { keymap,			"%.2s",		NULL										} ,
+	// { timer,				"%s│",		NULL										} ,
+	{ temp,					"%02s℃",	"/sys/class/thermal/thermal_zone1/temp"		} , /* coretemp */
+	{ temp,					"%02s ",	"/sys/class/thermal/thermal_zone0/temp"		} , /* acpitz */
+	{ cpu_perc,				"%s ",		NULL										} ,
+	{ cpu_freq,				"%.3s│",	NULL										} ,
+	{ ram_perc,				"%s ",		NULL										} ,
+	{ swap_perc,			"%s│",		NULL										} ,
+	{ wifi_essid,			"%s",		"wlp3s0 "									} ,
+	// { wifi_perc,			"%s ",		"wlp3s0"									} ,
+	// { ipv4,				"%s ",		"wlp3s0"									} ,
+	{ netspeed_tx,			"%s",		"wlp3s0"									} ,
+	{ netspeed_rx,			"%s",		"wlp3s0"									} ,
+	// { ipv4,				"%s",		"enp0s25"									} ,
+	// { netspeed_tx,		"%s",		"enp0s25"									} ,
+	// { netspeed_rx,		"%s",		"enp0s25"									} ,
+	{ datetime,				"│%s",		"%F %T"										} ,
+	// { entropy,			"%s",		NULL										} ,
+	// { ipv6,				"%s",	interface name (eth0)							} ,
+	// { run_command,		"%s",		command (echo foo)							} ,
+	// { swap_free,			"%s",		NULL										} ,
+	// { swap_perc,			"%s",		NULL										} ,
+	// { swap_total,		"%s",		NULL										} ,
+	// { swap_used,			"%s",		NULL										} ,
+	// { wifi_perc,			"%s",		interface name (wlan0)						} ,
+	// { wifi_essid,		"%s",		interface name (wlan0)						} ,
 };

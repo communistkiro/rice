@@ -34,26 +34,27 @@
 #include "arg.h"
 #include "common.h"
 
-#define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
-#define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
+#define LENGTH(x)			(sizeof(x) / sizeof(x[0]))
+#define CLEANMASK(mask)		(mask & (MODKEY|GDK_SHIFT_MASK))
 
 enum { AtomFind, AtomGo, AtomUri, AtomLast };
 
 enum {
-	OnDoc   = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
-	OnLink  = WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK,
-	OnImg   = WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE,
-	OnMedia = WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA,
-	OnEdit  = WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE,
-	OnBar   = WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR,
-	OnSel   = WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION,
-	OnAny   = OnDoc | OnLink | OnImg | OnMedia | OnEdit | OnBar | OnSel,
+	OnDoc	= WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
+	OnLink	= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK,
+	OnImg	= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE,
+	OnMedia	= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA,
+	OnEdit	= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE,
+	OnBar	= WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR,
+	OnSel	= WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION,
+	OnAny	= OnDoc | OnLink | OnImg | OnMedia | OnEdit | OnBar | OnSel,
 };
 
 typedef enum {
 	AccessMicrophone,
 	AccessWebcam,
 	CaretBrowsing,
+	ContentFilter,
 	Certificate,
 	CookiePolicies,
 	DiskCache,
@@ -86,6 +87,14 @@ typedef enum {
 	ZoomLevel,
 	ParameterLast
 } ParamName;
+
+typedef enum {
+ DoRemoveFilters = -1,
+ NoFiltersAreActive,
+ DoActivateFilters,
+ FiltersAreLoadingAsync,
+ FiltersAreActive
+} ContentFilterState;
 
 typedef union {
 	int i;
@@ -171,6 +180,8 @@ static const char *getscript(const char *uri);
 static const char *getstyle(const char *uri);
 static void setscript(Client *c, const char *file);
 static void setstyle(Client *c, const char *file);
+static int cfactivate(Client *c, const Arg *a);
+static void cfactivatecb(GObject *src_obj, GAsyncResult *res, gpointer data);
 static void runscript(Client *c);
 static void evalscript(Client *c, const char *jsstr, ...);
 static void updatewinid(Client *c);
@@ -185,38 +196,38 @@ static void cleanup(void);
 static WebKitWebView *newview(Client *c, WebKitWebView *rv);
 static void initwebextensions(WebKitWebContext *wc, Client *c);
 static GtkWidget *createview(WebKitWebView *v, WebKitNavigationAction *a,
-                             Client *c);
+							 Client *c);
 static gboolean buttonreleased(GtkWidget *w, GdkEvent *e, Client *c);
 static GdkFilterReturn processx(GdkXEvent *xevent, GdkEvent *event,
-                                gpointer d);
+								gpointer d);
 static gboolean winevent(GtkWidget *w, GdkEvent *e, Client *c);
 static gboolean readsock(GIOChannel *s, GIOCondition ioc, gpointer unused);
 static void showview(WebKitWebView *v, Client *c);
 static GtkWidget *createwindow(Client *c);
 static gboolean loadfailedtls(WebKitWebView *v, gchar *uri,
-                              GTlsCertificate *cert,
-                              GTlsCertificateFlags err, Client *c);
+							  GTlsCertificate *cert,
+							  GTlsCertificateFlags err, Client *c);
 static void loadchanged(WebKitWebView *v, WebKitLoadEvent e, Client *c);
 static void progresschanged(WebKitWebView *v, GParamSpec *ps, Client *c);
 static void titlechanged(WebKitWebView *view, GParamSpec *ps, Client *c);
 static void mousetargetchanged(WebKitWebView *v, WebKitHitTestResult *h,
-                               guint modifiers, Client *c);
+							   guint modifiers, Client *c);
 static gboolean permissionrequested(WebKitWebView *v,
-                                    WebKitPermissionRequest *r, Client *c);
+									WebKitPermissionRequest *r, Client *c);
 static gboolean decidepolicy(WebKitWebView *v, WebKitPolicyDecision *d,
-                             WebKitPolicyDecisionType dt, Client *c);
+							 WebKitPolicyDecisionType dt, Client *c);
 static void decidenavigation(WebKitPolicyDecision *d, Client *c);
 static void decidenewwindow(WebKitPolicyDecision *d, Client *c);
 static void decideresource(WebKitPolicyDecision *d, Client *c);
 static void insecurecontent(WebKitWebView *v, WebKitInsecureContentEvent e,
-                            Client *c);
+							Client *c);
 static void downloadstarted(WebKitWebContext *wc, WebKitDownload *d,
-                            Client *c);
+							Client *c);
 static void responsereceived(WebKitDownload *d, GParamSpec *ps, Client *c);
 static void download(Client *c, WebKitURIResponse *r);
 static void webprocessterminated(WebKitWebView *v,
-                                 WebKitWebProcessTerminationReason r,
-                                 Client *c);
+								 WebKitWebProcessTerminationReason r,
+								 Client *c);
 static void closeview(WebKitWebView *v, Client *c);
 static void destroywin(GtkWidget* w, Client *c);
 
@@ -243,7 +254,7 @@ static void clicknewwindow(Client *c, const Arg *a, WebKitHitTestResult *h);
 static void clickexternplayer(Client *c, const Arg *a, WebKitHitTestResult *h);
 
 static char winid[64];
-static char togglestats[12];
+static char togglestats[11];
 static char pagestats[2];
 static Atom atoms[AtomLast];
 static Window embed;
@@ -253,6 +264,9 @@ static Display *dpy;
 static Client *clients;
 static GdkDevice *gdkkb;
 static char *stylefile;
+static char *filterfile;
+static WebKitUserContentFilter *filter;
+static WebKitUserContentFilterStore *filterstore;
 static const char *useragent;
 static Parameter *curconfig;
 static int modparams[ParameterLast];
@@ -278,6 +292,7 @@ static ParamName loadcommitted[] = {
 //	AccessMicrophone,
 //	AccessWebcam,
 	CaretBrowsing,
+	ContentFilter,
 	DefaultCharset,
 	FontSize,
 	FrameFlattening,
@@ -308,20 +323,20 @@ static ParamName loadfinished[] = {
 void
 die(const char *errstr, ...)
 {
-       va_list ap;
+	   va_list ap;
 
-       va_start(ap, errstr);
-       vfprintf(stderr, errstr, ap);
-       va_end(ap);
-       exit(1);
+	   va_start(ap, errstr);
+	   vfprintf(stderr, errstr, ap);
+	   va_end(ap);
+	   exit(1);
 }
 
 void
 usage(void)
 {
-	die("usage: surf [-bBdDfFgGiIkKmMnNpPsStTvwxX]\n"
-	    "[-a cookiepolicies ] [-c cookiefile] [-C stylefile] [-e xid]\n"
-	    "[-r scriptfile] [-u useragent] [-z zoomlevel] [uri]\n");
+	die("usage: surf [-bBdDfFgGiIkKmMnNpPsStTvwxXyY]\n"
+		"[-a cookiepolicies ] [-c cookiefile] [-C stylefile] [-e xid]\n"
+		"[-r scriptfile] [-u useragent] [-z zoomlevel] [uri]\n");
 }
 
 void
@@ -351,10 +366,11 @@ setup(void)
 	curconfig = defconfig;
 
 	/* dirs and files */
-	cookiefile = buildfile(cookiefile);
-	scriptfile = buildfile(scriptfile);
-	certdir    = buildpath(certdir);
-	scriptdir  = buildpath(scriptdir);
+	cookiefile	= buildfile(cookiefile);
+	scriptfile	= buildfile(scriptfile);
+	filterfile	= buildfile(filterfile);
+	certdir		= buildpath(certdir);
+	scriptdir	= buildpath(scriptdir);
 	if (curconfig[Ephemeral].val.i)
 		cachedir = NULL;
 	else
@@ -369,7 +385,7 @@ setup(void)
 		gchanin = g_io_channel_unix_new(spair[0]);
 		g_io_channel_set_encoding(gchanin, NULL, NULL);
 		g_io_channel_set_flags(gchanin, g_io_channel_get_flags(gchanin)
-		                       | G_IO_FLAG_NONBLOCK, NULL);
+							   | G_IO_FLAG_NONBLOCK, NULL);
 		g_io_channel_set_close_on_unref(gchanin, TRUE);
 		g_io_add_watch(gchanin, G_IO_IN, readsock, NULL);
 	}
@@ -378,10 +394,10 @@ setup(void)
 	for (i = 0; i < LENGTH(certs); ++i) {
 		if (!regcomp(&(certs[i].re), certs[i].regex, REG_EXTENDED)) {
 			certs[i].file = g_strconcat(certdir, "/", certs[i].file,
-			                            NULL);
+										NULL);
 		} else {
 			fprintf(stderr, "Could not compile regex: %s\n",
-			        certs[i].regex);
+					certs[i].regex);
 			certs[i].regex = NULL;
 		}
 	}
@@ -389,10 +405,10 @@ setup(void)
 	for (i = 0; i < LENGTH(scripts); ++i) {
 		if (!regcomp(&(scripts[i].re), scripts[i].regex, REG_EXTENDED)) {
 			scripts[i].file = g_strconcat(scriptdir, "/", scripts[i].file,
-			                            NULL);
+										NULL);
 		} else {
 			fprintf(stderr, "Could not compile regex: %s\n",
-			        scripts[i].regex);
+					scripts[i].regex);
 			scripts[i].regex = NULL;
 		}
 	}
@@ -401,12 +417,12 @@ setup(void)
 		styledir = buildpath(styledir);
 		for (i = 0; i < LENGTH(styles); ++i) {
 			if (!regcomp(&(styles[i].re), styles[i].regex,
-			    REG_EXTENDED)) {
+				REG_EXTENDED)) {
 				styles[i].file = g_strconcat(styledir, "/",
-				                    styles[i].file, NULL);
+									styles[i].file, NULL);
 			} else {
 				fprintf(stderr, "Could not compile regex: %s\n",
-				        styles[i].regex);
+						styles[i].regex);
 				styles[i].regex = NULL;
 			}
 		}
@@ -417,9 +433,9 @@ setup(void)
 
 	for (i = 0; i < LENGTH(uriparams); ++i) {
 		if (regcomp(&(uriparams[i].re), uriparams[i].uri,
-		    REG_EXTENDED)) {
+			REG_EXTENDED)) {
 			fprintf(stderr, "Could not compile regex: %s\n",
-			        uriparams[i].uri);
+					uriparams[i].uri);
 			uriparams[i].uri = NULL;
 			continue;
 		}
@@ -532,23 +548,23 @@ buildpath(const char *path)
 char *
 untildepath(const char *path)
 {
-       char *apath, *name, *p;
-       const char *homedir;
+	   char *apath, *name, *p;
+	   const char *homedir;
 
-       if (path[1] == '/' || path[1] == '\0') {
-               p = (char *)&path[1];
-               homedir = getcurrentuserhomedir();
-       } else {
-               if ((p = strchr(path, '/')))
-                       name = g_strndup(&path[1], p - (path + 1));
-               else
-                       name = g_strdup(&path[1]);
+	   if (path[1] == '/' || path[1] == '\0') {
+			   p = (char *)&path[1];
+			   homedir = getcurrentuserhomedir();
+	   } else {
+			   if ((p = strchr(path, '/')))
+					   name = g_strndup(&path[1], p - (path + 1));
+			   else
+					   name = g_strdup(&path[1]);
 
-               homedir = getuserhomedir(name);
-               g_free(name);
-       }
-       apath = g_build_filename(homedir, p, NULL);
-       return apath;
+			   homedir = getuserhomedir(name);
+			   g_free(name);
+	   }
+	   apath = g_build_filename(homedir, p, NULL);
+	   return apath;
 }
 
 Client *
@@ -579,9 +595,9 @@ loaduri(Client *c, const Arg *a)
 		return;
 
 	if (g_str_has_prefix(uri, "http://")  ||
-	    g_str_has_prefix(uri, "https://") ||
-	    g_str_has_prefix(uri, "file://")  ||
-	    g_str_has_prefix(uri, "about:")) {
+		g_str_has_prefix(uri, "https://") ||
+		g_str_has_prefix(uri, "file://")  ||
+		g_str_has_prefix(uri, "about:")) {
 		url = g_strdup(uri);
 	} else {
 		if (uri[0] == '~')
@@ -624,8 +640,8 @@ void
 setatom(Client *c, int a, const char *v)
 {
 	XChangeProperty(dpy, c->xid,
-	                atoms[a], XA_STRING, 8, PropModeReplace,
-	                (unsigned char *)v, strlen(v) + 1);
+					atoms[a], XA_STRING, 8, PropModeReplace,
+					(unsigned char *)v, strlen(v) + 1);
 	XSync(dpy, False);
 }
 
@@ -640,7 +656,7 @@ getatom(Client *c, int a)
 
 	XSync(dpy, False);
 	XGetWindowProperty(dpy, c->xid, atoms[a], 0L, BUFSIZ, False, XA_STRING,
-	                   &adummy, &idummy, &ldummy, &ldummy, &p);
+					   &adummy, &idummy, &ldummy, &ldummy, &p);
 	if (p)
 		strncpy(buf, (char *)p, LENGTH(buf) - 1);
 	else
@@ -655,7 +671,7 @@ updatetitle(Client *c)
 {
 	char *title;
 	const char *name = c->overtitle ? c->overtitle :
-	                   c->title ? c->title : "";
+					   c->title ? c->title : "";
 
 	if (curconfig[ShowIndicators].val.i) {
 		gettogglestats(c);
@@ -663,10 +679,10 @@ updatetitle(Client *c)
 
 		if (c->progress != 100)
 			title = g_strdup_printf("[%i%%] %s:%s | %s",
-			        c->progress, togglestats, pagestats, name);
+					c->progress, togglestats, pagestats, name);
 		else
 			title = g_strdup_printf("%s:%s | %s",
-			        togglestats, pagestats, name);
+					togglestats, pagestats, name);
 
 		gtk_window_set_title(GTK_WINDOW(c->win), title);
 		g_free(title);
@@ -679,16 +695,15 @@ void
 gettogglestats(Client *c)
 {
 	togglestats[0] = cookiepolicy_set(cookiepolicy_get());
-	togglestats[1] = curconfig[CaretBrowsing].val.i ?   'C' : 'c';
-	togglestats[2] = curconfig[Geolocation].val.i ?     'G' : 'g';
-	togglestats[3] = curconfig[DiskCache].val.i ?       'D' : 'd';
-	togglestats[4] = curconfig[LoadImages].val.i ?      'I' : 'i';
-	togglestats[5] = curconfig[JavaScript].val.i ?      'S' : 's';
-	togglestats[7] = curconfig[Style].val.i ?           'M' : 'm';
-	togglestats[8] = curconfig[FrameFlattening].val.i ? 'F' : 'f';
-	togglestats[9] = curconfig[Certificate].val.i ?     'X' : 'x';
-	togglestats[10] = curconfig[StrictTLS].val.i ?      'T' : 't';
-	togglestats[11] = '\0';
+	togglestats[1] = curconfig[CaretBrowsing].val.i ?	'C' : 'c';
+	togglestats[2] = curconfig[Geolocation].val.i ?		'G' : 'g';
+	togglestats[3] = curconfig[DiskCache].val.i ?		'D' : 'd';
+	togglestats[4] = curconfig[LoadImages].val.i ?		'I' : 'i';
+	togglestats[5] = curconfig[JavaScript].val.i ?		'S' : 's';
+	togglestats[6] = curconfig[Style].val.i ?			'M' : 'm';
+	togglestats[7] = curconfig[FrameFlattening].val.i ?	'F' : 'f';
+	togglestats[8] = curconfig[Certificate].val.i ?		'X' : 'x';
+	togglestats[9] = curconfig[StrictTLS].val.i ?		'T' : 't';
 }
 
 void
@@ -737,7 +752,7 @@ seturiparameters(Client *c, const char *uri, ParamName *params)
 
 	for (i = 0; i < LENGTH(uriparams); ++i) {
 		if (uriparams[i].uri &&
-		    !regexec(&(uriparams[i].re), uri, 0, NULL, 0)) {
+			!regexec(&(uriparams[i].re), uri, 0, NULL, 0)) {
 			uriconfig = uriparams[i].config;
 			break;
 		}
@@ -749,9 +764,10 @@ seturiparameters(Client *c, const char *uri, ParamName *params)
 		switch(p) {
 		default: /* FALLTHROUGH */
 			if (!(defconfig[p].prio < curconfig[p].prio ||
-			    defconfig[p].prio < modparams[p]))
+				defconfig[p].prio < modparams[p]))
 				continue;
 		case Certificate:
+		case ContentFilter:
 		case CookiePolicies:
 		case Style:
 		case UserScript:
@@ -781,18 +797,38 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 		if (a->i)
 			setcert(c, geturi(c));
 		return; /* do not update */
+	case ContentFilter:
+		switch (a->i) {
+		case NoFiltersAreActive: /* fallthrough */
+		case FiltersAreActive: /* fallthrough */
+		case FiltersAreLoadingAsync:
+			return; /* do nothing */
+		case DoRemoveFilters:
+			webkit_user_content_manager_remove_all_filters(
+			webkit_web_view_get_user_content_manager(
+			c->view));
+			curconfig[p].val.i = NoFiltersAreActive;
+			refresh = 1;
+			break;
+		case DoActivateFilters:
+			refresh = cfactivate(c, a);
+			break;
+			default:
+			return; /* do nothing */
+		}
+	break;
 	case CookiePolicies:
 		webkit_cookie_manager_set_accept_policy(
-		    webkit_web_context_get_cookie_manager(
-		    webkit_web_view_get_context(c->view)),
-		    cookiepolicy_get());
+			webkit_web_context_get_cookie_manager(
+			webkit_web_view_get_context(c->view)),
+			cookiepolicy_get());
 		refresh = 0;
 		break;
 	case DiskCache:
 		webkit_web_context_set_cache_model(
-		    webkit_web_view_get_context(c->view), a->i ?
-		    WEBKIT_CACHE_MODEL_WEB_BROWSER :
-		    WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
+			webkit_web_view_get_context(c->view), a->i ?
+			WEBKIT_CACHE_MODEL_WEB_BROWSER :
+			WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
 		return; /* do not update */
 	case DefaultCharset:
 		webkit_settings_set_default_charset(s, a->v);
@@ -843,7 +879,7 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 		 * manipulating the DOM directly.
 		enablescrollbars = !enablescrollbars;
 		evalscript(c, "document.documentElement.style.overflow = '%s'",
-		    enablescrollbars ? "auto" : "hidden");
+			enablescrollbars ? "auto" : "hidden");
 		*/
 		return; /* do not update */
 	case ShowIndicators:
@@ -856,26 +892,26 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 		break;
 	case SpellChecking:
 		webkit_web_context_set_spell_checking_enabled(
-		    webkit_web_view_get_context(c->view), a->i);
+			webkit_web_view_get_context(c->view), a->i);
 		return; /* do not update */
 	case SpellLanguages:
 		return; /* do nothing */
 	case StrictTLS:
 		webkit_web_context_set_tls_errors_policy(
-		    webkit_web_view_get_context(c->view), a->i ?
-		    WEBKIT_TLS_ERRORS_POLICY_FAIL :
-		    WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+			webkit_web_view_get_context(c->view), a->i ?
+			WEBKIT_TLS_ERRORS_POLICY_FAIL :
+			WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 		break;
 	case Style:
 		webkit_user_content_manager_remove_all_style_sheets(
-		    webkit_web_view_get_user_content_manager(c->view));
+			webkit_web_view_get_user_content_manager(c->view));
 		if (a->i)
 			setstyle(c, getstyle(geturi(c)));
 		refresh = 0;
 		break;
 	case UserScript:
 		webkit_user_content_manager_remove_all_scripts(
-		    webkit_web_view_get_user_content_manager(c->view));
+			webkit_web_view_get_user_content_manager(c->view));
 		if (a->i)
 			setscript(c, getscript(geturi(c)));
 		refresh = 0;
@@ -902,7 +938,7 @@ getcert(const char *uri)
 
 	for (i = 0; i < LENGTH(certs); ++i) {
 		if (certs[i].regex &&
-		    !regexec(&(certs[i].re), uri, 0, NULL, 0))
+			!regexec(&(certs[i].re), uri, 0, NULL, 0))
 			return certs[i].file;
 	}
 
@@ -928,7 +964,7 @@ setcert(Client *c, const char *uri)
 		uri += sizeof("https://") - 1;
 		host = g_strndup(uri, strchr(uri, '/') - uri);
 		webkit_web_context_allow_tls_certificate_for_host(
-		    webkit_web_view_get_context(c->view), cert, host);
+			webkit_web_view_get_context(c->view), cert, host);
 		g_free(host);
 	}
 
@@ -943,7 +979,7 @@ getscript(const char *uri)
 
 	for (i = 0; i < LENGTH(scripts); ++i) {
 		if (scripts[i].regex &&
-		    !regexec(&(scripts[i].re), uri, 0, NULL, 0))
+			!regexec(&(scripts[i].re), uri, 0, NULL, 0))
 			return scripts[i].file;
 	}
 
@@ -960,7 +996,7 @@ getstyle(const char *uri)
 
 	for (i = 0; i < LENGTH(styles); ++i) {
 		if (styles[i].regex &&
-		    !regexec(&(styles[i].re), uri, 0, NULL, 0))
+			!regexec(&(styles[i].re), uri, 0, NULL, 0))
 			return styles[i].file;
 	}
 
@@ -978,11 +1014,11 @@ setscript(Client *c, const char *file)
 	}
 
 	webkit_user_content_manager_add_script(
-	    webkit_web_view_get_user_content_manager(c->view),
-	    webkit_user_script_new(script,
-	    WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
-	    WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END,
-	    NULL, NULL));
+		webkit_web_view_get_user_content_manager(c->view),
+		webkit_user_script_new(script,
+		WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+		WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END,
+		NULL, NULL));
 
 	g_free(script);
 }
@@ -998,13 +1034,65 @@ setstyle(Client *c, const char *file)
 	}
 
 	webkit_user_content_manager_add_style_sheet(
-	    webkit_web_view_get_user_content_manager(c->view),
-	    webkit_user_style_sheet_new(style,
-	    WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
-	    WEBKIT_USER_STYLE_LEVEL_USER,
-	    NULL, NULL));
+		webkit_web_view_get_user_content_manager(c->view),
+		webkit_user_style_sheet_new(style,
+		WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+		WEBKIT_USER_STYLE_LEVEL_USER,
+		NULL, NULL));
 
 	g_free(style);
+}
+int
+cfactivate(Client *c, const Arg *a)
+{
+	gchar *filetext;
+	gsize filesize;
+	static const gchar *cfid = "id";
+	GBytes *cfbytes;
+	GError *err = NULL;
+
+	if (filter != NULL) {
+		webkit_user_content_manager_add_filter(
+		webkit_web_view_get_user_content_manager(c->view),
+		filter);
+		curconfig[ContentFilter].val.i = FiltersAreActive;
+		return 1;
+	}
+	if (filterfile == NULL)
+		return 0;
+	if (!g_file_get_contents(filterfile, &filetext, &filesize, &err)) {
+		fprintf(stderr, "Error when accessing: %s\n\t%s\n",
+		filterfile, err->message);
+		return 0;
+	}
+	cfbytes = g_bytes_new(filetext, filesize);
+	webkit_user_content_filter_store_save(filterstore, cfid, cfbytes,
+	NULL, cfactivatecb, c);
+	curconfig[ContentFilter].val.i = FiltersAreLoadingAsync;
+	g_free(filetext);
+	return 0;
+}
+
+void
+cfactivatecb(GObject *src_obj, GAsyncResult *res, gpointer data)
+{
+	Client *c = data;
+	Arg a = {.i = 1};
+	GError *err = NULL;
+	filter = webkit_user_content_filter_store_save_finish(
+	filterstore, res, &err);
+	if (err != NULL) {
+		fprintf(stderr, "Error generating content filter: %s\n",
+		err->message);
+		filter = NULL;
+		curconfig[ContentFilter].val.i = NoFiltersAreActive;
+		return;
+	}
+	webkit_user_content_manager_add_filter(
+	webkit_web_view_get_user_content_manager(c->view),
+	filter);
+	curconfig[ContentFilter].val.i = FiltersAreActive;
+reload(c, &a);
 }
 
 void
@@ -1072,11 +1160,11 @@ newwindow(Client *c, const Arg *a, int noembed)
 		cmd[i++] = tmp;
 	}
 	cmd[i++] = curconfig[RunInFullscreen].val.i ? "-F" : "-f" ;
-	cmd[i++] = curconfig[Geolocation].val.i ?     "-G" : "-g" ;
-	cmd[i++] = curconfig[LoadImages].val.i ?      "-I" : "-i" ;
-	cmd[i++] = curconfig[KioskMode].val.i ?       "-K" : "-k" ;
-	cmd[i++] = curconfig[Style].val.i ?           "-M" : "-m" ;
-	cmd[i++] = curconfig[Inspector].val.i ?       "-N" : "-n" ;
+	cmd[i++] = curconfig[Geolocation].val.i ?	 "-G" : "-g" ;
+	cmd[i++] = curconfig[LoadImages].val.i ?	  "-I" : "-i" ;
+	cmd[i++] = curconfig[KioskMode].val.i ?	   "-K" : "-k" ;
+	cmd[i++] = curconfig[Style].val.i ?		   "-M" : "-m" ;
+	cmd[i++] = curconfig[Inspector].val.i ?	   "-N" : "-n" ;
 	if (scriptfile && g_strcmp0(scriptfile, "")) {
 		cmd[i++] = "-r";
 		cmd[i++] = scriptfile;
@@ -1188,7 +1276,7 @@ newview(Client *c, WebKitWebView *rv)
 			webkit_settings_set_user_agent(settings, fulluseragent);
 		} else if (surfuseragent) {
 			webkit_settings_set_user_agent_with_application_details(
-			    settings, "Surf", VERSION);
+				settings, "Surf", VERSION);
 		}
 		useragent = webkit_settings_get_user_agent(settings);
 
@@ -1198,10 +1286,10 @@ newview(Client *c, WebKitWebView *rv)
 			context = webkit_web_context_new_ephemeral();
 		} else {
 			context = webkit_web_context_new_with_website_data_manager(
-			          webkit_website_data_manager_new(
-			          "base-cache-directory", cachedir,
-			          "base-data-directory", cachedir,
-			          NULL));
+					  webkit_website_data_manager_new(
+					  "base-cache-directory", cachedir,
+					  "base-data-directory", cachedir,
+					  NULL));
 		}
 
 
@@ -1210,41 +1298,41 @@ newview(Client *c, WebKitWebView *rv)
 		/* rendering process model, can be a shared unique one
 		 * or one for each view */
 		webkit_web_context_set_process_model(context,
-		    WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+			WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 		/* TLS */
 		webkit_web_context_set_tls_errors_policy(context,
-		    curconfig[StrictTLS].val.i ? WEBKIT_TLS_ERRORS_POLICY_FAIL :
-		    WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+			curconfig[StrictTLS].val.i ? WEBKIT_TLS_ERRORS_POLICY_FAIL :
+			WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 		/* disk cache */
 		webkit_web_context_set_cache_model(context,
-		    curconfig[DiskCache].val.i ? WEBKIT_CACHE_MODEL_WEB_BROWSER :
-		    WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
+			curconfig[DiskCache].val.i ? WEBKIT_CACHE_MODEL_WEB_BROWSER :
+			WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
 
 		/* Currently only works with text file to be compatible with curl */
 		if (!curconfig[Ephemeral].val.i)
 			webkit_cookie_manager_set_persistent_storage(cookiemanager,
-			    cookiefile, WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
+				cookiefile, WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
 		/* cookie policy */
 		webkit_cookie_manager_set_accept_policy(cookiemanager,
-		    cookiepolicy_get());
+			cookiepolicy_get());
 		/* languages */
 		webkit_web_context_set_preferred_languages(context,
-		    curconfig[PreferredLanguages].val.v);
+			curconfig[PreferredLanguages].val.v);
 		webkit_web_context_set_spell_checking_languages(context,
-		    curconfig[SpellLanguages].val.v);
+			curconfig[SpellLanguages].val.v);
 		webkit_web_context_set_spell_checking_enabled(context,
-		    curconfig[SpellChecking].val.i);
+			curconfig[SpellChecking].val.i);
 
 		g_signal_connect(G_OBJECT(context), "download-started",
-		                 G_CALLBACK(downloadstarted), c);
+						 G_CALLBACK(downloadstarted), c);
 		g_signal_connect(G_OBJECT(context), "initialize-web-extensions",
-		                 G_CALLBACK(initwebextensions), c);
+						 G_CALLBACK(initwebextensions), c);
 
 		v = g_object_new(WEBKIT_TYPE_WEB_VIEW,
-		    "settings", settings,
-		    "user-content-manager", contentmanager,
-		    "web-context", context,
-		    NULL);
+			"settings", settings,
+			"user-content-manager", contentmanager,
+			"web-context", context,
+			NULL);
 	}
 
 	g_signal_connect(G_OBJECT(v), "notify::estimated-load-progress",
@@ -1285,10 +1373,10 @@ readsock(GIOChannel *s, GIOCondition ioc, gpointer unused)
 	gsize msgsz;
 
 	if (g_io_channel_read_chars(s, msg, sizeof(msg), &msgsz, &gerr) !=
-	    G_IO_STATUS_NORMAL) {
+		G_IO_STATUS_NORMAL) {
 		if (gerr) {
 			fprintf(stderr, "surf: error reading socket: %s\n",
-			        gerr->message);
+					gerr->message);
 			g_error_free(gerr);
 		}
 		return TRUE;
@@ -1353,9 +1441,9 @@ buttonreleased(GtkWidget *w, GdkEvent *e, Client *c)
 
 	for (i = 0; i < LENGTH(buttons); ++i) {
 		if (element & buttons[i].target &&
-		    e->button.button == buttons[i].button &&
-		    CLEANMASK(e->button.state) == CLEANMASK(buttons[i].mask) &&
-		    buttons[i].func) {
+			e->button.button == buttons[i].button &&
+			CLEANMASK(e->button.state) == CLEANMASK(buttons[i].mask) &&
+			buttons[i].func) {
 			buttons[i].func(c, &buttons[i].arg, c->mousepos);
 			return buttons[i].stopevent;
 		}
@@ -1403,9 +1491,9 @@ winevent(GtkWidget *w, GdkEvent *e, Client *c)
 		if (!curconfig[KioskMode].val.i) {
 			for (i = 0; i < LENGTH(keys); ++i) {
 				if (gdk_keyval_to_lower(e->key.keyval) ==
-				    keys[i].keyval &&
-				    CLEANMASK(e->key.state) == keys[i].mod &&
-				    keys[i].func) {
+					keys[i].keyval &&
+					CLEANMASK(e->key.state) == keys[i].mod &&
+					keys[i].func) {
 					updatewinid(c);
 					keys[i].func(c, &(keys[i].arg));
 					return TRUE;
@@ -1418,9 +1506,9 @@ winevent(GtkWidget *w, GdkEvent *e, Client *c)
 		break;
 	case GDK_WINDOW_STATE:
 		if (e->window_state.changed_mask ==
-		    GDK_WINDOW_STATE_FULLSCREEN)
+			GDK_WINDOW_STATE_FULLSCREEN)
 			c->fullscreen = e->window_state.new_window_state &
-			                GDK_WINDOW_STATE_FULLSCREEN;
+							GDK_WINDOW_STATE_FULLSCREEN;
 		break;
 	default:
 		break;
@@ -1467,7 +1555,7 @@ showview(WebKitWebView *v, Client *c)
 
 	if (curconfig[ZoomLevel].val.f != 1.0)
 		webkit_web_view_set_zoom_level(c->view,
-		                               curconfig[ZoomLevel].val.f);
+									   curconfig[ZoomLevel].val.f);
 
 	setatom(c, AtomFind, "");
 	setatom(c, AtomUri, "about:blank");
@@ -1496,22 +1584,22 @@ createwindow(Client *c)
 	}
 
 	g_signal_connect(G_OBJECT(w), "destroy",
-	                 G_CALLBACK(destroywin), c);
+					 G_CALLBACK(destroywin), c);
 	g_signal_connect(G_OBJECT(w), "enter-notify-event",
-	                 G_CALLBACK(winevent), c);
+					 G_CALLBACK(winevent), c);
 	g_signal_connect(G_OBJECT(w), "key-press-event",
-	                 G_CALLBACK(winevent), c);
+					 G_CALLBACK(winevent), c);
 	g_signal_connect(G_OBJECT(w), "leave-notify-event",
-	                 G_CALLBACK(winevent), c);
+					 G_CALLBACK(winevent), c);
 	g_signal_connect(G_OBJECT(w), "window-state-event",
-	                 G_CALLBACK(winevent), c);
+					 G_CALLBACK(winevent), c);
 
 	return w;
 }
 
 gboolean
 loadfailedtls(WebKitWebView *v, gchar *uri, GTlsCertificate *cert,
-              GTlsCertificateFlags err, Client *c)
+			  GTlsCertificateFlags err, Client *c)
 {
 	GString *errmsg = g_string_new(NULL);
 	gchar *html, *pem;
@@ -1522,33 +1610,33 @@ loadfailedtls(WebKitWebView *v, gchar *uri, GTlsCertificate *cert,
 
 	if (err & G_TLS_CERTIFICATE_UNKNOWN_CA)
 		g_string_append(errmsg,
-		    "The signing certificate authority is not known.<br>");
+			"The signing certificate authority is not known.<br>");
 	if (err & G_TLS_CERTIFICATE_BAD_IDENTITY)
 		g_string_append(errmsg,
-		    "The certificate does not match the expected identity "
-		    "of the site that it was retrieved from.<br>");
+			"The certificate does not match the expected identity "
+			"of the site that it was retrieved from.<br>");
 	if (err & G_TLS_CERTIFICATE_NOT_ACTIVATED)
 		g_string_append(errmsg,
-		    "The certificate's activation time "
-		    "is still in the future.<br>");
+			"The certificate's activation time "
+			"is still in the future.<br>");
 	if (err & G_TLS_CERTIFICATE_EXPIRED)
 		g_string_append(errmsg, "The certificate has expired.<br>");
 	if (err & G_TLS_CERTIFICATE_REVOKED)
 		g_string_append(errmsg,
-		    "The certificate has been revoked according to "
-		    "the GTlsConnection's certificate revocation list.<br>");
+			"The certificate has been revoked according to "
+			"the GTlsConnection's certificate revocation list.<br>");
 	if (err & G_TLS_CERTIFICATE_INSECURE)
 		g_string_append(errmsg,
-		    "The certificate's algorithm is considered insecure.<br>");
+			"The certificate's algorithm is considered insecure.<br>");
 	if (err & G_TLS_CERTIFICATE_GENERIC_ERROR)
 		g_string_append(errmsg,
-		    "Some error occurred validating the certificate.<br>");
+			"Some error occurred validating the certificate.<br>");
 
 	g_object_get(cert, "certificate-pem", &pem, NULL);
 	html = g_strdup_printf("<p>Could not validate TLS for “%s”<br>%s</p>"
-	                       "<p>You can inspect the following certificate "
-	                       "with Ctrl-t (default keybinding).</p>"
-	                       "<p><pre>%s</pre></p>", uri, errmsg->str, pem);
+						   "<p>You can inspect the following certificate "
+						   "with Ctrl-t (default keybinding).</p>"
+						   "<p><pre>%s</pre></p>", uri, errmsg->str, pem);
 	g_free(pem);
 	g_string_free(errmsg, TRUE);
 
@@ -1584,14 +1672,14 @@ loadchanged(WebKitWebView *v, WebKitLoadEvent e, Client *c)
 		c->title = uri;
 		seturiparameters(c, uri, loadcommitted);
 		c->https = webkit_web_view_get_tls_info(c->view, &c->cert,
-		                                        &c->tlserr);
+												&c->tlserr);
 		break;
 	case WEBKIT_LOAD_FINISHED:
 		seturiparameters(c, uri, loadfinished);
 		/* Disabled until we write some WebKitWebExtension for
 		 * manipulating the DOM directly.
 		evalscript(c, "document.documentElement.style.overflow = '%s'",
-		    enablescrollbars ? "auto" : "hidden");
+			enablescrollbars ? "auto" : "hidden");
 		*/
 		runscript(c);
 		break;
@@ -1603,7 +1691,7 @@ void
 progresschanged(WebKitWebView *v, GParamSpec *ps, Client *c)
 {
 	c->progress = webkit_web_view_get_estimated_load_progress(c->view) *
-	              100;
+				  100;
 	updatetitle(c);
 }
 
@@ -1616,7 +1704,7 @@ titlechanged(WebKitWebView *view, GParamSpec *ps, Client *c)
 
 void
 mousetargetchanged(WebKitWebView *v, WebKitHitTestResult *h, guint modifiers,
-    Client *c)
+	Client *c)
 {
 	WebKitHitTestResultContext hc = webkit_hit_test_result_get_context(h);
 
@@ -1645,10 +1733,10 @@ permissionrequested(WebKitWebView *v, WebKitPermissionRequest *r, Client *c)
 		param = Geolocation;
 	} else if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(r)) {
 		if (webkit_user_media_permission_is_for_audio_device(
-		    WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r)))
+			WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r)))
 			param = AccessMicrophone;
 		else if (webkit_user_media_permission_is_for_video_device(
-		         WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r)))
+				 WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r)))
 			param = AccessWebcam;
 	} else {
 		return FALSE;
@@ -1664,7 +1752,7 @@ permissionrequested(WebKitWebView *v, WebKitPermissionRequest *r, Client *c)
 
 gboolean
 decidepolicy(WebKitWebView *v, WebKitPolicyDecision *d,
-    WebKitPolicyDecisionType dt, Client *c)
+	WebKitPolicyDecisionType dt, Client *c)
 {
 	switch (dt) {
 	case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
@@ -1687,8 +1775,8 @@ void
 decidenavigation(WebKitPolicyDecision *d, Client *c)
 {
 	WebKitNavigationAction *a =
-	    webkit_navigation_policy_decision_get_navigation_action(
-	    WEBKIT_NAVIGATION_POLICY_DECISION(d));
+		webkit_navigation_policy_decision_get_navigation_action(
+		WEBKIT_NAVIGATION_POLICY_DECISION(d));
 
 	switch (webkit_navigation_action_get_navigation_type(a)) {
 	case WEBKIT_NAVIGATION_TYPE_LINK_CLICKED: /* fallthrough */
@@ -1700,7 +1788,7 @@ decidenavigation(WebKitPolicyDecision *d, Client *c)
 	default:
 		/* Do not navigate to links with a "_blank" target (popup) */
 		if (webkit_navigation_policy_decision_get_frame_name(
-		    WEBKIT_NAVIGATION_POLICY_DECISION(d))) {
+			WEBKIT_NAVIGATION_POLICY_DECISION(d))) {
 			webkit_policy_decision_ignore(d);
 		} else {
 			/* Filter out navigation to different domain ? */
@@ -1717,8 +1805,8 @@ decidenewwindow(WebKitPolicyDecision *d, Client *c)
 {
 	Arg arg;
 	WebKitNavigationAction *a =
-	    webkit_navigation_policy_decision_get_navigation_action(
-	    WEBKIT_NAVIGATION_POLICY_DECISION(d));
+		webkit_navigation_policy_decision_get_navigation_action(
+		WEBKIT_NAVIGATION_POLICY_DECISION(d));
 
 
 	switch (webkit_navigation_action_get_navigation_type(a)) {
@@ -1731,7 +1819,7 @@ decidenewwindow(WebKitPolicyDecision *d, Client *c)
 /* If the value of “mouse-button” is not 0, then the navigation was triggered by a mouse event.
  * test for link clicked but no button ? */
 		arg.v = webkit_uri_request_get_uri(
-		        webkit_navigation_action_get_request(a));
+				webkit_navigation_action_get_request(a));
 		newwindow(c, &arg, 0);
 		break;
 	case WEBKIT_NAVIGATION_TYPE_OTHER: /* fallthrough */
@@ -1748,7 +1836,7 @@ decideresource(WebKitPolicyDecision *d, Client *c)
 	int i, isascii = 1;
 	WebKitResponsePolicyDecision *r = WEBKIT_RESPONSE_POLICY_DECISION(d);
 	WebKitURIResponse *res =
-	    webkit_response_policy_decision_get_response(r);
+		webkit_response_policy_decision_get_response(r);
 	const gchar *uri = webkit_uri_response_get_uri(res);
 
 	if (g_str_has_suffix(uri, "/favicon.ico")) {
@@ -1757,12 +1845,12 @@ decideresource(WebKitPolicyDecision *d, Client *c)
 	}
 
 	if (!g_str_has_prefix(uri, "http://")
-	    && !g_str_has_prefix(uri, "https://")
-	    && !g_str_has_prefix(uri, "about:")
-	    && !g_str_has_prefix(uri, "file://")
-	    && !g_str_has_prefix(uri, "data:")
-	    && !g_str_has_prefix(uri, "blob:")
-	    && strlen(uri) > 0) {
+		&& !g_str_has_prefix(uri, "https://")
+		&& !g_str_has_prefix(uri, "about:")
+		&& !g_str_has_prefix(uri, "file://")
+		&& !g_str_has_prefix(uri, "data:")
+		&& !g_str_has_prefix(uri, "blob:")
+		&& strlen(uri) > 0) {
 		for (i = 0; i < strlen(uri); i++) {
 			if (!g_ascii_isprint(uri[i])) {
 				isascii = 0;
@@ -1794,7 +1882,7 @@ void
 downloadstarted(WebKitWebContext *wc, WebKitDownload *d, Client *c)
 {
 	g_signal_connect(G_OBJECT(d), "notify::response",
-	                 G_CALLBACK(responsereceived), c);
+					 G_CALLBACK(responsereceived), c);
 }
 
 void
@@ -1813,10 +1901,10 @@ download(Client *c, WebKitURIResponse *r)
 
 void
 webprocessterminated(WebKitWebView *v, WebKitWebProcessTerminationReason r,
-                     Client *c)
+					 Client *c)
 {
 	fprintf(stderr, "web process terminated: %s\n",
-	        r == WEBKIT_WEB_PROCESS_CRASHED ? "crashed" : "no memory");
+			r == WEBKIT_WEB_PROCESS_CRASHED ? "crashed" : "no memory");
 	closeview(v, c);
 }
 
@@ -1855,7 +1943,7 @@ void
 print(Client *c, const Arg *a)
 {
 	webkit_print_operation_run_dialog(webkit_print_operation_new(c->view),
-	                                  GTK_WINDOW(c->win));
+									  GTK_WINDOW(c->win));
 }
 
 void
@@ -1887,12 +1975,12 @@ clipboard(Client *c, const Arg *a)
 {
 	if (a->i) { /* load clipboard uri */
 		gtk_clipboard_request_text(gtk_clipboard_get(
-		                           GDK_SELECTION_PRIMARY),
-		                           pasteuri, c);
+								   GDK_SELECTION_PRIMARY),
+								   pasteuri, c);
 	} else { /* copy uri */
 		gtk_clipboard_set_text(gtk_clipboard_get(
-		                       GDK_SELECTION_PRIMARY), c->targeturi
-		                       ? c->targeturi : geturi(c), -1);
+							   GDK_SELECTION_PRIMARY), c->targeturi
+							   ? c->targeturi : geturi(c), -1);
 	}
 }
 
@@ -1901,10 +1989,10 @@ zoom(Client *c, const Arg *a)
 {
 	if (a->i > 0)
 		webkit_web_view_set_zoom_level(c->view,
-		                               curconfig[ZoomLevel].val.f + 0.1);
+									   curconfig[ZoomLevel].val.f + 0.1);
 	else if (a->i < 0)
 		webkit_web_view_set_zoom_level(c->view,
-		                               curconfig[ZoomLevel].val.f - 0.1);
+									   curconfig[ZoomLevel].val.f - 0.1);
 	else
 		webkit_web_view_set_zoom_level(c->view, 1.0);
 
@@ -1921,14 +2009,14 @@ msgext(Client *c, char type, const Arg *a)
 		return;
 
 	if ((ret = snprintf(msg, sizeof(msg), "%c%c%c", c->pageid, type, a->i))
-	    >= sizeof(msg)) {
+		>= sizeof(msg)) {
 		fprintf(stderr, "surf: message too long: %d\n", ret);
 		return;
 	}
 
 	if (send(spair[0], msg, ret, 0) != ret)
 		fprintf(stderr, "surf: error sending: %u%c%d (%d)\n",
-		        c->pageid, type, a->i, ret);
+				c->pageid, type, a->i, ret);
 }
 
 void
@@ -2009,10 +2097,10 @@ find(Client *c, const Arg *a)
 
 		if (g_strcmp0(f, s) == 0) /* reset search */
 			webkit_find_controller_search(c->finder, "", findopts,
-			                              G_MAXUINT);
+										  G_MAXUINT);
 
 		webkit_find_controller_search(c->finder, s, findopts,
-		                              G_MAXUINT);
+									  G_MAXUINT);
 
 		if (strcmp(s, "") == 0)
 			webkit_find_controller_search_finish(c->finder);
@@ -2164,6 +2252,14 @@ main(int argc, char *argv[])
 	case 'X':
 		defconfig[Certificate].val.i = 1;
 		defconfig[Certificate].prio = 2;
+		break;
+	case 'y':
+		defconfig[ContentFilter].val.i = 0;
+		defconfig[ContentFilter].prio = 2;
+		break;
+	case 'Y':
+		defconfig[ContentFilter].val.i = 1;
+		defconfig[ContentFilter].prio = 2;
 		break;
 	case 'z':
 		defconfig[ZoomLevel].val.f = strtof(EARGF(usage()), NULL);

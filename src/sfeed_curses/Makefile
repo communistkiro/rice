@@ -9,7 +9,7 @@ SFEED_THEME = mono
 # paths
 PREFIX = /usr/local
 MANPREFIX = ${PREFIX}/man
-DOCPREFIX = ${PREFIX}/doc/${NAME}
+DOCPREFIX = ${PREFIX}/share/doc/${NAME}
 
 # use system flags.
 SFEED_CFLAGS = ${CFLAGS}

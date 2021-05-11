@@ -1,8 +1,1 @@
--o ~/mov/%(upload_date)s-%(title)s.%(ext)s
--f bestvideo+bestaudio/best
---retries infinite
---fragment-retries infinite
---age-limit 99
---geo-bypass
---youtube-skip-dash-manifest
---no-mtime
+../yt-dlp/config

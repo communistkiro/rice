@@ -1,13 +1,18 @@
 html
 {
 	filter: invert(.95) hue-rotate(180deg);
+}
 
+body,
+p
+{
 	text-align: justify;
 	text-justify: inter-word;
+
 	-webkit-hyphens: auto;
-	-webkit-hyphenate-limit-before: 3;
+	-webkit-hyphenate-limit-before: 2;
 	-webkit-hyphenate-limit-after: 3;
-	-webkit-hyphenate-limit-chars: 6 3 3;
+	-webkit-hyphenate-limit-chars: 4 2 2;
 	-webkit-hyphenate-limit-lines: 2;
 	-webkit-hyphenate-limit-last: always;
 	-webkit-hyphenate-limit-zone: 8%;
@@ -15,6 +20,8 @@ html
 
 *[style*=background-image],
 .mwe-math-element,
+.mwe-math-fallback-image-inline,
+.mwe-math-fallback-image-inline,
 img
 {
 	filter: invert(1) hue-rotate(180deg);
@@ -24,8 +31,8 @@ img
 /**:has(:is(img[url$=gif], img[src$=gif])),*/
 /**:is(img[url$=gif], img[src$=gif]),*/
 /**[src~=gif],*[url~=gif]*/
-img[url$=gif],
-img[src$=gif]
+*[url$=gif],
+*[src$=gif]
 {
   display: none;
 }

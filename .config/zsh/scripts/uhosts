@@ -65,6 +65,30 @@ file=(
   https://gitlab.com/The_Quantum_Alpha/the-quantum-ad-list/-/raw/master/For%20hosts%20file/The_Quantum_Ad-List.txt  
   # 28
   https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-social/hosts
+  # 29
+  https://block.energized.pro/ultimate/formats/hosts.txt
+  # 30
+  https://raw.githubusercontent.com/badmojr/1Hosts/master/complete/hosts.txt
+  # 31 torrents too
+  https://raw.githubusercontent.com/tankmohit/UnifiedHosts/master/hosts.all
+  # 32
+  https://raw.githubusercontent.com/nickspaargaren/no-google/master/categories/dns.txt
+  # 33
+  https://raw.githubusercontent.com/nickspaargaren/no-google/master/categories/fonts.txt
+  # 34
+  https://raw.githubusercontent.com/nickspaargaren/no-google/master/categories/domains.txt
+  # 35
+  https://raw.githubusercontent.com/nickspaargaren/no-google/master/categories/products.txt
+  # 36
+  https://raw.githubusercontent.com/Cybo1927/Hosts/master/Anti/Anti%20Verizon
+  # 37
+  https://v.firebog.net/hosts/static/HPHosts/Hostsgrm.txt
+  # 38
+  https://raw.githubusercontent.com/anudeepND/blacklist/master/CoinMiner.txt
+  # 39
+  https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt
+  # 40
+  https://raw.githubusercontent.com/meinhimmel/hosts/master/hosts
 );
 
 for a ( {1..${#file}} ) { wget -q -O ${t}/${a} ${file[a]} & };
@@ -121,7 +145,6 @@ rm -vf ${t}/*;
 
 ##########################################################################################
 
-
 file=(
   https://easylist.to/easylist/easylist.txt
   https://easylist.to/easylist/easyprivacy.txt
@@ -135,9 +158,6 @@ file=(
 for a ( {1..${#file}} ) { wget -P ${t} ${file[a]} & };
 printf '%s\n' 'Downloading wyebadblock json files.' 'Fucking wait.' ${(l.COLUMNS..-.)}; wait; rm -f ${t}/wget-*(.N);
 
-#sort -u ${t}/* > ~/.config/wyebadblock/easylist.txt;
 perl -pe 's/^!.*\n//' ${t}/*(.oc[1,${#file}]) | sort -u | tail -n +3 > ~/.config/wyebadblock/easylist.txt;
-
-#printf '(window.onload = function() {\nconst blockme = [ %s ];\nfunction removal(value) {\n\tdocument.querySelectorAll(value).forEach(el => el.remove());\n}\nblockme.forEach(removal);\n})' ${(j., .)${(f)"$(<~/.config/wyebadblock/easylist.txt)"//(#m)[.\\\+\*\?\(\)\{\}\[\]\!\^\$\=\<\>\|\:\-]/\\${MATCH}}} > ~/.surf/script/elmblock.js;
 
 rm -rvf ${t};
