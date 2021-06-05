@@ -2,7 +2,7 @@
 
 # https://github.com/pystardust/ytfzf
 emulate -LR zsh;
-setopt pipe_fail;
+setopt pipe_fail extendedglob;
 
 # DEFAULTS
 EXTMENU='dmenu -r -l 48';
@@ -95,7 +95,9 @@ while { getopts hmdfp opt } {
   }
 }
 
-search_query="${@[OPTIND,-1]}";
+#search_query="${@[OPTIND,-1]}";
+search_query="$(printf '%s' ${(j..)${(s..)@[OPTIND,-1]}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}})";
+
 [[ -t 0 ]] && {
   prompt_menu='fzf --reverse -i --tabstop=1 --delimiter="$(printf "\t")" --nth=1,2'
   format_fzf

@@ -14,7 +14,7 @@ xbacklight -set 15 &
 
 
 # ... delay repeatrate
-xset r rate 225 130 &
+xset r rate 230 120 &
 
 
 # /usr/share/X11/xkb/rules for `-option ""'

@@ -9,13 +9,9 @@ typeset -i c q pages results lt lc lr ls ll lS ld lD rpp;
 typeset -a category title magnet size date seed leech dls;
 export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=begin";
 n=$'\n'; t=$(mktemp);
-query="${${@}:-$(read -er "?${n}> ")}";
-# [[ ! ${query} =~ '^\s*$' ]] || return 4;
-# [[ ${query} =~ '^\s*$' ]] && query= || query=$(uritool query escape ${query});
-[[ ${query} =~ '^\s*$' ]] && query= || {
-  typeset q;
-  q=( ${(s::)query} );
-  query=${(j::)q/(#b)([^A-Za-z0-9-_.~])/%${(l:2::0:)$(([##16]#match))}};
+# query="${${@}:-$(read -er "?${n}> ")}";
+[[ ${query::=${${@}:-$(read -er "?${n}> ")}} =~ '^\s*$' ]] && query= || {
+  query=${(j..)${(s..)query}/(#b)([^A-Za-z0-9-_.~])/%${(l:2::0:)$(([##16]#match))}};
 }
 
 base=https://nyaa.si/;

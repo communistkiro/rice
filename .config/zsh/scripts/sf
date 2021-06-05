@@ -1,11 +1,18 @@
 #!/bin/zsh
+typeset xid xidfile u uri p;
 xidfile='/tmp/tabbed-surf.xid';
 ((# > 0)) || uri='file:///root/.config/startpage/ss1.htm';
 xid=$(<${xidfile}) &>/dev/null;
+p=$(pwd);
 
 { [[ -r ${xidfile} ]] && xprop -id ${xid} } &>/dev/null || {
+  cd /tmp;
   tabbed -dn tabbedsurf -r 2 surf -e '' 'file:///root/.config/startpage/ss1.htm' >${xidfile} &>/dev/null &;
   unset uri; xid=$(<${xidfile});
-} &>/dev/null
+  cd ${p};
+} &>/dev/null;
 
-for u ( ${uri:-${@}} ) { surf -e ${xid} ${u} &>/dev/null & };
+for u ( ${uri:-${@}} ) {
+  [[ -r ${u} && "$(xdg-mime query filetype ${u})" =~ (^text|directory$) ]] && u=file://${u:a};
+  surf -e ${xid} ${u} &>/dev/null &
+};

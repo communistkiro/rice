@@ -33,33 +33,46 @@ while { getopts 's:h:B:T:H:' a } { case $a {
     H='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
 }; };
 
-tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]}; # top left
-bl=(┗ └ ╚ ⣇); bl=${bl[$s]}; # bottom left
-tr=(┓ ┐ ╗ ⢹); tr=${tr[$s]}; # top right
-br=(┛ ┘ ╝ ⣸); br=${br[$s]}; # bottom right
-th=(━ ─ ═ ⠉); th=${th[$s]}; # top horizontal
-bh=(━ ─ ═ ⣀); bh=${bh[$s]}; # bottom horizontal
-lv=(┃ │ ║ ⡇); lv=${lv[$s]}; # left vertical
-rv=(┃ │ ║ ⢸); rv=${rv[$s]}; # right vertical
-r='\033[0m';
-# box inside width
-w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
-((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
+((# + 1 > OPTIND)) || return 0;
 
-if ((w + 2 > COLUMNS)); then;
+tl=${$(<<<'┏ ┌ ╔ ⡏')[s]}; # top left
+bl=${$(<<<'┗ └ ╚ ⣇')[s]}; # bottom left
+tr=${$(<<<'┓ ┐ ╗ ⢹')[s]}; # top right
+br=${$(<<<'┛ ┘ ╝ ⣸')[s]}; # bottom right
+th=${$(<<<'━ ─ ═ ⠉')[s]}; # top horizontal
+bh=${$(<<<'━ ─ ═ ⣀')[s]}; # bottom horizontal
+lv=${$(<<<'┃ │ ║ ⡇')[s]}; # left vertical
+rv=${$(<<<'┃ │ ║ ⢸')[s]}; # right vertical
+# box inside width
+w=${${(On)@[OPTIND,-1]//(#m)*/${#MATCH}}[1]};
+(($+h)) && {
+  h=$(tr '\n\t\r\f' ' ' <<< $h)
+  (($#h > w)) && w=$(($#h + 4));
+};
+
+if ((w + 2 > COLUMNS)) {
   # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
-  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
-  for a in $@[OPTIND,-1]; do 
-    for d in ${(f)"$(fmt -w $COLUMNS <<< $a)"}; do
-      printf '%s %b%s%b %s\n' $lv $r$T ${(r.COLUMNS-4.. .)d} $r$B $rv;
-    done;
-  done;
-  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
-else;
-  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
-  for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
-  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
-fi;
+  (($+h)) &&
+#   if ((${#${h//[^$'\n']/}} > 0)) {
+#   } elif (($#h > COLUMNS - 4)) {
+#   } else {
+    printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)} $H $h $B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)} $tr
+#   };
+    printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)} $tr;
+  for a ( $@[OPTIND,-1] ) {
+    # for d ( ${(f)"$(fmt -w $COLUMNS <<< $a)"} ) {
+    for d ( ${(f)"$(<<<$a)"} ) {
+      printf '%s %b%s%b %s\n' $lv $T ${(r.COLUMNS-4.)d} $B $rv;
+    };
+  };
+  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)} $br '\033[0m';
+} else {
+  (($+h)) &&
+    printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)} $H $h $B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)} $tr ||
+    printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)} $tr;
+  for a ( $@[OPTIND,-1] ) { printf '%s %b%s%b %s\n' $lv $T ${(r.w-2.)a} $B $rv };
+  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)} $br '\033[0m';
+};
 }
 
 fetchEmail () { # List all the received emails in a nicely formatted order

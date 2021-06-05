@@ -39,8 +39,8 @@ EXAMPLES
 An alarm for 00:55:57 on the 8. days after today
   tmr -a 7 26 -61 -183
 
-An alarm for next hour, xx:00:00
-  tmr -a 1 0
+An alarm for next hour, xx:yy:00
+  tmr -a 0
 
 An alarm for midnight, 00:00:00
   tmr -a 1 0 0
@@ -55,7 +55,7 @@ An alarm for the next time the minutes are 26, xx:26:00
   tmr -a 26
 
 A 59-minute, 59-second countdown
-  tmr 1 0 -1
+  tmr 0 1 0 -1
 
 A 4-second countdown not outputting to the tmp file
   tmr -n 0 0 0 4
@@ -96,7 +96,7 @@ return 1;; (*) true;; }
 typeset tmp;
 typeset -i w b d h m s D H M S t;
 tmp=/tmp/tmr.$$;
-
+# set -x
 if     ((# - OPTIND == 3)) {
   d=${@[OPTIND]};
   h=${@[OPTIND + 1]};
@@ -119,7 +119,7 @@ if     ((# - OPTIND == 3)) {
   read 's?seconds : ';
 };
 
-((d == 0 && h == 0 && m == 0 && s == 0)) && return 1;
+# ((d == 0 && h == 0 && m == 0 && s == 0)) && return 1;
 
 if ((${+a})) {
   typeset F;
@@ -133,7 +133,8 @@ if ((${+a})) {
   M=$(date +%M);
   H=$(date +%H);
 
-  if ((S >= s && m == 0 && h == 0 && d == 0)) {
+  # if ((S >= s && m == 0 && h == 0 && d == 0)) {
+  if ((S >= s && m == M && h == 0 && d == 0)) {
     m=$((M + 1)); h=${H};
   } elif (((M >= m || M == m && S >= s) && h == 0 && d == 0)) {
     h=$((H + 1));
@@ -148,6 +149,7 @@ if ((${+a})) {
   printf "Alarm set for %s.\n\n" "$(date -d "${F} +${d} days +${h} hours +${m} minutes +${s} seconds" '+%F %T')";
   t=$(($(date -d "${F} +${d} days +${h} hours +${m} minutes +${s} seconds" '+%s') - $(date +%s)));
 } else {
+  ((d == 0 && h == 0 && m == 0 && s == 0)) && return 1;
   t=$((60 * (60 * (24 * d + h) + m) + s));
   ((t > 0)) || return 1;
 };

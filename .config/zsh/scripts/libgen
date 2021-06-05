@@ -2,13 +2,13 @@
 [[ -t 0 ]] || return 1;
 # { which zsh && which pup && which curl && which wget && which pcre2grep } &>/dev/null || return 2;
 emulate -LR zsh;
-setopt pipe_fail ksh_glob extended_glob;
+setopt pipe_fail ksh_glob extendedglob;
 typeset query base t n;
 
 quit () { rm -f ${t}; exit ${1:-0} };
 
 n=$'\n'; t=$(mktemp);
-query=${${@}:-$(read -er "?${n}> ")};
+query=$(printf '%s' ${(j..)${(s..)@:-$(read -er "?${n}> ")}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}});
 [[ ! ${query} =~ '^\s*$' ]] || quit 4;
 
 ping -c 1 libgen.rs &>/dev/null && base=http://libgen.rs/ ||
@@ -16,21 +16,10 @@ ping -c 1 libgen.is &>/dev/null && base=http://libgen.is/ ||
 ping -c 1 libgen.st &>/dev/null && base=http://libgen.st/ ||
 quit 3;
 
-uriencode () {
-  emulate -LR zsh;
-  setopt extendedglob;
-  typeset input;
-  input=( ${(s::)@} );
-  printf '%s\n' ${(j::)input/(#b)([^A-Za-z0-9-_.~])/%${(l:2::0:)$(([##16]#match))}};
-}
-
 uridecode () {
-  emulate -LR zsh;
-  typeset q w;
-  # [[ ${#} > 0 ]] || { q=$(mktemp); while { read -e -t 1 -r } { } > ${q}; [[ -s ${q} ]] || return };
-  eval "w=\$'${${${@:-$(<${q})}:gs/\\/\\\\}:gs/%/\\x}'";
-  printf '%s\n' ${w};
-  rm -f ${q};
+  typeset w;
+  eval "w=\$'${${${@}:gs/\\/\\\\}:gs/%/\\x}'";
+  printf '%s' ${w};
 }
 
 menu () {
@@ -87,7 +76,7 @@ case $(read -sek1 "?${n}") {
         (0) base+=\&column=extension;;
         (*) base+=\&column=def;;
       };
-      base+=\&req=$(uriencode ${query});
+      base+=\&req=${query};
 
     curl -sfLH User-Agent: -o ${t} ${base//detailed/simple}\&open=0;
 
@@ -190,7 +179,7 @@ case $(read -sek1 "?${n}") {
 
     ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
-    for n ( ${url} ) {
+    for n ( ${(u)url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
         [[ ${n} =~ '\?filename=' ]] && {
           wget -O ~/Downloads/"$(uridecode ${n#*=})" ${n};
@@ -201,7 +190,7 @@ case $(read -sek1 "?${n}") {
     };
   ;;
   (2)
-    base+=scimag/\?q=$(uriencode ${query});
+    base+=scimag/\?q=${query};
     typeset -a mirror title author journal volume size doi url;
     typeset -i pages lr lt la lj lv ls lP q c;
 
@@ -257,7 +246,7 @@ case $(read -sek1 "?${n}") {
     };
 
     ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
-    for n ( ${url} ) {
+    for n ( ${(u)url} ) {
       [[ ${n} =~ '\.pdf$' ]] && {
         wget -O ~/Downloads/"$(uridecode ${n##*/})" ${n};
       } || {
@@ -272,7 +261,7 @@ case $(read -sek1 "?${n}") {
     formats=(epub mobi azw azw3 fb2 pdf rtf txt);
     base+=fiction/;
     langs=(${(f)"$(curl -sfLH User-Agent: ${base} | pup -p 'select[name=language] option attr{value}')"});
-    base+=\?q=$(uritool query escape ${query});
+    base+=\?q=${query};
 
     menu -m 4b -t 2b 'Field_to_search: ' \
       '* any' \
@@ -368,7 +357,7 @@ case $(read -sek1 "?${n}") {
 
     ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
-    for n ( ${url} ) {
+    for n ( ${(u)url} ) {
       [[ ${n} =~ "\.${ext[++q]}$" ]] && {
         [[ ${n} =~ '\?filename=' ]] && target=${n#*=} || target=${n##*/};
         wget -O ~/Downloads/"$(uridecode ${target})" ${n};
@@ -380,7 +369,7 @@ case $(read -sek1 "?${n}") {
   (4)
     typeset -i results pages lr lt li lv lp ld lP q;
     typeset -a title issue volume publisher language date issuehash serieshash url file;
-    base=libgen.lc/comics/index.php\?s=$(uritool query escape ${query})\&res=100\&sorted=1;
+    base=libgen.lc/comics/index.php\?s=${query}\&res=100\&sorted=1;
     [[ $(read -seq "?${n}Query uses wildcards [y/*]?> ") == y ]] && base+=\&mask=1; printf '\n';
 
     menu -m 4b -t 2b 'Search_for: ' \
@@ -486,14 +475,14 @@ case $(read -sek1 "?${n}") {
 
     ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
-    for n ( ${url} ) {
+    for n ( ${(u)url} ) {
       wget -O ~/Downloads/"$(uridecode ${file[++q]})" ${n};
     };
   ;;
   (5)
     typeset -i pages results lr lt ls lf lS lp ln ll lP q c;
     typeset -a title format length language pubdate size url;
-    base=http://libgen.lc/standarts/index.php\?s=$(uritool query escape ${query});
+    base=http://libgen.lc/standarts/index.php\?s=${query};
 
     curl -sfLH User-Agent: -o ${t} ${base};
     results=$(pup -p -f ${t} | pcre2grep -o1 'Found.*?(\d+).*results');
@@ -558,7 +547,7 @@ case $(read -sek1 "?${n}") {
 
     ((${#url} == 0)) || printf '%s\n' 'All URLs:' ${(u)url} ${(l.COLUMNS..-.)};
     q=0;
-    for n ( ${url} ) {
+    for n ( ${(u)url} ) {
       wget -O ~/Downloads/$(tr -cd '[:alnum:]' < /dev/urandom | head -c 8).${ext[++q]:-pdf} ${n};
     };
   ;;
@@ -568,7 +557,7 @@ case $(read -sek1 "?${n}") {
     base=http://magzdb.org;
 
 
-    curl -sfLH User-Agent: -o ${t} ${base}/makelist\?t=$(uritool query escape ${query});
+    curl -sfLH User-Agent: -o ${t} ${base}/makelist\?t=${query};
     for q ({1..${pages}}) {
       name+=(${(f)"$(pup -p -f ${t} 'body div[align=left] a text{}')"});
       url+=(${(f)"$(pup -p -f ${t} 'body div[align=left] a attr{href}')"});

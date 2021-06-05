@@ -116,14 +116,14 @@ cmd rndrename ${{
 
 cmd mkdir ${{((# > 0)) && mkdir -p ${"$(printf '%s ' $@)"%?} || mktemp -d .XXXXXXXXXX;}}
 
-cmd fzf ${{
-  printf '%s\n' *(.D-) | fzf -i -m --reverse \
-    --bind "alt-e:execute(subl4 -n --command toggle_side_bar -a {+})" \
-    --bind "alt-c:clear-selection" \
-    --bind "alt-v:select-all" \
-    --preview 'cat {}' \
-    --preview-window=67%:sharp:wrap;
-}}
+# cmd fzf ${{
+#   printf '%s\n' *(.D-) | fzf -i -m --reverse \
+#     --bind "alt-e:execute(subl4 -n --command toggle_side_bar -a {+})" \
+#     --bind "alt-c:clear-selection" \
+#     --bind "alt-v:select-all" \
+#     --preview 'cat {}' \
+#     --preview-window=67%:sharp:wrap;
+# }}
 
 cmd 7za ${{
   set -f;
@@ -362,7 +362,7 @@ map gh          cd ~
 map gp          cd /tmp
 map c           push :<space>cd<space>
 # map e           find
-map f           fzf
+# map f           fzf
 map e           cz
 map E           sublime
 map l           $$PAGER $fx

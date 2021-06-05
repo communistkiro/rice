@@ -4,14 +4,13 @@ emulate -LR zsh;
 setopt extendedglob;
 typeset input q;
 
-[[ $# > 0 ]] || { q=$(mktemp); while { read -e -t 1 -r } { } > ${q}; [[ -s ${q} ]] || return };
-input=( ${(s::)@:-${(s::)$(<${q})}} );
+[[ ${#} > 0 ]] || { q=$(mktemp); while { read -e -t 1 -r } { } > ${q}; [[ -s ${q} ]] || return };
+# input=( ${(s..)@:-${(s..)$(<${q})}} );
 
 # https://en.wikipedia.org/wiki/Internationalized_Resource_Identifier
-
 # RFC 3986 section 2.3 Unreserved Characters (January 2005)
-printf '%s\n' ${(j::)input/(#b)([^A-Za-z0-9-_.~])/%${(l:2::0:)$(([##16]#match))}};
+printf '%s' ${(j..)${(s..)@:-${(s..)$(<${q})}}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}};
 
 # RFC 3986 section 2.2 Reserved Characters (January 2005)
-# printf '%s\n' ${(j::)input/(#b)([\!\"\#\$\%\&\'\(\)\*\+\,\/\:\;\<\=\>\?\@\[\\\]\^\`\{\|\}])/%${(l:2::0:)$(([##16]#match))}};
+# printf '%s' ${(j..)input/(#b)([\!\"\#\$\%\&\'\(\)\*\+\,\/\:\;\<\=\>\?\@\[\\\]\^\`\{\|\}])/%${(l:2..0:)$(([##16]#match))}};
 }

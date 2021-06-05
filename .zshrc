@@ -19,7 +19,7 @@ HYPHEN_INSENSITIVE="true";
 HISTFILE=/root/.zsh_history;
 SAVEHIST=1000;
 HISTSIZE=1000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='((r(m|dr|ealpath|g|un-help|)|c([dp]|l(|a|n))|f(d|eh|mt)|m(an|le|v)|p(|re|k)|b(l(|l)|uck)|t(mr|ime)|w(c|hich)|z(ed|sh|mv|cp|ln)|x(b(|r|s)|i|rs|q|)|e(links|cho)|l(1|r|s|ibgen)|oc(|c)|sf|qpp|kill|abb|pid|vol|neo|L) *|([.</~]|mpv|yt)*)';
+HISTORY_IGNORE='((r(m|dr|ealpath|g|un-help|)|c([dp]|l(|a|n)|hmod)|f(d|eh|mt)|m(an|le|v)|p(|re|k)|b(l(|l)|uck)|t(mr|ime)|w(c|hich)|z(ed|sh|mv|cp|ln)|x(b(|r|s)|i|rs|q|)|e(links|cho)|l(1|r|l|s|ibgen)|oc(|c)|s(f|o(|o))|qpp|kill|abb|pid|vol|neo|L|tail|head) *|([.</~]|mpv|yt)*)';
 zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1 }; # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -55,14 +55,14 @@ compdef _dirs d;
 
 FZF_BASE=/root/src/fzf;
 source /root/.config/zsh/plugins/fzf/fzf.plugin.zsh;
-export FZF_DEFAULT_OPTS="-i -m --reverse --ansi --bind=alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down";
+export FZF_DEFAULT_OPTS="-i -m --reverse --ansi --bind=alt-w:toggle-preview-wrap,alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down";
 
 # source /root/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh;
 source /root/.config/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh;
 
 source /root/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh;
 
-source /root/.config/zsh/plugins/forgit/forgit.plugin.zsh;
+source /root/.config/zsh/plugins/forgit.my/forgit.plugin.zsh;
 
 # source /root/.config/zsh/plugins/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh;
 
@@ -132,15 +132,15 @@ alias fd='fd -uu -i';
 alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
 alias flit='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.44 --setf int_f0_target_mean=90 -pw';
-# alias fmt='fmt -w $((COLUMNS*94/100))';
 alias hl='hledger-ui';
 alias j='ijconsole';
 alias L='less';
-alias l1='() { w=(${(f)"$(ls -A1 ${1:-.})"}); q=${${(On)w//(#m)*/${#MATCH}}[1]}; print -C $((COLUMNS/q)) -- ${w} }';
-# alias l1='ls -A -1';
+# alias l1='() { w=(${(f)"$(ls -A1 ${1:-.})"}); q=${${(On)w//(#m)*/${#MATCH}}[1]}; print -C $((COLUMNS/q)) -- ${w} }';
+alias l1='ls -A -1';
 alias love='mpc sendmessage mpdas love';
-alias lr='ls -A -1 --recursive';
-alias man='() { man -a ${1} 2>/dev/null || xmandoc ${1} || return 1 }';
+alias ll='ls -l --almost-all --color=always --human-readable --time-style=full-iso';
+alias lr='ls -1 --almost-all --color=always --recursive';
+alias man='() { man -a ${@} 2>/dev/null || xmandoc ${@} || return 1 }';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
 alias mpva='mpv --force-window=yes --idle --no-terminal';
@@ -171,8 +171,8 @@ alias vol='amixer set Master';
 alias which='which -a';
 alias ytd='yt-dlp';
 alias xb='xbacklight -set';
-alias xbr='xbps-remove -R';
-alias xbs='xbps-install -Su';
+alias xbr='xbps-remove -Rv';
+alias xbs='xbps-install -Suv';
 alias xc='xclip -se c -noutf8 -r';
 alias xp='xclip -se p -noutf8 -r';
 alias x='aunpack';

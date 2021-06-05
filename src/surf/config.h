@@ -21,7 +21,7 @@ static Parameter defconfig[ParameterLast] = {
 	[AccessWebcam]			=	{	{ .i = 0 },		},
 	[Certificate]			=	{	{ .i = 0 },		},
 	[CaretBrowsing]			=	{	{ .i = 1 },		},
-	[ContentFilter]			=	{ 	{ .i = 1 },	1	},
+	[ContentFilter]			=	{ 	{ .i = 1 },		},
 	[CookiePolicies]		=	{	{ .v = "a@" },	},
 	[DefaultCharset]		=	{	{ .v = "UTF-8"	}, },
 	[DiskCache]				=	{	{ .i = 1 },		},
@@ -53,41 +53,26 @@ static Parameter defconfig[ParameterLast] = {
 	[ZoomLevel]				=	{	{ .f = 1.15 },	},
 };
 
+	// { "://(www\\.)?(lainchan|boards.4chan(nel)?)\\.org(/|$)", {
 static UriParameters uriparams[] = {
-	{ "://(www\\.)?(lainchan|boards.4chan(nel)?)\\.org(/|$)", {
-		[CookiePolicies]    = {	{ .v = "@a" },	2 },
-		[JavaScript]		= { { .i =	1	},	2 },
-		// [Style]				= {	{ .i = 	0 	},	2 },
+	{ "://boards.4chan(nel)?\\.org", {
+		[CookiePolicies]    = {	{ .v = "@" },	1 },
+		[JavaScript]		= { { .i =	1	},	1 },
 	}, },
 
-	{ "://(www\\.)?(wizchan\\.org|endchan\\.net|2ch\\.hk)(/|$)", {
-		// [JavaScript]		= { { .i =	1	},	2 },
+	{ "://lainchan\\.org", {
+		[CookiePolicies]    = {	{ .v = "@" },	1 },
+		[JavaScript]		= { { .i =	1	},	1 },
 		[Style]				= {	{ .i = 	0 	},	2 },
 	}, },
-	{ "://(www\\.)?git(hub|lab)\\.com(/|$)", {
-		// [JavaScript]		= { { .i =	1	},	2 },
-		[Style]				= {	{ .i = 	1 	},	2 },
+
+	{ "://neocities\\.org(/|$)", {
+		[CookiePolicies]    = {	{ .v = "@" },	1 },
+		[Style]				= {	{ .i = 	1 	},	1 },
 	}, },
 
-	{ "://(www\\.)?mail\\.(protonmail|tuta(nota|mail))\\.com(/|$)", {
-		// [JavaScript]		= { { .i =	1	},	2 },
-		[Style]				= {	{ .i = 	1 	},	2 },
-	}, },
-
-	{ "://([^.]+\\.)?neocities\\.org(/|$)", {
-		[CookiePolicies]    = {	{ .v = "@a" },	2 },
-		// [JavaScript]		= { { .i =	1	},	2 },
-		[Style]				= {	{ .i = 	1 	},	2 },
-	}, },
-
-	{ "://(www\\.)?([^.]+\\.)wik(tionary|i(pedia|species|news|source|books|quote|media|versity|voyage))\\.org/", {
-		// [JavaScript] 		= { { .i =	1	},	2 },
-		[Style]				= {	{ .i = 	1 	},	2 },
-	}, },
-
-	{ ".*", {
-		// [JavaScript] 		= { { .i =	0	},	2 },
-		[Style]				= {	{ .i = 	1 	},	2 },
+	{ "*", {
+		[CookiePolicies]    = {	{ .v = "a" },	1 },
 	}, },
 };
 
@@ -136,7 +121,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 		} \
 }
 
-/* surfraw implementation; instead of "xprop -id $0 -f _SURF_GO 8s -set _SURF_GO $(surfraw -p $(surfraw -elvi | tail -n +2 | cut -s -f1 | dmenu -i))" do "echo '/etc/crontab 00 * * * * surfraw -elvi | tail -n +2 | cut -s -f1 > ~/.config/surfraw/cache; cat ~/.config/surfraw/bookmarks | cut -d\  -f1 >> ~/.config/surfraw/cache' >> /etc/crontab", and just cat the file into dmenu - it's faster */
+/* SURFRAW */
 #define SR_SEARCH {\
 		.v = (char *[]){ "/bin/sh", "-ec", \
 			 "e=$(dmenu -p elvi: <~/.config/surfraw/cache); xprop -id $0 -f _SURF_GO 8s -set _SURF_GO \"$(surfraw -p -- ${e%% *} ${e#* })\"", winid, NULL  \
@@ -183,7 +168,7 @@ static Key keys[] = {
 	{ MODKEY,					GDK_KEY_q,					spawn,				SR_SEARCH },
 	{ 0,						GDK_KEY_Escape,				stop,				{ 0 } },
 	{ MODKEY,					GDK_KEY_r,					reload,				{ .i =  0 } },
-	{ MODKEY,					GDK_KEY_r,					reload,				{ .i =  1 } },
+	{ MODKEY|GDK_SHIFT_MASK,	GDK_KEY_r,					reload,				{ .i =  1 } },
 	{ MODKEY,					GDK_KEY_Right,				navigate,			{ .i =  1 } },
 	{ MODKEY,					GDK_KEY_Left,				navigate,			{ .i = -1 } },
 	{ MODKEY,					GDK_KEY_apostrophe,			scrollv,			{ .i =  10 } },
