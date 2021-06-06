@@ -1,2 +1,2 @@
 #!/bin/sh
-scrot --line style=dash,width=2,color='red' --select --freeze --quality 67 '/tmp/%Y-%m-%d-%H-%M-%S.png'
+scrot --line style=dash,width=2,color='red' --select --freeze --quality 67 '/tmp/%s.png' #'/tmp/%Y-%m-%d-%H-%M-%S.png'

@@ -1,0 +1,71 @@
+#!/bin/zsh
+# reconverts anchors to below format to facilitate script rerunning
+# substitutes strings formatted as the regex'delim1(\w+)delim2' with "<a href='#\1>(\d+)</a>'", where the number is that of the ordered references
+# uniquely sorts by occurance all in text found such labels and adds them with sufficient indentation on the line number where a li tag with a 'cite' class and an id is first found, all of which are deleted, so it needn't be contiguous
+# appends all non-used references with a rule as delimiter;
+
+typeset q w e r y z;
+typeset -A ref;
+typeset -a label d de;
+typeset -i adr t;
+
+# delimiters for labels: one or two required; if more than one present, first non-null value in the array taken as terminal; otherwise initial reused
+while { getopts d: q } { case ${q} { (d) [[ -n ${OPTARG} ]] && d=(${(s..)${OPTARG//[[:space:]]##/ }}) && if ((${#d} == 1)) { d[2]=${d[1]} } elif ((${#d} > 1)) { d[3,-1]=() }; }; };
+
+[[ -n ${d[1]} && -n ${d[2]} ]] || d=('[[' ']]');
+if [[ ${#d} -eq 1 ]] {
+  d[2]=${d[1]};
+} elif [[ ${#d} -gt 1 ]] {
+  d[2]=${${d[2,-1]?}[1]};
+  [[ -n ${d[2]} ]] || d[2]=${d[1]};
+};
+# escape all characters to ease perling
+z=(\\${^${(s..)d}});
+z[$#z/2+1]=();
+de[1]=${(j..)z[1,$#z/2]};
+de[2]=${(j..)z[$#z/2+1,-1]};
+z=;
+
+err() { printf '%s:\t%s\n' ${q} ${1} }
+if [[ ${#} -gt 0 ]] {
+  y=$(mktemp);
+  for q ( ${@} ) {
+    [[ -r ${q} && -s ${q} ]] || { err 'No read permission or empty file.'; continue };
+    cp ${q} ${q}.bak;
+    perl -pe "s/<a href='#(\w+)'>\d+<\/a>/${d[1]}\1${d[2]}/g" ${q} > ${y}; cp ${y} ${q};
+    label=(${$(pcre2grep -o1 "${de[1]}(\w+)${de[2]}" ${q})}); ((${#label} > 0)) || { err 'No citations found.'; continue };
+    label=(${(u)label});
+    ref=(${(f)"$(pcre2grep -O '$1$n$2' "<li class='cite'\s+id='(\w+)'\s*>(.+?)</li>" ${q})"}); ((${#ref} > 0)) || { err 'No references found.'; continue };
+    z=(${(f)"$(print -C 2 ${label} {1..${#label}})"});        
+    adr=$(perl -ne "/<li class='cite'\s+id='\w+/ && "'print "$.\n"' ${q} | head -n 1);# FIXME exit on first match
+    r=$(for w ( {1..$((${#${"$(head -n $((adr - 1)) ${q} | tail -n 1)"//[^$'\t']/}} + 1))} ) { printf '\t' });
+    e=$(for w ( ${label} ) {
+      printf "%s<li class='cite' id='%s'>%s</li>\n" ${r} ${w} ${ref[${w}]};
+    });
+    for w ( ${label} ) { t=${${(M)z:#${w} *}##* }; sed -i "s/${de[1]}${w}${de[2]}/<a href='#${w}'>${t}<\/a>/g" ${q}; unset "ref[${w}]" };
+    ((${#ref} == 0)) || e+=$(printf '\n'; for w ( ${(k)ref} ) { printf "%s<li class='cite' id='%s'>%s</li>\n" ${r} ${w} ${ref[${w}]} } );# printf '\n%s<hr>\n' ${r};
+    sed -i "/<li class='cite'/d" ${q}; # fucking hell, sed can't fucking do this line without a a fucking / as a delim. fuck me.
+    <<(head -n $((adr - 1)) ${q}) <<<${e} <<(tail -n +${adr} ${q}) > ${y}; cp ${y} ${q};
+  };
+  rm -f ${y};
+} else {
+  q=$(mktemp); w=$(mktemp);
+  quit() { rm -f ${q}; exit ${1:-0} };
+  while { read -e -t 1 -r } { } > ${q}; [[ -s ${q} ]] || { err 'Empty input.'; quit };
+  perl -pe "s/<a href='#(\w+)'>\d+<\/a>/${d[1]}\1${d[2]}/g" ${q} > ${w}; cp ${w} ${q}; rm -f ${w};
+  label=(${$(pcre2grep -o1 "${de[1]}(\w+)${de[2]}" ${q})}); ((${#label} > 0)) || { err 'No citations found.'; quit };
+  label=(${(u)label});
+  ref=(${(f)"$(pcre2grep -O '$1$n$2' "<li class='cite'\s+id='(\w+)'\s*>(.+?)</li>" ${q})"}); ((${#ref} > 0)) || { err 'No references found.'; quit };
+  z=(${(f)"$(print -C 2 ${label} {1..${#label}})"});
+  adr=$(perl -ne "/<li class='cite'\s+id='\w+/ && "'print "$.\n"' ${q} | head -n 1);
+  r=$(for w ( {1..$((${#${"$(head -n $((adr - 1)) ${q} | tail -n 1)"//[^$'\t']/}} + 1))} ) { printf '\t' });
+  e=$(for w ( ${label} ) { printf "%s<li class='cite' id='%s'>%s</li>\n" ${r} ${w} ${ref[${w}]} });
+  for w ( ${label} ) { t=${${(M)z:#${w} *}##* }; sed -i "s/${de[1]}${w}${de[2]}/<a href='#${w}'>${t}<\/a>/g" ${q}; unset "ref[${w}]" };
+  ((${#ref} == 0)) || e+=$(
+    # printf '\n%s<hr>\n' ${r};
+    printf '\n';
+    for w ( ${(k)ref} ) { printf "%s<li class='cite' id='%s'>%s</li>\n" ${r} ${w} ${ref[${w}]} } );
+  sed -i "/<li class='cite'/d" ${q};
+  <<(head -n $((adr - 1)) ${q}) <<<${e} <<(tail -n +${adr} ${q});
+  quit;
+};

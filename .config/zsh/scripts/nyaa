@@ -2,8 +2,9 @@
 [[ -t 0 ]] || return 1;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 # { which zsh && which curl && which pcre2grep && which qbittorrent } &>/dev/null || return 2;
+
 emulate -LR zsh;
-setopt pipe_fail sh_glob extended_glob;
+setopt pipefail extendedglob kshglob rematchpcre;
 typeset base t n C;
 typeset -i c q pages results lt lc lr ls ll lS ld lD rpp;
 typeset -a category title magnet size date seed leech dls;
@@ -11,23 +12,28 @@ export FZF_DEFAULT_OPTS="-i +m --reverse --ansi --bind=\[:up,\':down --tiebreak=
 n=$'\n'; t=$(mktemp);
 # query="${${@}:-$(read -er "?${n}> ")}";
 [[ ${query::=${${@}:-$(read -er "?${n}> ")}} =~ '^\s*$' ]] && query= || {
-  query=${(j..)${(s..)query}/(#b)([^A-Za-z0-9-_.~])/%${(l:2::0:)$(([##16]#match))}};
+  query=${(j..)${(s..)query}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}};
 }
 
 base=https://nyaa.si/;
 quit () { rm -f ${t}; exit ${1:-0} };
+
 menu () {
   typeset m t a;
+  m='\033[0;';
+  t='\033[0;';
   while { getopts 'm:t:' a } { case $a {
     (m) 
-      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      m+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
     (t)
-      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      t+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
   }; };
-  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
+  m=${m%?}m;
+  t=${t%?}m;
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m} ${a%% *} ${t} "${a#* }" '\033[0m' };
 }
 
-menu -m 4b -t 2b 'Filter: ' \
+menu -m 4b -t 2 'Filter: ' \
   '1 No remakes' \
   '2 Trusted only' \
   '* No filter';
@@ -39,7 +45,7 @@ case ${C} {
 
 base+=\&q=${query};
 
-menu -m 4b -t 2b  'Category: ' \
+menu -m 4b -t 2  'Category: ' \
   '1 Anime' \
   '2 Audio' \
   '3 Literature' \
@@ -55,7 +61,7 @@ case ${C} {
 
 case ${(M)base%?} {
   (1)
-    menu -m 4b -t 2b 'Anime_sub-category: ' \
+    menu -m 4b -t 2 'Anime_sub-category: ' \
       '1 Anime Music Video' \
       '2 English-translated' \
       '3 Non-English-translated' \
@@ -67,7 +73,7 @@ case ${(M)base%?} {
       (*) base+=_0;;
     };;
   (2)
-    menu -m 4b -t 2b 'Audio_sub-category: ' \
+    menu -m 4b -t 2 'Audio_sub-category: ' \
       '1 Lossless' \
       '2 Lossy' \
       '* Any';
@@ -77,7 +83,7 @@ case ${(M)base%?} {
       (*) base+=_0;;
     };;
   (3)
-    menu -m 4b -t 2b 'Literature_sub-category: ' \
+    menu -m 4b -t 2 'Literature_sub-category: ' \
       '1 English-translated' \
       '2 Non-English-translated' \
       '3 Raw' \
@@ -88,7 +94,7 @@ case ${(M)base%?} {
       (*) base+=_0;;
     };;
   (4)
-    menu -m 4b -t 2b 'Live action_sub-category: ' \
+    menu -m 4b -t 2 'Live action_sub-category: ' \
       '1 English-translated' \
       '2 Idol/Promotional Video' \
       '3 Non-English-translated' \
@@ -100,7 +106,7 @@ case ${(M)base%?} {
       (*) base+=_0;;
     };;
   (5)
-    menu -m 4b -t 2b 'Pictures_sub-category: ' \
+    menu -m 4b -t 2 'Pictures_sub-category: ' \
       '1 Graphics' \
       '2 Photos' \
       '* Any';
@@ -110,7 +116,7 @@ case ${(M)base%?} {
       (*) base+=_0;;
     };;
   (6)
-    menu -m 4b -t 2b 'Software_sub-category: ' \
+    menu -m 4b -t 2 'Software_sub-category: ' \
       '1 Applications' \
       '2 Games' \
       '* Any';
@@ -121,7 +127,7 @@ case ${(M)base%?} {
     };;
 };
 
-menu -m 4b -t 2b 'Sort_by: ' \
+menu -m 4b -t 2 'Sort_by: ' \
   '1 Size' \
   '2 Seeds' \
   '3 Leeches' \
@@ -136,7 +142,7 @@ case ${C} {
   (*) base+=\&s=id;;
 };
 
-menu -m 4b -t 2b 'Sort_order: ' \
+menu -m 4b -t 2 'Sort_order: ' \
   '1 Ascending' \
   '* Descending'; 
 read -sk1 "C?${n}";

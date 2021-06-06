@@ -53,11 +53,12 @@ while { true } {
   c=$(fzf -q ${query} < ${T} | cut -f 1 -d ' ') || break;
   ((c > 0 && c <= R)) && {
     curl -sfLH User-Agent: -o ${t} ${base}${(Q)url[c]};
-    hash+=($(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pup -p -f ${t} 'table td:nth-child(2) text{}' | pcre2grep -M -O '&tr=$1' '(\w+://\S+)')//:/%3a}//\//%2f});
+    # hash+=($(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pup -p -f ${t} 'table td:nth-child(2) text{}' | pcre2grep -M -O '&tr=$1' '(\w+://\S+)')//:/%3a}//\//%2f});
+     qbittorrent $(pcre2grep -O 'magnet:?xt=urn:btih:$1' -M 'Info\s*Hash:\s*</td>\s*<td>\s*(\S+)\s*</td>' ${t})${${(f)$(pup -p -f ${t} 'table td:nth-child(2) text{}' | pcre2grep -M -O '&tr=$1' '(\w+://\S+)')//:/%3a}//\//%2f} &>/dev/null & disown;
   };
 };
 
-((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
+# ((${#hash} > 0)) && { qbittorrent ${(u)hash} &>/dev/null & disown };
 #((${#hash} > 0)) && for q ( {1..${#hash}} ) {
 # printf '%s\n' d10:magnet-uri${#hash[q]}:${hash[q]}e > ~/Downloads/rtorrent/watch/start/meta-${${hash[q]%%&*}##*:}.torrent;
 #};

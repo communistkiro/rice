@@ -55,7 +55,12 @@ static Parameter defconfig[ParameterLast] = {
 
 	// { "://(www\\.)?(lainchan|boards.4chan(nel)?)\\.org(/|$)", {
 static UriParameters uriparams[] = {
-	{ "://boards.4chan(nel)?\\.org", {
+	{ "://boards.4channel\\.org", {
+		[CookiePolicies]    = {	{ .v = "@" },	1 },
+		[JavaScript]		= { { .i =	1	},	1 },
+	}, },
+
+	{ "://boards.4chan\\.org", {
 		[CookiePolicies]    = {	{ .v = "@" },	1 },
 		[JavaScript]		= { { .i =	1	},	1 },
 	}, },
@@ -66,13 +71,13 @@ static UriParameters uriparams[] = {
 		[Style]				= {	{ .i = 	0 	},	2 },
 	}, },
 
-	{ "://neocities\\.org(/|$)", {
+	{ "://neocities\\.org", {
 		[CookiePolicies]    = {	{ .v = "@" },	1 },
 		[Style]				= {	{ .i = 	1 	},	1 },
 	}, },
 
-	{ "*", {
-		[CookiePolicies]    = {	{ .v = "a" },	1 },
+	{ ".*", {
+		[CookiePolicies]    = {	{ .v = "a@" },	1 },
 	}, },
 };
 

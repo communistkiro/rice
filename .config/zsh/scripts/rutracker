@@ -1,7 +1,7 @@
 #!/bin/zsh
 # rutracker script
 
-[[ -t 0 ]] || return 1;
+# [[ -t 0 ]] || return 1;
 # { which zsh && which pup && which curl && which uritool } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;

@@ -1,236 +1,272 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
- # { which zsh && which pup && which curl && which wget } &>/dev/null || return 2;
+# { which zsh && which pup && which curl && which wget } &>/dev/null || return 2;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 
 menu () {
   typeset m t a;
+  m='\033[0;';
+  t='\033[0;';
   while { getopts 'm:t:' a } { case $a {
     (m) 
-      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      m+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
     (t)
-      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      t+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
   }; };
-  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
+  m=${m%?}m;
+  t=${t%?}m;
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m} ${a%% *} ${t} "${a#* }" '\033[0m' };
 }
 
 box () {
-((# > 0)) || return 0;
-typeset a d h B T H tl tr bl br th bh lv rv r w; 
-typeset -i s;
-s=1;
-while { getopts 's:h:B:T:H:' a } { case $a {
-  (s) # line style
-    ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
-  (h) # header
-    h=${OPTARG};;
-  (B) # box color
-    B='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-  (T) # text color
-    T='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-  (H) # header color
-    H='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-}; };
+  typeset a h B T H tl tr bl br th bh lv rv w; 
+  typeset -i s;
+  s=1;
+  B='\033[0;';
+  T='\033[0;';
+  H='\033[0;';
+  while { getopts 's:h:B:T:H:' a } { case $a {
+    (s) # line style
+      ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
+    (h) # header
+      h=${OPTARG};;
+    (B) # box color
+      B+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+    (T) # text color
+      T+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+     (H) # header color
+      H+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+  }; };
 
-tl=(┏ ┌ ╔ ⡏); tl=${tl[$s]}; # top left
-bl=(┗ └ ╚ ⣇); bl=${bl[$s]}; # bottom left
-tr=(┓ ┐ ╗ ⢹); tr=${tr[$s]}; # top right
-br=(┛ ┘ ╝ ⣸); br=${br[$s]}; # bottom right
-th=(━ ─ ═ ⠉); th=${th[$s]}; # top horizontal
-bh=(━ ─ ═ ⣀); bh=${bh[$s]}; # bottom horizontal
-lv=(┃ │ ║ ⡇); lv=${lv[$s]}; # left vertical
-rv=(┃ │ ║ ⢸); rv=${rv[$s]}; # right vertical
-r='\033[0m';
-# box inside width
-w=0; for a in $@[OPTIND,-1]; do ((${(c)#a} > w)) && w=${(c)#a}; done; 
-((${+h:+1} && $#h > w)) && w=$#h && ((w+=2)); ((w+=2));
+  ((# + 1 > OPTIND)) || return 0;
 
-if ((w + 2 > COLUMNS)); then;
-  # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
-  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)th} $tr;
-  for a in $@[OPTIND,-1]; do 
-    for d in ${(f)"$(fmt -w $COLUMNS <<< $a)"}; do
-      printf '%s %b%s%b %s\n' $lv $r$T ${(r.COLUMNS-4.. .)d} $r$B $rv;
-    done;
-  done;
-  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)bh} $br $r;
-else;
-  ((${+h:+1})) && printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)th} $r$H $h $r$B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)th} $tr || printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)th} $tr;
-  for a in $@[OPTIND,-1]; do printf '%s %b%s%b %s\n' $lv $r$T ${(r.w-2.. .)a} $r$B $rv; done;
-  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)bh} $br $r;
-fi;
-}
+  B=${B%?}m;
+  T=${T%?}m;
+  H=${H%?}m;
 
-() {
-  emulate -LR zsh;
-  setopt pipe_fail extended_glob ksh_glob re_match_pcre;
-  typeset key lon lat loc a w z n; 
-  typeset -a s d;
-  key=85a4e3c55b73909f42c6a23ec35b7147; z=$(mktemp -d); w=$(mktemp ${z}/XXXXXXXX); cd ${z}; n=$'\n'; 
-  clear; menu -m 4b -t 2 \
-    '1 openweathermap' \
-    '2 darksky' \
-    '* exit';
-  case $(read -sek1) {
-    (1) # OPENWEATHERMAP    https://openweathermap.org/api/one-call-api
-      if { which curl &>/dev/null } {
-        alias fetch="curl -s -f -L --max-redirs 0 -H User-Agent: -o ${w}"; 
-      } elif { which wget &>/dev/null } {
-        alias fetch="wget -q -O ${w}";
-      } else { return 1 };
-      while { true } {
-        clear; box -H 1b -B 4 -T 3 -h openweathermap \
-          "${(r.16...)$(<<< lon/lat:)}${lon:-23.3241} / ${lat:-42.6974}" \
-          "${(r.16...)$(<<< location:)}${loc:-Sofia,Bulgaria}";
-        menu -m 4b -t 2 \
-          '1 longitude / latitude' \
-          '2 location' \
-          '3 go' \
-          '* quit';
-        case $(read -sek1) {
-          (1) 
-            read "lon?${n}lon: ";
-            read "lat?${n}lat: ";
-            ((lat < 0 || lat > 180 || lon < -90 || lon > 90)) && {
-              read -sk1 "?${n}Invalid input!${n}Valid:  -90 <=lon<=90; 0<=lat<=180"; lon=; lat=;
-            };;
-          (2) read "loc?${n}location: ";;
-          (3)
-            if [[ -z ${loc} ]] {
-              $(fetch "api.openweathermap.org/data/2.5/onecall?lon=${lon:-23.3241}&lat=${lat:-42.6974}&appid=${key}&units=metric&exclude=daily") || return 22;
-            } else {
-              $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${key}&units=metric") || return 23;
-              lat=$(jq -r '.coord.lat' ${w}); lon=$(jq -r '.coord.lon' ${w});
-              $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}&units=metric&exclude=daily");
-            };
-            [[ -n $(< ${w}) ]] || return 24;
+  tl=${$(<<<'┏ ┌ ╔ ⡏')[s]}; # top left
+  bl=${$(<<<'┗ └ ╚ ⣇')[s]}; # bottom left
+  tr=${$(<<<'┓ ┐ ╗ ⢹')[s]}; # top right
+  br=${$(<<<'┛ ┘ ╝ ⣸')[s]}; # bottom right
+  th=${$(<<<'━ ─ ═ ⠉')[s]}; # top horizontal
+  bh=${$(<<<'━ ─ ═ ⣀')[s]}; # bottom horizontal
+  lv=${$(<<<'┃ │ ║ ⡇')[s]}; # left vertical
+  rv=${$(<<<'┃ │ ║ ⢸')[s]}; # right vertical
 
-            printf '%s' ${${"$(< ${w})"##*\}\],\"hourly\":}%,\"alerts\":*} > hourly;
+  w=${${(On)@[OPTIND,-1]//(#m)*/${#MATCH}}[1]}; # box inside width
+  (($+h)) && (($#h > w)) && w=$(($#h + 4)) || ((w += 2));
 
-            for a ( ${${(ps.\"dt\":.)$(< hourly)}[2,25]%%,*} ) {
-              s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d    %H:%M')");
-            };
-            d=(${(@f)${(ps.,\"description\":\".)$(< hourly)}[2,25]%%\",*});
-            for a ( {1..24} ) { printf '%s\t%s\n' ${s[a]} ${d[a]} } > summary;
-            for a ( {1..$((LINES - 1 - $(wc -l < summary)))} ) { printf '\n' >> summary };
-
-            asciigraph -c 'Temperature / °C'             -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"temp\":.)$(< hourly)}[2,25]%%,*}       > ${z}/x.01temp;
-            asciigraph -c 'Apparent temperature / °C'    -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"feels_like\":.)$(< hourly)}[2,25]%%,*} > ${z}/x.02feels_like;
-            asciigraph -c 'Relative humidity / %'        -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"humidity\":.)$(< hourly)}[2,25]%%,*}   > ${z}/x.03humidity;
-            asciigraph -c 'Atmospheric pressure / hPa'   -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"pressure\":.)$(< hourly)}[2,25]%%,*}   > ${z}/x.04pressure;
-            asciigraph -c 'Dew point / °C'               -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"dew_point\":.)$(< hourly)}[2,25]%%,*}  > ${z}/x.05dew_point;
-            asciigraph -c 'Cloud coverage / %'           -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"clouds\":.)$(< hourly)}[2,25]%%,*}     > ${z}/x.06clouds;
-            asciigraph -c 'Wind bearing / °'             -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"wind_deg\":.)$(< hourly)}[2,25]%%,*}   > ${z}/x.09wind_deg; 
-            asciigraph -c 'Wind speed / km h^-1'         -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"wind_speed\":.)$(< hourly)}[2,25]%%,*} > ${z}/x.10wind_speed;
-            asciigraph -c 'Possibility of precipitation' -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"pop\":.)$(< hourly)}[2,25]%%(\}|,)*}   > ${z}/x.07pop;
-            asciigraph -c 'Precipitate / kg m^-2'        -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)$(< hourly)//(*,\"pop\":+([0-9.]),\"+([a-z])\":\{\"1h\":(#b)(+([0-9.]))\}|*)/${match[1]:-0}} > ${z}/x.08precipitate;
-            # jq -r '.hourly[].temp'       ${w} | head -n 24 | asciigraph -c 'temp'        -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.temp;
-            # jq -r '.hourly[].feels_like' ${w} | head -n 24 | asciigraph -c 'feels_like'  -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.feels_like;
-            # jq -r '.hourly[].pressure'   ${w} | head -n 24 | asciigraph -c 'pressure'    -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.pressure;
-            # jq -r '.hourly[].humidity'   ${w} | head -n 24 | asciigraph -c 'humidity'    -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.humidity;
-            # jq -r '.hourly[].dew_point'  ${w} | head -n 24 | asciigraph -c 'dew_point'   -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.dew_point;
-            # jq -r '.hourly[].clouds'     ${w} | head -n 24 | asciigraph -c 'clouds'      -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.clouds;
-            # jq -r '.hourly[].wind_speed' ${w} | head -n 24 | asciigraph -c 'wind_speed'  -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.wind_speed;
-            # jq -r '.hourly[].wind_deg'   ${w} | head -n 24 | asciigraph -c 'wind_deg'    -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.wind_deg;
-            # jq '.hourly[].rain | walk (if type == "null" then 0 else . end)' ${w} | sed -r '/\{|\}/d; s/ +"1h": //' | head -n 24 | asciigraph -c 'rain' -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.rain;
-            # jq '.hourly[].snow | walk (if type == "null" then 0 else . end)' ${w} | sed -r '/\{|\}/d; s/ +"1h": //' | head -n 24 | asciigraph -c 'snow' -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.snow;
-
-            ((LINES % 2 == 1)) || printf '\n' >> ${(f)"$(printf '%s\n' x.* | nl --number-width=2 --number-format ln | pcre2grep -o1 "^(?:${(j:|:)${(f)"$(seq 1 2 10)"}})\s+(.+)$")"};
-            for a ( ${z}/x.* ) { (($(wc -l < ${a}) < 4)) && rm -f ${a} };
-            cat summary x.* | less; cd ~; rm -rf ${z}; return 0;;
-          (*) return 1;;
-        };
-      };;
-    (2) # DARKSKY
-      typeset t h; t=$(mktemp ${z}/XXXXXXXX); h=$(date +%H);
-      typeset -a s d;
-      if { which curl &>/dev/null } {
-        alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${t}";
-      } elif { which wget &>/dev/null } {
-        alias fetch="wget -q -O ${t}";
-      } else { return 1 };
-      while { true } {
-        clear; box -H 1b -B 4 -T 3 -h darksky \
-          "${(r.16...)$(<<< lon/lat:)}${lon:-23.3241} / ${lat:-42.6974}" \
-          "${(r.16...)$(<<< location:)}${loc:-Sofia, Bulgaria}";
-        menu -m 4b -t 2 \
-          '1 longitude / latitude' \
-          '2 location' \
-          '3 go' \
-          '* quit';
-        case $(read -sek1) {
-          (1) 
-            read -r "lon?${n}lon: ";
-            read -r "lat?${n}lat: ";
-            ((lat < 0 || lat > 180 || lon < -90 || lon > 90)) && {
-              read -sk1 "?${n}Invalid input!"; lon=; lat=;
-            };;
-          (2) 
-            read -r 'loc?location: ';
-            ! { [[ -n ${loc} ]] && $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${key}&units=metric") } && {
-              read -sk1 '?curl fail.'; return 1;
-            };
-
-            if [[ -n $(< ${t}) ]] {
-              lat=$(jq -r '.coord.lat' ${t});
-              lon=$(jq -r '.coord.lon' ${t});
-            } else {
-              read -sk1 '?lon/lat fail';
-            };;
-          (3)
-            $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date +%F)/ca24/en) || return 1;
-            [[ -n $(< ${t}) ]] || { read -sk1 '?No data.'; return 1 };
-            pcre2grep -o1 '(\[.+)\]' ${t} >> ${w};
-            [[ -n $(< ${w}) ]] || { read -sk1 '?No data.'; return 1 };
-
-            if [[ $h != 00 ]] {
-              printf '%s' , >> ${w};
-              $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date -d '+1day' +%F)/ca24/en) || return 1;
-              [[ -n $(< ${t}) ]] || { read -sk1 '?No data.'; return 1 };
-              pcre2grep -o1 '\[(.+\])' ${t} >> ${w};
-            } else {
-              printf '%s' ] >> ${w};
-            };
-            tr -d '\n' < ${w} > ${t}; cat ${t} > ${w};
-
-            for a ( ${${${(ps.\"time\":.)$(< ${w})}%%,*}[2,49]} ) {
-              s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%F    %T')");
-            };
-            d=(${${(ps.,\"summary\":\".)$(< ${w})}%%\",*}); d[1]=();
-            # for a in ${(f)"$(jq '.[].time' ${w})"}; do;
-            #   s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d %H:%M')");
-            # done;
-            # d=(${(f)"$(jq -r '.[].summary' ${w})"});
-            for a ( {$((h+1))..$((h+24))} ) { printf '%s\t%s\n' ${s[a]} ${d[a]} } > summary;
-            for a ( {1..$((LINES - 1 - $(wc -l < summary)))} ) { printf '\n' >> summary };
-
-            # asciigraph -c 'UV index'                          -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"uvIndex\":.)$(< ${w})}[h+1,h+24]%%,*}             > ${z}/x.uvIndex;
-            # asciigraph -c 'Wind gust / km h^-1'               -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"windGust\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.windGust;
-            # asciigraph -c 'Visibility / km'                   -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"visibility\":.)$(< ${w})}[h+1,h+24]%%,*}          > ${z}/x.05visibility;
-            asciigraph -c 'Temperature / °C'                    -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"temperature\":.)$(< ${w})}[h+1,h+24]%%,*}         > ${z}/x.01temperature;
-            asciigraph -c 'Apparent temperature / °C'           -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"apparentTemperature\":.)$(< ${w})}[h+1,h+24]%%,*} > ${z}/x.02apparentTemperature;
-            asciigraph -c 'Realtive humidity'                   -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"humidity\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.03humidity;
-            asciigraph -c 'Atmospheric pressure / hPa'          -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"pressure\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.04pressure;
-            asciigraph -c 'Dew point / °C'                      -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"dewPoint\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.05dewPoint;
-            asciigraph -c 'Cloud coverage'                      -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"cloudCover\":.)$(< ${w})}[h+1,h+24]%%,*}          > ${z}/x.06cloudCover;
-            asciigraph -c 'Possibility of precipitation'        -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"precipProbability\":.)$(< ${w})}[h+1,h+24]%%,*}   > ${z}/x.07precipProbability;
-            asciigraph -c 'Precipitate / mm m^-2'               -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"precipIntensity\":.)$(< ${w})}[h+1,h+24]%%,*}     > ${z}/x.08precipIntensity;
-            asciigraph -c 'Precipitate accumulation / mm m^-2'  -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"precipAccumulation\":.)$(< ${w})}[h+1,h+24]%%,*}  > ${z}/x.09precipAccumulation;
-            asciigraph -c 'Ozone / ?'                           -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"ozone\":.)$(< ${w})}[h+1,h+24]%%(,|\})*}          > ${z}/x.10ozone;
-            asciigraph -c 'Wind bearing/ °'                     -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"windBearing\":.)$(< ${w})}[h+1,h+24]%%,*}         > ${z}/x.11windBearing;
-            asciigraph -c 'Wind speed/ km h^-1'                 -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"windSpeed\":.)$(< ${w})}[h+1,h+24]%%,*}           > ${z}/x.12windSpeed;
-            # s=(apparentTemperature cloudCover dewPoint humidity ozone precipAccumulation precipIntensity precipProbability pressure temperature uvIndex visibility windBearing windGust windSpeed);
-            # for a in ${(f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep "^(${(j.|.)s})$"}; do
-            # for a in ${(f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
-            #   jq -r ".[range(1+$h;24+1+$h)].${a}" ${w} | asciigraph -c ${a} -h $((LINES/2-2)) -w $((COLUMNS-12)) > ${z}/x.${a};
-            # done;
-
-            ((LINES % 2 == 1)) || printf '\n' >> ${(f)"$(printf '%s\n' x.* | nl --number-width=2 --number-format ln | pcre2grep -o1 "^(?:${(j:|:)${(f)"$(seq 1 2 14)"}})\s+(.+)$")"};
-            for a ( ${z}/x.* ) { (($(wc -l < ${a}) < 4)) && rm -f ${a} };
-            cat summary x.* | less; cd ~; rm -rf ${z}; return 0;;
-          (*) return 0;;
-        };
-      };;
-    (*) return 0;;
+  if ((w + 2 > COLUMNS)) {
+    # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
+    (($+h)) && printf '%b\n' $B$tl${(pr.(COLUMNS-2-$#h)/2+1..$th.)}$H$h$B${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)}$tr;
+    printf '%b\n' $B$tl${(pr.COLUMNS-3..$th.)}$tr;
+    printf '%b\n' ${(r.2.)lv}$T${(r.COLUMNS-4.)^${(f)@[OPTIND,-1]}}$B${(l.2.)rv};
+    printf '%b\n' $bl${(pr.COLUMNS-2..$bh.)}$br'\033[0m';
+  } else {
+    (($+h)) &&
+    printf '%b\n' $B$tl${(pr.(w-$#h)/2..$th.)}$H$h$B${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)}$tr ||
+    printf '%b\n' $B$tl${(pr.w-1..$th.)}$tr;
+    printf '%b\n' ${(r.2.)lv}$T${(r.w-2.)^@[OPTIND,-1]}$B${(l.2.)rv};
+    printf '%b\n' $bl${(pr.w..$bh.)}$br'\033[0m';
   };
 }
+
+emulate -LR zsh;
+setopt pipefail extendedglob kshglob rematchpcre;
+typeset key lon lat loc a w z n; 
+typeset -a s d;
+key=85a4e3c55b73909f42c6a23ec35b7147;
+z=/tmp/wdr$$; w=$(mktemp);
+mkdir ${z}; cd ${z}; n=$'\n'; 
+trap 'quit 1' QUIT HUP INT;
+quit () {
+  rm -rf ${z} ${w}; exit ${1:-0};
+}
+
+while { getopts l:x: a } { case ${a} {
+  (l)
+    s=(${(s./.)OPTARG//[[:space:]]/}); lon=${s[1]}; lat=${s[2]}; s=;
+    ((lat < 0 || lat > 180 || lon < -90 || lon > 90)) && { lon=; lat=; printf 'Invalid input!\nValid:\n\t\t-90<=lon<=90\b\t\t 0<=lat<=180\n' };
+    ;;
+  (x)
+    {
+      curl -s -f -L --max-redirs 0 -H User-Agent: -o ${w} "api.openweathermap.org/data/2.5/weather?q=$(printf '%s' ${(j..)${(s..)OPTARG}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}})&appid=${key}&units=metric" ||
+      wget -q -O ${w} "api.openweathermap.org/data/2.5/weather?q=$(printf '%s' ${(j..)${(s..)loc}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}})&appid=${key}&units=metric"
+    } && {
+      lat=$(jq -r '.coord.lat' ${w});
+      lon=$(jq -r '.coord.lon' ${w});
+      loc=${OPTARG};
+    }
+    ;;
+}; };
+
+menu -m 4b -t 2 \
+  '1 openweathermap' \
+  '2 darksky' \
+  '* exit';
+case $(read -sek1) {
+  (1) # OPENWEATHERMAP    https://openweathermap.org/api/one-call-api
+    if { which curl &>/dev/null } {
+      alias fetch="curl -s -f -L --max-redirs 0 -H User-Agent: -o ${w}"; 
+    } elif { which wget &>/dev/null } {
+      alias fetch="wget -q -O ${w}";
+    } else { return 1 };
+    while { true } {
+      clear; box -H 1b -B 4 -T 3 -h openweathermap \
+        "${(r.12....lon/lat:.)}${(r.10.)lon:-23.3241}/${(r.10.)lat:-42.6974}" \
+        "${(r.12....location:.)}${loc:-Sofia, Bulgaria}";
+      menu -m 4b -t 2 \
+        '1 longitude / latitude' \
+        '2 location' \
+        '3 go' \
+        '* quit';
+      case $(read -sek1) {
+        (1) 
+          read "lon?${n}lon: ";
+          read "lat?${n}lat: ";
+          ((lat < 0 || lat > 180 || lon < -90 || lon > 90)) && {
+            read -sk1 "?${n}Invalid input!${n}Valid:  -90 <=lon<=90; 0<=lat<=180"; lon=; lat=;
+          };
+          ;;
+        (2)
+          read "loc?${n}location: ";
+          ! [[ ${loc} =~ '^\s*$' ]] && $(fetch "api.openweathermap.org/data/2.5/weather?q=$(printf '%s' ${(j..)${(s..)loc}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}})&appid=${key}&units=metric") && { lat=$(jq -r '.coord.lat' ${w}); lon=$(jq -r '.coord.lon' ${w}) } || loc=;
+          ;;
+        (3)
+          $(fetch "api.openweathermap.org/data/2.5/onecall?lon=${lon:-23.3241}&lat=${lat:-42.6974}&appid=${key}&units=metric&exclude=daily") || quit 22;
+          # if [[ -z ${loc} ]] {
+          #   $(fetch "api.openweathermap.org/data/2.5/onecall?lon=${lon:-23.3241}&lat=${lat:-42.6974}&appid=${key}&units=metric&exclude=daily") || quit 22;
+          # } else {
+          #   $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${key}&units=metric") || quit 23;
+          #   lat=$(jq -r '.coord.lat' ${w}); lon=$(jq -r '.coord.lon' ${w});
+          #   $(fetch "api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}&units=metric&exclude=daily");
+          #   quit 99;
+          # };
+          [[ -n $(< ${w}) ]] || quit 24;
+
+          printf '%s' ${${"$(< ${w})"##*\}\],\"hourly\":}%,\"alerts\":*} > hourly;
+
+          for a ( ${${(ps.\"dt\":.)$(< hourly)}[2,25]%%,*} ) {
+            s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d    %H:%M')");
+          };
+          d=(${(@f)${(ps.,\"description\":\".)$(< hourly)}[2,25]%%\",*});
+          for a ( {1..24} ) { printf '%s\t%s\n' ${s[a]} ${d[a]} } > summary;
+          for a ( {1..$((LINES - 1 - $(wc -l < summary)))} ) { printf '\n' >> summary };
+
+          asciigraph -c 'Temperature / °C'             -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"temp\":.)$(< hourly)}[2,25]%%,*}       > ${z}/x.01temp;
+          asciigraph -c 'Apparent temperature / °C'    -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"feels_like\":.)$(< hourly)}[2,25]%%,*} > ${z}/x.02feels_like;
+          asciigraph -c 'Relative humidity / %'        -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"humidity\":.)$(< hourly)}[2,25]%%,*}   > ${z}/x.03humidity;
+          asciigraph -c 'Atmospheric pressure / hPa'   -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"pressure\":.)$(< hourly)}[2,25]%%,*}   > ${z}/x.04pressure;
+          asciigraph -c 'Dew point / °C'               -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"dew_point\":.)$(< hourly)}[2,25]%%,*}  > ${z}/x.05dew_point;
+          asciigraph -c 'Cloud coverage / %'           -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"clouds\":.)$(< hourly)}[2,25]%%,*}     > ${z}/x.06clouds;
+          asciigraph -c 'Wind bearing / °'             -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"wind_deg\":.)$(< hourly)}[2,25]%%,*}   > ${z}/x.09wind_deg; 
+          asciigraph -c 'Wind speed / km h^-1'         -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"wind_speed\":.)$(< hourly)}[2,25]%%,*} > ${z}/x.10wind_speed;
+          asciigraph -c 'Possibility of precipitation' -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"pop\":.)$(< hourly)}[2,25]%%(\}|,)*}   > ${z}/x.07pop;
+          asciigraph -c 'Precipitate / kg m^-2'        -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)$(< hourly)//(*,\"pop\":+([0-9.]),\"+([a-z])\":\{\"1h\":(#b)(+([0-9.]))\}|*)/${match[1]:-0}} > ${z}/x.08precipitate;
+          # jq -r '.hourly[].temp'       ${w} | head -n 24 | asciigraph -c 'temp'        -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.temp;
+          # jq -r '.hourly[].feels_like' ${w} | head -n 24 | asciigraph -c 'feels_like'  -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.feels_like;
+          # jq -r '.hourly[].pressure'   ${w} | head -n 24 | asciigraph -c 'pressure'    -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.pressure;
+          # jq -r '.hourly[].humidity'   ${w} | head -n 24 | asciigraph -c 'humidity'    -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.humidity;
+          # jq -r '.hourly[].dew_point'  ${w} | head -n 24 | asciigraph -c 'dew_point'   -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.dew_point;
+          # jq -r '.hourly[].clouds'     ${w} | head -n 24 | asciigraph -c 'clouds'      -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.clouds;
+          # jq -r '.hourly[].wind_speed' ${w} | head -n 24 | asciigraph -c 'wind_speed'  -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.wind_speed;
+          # jq -r '.hourly[].wind_deg'   ${w} | head -n 24 | asciigraph -c 'wind_deg'    -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.wind_deg;
+          # jq '.hourly[].rain | walk (if type == "null" then 0 else . end)' ${w} | sed -r '/\{|\}/d; s/ +"1h": //' | head -n 24 | asciigraph -c 'rain' -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.rain;
+          # jq '.hourly[].snow | walk (if type == "null" then 0 else . end)' ${w} | sed -r '/\{|\}/d; s/ +"1h": //' | head -n 24 | asciigraph -c 'snow' -h $((LINES/2-2)) -w $((COLUMNS-12)) > x.snow;
+
+          ((LINES % 2 == 1)) || printf '\n' >> ${(f)"$(printf '%s\n' x.* | nl --number-width=2 --number-format ln | pcre2grep -o1 "^(?:${(j:|:)${(f)"$(seq 1 2 10)"}})\s+(.+)$")"};
+          for a ( ${z}/x.* ) { (($(wc -l < ${a}) < 4)) && rm -f ${a} };
+          cat summary x.* | less; cd ~; quit;;
+        (*) quit 1;;
+      };
+    };
+    ;;
+  (2) # DARKSKY
+    typeset t h;
+    typeset -a s d;
+    t=$(mktemp); h=$(date +%H);
+    if { which curl &>/dev/null } {
+      alias fetch="curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${t}";
+    } elif { which wget &>/dev/null } {
+      alias fetch="wget -q -O ${t}";
+    } else { quit 31 };
+    while { true } {
+      clear; box -H 1b -B 4 -T 3 -h darksky \
+        "${(r.12....lon/lat:.)}${(r.10.)lon:-23.3241}/${(r.10.)lat:-42.6974}" \
+        "${(r.12....location:.)}${loc:-Sofia, Bulgaria}";
+      menu -m 4b -t 2 \
+        '1 longitude / latitude' \
+        '2 location' \
+        '3 go' \
+        '* quit';
+      case $(read -sek1) {
+        (1) 
+          read -r "lon?${n}lon: ";
+          read -r "lat?${n}lat: ";
+          ((lat < 0 || lat > 180 || lon < -90 || lon > 90)) && {
+            read -sk1 "?${n}Invalid input!"; lon=; lat=;
+          };;
+        (2) 
+          read -r 'loc?location: ';
+          # ! { [[ ${loc} =~ '^\s*$' ]] && $(fetch "api.openweathermap.org/data/2.5/weather?q=${loc// /%20}&appid=${key}&units=metric") } && { read -sk1 '?curl fail.'; quit 32 };
+          if { ! [[ ${loc} =~ '^\s*$' ]] && $(fetch "api.openweathermap.org/data/2.5/weather?q=$(printf '%s' ${(j..)${(s..)loc}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}})&appid=${key}&units=metric") && [[ -n $(<${t}) ]] } {
+            lat=$(jq -r '.coord.lat' ${t});
+            lon=$(jq -r '.coord.lon' ${t});
+          } else { loc=; };
+          ;;
+        (3)
+          $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date +%F)/ca24/en) || quit 33;
+          [[ -n $(< ${t}) ]] || { read -sk1 '?No data.'; quit 34 };
+          pcre2grep -o1 '(\[.+)\]' ${t} >> ${w};
+          [[ -n $(< ${w}) ]] || { read -sk1 '?No data.'; quit 35 };
+
+          if [[ $h != 00 ]] {
+            printf '%s' , >> ${w};
+            $(fetch https://darksky.net/details/${lat:-42.6974},${lon:-23.3241}/$(date -d '+1day' +%F)/ca24/en) || quit 36;
+            [[ -n $(< ${t}) ]] || { read -sk1 '?No data.'; quit 37 };
+            pcre2grep -o1 '\[(.+\])' ${t} >> ${w};
+          } else {
+            printf '%s' ] >> ${w};
+          };
+          tr -d '\n' < ${w} > ${t}; cat ${t} > ${w};
+
+          for a ( ${${${(ps.\"time\":.)$(< ${w})}%%,*}[2,49]} ) {
+            s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%F    %T')");
+          };
+          d=(${${(ps.,\"summary\":\".)$(< ${w})}%%\",*}); d[1]=();
+          # for a in ${(f)"$(jq '.[].time' ${w})"}; do;
+          #   s+=("$(date -d "1970-01-01 UTC ${a} seconds" +'%Y-%m-%d %H:%M')");
+          # done;
+          # d=(${(f)"$(jq -r '.[].summary' ${w})"});
+          for a ( {$((h+1))..$((h+24))} ) { printf '%s\t%s\n' ${s[a]} ${d[a]} } > summary;
+          for a ( {1..$((LINES - 1 - $(wc -l < summary)))} ) { printf '\n' >> summary };
+
+          # asciigraph -c 'UV index'                          -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"uvIndex\":.)$(< ${w})}[h+1,h+24]%%,*}             > ${z}/x.uvIndex;
+          # asciigraph -c 'Wind gust / km h^-1'               -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"windGust\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.windGust;
+          # asciigraph -c 'Visibility / km'                   -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"visibility\":.)$(< ${w})}[h+1,h+24]%%,*}          > ${z}/x.05visibility;
+          asciigraph -c 'Temperature / °C'                    -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"temperature\":.)$(< ${w})}[h+1,h+24]%%,*}         > ${z}/x.01temperature;
+          asciigraph -c 'Apparent temperature / °C'           -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"apparentTemperature\":.)$(< ${w})}[h+1,h+24]%%,*} > ${z}/x.02apparentTemperature;
+          asciigraph -c 'Realtive humidity'                   -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"humidity\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.03humidity;
+          asciigraph -c 'Atmospheric pressure / hPa'          -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"pressure\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.04pressure;
+          asciigraph -c 'Dew point / °C'                      -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"dewPoint\":.)$(< ${w})}[h+1,h+24]%%,*}            > ${z}/x.05dewPoint;
+          asciigraph -c 'Cloud coverage'                      -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"cloudCover\":.)$(< ${w})}[h+1,h+24]%%,*}          > ${z}/x.06cloudCover;
+          asciigraph -c 'Possibility of precipitation'        -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"precipProbability\":.)$(< ${w})}[h+1,h+24]%%,*}   > ${z}/x.07precipProbability;
+          asciigraph -c 'Precipitate / mm m^-2'               -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"precipIntensity\":.)$(< ${w})}[h+1,h+24]%%,*}     > ${z}/x.08precipIntensity;
+          asciigraph -c 'Precipitate accumulation / mm m^-2'  -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"precipAccumulation\":.)$(< ${w})}[h+1,h+24]%%,*}  > ${z}/x.09precipAccumulation;
+          asciigraph -c 'Ozone / ?'                           -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"ozone\":.)$(< ${w})}[h+1,h+24]%%(,|\})*}          > ${z}/x.10ozone;
+          asciigraph -c 'Wind bearing/ °'                     -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"windBearing\":.)$(< ${w})}[h+1,h+24]%%,*}         > ${z}/x.11windBearing;
+          asciigraph -c 'Wind speed/ km h^-1'                 -h $(((LINES-1)/2-2)) -w $((COLUMNS-12)) <<< ${(F)${(ps.,\"windSpeed\":.)$(< ${w})}[h+1,h+24]%%,*}           > ${z}/x.12windSpeed;
+          # s=(apparentTemperature cloudCover dewPoint humidity ozone precipAccumulation precipIntensity precipProbability pressure temperature uvIndex visibility windBearing windGust windSpeed);
+          # for a in ${(f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep "^(${(j.|.)s})$"}; do
+          # for a in ${(f)"$(jq '.[1]' ${w} | pcre2grep -o1 '^\s+"(.+?)":' | pcre2grep -v '^(time|icon|summary|precipType|solar|azimuth|altitude|dni|ghi|dhi|etr)$')"}; do
+          #   jq -r ".[range(1+$h;24+1+$h)].${a}" ${w} | asciigraph -c ${a} -h $((LINES/2-2)) -w $((COLUMNS-12)) > ${z}/x.${a};
+          # done;
+
+          ((LINES % 2 == 1)) || printf '\n' >> ${(f)"$(printf '%s\n' x.* | nl --number-width=2 --number-format ln | pcre2grep -o1 "^(?:${(j:|:)${(f)"$(seq 1 2 14)"}})\s+(.+)$")"};
+          for a ( ${z}/x.* ) { (($(wc -l < ${a}) < 4)) && rm -f ${a} };
+          cat summary x.* | less; cd ~; quit;;
+        (*) quit;;
+      };
+    };;
+  (*) quit;;
+};

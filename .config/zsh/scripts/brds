@@ -7,13 +7,17 @@ alias fetch="curl -sfLH User-Agent:";
 
 menu () {
   typeset m t a;
+  m='\033[0;';
+  t='\033[0;';
   while { getopts 'm:t:' a } { case $a {
     (m) 
-      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      m+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
     (t)
-      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      t+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
   }; };
-  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
+  m=${m%?}m;
+  t=${t%?}m;
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m} ${a%% *} ${t} "${a#* }" '\033[0m' };
 }
 
 selb () {

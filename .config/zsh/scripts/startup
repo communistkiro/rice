@@ -1,6 +1,21 @@
 #!/bin/zsh
 # one-off cmds script called somewhere sometime durring xstart
 
+
+
+# fuck trackpad
+ps -C syndaemon &>/dev/null || syndaemon -d -i 131072 &
+
+
+# fuck short circuits
+xinput --disable  2 & # Virtual Core Pointer
+xinput --disable  4 & # Virtual Core XTEST Pointer
+xinput --disable 14 & # TPPS/2 IBM TrackPoint
+xinput --disable 15 &
+
+xdotool mousemove 1920 1080
+
+
 # only explicit beeps
 xset b off &
 
@@ -14,7 +29,7 @@ xbacklight -set 15 &
 
 
 # ... delay repeatrate
-xset r rate 230 120 &
+xset r rate 225 85 &
 
 
 # /usr/share/X11/xkb/rules for `-option ""'
@@ -34,10 +49,6 @@ ps -C xbindkeys &>/dev/null || xbindkeys &
 ps -C xcape || xcape -e 'Super_L=Escape' &
 
 
-# fuck trackpad
-ps -C syndaemon &>/dev/null || syndaemon -d -i 131072 &
-
-
 # Screen lock
 # ps -C xautolock &>/dev/null || xautolock -time 20 -secure -locker 'xbacklight -set 0; slock; xbacklight -set 15' &
 
@@ -52,9 +63,6 @@ ps -C syndaemon &>/dev/null || syndaemon -d -i 131072 &
 
 # Set last set background
 /root/.fehbg &
-
-
-xinput --disable 15 &
 
 
 ps -C scrond &>/dev/null || scrond &

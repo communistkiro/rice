@@ -1,5 +1,5 @@
 #!/bin/zsh
-[[ -t 0 ]] || return 1;
+# [[ -t 0 ]] || return 1;
 ping -c 1 1.1.1.1 &>/dev/null || return 3;
 emulate -LR zsh;
 setopt pipe_fail extended_glob;

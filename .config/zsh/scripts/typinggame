@@ -1,56 +1,64 @@
 #!/bin/zsh
-() {
-  typeset t q;
-  typeset -i w r p v;
-  if [[ -t 0 && ${#} -eq 1 && -r ${1} ]] { t=$(<${1}) } else { t=$(while { read -e -t 1 -r } { }) };
-  [[ -n ${t} ]] || {
-    l=$((COLUMNS*LINES/2));
-    t=$(tr -cd '[:graph:]' </dev/urandom | head -c ${l});
-    p=1;
-    t=$(
-      while ((p < l)) {
-        r=${RANDOM};
-        if   ((r <  9791)) { w=04 } \
-        elif ((r < 16089)) { w=05 } \
-        elif ((r < 20507)) { w=06 } \
-        elif ((r < 24309)) { w=07 } \
-        elif ((r < 26955)) { w=08 } \
-        elif ((r < 29386)) { w=09 } \
-        elif ((r < 30921)) { w=10 } \
-        elif ((r < 31791)) { w=11 } \
-        elif ((r < 32264)) { w=12 } \
-        elif ((r < 32558)) { w=13 } \
-        elif ((r < 32668)) { w=14 } \
-        elif ((r < 32713)) { w=15 } \
-        elif ((r < 32734)) { w=16 } \
-        elif ((r < 32744)) { w=17 } \
-        elif ((r < 32751)) { w=18 } \
-        elif ((r < 32753)) { w=19 } \
-        elif ((r < 32756)) { w=20 } \
-        elif ((r < 32758)) { w=21 } \
-        elif ((r < 32759)) { w=22 } \
-        elif ((r < 32760)) { w=23 } \
-        elif ((r < 32762)) { w=24 } \
-        elif ((r < 32763)) { w=25 } \
-        elif ((r < 32764)) { w=26 } \
-        elif ((r < 32764)) { w=27 } \
-        elif ((r < 32765)) { w=28 } \
-        elif ((r < 32766)) { w=29 } \
-        elif ((r < 32766)) { w=30 } \
-        elif ((r < 32766)) { w=31 } \
-        elif ((r < 32766)) { w=32 } \
-        elif ((r < 32766)) { w=33 } \
-        elif ((r < 32767)) { w=34 } \
-        elif ((r < 32767)) { w=35 } \
-        else               { w=03 };
-        printf '%s ' ${t[p,p+w]};
-        ((p += w));
-      };
-    );
-  };
+typeset t q z;
+typeset -i w r p v;
+if [[ -t 0 && ${#} -eq 1 && -r ${1} ]] { t=$(<${1}) } else { t=$(while { read -e -t 1 -r } { }) };
+# preserve newlines p ${${(f)q//$'\n\n'/QQQQQ}[1,4]//QQQQQ/$'\n\n'}
+[[ -n ${t} ]] && t=${${(f)"$(fmt -w $((COLUMNS*95/100)) <<< ${t} | perl -ne 's/\e\[\d+m//g;print')"}[1,LINES]} || {
+  l=$((COLUMNS*LINES));
+  t=$(tr -cd '[:graph:]' </dev/urandom | head -c ${l});
+  p=1;
+  t=$(while ((p < l)) {
+    r=${RANDOM};
+    if   ((r <  9791)) { w=04 } \
+    elif ((r < 16089)) { w=05 } \
+    elif ((r < 20507)) { w=06 } \
+    elif ((r < 24309)) { w=07 } \
+    elif ((r < 26955)) { w=08 } \
+    elif ((r < 29386)) { w=09 } \
+    elif ((r < 30921)) { w=10 } \
+    elif ((r < 31791)) { w=11 } \
+    elif ((r < 32264)) { w=12 } \
+    elif ((r < 32558)) { w=13 } \
+    elif ((r < 32668)) { w=14 } \
+    elif ((r < 32713)) { w=15 } \
+    elif ((r < 32734)) { w=16 } \
+    elif ((r < 32744)) { w=17 } \
+    elif ((r < 32751)) { w=18 } \
+    elif ((r < 32753)) { w=19 } \
+    elif ((r < 32756)) { w=20 } \
+    elif ((r < 32758)) { w=21 } \
+    elif ((r < 32759)) { w=22 } \
+    elif ((r < 32760)) { w=23 } \
+    elif ((r < 32762)) { w=24 } \
+    elif ((r < 32763)) { w=25 } \
+    elif ((r < 32764)) { w=26 } \
+    elif ((r < 32764)) { w=27 } \
+    elif ((r < 32765)) { w=28 } \
+    elif ((r < 32766)) { w=29 } \
+    elif ((r < 32766)) { w=30 } \
+    elif ((r < 32766)) { w=31 } \
+    elif ((r < 32766)) { w=32 } \
+    elif ((r < 32766)) { w=33 } \
+    elif ((r < 32767)) { w=34 } \
+    elif ((r < 32767)) { w=35 } \
+    else               { w=03 };
+    printf '%s ' ${t[p,p+w]};
+    ((p += w + 1));
+  });
+  t=${t[1,COLUMNS*LINES]}
+};
 
-  clear; printf '%s%b' ${t} '\e[1;1H';
-  for v ({1..${#t}}) {
-    read -sk1 q; [[ ${q} == ${t[v]} ]] && printf '%b%s%b' '\e[32m' ${q} '\e[0m' || printf '%b%s%b' '\e[1;31m' ${q} '\e[0m';
-  };
-}
+clear; printf '%s%b' ${t} '\e[1;1H';
+#for v ( {1..${#t}} ) {
+#  #read -sk1 q;
+#  #[[ ${q} == ${t[v]} ]] &&
+#  q=${t[v]};
+#  [[ $(read -sk1) == ${q} ]] &&
+#  printf '%b%s' '\e[0;32m'   ${q} ||
+#  printf '%b%s' '\e[0;1;31m' ${q};
+#};
+for q ( ${(s..)t} ) {
+  [[ $(read -sek1) == ${q} ]] &&
+  printf '%b%s' '\e[0;32m'   ${q} ||
+  printf '%b%s' '\e[0;1;31m' ${q};
+};

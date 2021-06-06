@@ -2,7 +2,7 @@
 # pup made interactive
 emulate -LR zsh;
 FZF_DEFAULT_OPTS="--disabled --reverse --print-query --border=horizontal --bind=alt-\':preview-down,alt-\[:preview-up --preview-window=99%:down:sharp";
-if [[ -t 0 && ${#} -eq 1 && -s ${1} ]] {
+if [[ -t 0 && ${#} -eq 1 && -s ${1} && -r ${1} ]] {
   fzf --preview="pup -p -f ${1:a:q} "{q}"" <<< '';
 } else {
   typeset q; q=$(mktemp);

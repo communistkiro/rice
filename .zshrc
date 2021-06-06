@@ -2,16 +2,21 @@
 export PATH=${(j : )${(u)${(s : )$(<<<${PATH}:/root/.config/zsh/scripts:/root/bin)}}}
 export PS1="%B%F{red}%?%f %F{blue}%d%f%b
 ";
+
+
+
+####    HOOKS
 preexec () { printf '%b' "\e]0;$2\a" }
-precmd () { printf '%b' "\e]0;${PWD}\a" }
+precmd () { printf '%b' "\e]0;${?} ${PWD}\a" }
+# chpwd () { printf '%b' "\e]0;${PWD}\a" }
 
 
 
 
 ####    OPTS
-setopt extended_glob ksh_glob no_sh_glob rematch_pcre null_glob pipe_fail # err_return;
-setopt long_list_jobs list_packed no_beep auto_cd interactivecomments;
-setopt auto_pushd pushd_ignore_dups pushdminus;
+setopt extendedglob kshglob noshglob rematchpcre nullglob pipefail # errreturn;
+setopt longlistjobs listpacked nobeep autocd interactivecomments;
+setopt autopushd pushdignoredups pushdminus;
 
 # CASE_SENSITIVE="true";
 HYPHEN_INSENSITIVE="true";
@@ -19,7 +24,7 @@ HYPHEN_INSENSITIVE="true";
 HISTFILE=/root/.zsh_history;
 SAVEHIST=1000;
 HISTSIZE=1000; # a cushion larger than SAVEHIST, if hist_expire_dups_first set
-HISTORY_IGNORE='((r(m|dr|ealpath|g|un-help|)|c([dp]|l(|a|n)|hmod)|f(d|eh|mt)|m(an|le|v)|p(|re|k)|b(l(|l)|uck)|t(mr|ime)|w(c|hich)|z(ed|sh|mv|cp|ln)|x(b(|r|s)|i|rs|q|)|e(links|cho)|l(1|r|l|s|ibgen)|oc(|c)|s(f|o(|o))|qpp|kill|abb|pid|vol|neo|L|tail|head) *|([.</~]|mpv|yt)*)';
+HISTORY_IGNORE='((r(m|dr|ealpath|g|un-help|)|c([dp]|l(|a|n)|hmod)|f(d|eh|mt)|m(an|le|v)|p(|re|k|rint(|f))|b(l(|l)|uck)|t(mr|ime)|w(c|hich)|z(ed|sh|mv|cp|ln)|x(b(|r|s)|i|rs|q|)|e(links|cho)|l(1|r|l|s|ibgen)|oc(|e)|s(f|o(|o)|cihub)|qpp|kill|abb|pid|vol|n(eo|oise)|L|tail|head) *|([.</~]|mpv|yt)*)';
 zshaddhistory () { whence ${${(z)1}[1]} >| /dev/null || return 1 }; # https://superuser.com/questions/902241/how-to-make-zsh-not-store-failed-command
 
 setopt no_extended_history;      # record timestamp of command in HISTFILE
@@ -34,28 +39,28 @@ setopt share_history;            # share command history data
 
 
 ####    PLUGINS/AUTOLOAD
-autoload -Uz zed zmv;
-autoload -Uz /root/.config/zsh/autoloadmedaddy/*(.);
-zle -N tetris;
-
 # source /root/.config/zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh;
-
 source /root/.config/zsh/plugins/completion.zsh;
+
 autoload -Uz compaudit compinit;
 autoload -Uz +X compinit && compinit;
 autoload -Uz +X bashcompinit && bashcompinit;
 
 autoload -Uz compdef;
 
-autoload -Uz bracketed-paste-url-magic; zle -N bracketed-paste bracketed-paste-url-magic;
-autoload -Uz url-quote-magic; zle -N self-insert url-quote-magic;
+autoload -Uz bracketed-paste-magic;
+zle -N bracketed-paste bracketed-paste-magic;
+#autoload -Uz url-quote-magic;
+#zle -N self-insert url-quote-magic;
 
-function d () { if [[ -n $1 ]]; then dirs "$@"; else dirs -v | head -n 10; fi };
+d () { if [[ -n $1 ]]; then dirs "$@"; else dirs -v | head -n 10; fi };
 compdef _dirs d;
 
 FZF_BASE=/root/src/fzf;
-source /root/.config/zsh/plugins/fzf/fzf.plugin.zsh;
+source /root/src/fzf/shell/completion.zsh;
+source /root/src/fzf/shell/key-bindings.zsh;
 export FZF_DEFAULT_OPTS="-i -m --reverse --ansi --bind=alt-w:toggle-preview-wrap,alt-/:toggle-preview,alt-c:clear-selection,alt-v:select-all,alt-\[:preview-up,alt-\':preview-down,\[:up,\':down";
+
 
 # source /root/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh;
 source /root/.config/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh;
@@ -79,10 +84,14 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 zstyle -e ':completion:*:approximate:*' \
         max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
 
+autoload -Uz zed zmv;
+autoload -Uz /root/.config/zsh/autoloadmedaddy/*(.);
+zle -N tetris;
 
 
 
-###     KEYBINDS
+
+####    KEYBINDINGS
 
 
 
@@ -108,7 +117,7 @@ alias -g C='| wc -l';
 alias -g dnd='&>/dev/null&disown';
 alias -g dn='&>/dev/null';
 alias -g l='|& less';
-alias -g f='| fmt -w $((COLUMNS*9/10)) -';
+alias -g f='| fmt -w $((COLUMNS*95/100))';
 # alias -g ne="2> /dev/null";
 alias -g x0='| xargs -0';
 alias -g xf="| xargs -d '\n'";
@@ -131,21 +140,21 @@ alias du='du -h';
 alias fd='fd -uu -i';
 alias feeds='sfeed_curses /root/.sfeed/feeds/*';
 # alias ffff="echo fuck | skroll -rl -d .0025 -n 33";
-alias flit='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.44 --setf int_f0_target_mean=90 -pw';
+# alias flit='flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=0.44 --setf int_f0_target_mean=90 -pw';
+# alias flit='() { flite -voice /root/src/voices/cmu_us_fem.flitevox --setf duration_stretch=$((1./${1:-2.65})) --setf int_f0_target_mean=90 -pw }'
 alias hl='hledger-ui';
 alias j='ijconsole';
 alias L='less';
 # alias l1='() { w=(${(f)"$(ls -A1 ${1:-.})"}); q=${${(On)w//(#m)*/${#MATCH}}[1]}; print -C $((COLUMNS/q)) -- ${w} }';
-alias l1='ls -A -1';
+alias l1='ls -1 --almost-all --color=always';
 alias love='mpc sendmessage mpdas love';
 alias ll='ls -l --almost-all --color=always --human-readable --time-style=full-iso';
 alias lr='ls -1 --almost-all --color=always --recursive';
 alias man='() { man -a ${@} 2>/dev/null || xmandoc ${@} || return 1 }';
 alias mle='mle -i 1 -w 1 -y syn_generic';
 alias mpi='mp3info2';
-alias mpva='mpv --force-window=yes --idle --no-terminal';
+alias mpva='() { mpv --force-window=yes --idle --no-terminal ${@:a} }';
 alias mpvp='mpv --vo=tct --profile=sw-fast --ytdl-format=worst --really-quiet';
-alias mss='st -n "sweaper" -f "Fira Code Black:pixelsize=24"';
 alias ncm='ncmpcpp 2>/dev/null';
 alias neo='ruby ~/src/neocities-ruby/bin/neocities';
 alias oc='octave-cli --quiet';
@@ -156,7 +165,7 @@ alias pre='pcre2grep -i --color';
 alias rg='rg --color always --heading --line-number --smart-case --engine auto --hidden --unrestricted';
 alias rdr="rdrview -B 'elinks -dump -no-references -no-numbering'";
 # alias realpath='realpath -qe';
-alias rm='rm -v';
+alias rm='rm -vI';
 alias rsync='rsync -vah --progress';
 # alias sex='sex | cow';
 # alias snow='pkill xsnow ; xsnow -snowflakes 1000 -santaspeed 15 -santa 1 -santaupdatefactor 1 -notrees -whirl 180 -yspeed 222 -xspeed 88 & disown';

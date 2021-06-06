@@ -12,7 +12,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
 fi
 
 /root/.config/zsh/scripts/startup &
-subl4 &
+#subl4 &
 
 DISPLAY:=127.0.0.1:0
 exec dwm

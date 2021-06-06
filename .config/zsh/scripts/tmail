@@ -1,4 +1,5 @@
 #!/bin/zsh
+
 # temporary mail
 [[ -t 0 ]] || return 1;
 # { which zsh && which fzy && which rdrview && which pcre2grep } &>/dev/null || return 2;
@@ -6,80 +7,77 @@ ping -c 1 1.1.1.1 &>/dev/null || return 3;
 
 menu () {
   typeset m t a;
+  m='\033[0;';
+  t='\033[0;';
   while { getopts 'm:t:' a } { case $a {
     (m) 
-      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      m+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
     (t)
-      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      t+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
   }; };
-  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
+  m=${m%?}m;
+  t=${t%?}m;
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m} ${a%% *} ${t} "${a#* }" '\033[0m' };
 }
 
 box () {
-((# > 0)) || return 0;
-typeset a d h B T H tl tr bl br th bh lv rv r w; 
-typeset -i s;
-s=1;
-while { getopts 's:h:B:T:H:' a } { case $a {
-  (s) # line style
-    ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
-  (h) # header
-    h=${OPTARG};;
-  (B) # box color
-    B='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-  (T) # text color
-    T='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-  (H) # header color
-    H='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-}; };
+  typeset a h B T H tl tr bl br th bh lv rv w; 
+  typeset -i s;
+  s=1;
+  B='\033[0;';
+  T='\033[0;';
+  H='\033[0;';
+  while { getopts 's:h:B:T:H:' a } { case $a {
+    (s) # line style
+      ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
+    (h) # header
+      h=${OPTARG};;
+    (B) # box color
+      B+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+    (T) # text color
+      T+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+    (H) # header color
+      H+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+  }; };
 
-((# + 1 > OPTIND)) || return 0;
+  ((# + 1 > OPTIND)) || return 0;
 
-tl=${$(<<<'┏ ┌ ╔ ⡏')[s]}; # top left
-bl=${$(<<<'┗ └ ╚ ⣇')[s]}; # bottom left
-tr=${$(<<<'┓ ┐ ╗ ⢹')[s]}; # top right
-br=${$(<<<'┛ ┘ ╝ ⣸')[s]}; # bottom right
-th=${$(<<<'━ ─ ═ ⠉')[s]}; # top horizontal
-bh=${$(<<<'━ ─ ═ ⣀')[s]}; # bottom horizontal
-lv=${$(<<<'┃ │ ║ ⡇')[s]}; # left vertical
-rv=${$(<<<'┃ │ ║ ⢸')[s]}; # right vertical
-# box inside width
-w=${${(On)@[OPTIND,-1]//(#m)*/${#MATCH}}[1]};
-(($+h)) && {
-  h=$(tr '\n\t\r\f' ' ' <<< $h)
-  (($#h > w)) && w=$(($#h + 4));
-};
+  B=${B%?}m;
+  T=${T%?}m;
+  H=${H%?}m;
 
-if ((w + 2 > COLUMNS)) {
-  # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
-  (($+h)) &&
-#   if ((${#${h//[^$'\n']/}} > 0)) {
-#   } elif (($#h > COLUMNS - 4)) {
-#   } else {
-    printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)} $H $h $B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)} $tr
-#   };
-    printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)} $tr;
-  for a ( $@[OPTIND,-1] ) {
-    # for d ( ${(f)"$(fmt -w $COLUMNS <<< $a)"} ) {
-    for d ( ${(f)"$(<<<$a)"} ) {
-      printf '%s %b%s%b %s\n' $lv $T ${(r.COLUMNS-4.)d} $B $rv;
-    };
+  tl=${$(<<<'┏ ┌ ╔ ⡏')[s]}; # top left
+  bl=${$(<<<'┗ └ ╚ ⣇')[s]}; # bottom left
+  tr=${$(<<<'┓ ┐ ╗ ⢹')[s]}; # top right
+  br=${$(<<<'┛ ┘ ╝ ⣸')[s]}; # bottom right
+  th=${$(<<<'━ ─ ═ ⠉')[s]}; # top horizontal
+  bh=${$(<<<'━ ─ ═ ⣀')[s]}; # bottom horizontal
+  lv=${$(<<<'┃ │ ║ ⡇')[s]}; # left vertical
+  rv=${$(<<<'┃ │ ║ ⢸')[s]}; # right vertical
+
+  w=${${(On)@[OPTIND,-1]//(#m)*/${#MATCH}}[1]}; # box inside width
+  (($+h)) && (($#h > w)) && w=$(($#h + 4)) || ((w += 2));
+
+  if ((w + 2 > COLUMNS)) {
+    # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
+    (($+h)) && printf '%b\n' $B$tl${(pr.(COLUMNS-2-$#h)/2+1..$th.)}$H$h$B${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)}$tr;
+    printf '%b\n' $B$tl${(pr.COLUMNS-3..$th.)}$tr;
+    printf '%b\n' ${(r.2.)lv}$T${(r.COLUMNS-4.)^${(f)@[OPTIND,-1]}}$B${(l.2.)rv};
+    printf '%b\n' $bl${(pr.COLUMNS-2..$bh.)}$br'\033[0m';
+  } else {
+    (($+h)) &&
+    printf '%b\n' $B$tl${(pr.(w-$#h)/2..$th.)}$H$h$B${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)}$tr ||
+    printf '%b\n' $B$tl${(pr.w-1..$th.)}$tr;
+    printf '%b\n' ${(r.2.)lv}$T${(r.w-2.)^@[OPTIND,-1]}$B${(l.2.)rv};
+    printf '%b\n' $bl${(pr.w..$bh.)}$br'\033[0m';
   };
-  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)} $br '\033[0m';
-} else {
-  (($+h)) &&
-    printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)} $H $h $B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)} $tr ||
-    printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)} $tr;
-  for a ( $@[OPTIND,-1] ) { printf '%s %b%s%b %s\n' $lv $T ${(r.w-2.)a} $B $rv };
-  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)} $br '\033[0m';
-};
 }
 
 fetchEmail () { # List all the received emails in a nicely formatted order
   curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o $a "${api}?action=getMessages&login=${userName}&domain=${domainName}";
  
   emailLength=$(jq length $a);
-  ((emailLength == 0)) && read -k1 "?${n}No (new) mail." && return 1;
+  ((emailLength == 0)) && read -sk1 "?${n}No (new) mail." && return 1;
 
   emailNumber=#;          emailNumber+=($(seq -w $emailLength));
   emailId=ID;             emailId+=(${(f)"$(jq -r '.[].id' $a)"});
@@ -88,7 +86,7 @@ fetchEmail () { # List all the received emails in a nicely formatted order
   emailTime=Time;         emailTime+=(${(f)"$(jq -r '.[].date' $a)"});
 }
 
- viewEmail () { # View an email by ID
+viewEmail () { # View an email by ID
   typeset b;
   [[ -f ${dir}/${userName}${domainName}${1} ]] || curl -s -f -L --max-redirs 0 -H 'User-Agent:' -o ${dir}/${userName}${domainName}${1} "${api}?action=readMessage&login=${userName}&domain=${domainName}&id=${1}";
   [[ $(< ${dir}/${userName}${domainName}${1}) = "Message not found" ]] && read -sk1 "?${n}Message not found." && return;
@@ -122,7 +120,7 @@ customAddress () {
   typeset customName;
   read "customName?${n}Custom address ([a-z0-9]+)> ";
   [[ ${customName} =~ '[a-z0-9]+' ]] && userName=${customName} || { read -sk1 "?${n}Invalid username." && return 1 };
-  menu -t 6b -m 2b 'Domain_name: ' '* 1secmail.com' ' 2 1secmail.net' '3 1secmail.org' '4 wwjmp.com';
+  menu -t 4b -m 2b 'Domain_name: ' '* 1secmail.com' ' 2 1secmail.net' '3 1secmail.org' '4 wwjmp.com';
   case $(read -sek1 "?${n}") {
     (2) domainName=1secmail.net;;
     (3) domainName=1secmail.org;;
@@ -134,12 +132,12 @@ customAddress () {
 setAddress () { # saves current address for later use
   if [[ -n ${userName} && -n ${domainName} ]] {
     if { pcre2grep -q "^${userName}@${domainName}$" ${dir}/emailaddresses } {
-      read -k1 "?${n}Already in set email addresses.";
+      read -sk1 "?${n}Already in set email addresses.";
     } else {
-      printf '%s\n' "${userName}@${domainName}" >> ${dir}/emailaddresses;
+      printf '%s@%s\n' ${userName} ${domainName} >> ${dir}/emailaddresses;
     };
   } else {
-    read -k1 "?${n}No email address.";
+    read -sk1 "?${n}No email address.";
   };
 }
 
@@ -152,16 +150,33 @@ pickAddress () { # select one of previously set addresses
 }
 
 () {
-  typeset dir api c a s emailLength emailNumber emailId emailFrom emailSubject emailTime userName domainName n;
-  n=$'\n'; api=https://www.1secmail.com/api/v1/; dir=/tmp/tmpmail; 
+  emulate -LR zsh;
+  setopt extendedglob;
+  typeset -r \
+    n=$'\n' \
+    api=https://www.1secmail.com/api/v1/ \
+    dir=/tmp/tmpmail \
+    a=$(mktemp ${dir}/XXXXXXXX);
+  typeset \
+    c \
+    userName \
+    domainName;
+  typeset -a \
+    emailNumber=(\#) \
+    emailId=(ID) \
+    emailFrom=(From) \
+    emailSubject=(Subject) \
+    emailTime=(Time);
+  typeset -i \
+    s \
+    emailLength;
   [[ -d ${dir} ]] || mkdir ${dir};
   touch ${dir}/emailaddresses;
 
-  a=$(mktemp ${dir}/XXXXXXXX);
   while { true } {
     clear;
-    box -H i5 -B 4b -T 2 -h ${userName}@${domainName} ${(f)"$(for s ( {1..$((emailLength+1))} ) { printf '%s&&%s&&%s&&%s&&%s\n' ${emailNumber[s]:-\#} ${emailTime[s]:-Time} ${emailId[s]:-ID} ${emailFrom[s]:-From} ${emailSubject[s]:-Subject}; } | column -t -s '&&')"};
-    menu -t 6b -m 2b \
+    box -H i5 -B 4b -T 2 -h ${userName}@${domainName} ${(f)"$(for s ( {1..$((emailLength+1))} ) { printf '%s@@%s@@%s@@%s@@%s\n' ${emailNumber[s]} ${emailTime[s]} ${emailId[s]} ${emailFrom[s]} ${emailSubject[s]} } | column -t -s @@)"};
+    menu -t 4b -m 2b \
       'g (re)generate address' \
       's save current' \
       'r refresh inbox' \
@@ -175,9 +190,9 @@ pickAddress () { # select one of previously set addresses
     case ${c} {
       (g) generateAddress;;
       (s) setAddress;;
-      (r) fetchEmail;;
-      (R) fetchEmail && viewEmail ${emailId[1+1]};;
-      (y) [[ -z ${userName} || -z ${domainName} ]] || printf '%s' ${userName}@${domainName} | xclip -se c;;
+      # (r) fetchEmail;;
+      # (R) fetchEmail && viewEmail ${emailId[1+1]};;
+      # (y) [[ -z ${userName} || -z ${domainName} ]] || xclip -se c <<< ${userName}@${domainName};;
       (c) pickAddress;;
       (C) customAddress;;
       (0) ((c += 10));&

@@ -19,7 +19,7 @@ SUBS_FILE=${SUBS}/subs.txt;
 SUBS_LINKS=${SUBS}/links;
 SUBS_CACHE=${SUBS}/cache;
 SUBS_SLEEP_VALUE=0.01; # raise this if you experience problems
-SEP='^^^^^';
+SEP='Ь';
 [[ -d ${SUBS} ]] || mkdir ${SUBS};
 
 yt_die () {
@@ -60,8 +60,8 @@ yt_gen_links () {
     for line ( ${(f)"$(curl -sfL --retry 10 https://youtube.com/user/${line}/about)"} ) {
       case ${line} {
         (*channel/UC??????????????????????*)
-          line=${${line##*channel/}%%\"*}
-          printf 'https://youtube.com/feeds/videos.xml?channel_id=%s\n' ${line} >> ${SUBS_LINKS}
+          line=${${line##*channel/}%%\"*};
+          printf 'https://youtube.com/feeds/videos.xml?channel_id=%s\n' ${line} >> ${SUBS_LINKS};
           break;;
       };
     };
@@ -86,15 +86,15 @@ yt_get_vids () {
       (*'<media:title>'*) title=${${line%</*}#*:title>}; printf '%s\n' "${date}${SEP}${chan}${SEP}${title}${SEP}${url}" >> ${SUBS_CACHE}/${chan};;
     };
   };
-}
+};
 
 # Updates the local cache of subscriptions. ([-u] flag)
 yt_update_subs () {
-  [[ -f ${SUBS_LINKS} ]] || yt_die 'Subs links have not been generated.'
-  typeset link
+  [[ -f ${SUBS_LINKS} ]] || yt_die 'Subs links have not been generated.';
+  typeset link;
   typeset -i total count c;
 
-  rm -rf ${SUBS_CACHE} && mkdir ${SUBS_CACHE}
+  rm -rf ${SUBS_CACHE} && mkdir ${SUBS_CACHE};
 
   total=$(wc -l < ${SUBS_LINKS});
   count=0;
@@ -107,12 +107,12 @@ yt_update_subs () {
   };
 
   printf '\n\n%s\n' 'Waiting for jobs to finish...'; wait; printf '%s\n' 'done!';
-}
+};
 
 yt_cat_subs () { # grab current cache of subscriptions, sort by date uploaded
     [[ -d ${SUBS_CACHE} ]] ||  yt_die 'Subs cache has not been retrieved.';
-    column -t -s '^^^^^' -o ' ' < ${SUBS_CACHE}/* | sort -rk1;
-}
+    column -t -s ${SEP} -o ' ' < ${SUBS_CACHE}/* | sort -rk1;
+};
 
 yt_get_sel () { # split the concatenated lines into entities, send to selector, and play result w/ mpv
   typeset sel;
@@ -128,7 +128,7 @@ yt_get_sel () { # split the concatenated lines into entities, send to selector, 
   } else {
     { exec mpv ${(z)MPV_OPTS} --pause ${${sel% }##* } } & disown || return 1;
   };
-}
+};
 
 yt_main () {
   typeset opt MPV_OPTS;
@@ -147,5 +147,5 @@ yt_main () {
     (*) yt_get_sel;;
   }; };
   ((# == 0 && OPTIND == 1)) && yt_get_sel;
-}
+};
 yt_main "$@";

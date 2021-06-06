@@ -1,16 +1,16 @@
 #!/bin/zsh
 [[ -t 0 ]] || return 1;
 emulate -LR zsh;
-setopt pipe_fail;
+setopt pipefail;
 
 ((# > 0)) || {
   typeset -a a s; a=(${(fq)"$(printf '%s\n' ~/Downloads/texpkg/**/*(.N) | fzf -i -m --reverse --bind=alt-c:clear-selection,alt-v:select-all,\[:up,\':down)"}); 
   for n ( ${a} ) {
     case ${n:e} {
-      (pdf) qpdfview --unique --quiet ${n};;
+      (pdf) qpdfview --unique --quiet ${n} &;;
       (htm(|l)) sf ${n};;
       ([1-9]) man -l ${n};;
-      (jp(|e)g|png|tiff|gif) feh ${n};;
+      (jp(|e)g|png|tiff|gif) feh ${n} &;;
       (*) less ${n};;
     };
   };

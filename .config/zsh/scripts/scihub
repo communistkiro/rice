@@ -13,8 +13,8 @@ typeset base a s d;
 base=(https://sci-hub.{do,st,se}/);
 for a ( ${@} ) {
   for d ( {1..${#base}} ) {
-    s=${$(curl -sfLH User-Agent: ${base[d]}${a} | pup -p 'a attr{onclick}' | pcre2grep -o1 "'(.+)'")};
+    s=${$(curl -sfLH User-Agent: ${base[d]}${a} | pup -p 'a attr{onclick}' | pcre2grep -o1 "'.*?//(.+?\.pdf).*?'")};
     [[ -z ${s} ]] || break;
   };
-  [[ -z ${s} ]] && printf '%s: Not found.\n' ${a} || wget -nc -P ~/Downloads ${s%\?*};
+  [[ -z ${s} ]] && printf '%s: Not found.\n' ${a} || wget -nc -P ~/Downloads ${s};
 };

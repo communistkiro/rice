@@ -48,9 +48,9 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
 
 static const Layout layouts[] = {
     /* symbol     arrange function */
+    { "[M]",      monocle },
     { "|||",      col },
     { "[]=",      tile },    /* first entry is default */
-    { "[M]",      monocle },
     { "><>",      NULL },    /* no layout function means floating behavior */
     {  NULL,      NULL}
 };
@@ -71,7 +71,7 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 // static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_c1, "-nf", col_c2, "-sb", col_gray1, "-sf", col_c3, NULL };
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont };
 // static const char *termcmd[]  = { "st", NULL };
-static const char *termcmd[] = { "tabbed", "-p", "s-1", "-c", "-r", "2", "st", "-w", "''", NULL };
+static const char *termcmd[] = { "tabbed", "-p", "s+1", "-c", "-r", "2", "st", "-w", "''", NULL };
 
 static Key keys[] = {
     /* modifier                     key             function        argument */

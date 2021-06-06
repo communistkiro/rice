@@ -5,13 +5,21 @@ ping -c 1 1.1.1.1 &>/dev/null || return 3;
 
 menu () {
   typeset m t a;
+  m='\033[0;';
+  t='\033[0;';
   while { getopts 'm:t:' a } { case $a {
     (m) 
-      m='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      m+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
     (t)
-      t='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
+      t+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
   }; };
-  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m:-\\033\[0m} ${a%% *} ${t:-\\033\[0m} "${a#* }" '\033[0m' };
+  m=${m%?}m;
+  t=${t%?}m;
+  for a ( ${@[OPTIND,-1]} ) { printf '\t%b%s\t\t%b%s%b\n' ${m} ${a%% *} ${t} "${a#* }" '\033[0m' };
+}
+
+uriencode () {
+  printf '%s' ${(j..)${(s..)@}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}}  
 }
 
 () {
@@ -63,7 +71,7 @@ menu () {
         read -r 'term?Term: '; [[ -z $term ]] && break;
         field=$(fzf +m --prompt 'Field: ' <<< ${(F)fields} ); # [[ -z field ]] && break;
         # query+=\&terms-${termnum}-operator=${operator}\&terms-${termnum}-term=${term// /%20}\&terms-${termnum}-field=${field:-all};
-        query+=\&terms-${termnum}-operator=${operator}\&terms-${termnum}-term=$(uritool query escape ${term})\&terms-${termnum}-field=${field:-all};
+        query+=\&terms-${termnum}-operator=${operator}\&terms-${termnum}-term=$(uriencode ${term})\&terms-${termnum}-field=${field:-all};
         ((++termnum));
       };
       ((termnum > 0)) || return 0;
@@ -124,13 +132,13 @@ menu () {
       printf '%s\n\n' "$(pup -p -f $tmp 'h1 json{}'|jq -r '.[].text')";
       for a ( {1..$results} ) {
         printf '%b%s\n%b%s\n%b%s.pdf\n%b%s\n%bSubmitted: %18.18s\t\t%bAnnounced: %18.18s%b\n\n\n' \
-          '\033[31;1m' "$(fmt -w 80 <<< ${title[a]:- })" \
-          '\033[34;1m' "$(fmt -w 80 <<< ${(j., .)${(f)author[a]:- }})" \
-          '\033[32;1m'  ${pdf[a]:- } \
-          '\033[33;1m' "$(fmt -w 80 <<< ${abstract[a]:- })" \
-          '\033[36;1m'  ${submitted[a]:- } \
-          '\033[35;1m'  ${announced[a]:- } '\033[0m';
-      } | less -r;
+          '\033[0;31;1m' "$(fmt -w $((COLUMNS*85/100)) <<< ${title[a]:- })" \
+          '\033[0;34;1m' "$(fmt -w $((COLUMNS*85/100)) <<< ${(j., .)${(f)author[a]:- }})" \
+          '\033[0;32;1m'  ${pdf[a]:- } \
+          '\033[0;33;1m' "$(fmt -w $((COLUMNS*85/100)) <<< ${abstract[a]:- })" \
+          '\033[0;36;1m'  ${submitted[a]:- } \
+          '\033[0;35;1m'  ${announced[a]:- } '\033[0m';
+      } | less;
 
       rm $tmp; return 0;;
     (2)
@@ -142,6 +150,7 @@ menu () {
 
       read -r 'term?Search terms & keywords: '; [[ ${term} =~ '^\s*$' ]] && break;
       query+=${term// /%252B};
+      # query=+$(uriencode ${term});
 
       menu -t 4 -m 2b \
         'Include_articles_from: ' \
@@ -214,10 +223,10 @@ menu () {
 
       for a ( {1..$results} ) {
         printf '%b%s\n%b%s\n%b%s.pdf\n\n\n' \
-          '\033[37;1m' "$(fmt -w 80 <<< ${title[a]:- })" \
-          '\033[34;1m' "$(fmt -w 80 <<< ${(f)author[a]:- })" \
-          '\033[32;1m'  ${${pdf[a]/#\//http://biorxiv.org/}:- };
-      } | less -r; return 0;;
+          '\033[0;34;1m' "$(fmt -w $((COLUMNS*85/100)) <<< ${title[a]:- })" \
+          '\033[0;33;1m' "$(fmt -w $((COLUMNS*85/100)) <<< ${(f)author[a]:- })" \
+          '\033[0;32;1m'  ${${pdf[a]/#\//http://biorxiv.org/}:- };
+      } | less; return 0;;
     (*) return 0;;
   };
 }

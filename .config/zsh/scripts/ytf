@@ -95,8 +95,7 @@ while { getopts hmdfp opt } {
   }
 }
 
-#search_query="${@[OPTIND,-1]}";
-search_query="$(printf '%s' ${(j..)${(s..)@[OPTIND,-1]}/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}})";
+search_query="$(printf '%s' ${(j..s..)@[OPTIND,-1]/(#b)([^A-Za-z0-9-_.~])/%${(l.2..0.)$(([##16]#match))}})";
 
 [[ -t 0 ]] && {
   prompt_menu='fzf --reverse -i --tabstop=1 --delimiter="$(printf "\t")" --nth=1,2'
@@ -111,13 +110,13 @@ search_query="$(printf '%s' ${(j..)${(s..)@[OPTIND,-1]}/(#b)([^A-Za-z0-9-_.~])/%
 # [[ -t 0 ]] || search_query=$(${EXTMENU} <<< '')
 [[ ! ${search_query} =~ '^\s*$' ]] || { helpinfo ; exit 0 };
 
-yt_fetch=$(
-  curl 'https://www.youtube.com/results' -s \
+yt_fetch=$(curl 'https://www.youtube.com/results' -s \
   -G --data-urlencode "search_query=${search_query}" \
   -H 'authority: www.youtube.com' \
   -H 'accept-language: en-US,en;q=0.9' \
-  --compressed);
-  # -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Safari/537.36' \
+  --compressed;
+  #-H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Safari/537.36';
+);
 
 [[ -n ${yt_fetch} ]] || { printf 'ERROR[#01]: Could not curl website. Please check your network and try again.\n'; exit 2 };
 
@@ -142,7 +141,7 @@ while { true } {
   user_selection || return 0;
   if ((${+p})) {
   } elif ((${+d})) {
-    yt-dlp --ignore-errors ${url} &>/dev/null & disown;
+    yt-dlp --ignore-errors ${url} & disown;
   } else { 
     $(${player} ${format:+--ytdl-format=${format}} --really-quiet --pause ${url}) & disown;
   };

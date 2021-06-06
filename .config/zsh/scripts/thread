@@ -1,9 +1,8 @@
 #!/bin/zsh
-unset a;
 typeset dir thread t ext;
-while { getopts a t } { case ${(L)t} { (a) typeset a } };
+while { getopts a t } { case ${t} { (a) typeset a } }; 
 t=$(mktemp);
-for thread ( ${@} ) {
+for thread ( ${@[OPTIND,-1]} ) {
   if [[ ${thread} =~ '^(https?://)?boards.4chan(nel)?\.org' ]] {
     dir=/tmp/${${thread#*thread/}%#*}; [[ -d ${dir} ]] || mkdir ${dir};
     curl -sfo ${t} ${thread%%\#*};

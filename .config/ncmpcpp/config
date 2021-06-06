@@ -28,54 +28,49 @@ mpd_crossfade_time                             = "0"
 ## output, whose format parameter has to be set to 44100:16:1 for mono
 ## visualization or 44100:16:2 for stereo visualization. Example configuration
 ## (it has to be put into mpd.conf):
-audio_output {
-       type            "fifo"
-       name            "Visualizer feed"
-       path            "/tmp/mpd.fifo"
-       format          "44100:16:2"
-}
+# audio_output {
+#        type            "fifo"
+#        name            "Visualizer feed"
+#        path            "/tmp/mpd.fifo"
+#        format          "44100:16:2"
+# }
 
 ## Note: Below parameter is needed for ncmpcpp to determine which output
 ## provides data for visualizer and thus allow syncing between visualization and
 ## sound as currently there are some problems with it.
-visualizer_output_name                         = "Visualizer feed"
+# visualizer_output_name                         = "Visualizer feed"
 
 ## If you set format to 44100:16:2, make it 'yes'.
-visualizer_in_stereo                           = "yes"
-visualizer_fps                                 = 60
-visualizer_autoscale                           = yes
+# visualizer_in_stereo                           = "yes"
+# visualizer_fps                                 = 60
+# visualizer_autoscale                           = yes
 
 ## Use unicode block characters for a smoother, more continuous look.
 ## This will override the visualizer_look option. With transparent terminals
 ## and visualizer_in_stereo set, artifacts may be visible on the bottom half of
 ## the visualization.
-visualizer_spectrum_smooth_look = yes
+# visualizer_spectrum_smooth_look = yes
 
 
 ## A value between 1 and 5 inclusive. Specifying a larger value makes the
 ## visualizer look at a larger slice of time, which results in less jumpy
 ## visualizer output.
-visualizer_spectrum_dft_size = 2
-
-visualizer_spectrum_gain = 15
+# visualizer_spectrum_dft_size = 2
+# visualizer_spectrum_gain = 22
 
 ## Left-most frequency of visualizer in Hz, must be less than HZ MAX
-
-visualizer_spectrum_hz_min = 20
+# visualizer_spectrum_hz_min = 20
 
 ## Right-most frequency of visualizer in Hz, must be greater than HZ MIN
-
-visualizer_spectrum_hz_max = 20000
+# visualizer_spectrum_hz_max = 16000
 
 ## Available values: spectrum, wave, wave_filled, ellipse.
-visualizer_type                                = "spectrum"
-
-visualizer_look                                = "●█"
-
-visualizer_color                               = "41, 83, 119, 155, 185, 215, 209, 203, 197, 161"
+# visualizer_type                                = "spectrum"
+# visualizer_look                                = "●█"
+# visualizer_color                               = "41, 83, 119, 155, 185, 215, 209, 203, 197, 161"
 # visualizer_color                               = "blue, cyan, green, yellow, red, magenta"
 
-visualizer_sync_interval = 10
+# visualizer_sync_interval = 10
 
 ##### system encoding #####
 ##

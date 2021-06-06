@@ -1,1 +1,1 @@
-perl -ne 's/\e\[\d+m//g;print'
+perl -ne 's/\e\[(\d+;)*\d+[a-mA-M]//g;print'

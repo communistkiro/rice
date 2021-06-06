@@ -1,21 +1,23 @@
 #!/bin/zsh
 box () {
-((# > 0)) || return 0;
-typeset a d h B T H tl tr bl br th bh lv rv r w; 
-typeset -i s;
-s=1;
-while { getopts 's:h:B:T:H:' a } { case $a {
-  (s) # line style
-    ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
-  (h) # header
-    h=${OPTARG};;
-  (B) # box color
-    B='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-  (T) # text color
-    T='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-  (H) # header color
-    H='\033[0;'$(printf '%s' ${OPTARG} | perl -pe 's/([0-7])/3$1;/g; s/i/7;/gi; s/b/1;/gi; s/;$//')m;;
-(*) less -F << HEREDOC # help wanted.
+  typeset a h B T H tl tr bl br th bh lv rv w; 
+  typeset -i s;
+  s=1;
+  B='\033[0;';
+  T='\033[0;';
+  H='\033[0;';
+  while { getopts 's:h:B:T:H:' a } { case $a {
+    (s) # line style
+      ((OPTARG >= 1 && OPTARG < 5)) && s=$OPTARG;;
+    (h) # header
+      h=${OPTARG};;
+    (B) # box color
+      B+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+    (T) # text color
+      T+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+    (H) # header color
+      H+=${${${${OPTARG//[^0-7iIbB]/}//(#m)[0-7]/3${MATCH};}//[iI]/7;}//[bB]/1;};;
+  (*) less -F << HEREDOC # help wanted.
 NAME
   box - enclose strings in box
 
@@ -38,47 +40,38 @@ EXAMPLES
     a=Zz; box -s 3 -T 3b -B b2 -H 5i -h 'looooooooooooooooong snooze' ${(pr.16..$a.l.8...)a} "padding works, too"
 
 HEREDOC
-return 1;;
-}; };
+  return 1;;
+  }; };
 
-((# + 1 > OPTIND)) || return 0;
+  ((# + 1 > OPTIND)) || return 0;
 
-tl=${$(<<<'┏ ┌ ╔ ⡏')[s]}; # top left
-bl=${$(<<<'┗ └ ╚ ⣇')[s]}; # bottom left
-tr=${$(<<<'┓ ┐ ╗ ⢹')[s]}; # top right
-br=${$(<<<'┛ ┘ ╝ ⣸')[s]}; # bottom right
-th=${$(<<<'━ ─ ═ ⠉')[s]}; # top horizontal
-bh=${$(<<<'━ ─ ═ ⣀')[s]}; # bottom horizontal
-lv=${$(<<<'┃ │ ║ ⡇')[s]}; # left vertical
-rv=${$(<<<'┃ │ ║ ⢸')[s]}; # right vertical
-# box inside width
-w=${${(On)@[OPTIND,-1]//(#m)*/${#MATCH}}[1]};
-(($+h)) && {
-  h=$(tr '\n\t\r\f' ' ' <<< $h)
-  (($#h > w)) && w=$(($#h + 4));
-};
+  B=${B%?}m;
+  T=${T%?}m;
+  H=${H%?}m;
 
-if ((w + 2 > COLUMNS)) {
-  # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
-  (($+h)) &&
-#   if ((${#${h//[^$'\n']/}} > 0)) {
-#   } elif (($#h > COLUMNS - 4)) {
-#   } else {
-    printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(COLUMNS-2-$#h)/2..$th.)} $H $h $B ${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)} $tr
-#   };
-    printf '%b%s%s%s\n' $B $tl ${(pr.COLUMNS-3..$th.)} $tr;
-  for a ( $@[OPTIND,-1] ) {
-    # for d ( ${(f)"$(fmt -w $COLUMNS <<< $a)"} ) {
-    for d ( ${(f)"$(<<<$a)"} ) {
-      printf '%s %b%s%b %s\n' $lv $T ${(r.COLUMNS-4.)d} $B $rv;
-    };
+  tl=${$(<<<'┏ ┌ ╔ ⡏')[s]}; # top left
+  bl=${$(<<<'┗ └ ╚ ⣇')[s]}; # bottom left
+  tr=${$(<<<'┓ ┐ ╗ ⢹')[s]}; # top right
+  br=${$(<<<'┛ ┘ ╝ ⣸')[s]}; # bottom right
+  th=${$(<<<'━ ─ ═ ⠉')[s]}; # top horizontal
+  bh=${$(<<<'━ ─ ═ ⣀')[s]}; # bottom horizontal
+  lv=${$(<<<'┃ │ ║ ⡇')[s]}; # left vertical
+  rv=${$(<<<'┃ │ ║ ⢸')[s]}; # right vertical
+
+  w=${${(On)@[OPTIND,-1]//(#m)*/${#MATCH}}[1]}; # box inside width
+  (($+h)) && (($#h > w)) && w=$(($#h + 4)) || ((w += 2));
+
+  if ((w + 2 > COLUMNS)) {
+    # FIXME; IF HEADER MULTI ROW OR LONGER THAN COLUMNS ... ELSE
+    (($+h)) && printf '%b\n' $B$tl${(pr.(COLUMNS-2-$#h)/2+1..$th.)}$H$h$B${(pr.(COLUMNS-2-$#h)/2+$#h+COLUMNS-2-($#h+COLUMNS-2)/2*2..$th.)}$tr;
+    printf '%b\n' $B$tl${(pr.COLUMNS-3..$th.)}$tr;
+    printf '%b\n' ${(r.2.)lv}$T${(r.COLUMNS-4.)^${(f)@[OPTIND,-1]}}$B${(l.2.)rv};
+    printf '%b\n' $bl${(pr.COLUMNS-2..$bh.)}$br'\033[0m';
+  } else {
+    (($+h)) &&
+    printf '%b\n' $B$tl${(pr.(w-$#h)/2..$th.)}$H$h$B${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)}$tr ||
+    printf '%b\n' $B$tl${(pr.w-1..$th.)}$tr;
+    printf '%b\n' ${(r.2.)lv}$T${(r.w-2.)^@[OPTIND,-1]}$B${(l.2.)rv};
+    printf '%b\n' $bl${(pr.w..$bh.)}$br'\033[0m';
   };
-  printf '%s%s%s%b\n' $bl ${(pr.COLUMNS-2..$bh.)} $br '\033[0m';
-} else {
-  (($+h)) &&
-    printf '%b%s%s%b%s%b%s%s\n' $B $tl ${(pr.(w-$#h)/2..$th.)} $H $h $B ${(pr.(w-$#h)/2+$#h+w-($#h+w)/2*2..$th.)} $tr ||
-    printf '%b%s%s%s\n' $B $tl ${(pr.w-1..$th.)} $tr;
-  for a ( $@[OPTIND,-1] ) { printf '%s %b%s%b %s\n' $lv $T ${(r.w-2.)a} $B $rv };
-  printf '%s%s%s%b\n' $bl ${(pr.w..$bh.)} $br '\033[0m';
-};
 }

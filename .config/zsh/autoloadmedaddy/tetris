@@ -8,7 +8,7 @@
 emulate -L zsh
 
 tetris_hsz=10
-tetris_vsz=$((LINES * 95 / 100))
+tetris_vsz=$((LINES * 8 / 10))
 typeset -ga tetris_shapes
 tetris_shapes=(
 	0x0f00 0x4444 0x0f00 0x4444
@@ -218,17 +218,16 @@ function tetris-render-screen {
 	setopt extendedglob
 	local s i extras
 	extras=(
-		"Score: ${tetris_score}"
-		""
-		"Game parameters: ${tetris_hsz}x${tetris_vsz}, ${tetris_speed}Hz"
-		""
-		"Keys:"
-		"      left:    ;"
-		"    rotate:    ["
-		"   rotate2:    c"
-		"     right:    \\"
-		"      drop:    space"
-		"      quit:    q"
+	#	"Score: ${tetris_score}"
+	#	"${tetris_hsz}x${tetris_vsz}, ${tetris_speed}Hz" # Game parameters: 
+	#	""
+	#	"Keys:"
+	#	"      left:    ;"
+	#	"    rotate:    ["
+	#	"   rotate2:    c"
+	#	"     right:    \\"
+	#	"      drop:    space"
+	#	"      quit:    q"
 	)
 	for ((i=0; i!=tetris_vsz; i++)); do
 		s="$s|${${${${${tetris_board[1+i*tetris_hsz,(i+1)*tetris_hsz]}//O/()}//\*/**}// /  }//\#/##}|"${extras[1]+   $extras[1]}$'\n'

@@ -96,7 +96,6 @@ return 1;; (*) true;; }
 typeset tmp;
 typeset -i w b d h m s D H M S t;
 tmp=/tmp/tmr.$$;
-# set -x
 if     ((# - OPTIND == 3)) {
   d=${@[OPTIND]};
   h=${@[OPTIND + 1]};
